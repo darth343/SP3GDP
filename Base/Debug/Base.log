@@ -1,0 +1,68 @@
+﻿Build started 12/8/2016 6:40:55 AM.
+     1>Project "C:\Users\Arun\Documents\2016 S1\GDEV\Assigmnet\DM2231_Framework(11)\DM2231_Framework\Base\Base.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Users\Arun\Documents\2016 S1\GDEV\Assigmnet\DM2231_Framework(11)\DM2231_Framework\/Common/Source" /I"C:\Users\Arun\Documents\2016 S1\GDEV\Assigmnet\DM2231_Framework(11)\DM2231_Framework\/glew/include" /I"C:\Users\Arun\Documents\2016 S1\GDEV\Assigmnet\DM2231_Framework(11)\DM2231_Framework\/glfw/include" /ZI /nologo /W3 /WX- /Od /Oy- /D _VARIADIC_MAX=10 /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Source\SceneText.cpp
+         SceneText.cpp
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(179): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(181): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(183): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(185): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(187): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(189): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(191): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(193): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(195): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(197): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(318): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(321): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(330): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(332): warning C4244: '-=' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(333): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(337): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(403): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(405): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(406): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(408): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(431): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(478): warning C4244: '-=' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(515): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(814): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(822): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(851): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(861): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(866): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(918): warning C4244: 'argument' : conversion from 'double' to 'const float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(918): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(958): warning C4244: 'argument' : conversion from 'double' to 'const float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\gdev\assigmnet\dm2231_framework(11)\dm2231_framework\base\source\scenetext.cpp(958): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Arun\Documents\2016 S1\GDEV\Assigmnet\DM2231_Framework(11)\DM2231_Framework\Debug\Base.exe" /INCREMENTAL:NO /NOLOGO /LIBPATH:"C:\Users\Arun\Documents\2016 S1\GDEV\Assigmnet\DM2231_Framework(11)\DM2231_Framework\Debug" /LIBPATH:"C:\Users\Arun\Documents\2016 S1\GDEV\Assigmnet\DM2231_Framework(11)\DM2231_Framework\/glfw/lib-msvc100" /LIBPATH:"C:\Users\Arun\Documents\2016 S1\GDEV\Assigmnet\DM2231_Framework(11)\DM2231_Framework\/glew/lib" Common.lib winmm.lib opengl32.lib glu32.lib glew32.lib glfw3.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Arun\Documents\2016 S1\GDEV\Assigmnet\DM2231_Framework(11)\DM2231_Framework\Debug\Base.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Arun\Documents\2016 S1\GDEV\Assigmnet\DM2231_Framework(11)\DM2231_Framework\Debug\Base.lib" /MACHINE:X86 Debug\Application.obj
+         Debug\Camera.obj
+         Debug\Camera2.obj
+         Debug\Camera3.obj
+         Debug\Enemy.obj
+         Debug\Goodies.obj
+         Debug\GoodiesFactory.obj
+         Debug\LoadOBJ.obj
+         Debug\LoadTGA.obj
+         Debug\main.obj
+         Debug\Map.obj
+         Debug\Mesh.obj
+         Debug\MeshBuilder.obj
+         Debug\Minimap.obj
+         Debug\PlayerInfo.obj
+         Debug\SceneText.obj
+         Debug\shader.obj
+         Debug\SpriteAnimation.obj
+         Debug\Strategy.obj
+         Debug\Strategy_Kill.obj
+         Debug\TreasureChest.obj
+         Debug\Utility.obj
+     1>Application.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/OPT:LBR' specification
+     1>LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
+         Base.vcxproj -> C:\Users\Arun\Documents\2016 S1\GDEV\Assigmnet\DM2231_Framework(11)\DM2231_Framework\Debug\Base.exe
+     1>Done Building Project "C:\Users\Arun\Documents\2016 S1\GDEV\Assigmnet\DM2231_Framework(11)\DM2231_Framework\Base\Base.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:01.64
