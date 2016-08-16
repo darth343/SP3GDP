@@ -167,9 +167,7 @@ void SceneText::Init()
 
 	// Initialise the hero's position
 	theHero = new CPlayerInfo();
-	theHero->SetPos_x(50);
-	theHero->SetPos_y(200);
-	theHero->HeroJump();
+	theHero->SetPosition(Vector3(50, 200, 0));
 
 	meshList[GEO_HEROWALK] = MeshBuilder::Generate2DMesh("Player", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_HEROWALK]->textureID = LoadTGA("Image//Hero.tga");
@@ -245,8 +243,6 @@ void SceneText::Update(double dt)
 		this->theHero->MoveLeftRight(true, m_cMap, dt);
 	if (Application::IsKeyPressed('D'))
 		this->theHero->MoveLeftRight(false, m_cMap, dt);
-	if (Application::IsKeyPressed(' '))
-		this->theHero->HeroJump();
 
 	theHero->HeroUpdate(m_cMap, dt, meshList);
 
@@ -517,7 +513,7 @@ void SceneText::Render()
 
 	RenderBackground();
 	RenderTileMap(m_cMap);
-	Render2DMesh(theHero->GetPlayerMesh(), false, 32.0f, theHero->GetPos_x(), theHero->GetPos_y(), false, theHero->GetFlipStatus());
+	Render2DMesh(theHero->GetPlayerMesh(), false, 32.0f, theHero->GetPosition().x, theHero->GetPosition().y, false, theHero->GetFlipStatus());
 
 
 	//On screen text

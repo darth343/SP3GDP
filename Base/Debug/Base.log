@@ -1,18 +1,52 @@
-﻿Build started 16/8/2016 9:58:19 AM.
+﻿Build started 16/8/2016 10:29:11 AM.
      1>Project "C:\Users\Arun\Documents\2016 S1\SP3\Base\Base.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Users\Arun\Documents\2016 S1\SP3\/Common/Source" /I"C:\Users\Arun\Documents\2016 S1\SP3\/glew/include" /I"C:\Users\Arun\Documents\2016 S1\SP3\/glfw/include" /ZI /nologo /W3 /WX- /Od /Oy- /D _VARIADIC_MAX=10 /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Source\SceneText.cpp
-         SceneText.cpp
-     1>c:\users\arun\documents\2016 s1\sp3\base\source\scenetext.cpp(160): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\arun\documents\2016 s1\sp3\base\source\scenetext.cpp(162): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\arun\documents\2016 s1\sp3\base\source\scenetext.cpp(181): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\arun\documents\2016 s1\sp3\base\source\scenetext.cpp(242): warning C4244: '-=' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\arun\documents\2016 s1\sp3\base\source\scenetext.cpp(527): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Users\Arun\Documents\2016 S1\SP3\/Common/Source" /I"C:\Users\Arun\Documents\2016 S1\SP3\/glew/include" /I"C:\Users\Arun\Documents\2016 S1\SP3\/glfw/include" /ZI /nologo /W3 /WX- /Od /Oy- /D _VARIADIC_MAX=10 /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Source\PlayerInfo.cpp
+         PlayerInfo.cpp
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(51): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(59): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(69): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(74): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(79): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(88): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(93): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(100): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(108): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(118): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(123): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(128): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(137): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(142): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(156): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(164): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(174): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(179): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(185): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(194): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(200): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(206): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(214): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(224): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(230): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(236): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(245): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(250): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(294): warning C4244: '=' : conversion from 'const int' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(308): warning C4244: '=' : conversion from 'const int' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(311): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(317): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(324): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(345): warning C4244: '=' : conversion from 'const int' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(350): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(359): warning C4244: '=' : conversion from 'const int' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(371): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\arun\documents\2016 s1\sp3\base\source\playerinfo.cpp(382): warning C4244: 'argument' : conversion from 'double' to 'const int', possible loss of data
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Arun\Documents\2016 S1\SP3\Debug\Base.exe" /INCREMENTAL:NO /NOLOGO /LIBPATH:"C:\Users\Arun\Documents\2016 S1\SP3\Debug" /LIBPATH:"C:\Users\Arun\Documents\2016 S1\SP3\/glfw/lib-msvc100" /LIBPATH:"C:\Users\Arun\Documents\2016 S1\SP3\/glew/lib" Common.lib winmm.lib opengl32.lib glu32.lib glew32.lib glfw3.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Arun\Documents\2016 S1\SP3\Debug\Base.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Arun\Documents\2016 S1\SP3\Debug\Base.lib" /MACHINE:X86 Debug\Application.obj
          Debug\Camera.obj
          Debug\Camera2.obj
          Debug\Camera3.obj
+         Debug\Enemy.obj
          Debug\LoadOBJ.obj
          Debug\LoadTGA.obj
          Debug\main.obj
@@ -31,4 +65,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:02.79
+Time Elapsed 00:00:01.50

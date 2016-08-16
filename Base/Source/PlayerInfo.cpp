@@ -11,9 +11,6 @@ CPlayerInfo::CPlayerInfo(void)
 }
 
 const float MOVEMENT_SPEED = 250.f;
-const float JUMP_SPEED = 40.f;
-const float JUMP_POWER = 15.f;
-const float CONSTRAINTSPEED = 200.f;
 const float xOffset = 8.f;
 const float yOffset = 2.f;
 
@@ -279,11 +276,6 @@ Vector3 CPlayerInfo::GetPosition()
 void CPlayerInfo::SetPosition(Vector3 pos)
 {
 	theHeroPosition = pos;
-}
-
-Vector3 CPlayerInfo::GetPosition()
-{
-	return theHeroPosition;
 }
 
 // Constrain the position of the Hero to within the border
