@@ -11,6 +11,7 @@
 #include "Vector2.h"
 #include "PlayerInfo.h"
 #include "GameObject.h"
+#include "NPC.h"
 
 class SceneText : public Scene
 {
@@ -120,6 +121,7 @@ private:
 	bool bLightEnabled;
 
 	float fps;
+	NPC npc;
 
 	// Handle to the tilemaps
 	CMap* m_cMap;

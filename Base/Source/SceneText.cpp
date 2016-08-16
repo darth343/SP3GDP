@@ -141,6 +141,12 @@ void SceneText::Init()
 
 	camera.Init(Vector3(0, 0, 10), Vector3(0, 0, 0), Vector3(0, 1, 0));
 
+	vector<NPC> npcvec;
+	npc.ReadFromFile("Image//Text.txt");
+	npcvec = npc.GetNPCVec();
+
+	//cout << npcvec[1].GetDialogue() << endl;
+	//cout << npcvec[0].GetDialogue() << endl;
 	//Init GameState Here for testing purposes
 	GS = TESTMAP;
 
