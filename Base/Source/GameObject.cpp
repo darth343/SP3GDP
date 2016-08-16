@@ -4,14 +4,15 @@ GameObject::GameObject(Vector3 scale)
 : scale(scale)
 {
 	Min.SetZero(); Max = scale;
+	active = true;
 }
 
-bool GameObject::CheckCollision(CPlayerInfo* player, CMap* m_cMap)
+bool GameObject::CheckCollision(Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 {
 	if (
-		((player->GetPosition().x < this->position.x + this->Max.x - player->GetMapOffset().x && player->GetPosition().x > this->position.x + this->Min.x - player->GetMapOffset().x) || (player->GetPosition().x + m_cMap->GetTileSize() < this->position.x + this->Max.x - player->GetMapOffset().x && player->GetPosition().x + m_cMap->GetTileSize() > this->position.x + this->Min.x - player->GetMapOffset().x))
+		((playerPos.x < this->position.x + this->Max.x - mapOffset.x && playerPos.x > this->position.x + this->Min.x - mapOffset.x) || (playerPos.x + m_cMap->GetTileSize() < this->position.x + this->Max.x - mapOffset.x && playerPos.x + m_cMap->GetTileSize() > this->position.x + this->Min.x - mapOffset.x))
 		&&
-		((player->GetPosition().y < this->position.y + this->Max.y - player->GetMapOffset().y && player->GetPosition().y > this->position.y + this->Min.y - player->GetMapOffset().y) || (player->GetPosition().y + m_cMap->GetTileSize()< this->position.y + this->Max.y - player->GetMapOffset().y && player->GetPosition().y + m_cMap->GetTileSize()> this->position.y + this->Min.y - player->GetMapOffset().y))
+		((playerPos.y < this->position.y + this->Max.y - mapOffset.y && playerPos.y > this->position.y + this->Min.y - mapOffset.y) || (playerPos.y + m_cMap->GetTileSize()< this->position.y + this->Max.y - mapOffset.y && playerPos.y + m_cMap->GetTileSize()> this->position.y + this->Min.y - mapOffset.y))
 		)
 	{
 		return true;

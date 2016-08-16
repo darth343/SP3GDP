@@ -2,7 +2,6 @@
 #define GAMEOBJECT_H
 #include "Vector3.h"
 #include "Map.h"
-#include "PlayerInfo.h"
 #include <string>
 using std::string;
 
@@ -18,8 +17,8 @@ public:
 	};
 	GameObject(Vector3 scale = Vector3(1, 1, 1));
 	~GameObject() {};
-	virtual void Update(double dt, CPlayerInfo* player, CMap* m_cMap) = 0;
-	bool CheckCollision(CPlayerInfo* player, CMap* m_cMap);
+	virtual void Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap) = 0;
+	bool CheckCollision(Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap);
 	void CollisionResponse();
 	bool active;
 	GAMEOBJECT_TYPE type;

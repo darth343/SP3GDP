@@ -24,7 +24,7 @@ public:
 	float GetDamage();
 	void SetDamage(float dmg);
 	int GetMonsterID();
-	void Update(double dt, CPlayerInfo* player, CMap* m_cMap);
+	void Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap);
 
 private:
 	float health;

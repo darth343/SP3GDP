@@ -9,6 +9,7 @@
 #include <sstream>
 #include "SpriteAnimation.h"
 #include "Enemy.h"
+#include "Items.h"
 SceneText::SceneText()
 	:
 	m_cMap(NULL)
@@ -164,9 +165,10 @@ void SceneText::Init()
 	m_cMap->Init(Application::GetInstance().GetScreenHeight(), Application::GetInstance().GetScreenWidth(), 32);
 	m_cMap->LoadMap( "Image//MapDesign.csv");
 
-	Enemy* enemy = new Enemy(Vector3(100.f, 200.f, 1));
-	enemy->position.Set(150, 150);
-	m_goList.push_back(enemy);
+	Items * thePotion = new Items(Vector3(32.f, 32.f, 1));
+	thePotion->position.Set(150, 150, 1);
+	m_goList.push_back(thePotion);
+
 	// Initialise and load the REAR tile map
 	//m_cRearMap = new CMap();
 	//m_cRearMap->Init( 600, 800, 24, 32, 600, 1600 );
@@ -268,7 +270,7 @@ void SceneText::Update(double dt)
 	PlayerUpdate(dt);
 		for (int i = 0; i < m_goList.size(); ++i)
 	{
-		m_goList[i]->Update(dt, theHero, m_cMap);
+		m_goList[i]->Update(dt, theHero->GetPosition(), theHero->GetMapOffset(), m_cMap);
 	}
 
 	fps = (float)(1.f / dt);
