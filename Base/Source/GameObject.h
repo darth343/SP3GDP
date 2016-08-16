@@ -13,6 +13,7 @@ public:
 		GO_NONE,
 		GO_ITEM,
 		GO_ENEMY,
+		GO_NPC,
 		GO_TOTAL,
 	};
 	GameObject(Vector3 scale = Vector3(1, 1, 1));
