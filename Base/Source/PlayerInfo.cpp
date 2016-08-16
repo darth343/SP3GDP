@@ -7,6 +7,9 @@ CPlayerInfo::CPlayerInfo(void)
 	: mapOffset(Vector3(0, 0, 0))
 	, playerMesh(NULL)
 	, FlipStatus(false)
+	, collideSomething(false)
+	, hp(100)
+	, damage(20)
 {
 }
 
@@ -378,6 +381,11 @@ void CPlayerInfo::ConstrainHero(const int leftBorder, const int rightBorder,
  ********************************************************************************/
 void CPlayerInfo::HeroUpdate(CMap* m_cMap, double dt, Mesh**meshList)
 {
-
+	Vector3 checkPosition = (theHeroPosition + mapOffset) * (1.f / m_cMap->GetTileSize());
+	if (m_cMap->theMap[(int)checkPosition.y][(int)checkPosition.x].BlockID == 2)
+	{
+		collideSomething = true;
+		cout << "Collided with Enemy" << endl;
+	}
 	ConstrainHero(m_cMap->getScreenWidth() * 0.25, m_cMap->getScreenWidth() * 0.5, m_cMap->getScreenHeight() * 0.5, m_cMap->getScreenHeight() * 0.15, dt, m_cMap, true, true);
 }

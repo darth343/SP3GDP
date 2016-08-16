@@ -86,7 +86,7 @@ bool CMap::LoadFile(const string mapName)
 				{
 					getline(file, tempString, ',');
 					int ID = std::stoi(tempString);
-					if (ID == 0)
+					if (ID == 0 || ID == 2)
 					{
 						Tile tempTile(Vector3(x, y), ID, false);
 						theMap[y][x] = tempTile;
@@ -99,7 +99,7 @@ bool CMap::LoadFile(const string mapName)
 				}
 				getline(file, tempString, '\n');
 				int ID = std::stoi(tempString);
-				if (ID == 0)
+				if (ID == 0 || ID == 2)
 				{
 					Tile tempTile(Vector3(theNumOfTiles_Width, y), ID, false);
 					theMap[y][x] = tempTile;

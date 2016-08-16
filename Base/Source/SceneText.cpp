@@ -549,6 +549,10 @@ void SceneText::RenderTileMap(CMap* map, Vector3 speed)
 			{
 				Render2DMesh(meshList[GEO_GROUNDTOP], false, 1.0f, x*map->GetTileSize() - (theHero->GetMapOffset().x * speed.x), y*map->GetTileSize() - (theHero->GetMapOffset().y* speed.y));
 			}
+			else if (map->theMap[y][x].BlockID == 2)
+				Render2DMesh(meshList[GEO_HEROWALK], false, 32.0f, x*map->GetTileSize() - (theHero->GetMapOffset().x * speed.x), y*map->GetTileSize() - (theHero->GetMapOffset().y* speed.y));
+
+
 		}
 	}
 }

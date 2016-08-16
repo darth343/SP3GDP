@@ -46,6 +46,12 @@ public:
 	void ConstrainHero(const int leftBorder, const int rightBorder, 
 					   const int topBorder, const int bottomBorder, 
 					   double dt, CMap* m_cMap, bool constrainX, bool constrainY);
+
+	float GetHP();
+	void SetHP(float hp);
+	float GetDMG();
+	void SetDMG(float hp);
+
 private:
 	// Hero's information
 	Vector3 theHeroPosition;
@@ -53,4 +59,8 @@ private:
 	Mesh* playerMesh;
 	// For scrolling.
 	Vector3 mapOffset;
+
+	float hp;
+	float damage;
+	bool collideSomething;
 };
