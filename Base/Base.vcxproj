@@ -22,6 +22,7 @@
     <ClCompile Include="Source\Map.cpp" />
     <ClCompile Include="Source\Mesh.cpp" />
     <ClCompile Include="Source\MeshBuilder.cpp" />
+    <ClCompile Include="Source\NPC.cpp" />
     <ClCompile Include="Source\PlayerInfo.cpp" />
     <ClCompile Include="Source\SceneText.cpp" />
     <ClCompile Include="Source\shader.cpp" />
@@ -41,6 +42,7 @@
     <ClInclude Include="Source\Material.h" />
     <ClInclude Include="Source\Mesh.h" />
     <ClInclude Include="Source\MeshBuilder.h" />
+    <ClInclude Include="Source\NPC.h" />
     <ClInclude Include="Source\PlayerInfo.h" />
     <ClInclude Include="Source\Scene.h" />
     <ClInclude Include="Source\SceneText.h" />
