@@ -9,13 +9,6 @@
 #include <sstream>
 #include "SpriteAnimation.h"
 
-const float BOULDER_SPAWNTIME = 3.0f;
-const float BOULDER_SPEED = 3.5f;
-const float INVULNERABLE_DURATION = 2.f;
-const float BULLETSPAWNTIMER = 0.25f;
-const float BOSS_ATTACK_TIMER = 0.65f;
-const float BULLETSPEED = 500.f;
-
 SceneText::SceneText()
 	:
 	m_cMap(NULL)

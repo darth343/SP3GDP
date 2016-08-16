@@ -4,22 +4,15 @@
 #include "Application.h"
 
 CPlayerInfo::CPlayerInfo(void)
-	: hero_inMidAir_Up(false)
-	, hero_inMidAir_Down(false)
-	, jumpspeed(0)
-	, heroAnimationCounter(0)
-	, heroAnimationInvert(false)
-	, mapOffset(Vector3(0, 0, 0))
+	: mapOffset(Vector3(0, 0, 0))
 	, playerMesh(NULL)
 	, FlipStatus(false)
-	, lives(5)
 {
 }
 
 const float MOVEMENT_SPEED = 250.f;
 const float JUMP_SPEED = 40.f;
 const float JUMP_POWER = 15.f;
-const float MAX_JUMPSPEED = 6.f;
 const float CONSTRAINTSPEED = 200.f;
 const float xOffset = 8.f;
 const float yOffset = 2.f;
@@ -33,80 +26,6 @@ void CPlayerInfo::Init(void)
 {
 	theHeroPosition.x=0;
 	theHeroPosition.y=0;
-}
-
-// Returns true if the player is on ground
-bool CPlayerInfo::isOnGround(void)
-{
-	if (hero_inMidAir_Up == false && hero_inMidAir_Down == false)
-		return true;
-
-	return false;
-}
-
-// Returns true if the player is jumping upwards
-bool CPlayerInfo::isJumpUpwards(void)
-{
-	if (hero_inMidAir_Up == true && hero_inMidAir_Down == false)
-		return true;
-
-	return false;
-}
-
-// Returns true if the player is on freefall
-bool CPlayerInfo::isFreeFall(void)
-{
-	if (hero_inMidAir_Up == false && hero_inMidAir_Down == true)
-		return true;
-
-	return false;
-}
-
-// Set the player's status to free fall mode
-void CPlayerInfo::SetOnFreeFall(bool isOnFreeFall)
-{
-	if (isOnFreeFall == true)
-	{
-		hero_inMidAir_Up = false;
-		hero_inMidAir_Down = true;
-		jumpspeed = 0;
-	}
-}
-
-// Set the player to jumping upwards
-void CPlayerInfo::HeroJump()
-{
-	if (hero_inMidAir_Up == false && hero_inMidAir_Down == false)
-	{
-		hero_inMidAir_Up = true;
-		jumpspeed = JUMP_POWER;
-	}
-}
-
-// Set position x of the player
-void CPlayerInfo::SetPos_x(float pos_x)
-{
-	theHeroPosition.x = pos_x;
-}
-
-// Set position y of the player
-void CPlayerInfo::SetPos_y(int pos_y)
-{
-	theHeroPosition.y = pos_y;
-}
-
-// Set Jumpspeed of the player
-void CPlayerInfo::SetJumpspeed(int jumpspeed)
-{
-	this->jumpspeed = jumpspeed;
-}
-
-// Stop the player's movement
-void CPlayerInfo::SetToStop(void)
-{
-	hero_inMidAir_Up = false;
-	hero_inMidAir_Down = false;
-	jumpspeed = 0;
 }
 
 Mesh* CPlayerInfo::GetPlayerMesh()
@@ -337,75 +256,34 @@ void CPlayerInfo::MoveLeftRight(const bool mode, CMap* m_cMap, double dt)
 	}
 }
 
-
-// Get position x of the player
-int CPlayerInfo::GetPos_x(void)
+Vector3 CPlayerInfo::GetMapOffset(void)
 {
-	return theHeroPosition.x;
+	return mapOffset;
 }
 
-// Get position y of the player
-int CPlayerInfo::GetPos_y(void)
+void CPlayerInfo::SetMapOffset(Vector3 MapOffset)
 {
-	return theHeroPosition.y;
+	mapOffset = MapOffset;
 }
 
-// Get Jumpspeed of the player
-int CPlayerInfo::GetJumpspeed(void)
+void CPlayerInfo::SetFlipStatus(bool flip)
 {
-	return jumpspeed;
+	FlipStatus = flip;
 }
 
-//// Get mapOffset_x
-//int CPlayerInfo::GetMapOffset_x(void)
-//{
-//	return mapOffset_x;
-//}
-//// Get mapOffset_y
-//int CPlayerInfo::GetMapOffset_y(void)
-//{
-//	return mapOffset_y;
-//}
-
-// Update Jump Upwards
-void CPlayerInfo::UpdateJumpUpwards()
+Vector3 CPlayerInfo::GetPosition()
 {
-	theHeroPosition.y -= jumpspeed;
-	jumpspeed -= JUMP_SPEED;
-	if (jumpspeed == 0)
-	{
-		hero_inMidAir_Up = false;
-		hero_inMidAir_Down = true;
-	}
+	return theHeroPosition;
 }
 
-// Update FreeFall
-void CPlayerInfo::UpdateFreeFall()
+void CPlayerInfo::SetPosition(Vector3 pos)
 {
-	theHeroPosition.y += jumpspeed;
-	jumpspeed = Math::Min(jumpspeed + JUMP_SPEED, MAX_JUMPSPEED);
+	theHeroPosition = pos;
 }
 
-// Set Animation Invert status of the player
-void CPlayerInfo::SetAnimationInvert(bool heroAnimationInvert)
+Vector3 CPlayerInfo::GetPosition()
 {
-	this->heroAnimationInvert = heroAnimationInvert;
-}
-// Get Animation Invert status of the player
-bool CPlayerInfo::GetAnimationInvert(void)
-{
-	return heroAnimationInvert;
-}
-
-// Set Animation Counter of the player
-void CPlayerInfo::SetAnimationCounter(int heroAnimationCounter)
-{
-	this->heroAnimationCounter = heroAnimationCounter;
-}
-// Get Animation Counter of the player
-int CPlayerInfo::GetAnimationCounter(void)
-{
-	return heroAnimationCounter;
+	return theHeroPosition;
 }
 
 // Constrain the position of the Hero to within the border
