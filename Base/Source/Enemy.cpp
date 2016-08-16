@@ -36,9 +36,9 @@ int Enemy::GetMonsterID()
 {
 	return monsterID;
 }
-void Enemy::Update(double dt, CPlayerInfo* player, CMap* m_cMap)
+void Enemy::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 {
-	if (CheckCollision(player, m_cMap))
+	if (CheckCollision(playerPos, mapOffset, m_cMap))
 	{
 		cout << "Collided with " << monsterID << endl;
 	}
