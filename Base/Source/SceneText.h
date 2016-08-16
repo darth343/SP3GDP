@@ -13,6 +13,15 @@
 
 class SceneText : public Scene
 {
+	enum GAMESTATE_TYPE
+	{
+		START_SCREEN,
+		TESTMAP,
+		INVENTORY_SCREEN,
+
+		GS_TOTAL,
+	};
+
 	enum UNIFORM_TYPE
 	{
 		U_MVP = 0,
@@ -82,6 +91,13 @@ public:
 	void Render2DMesh(Mesh *mesh, const bool enableLight, const float size = 1.0f, const float x = 0.0f, const float y = 0.0f, const bool rotate = false, const bool flip = false);
 	void Render2DMeshWScale(Mesh *mesh, const bool enableLight, const float sizeX, const float sizeY, const float x = 0.0f, const float y = 0.0f, const bool rotate = false, const bool flip = false);
 	void RenderTileMap(CMap* m_cMap, Vector3 speed = Vector3(1, 1, 1));
+
+	void BasicRender(); // Basic Render Codes, do not touch unless needed 
+	void RenderPlayer();
+	void UselessUpdate(double dt); // Ask KY for details :>
+	void PlayerUpdate(double dt); // Update to the player 
+	void RenderTestMap();
+
 private:
 	unsigned m_vertexArrayID;
 	Mesh* meshList[NUM_GEOMETRY];
@@ -106,6 +122,8 @@ private:
 	CMap* m_cMap;
 	// Hero's information
 	CPlayerInfo* theHero;
+	// GameState
+	GAMESTATE_TYPE GS; // Change GameState in SceneText.cpp line 144 for testing purposes
 };
 
 #endif

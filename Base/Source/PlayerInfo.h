@@ -3,6 +3,7 @@
 #include "Map.h"
 #include "SpriteAnimation.h"
 #include "Mesh.h"
+#include "Items.h"
 
 class CPlayerInfo
 {
@@ -59,6 +60,8 @@ private:
 	Mesh* playerMesh;
 	// For scrolling.
 	Vector3 mapOffset;
+	// Array for inventory
+	Items Inventory[ITEM_TOTAL];
 
 	float hp;
 	float damage;

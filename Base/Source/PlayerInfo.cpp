@@ -387,5 +387,17 @@ void CPlayerInfo::HeroUpdate(CMap* m_cMap, double dt, Mesh**meshList)
 		collideSomething = true;
 		cout << "Collided with Enemy" << endl;
 	}
+	if (m_cMap->theMap[(int)checkPosition.y][(int)checkPosition.x].BlockID == 9) // potion
+	{
+		Inventory[POTION].addPotion();
+		m_cMap->theMap[(int)checkPosition.y][(int)checkPosition.x].BlockID = 0;
+		std::cout << Inventory[POTION].getPotionCount() << std::endl;
+	}
+	if (m_cMap->theMap[(int)checkPosition.y][(int)checkPosition.x].BlockID == 10) // trap
+	{
+		Inventory[TRAP].addTrap();
+		m_cMap->theMap[(int)checkPosition.y][(int)checkPosition.x].BlockID = 0;
+		std::cout << Inventory[TRAP].getTrapCount() << std::endl;
+	}
 	ConstrainHero(m_cMap->getScreenWidth() * 0.25, m_cMap->getScreenWidth() * 0.5, m_cMap->getScreenHeight() * 0.5, m_cMap->getScreenHeight() * 0.15, dt, m_cMap, true, true);
 }

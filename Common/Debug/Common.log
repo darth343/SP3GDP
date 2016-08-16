@@ -1,9 +1,9 @@
-﻿Build started 8/16/2016 12:57:55 PM.
-     1>Project "C:\Users\509n1\Desktop\SP3GDP\Common\Common.vcxproj" on node 2 (Build target(s)).
+﻿Build started 16/8/2016 2:32:50 PM.
+     1>Project "C:\My Stuff\SP3GDP\Common\Common.vcxproj" on node 2 (Build target(s)).
      1>Lib:
-         Common.vcxproj -> C:\Users\509n1\Desktop\SP3GDP\Debug\Common.lib
-     1>Done Building Project "C:\Users\509n1\Desktop\SP3GDP\Common\Common.vcxproj" (Build target(s)).
+         Common.vcxproj -> C:\My Stuff\SP3GDP\Debug\Common.lib
+     1>Done Building Project "C:\My Stuff\SP3GDP\Common\Common.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:00.04
+Time Elapsed 00:00:00.10
