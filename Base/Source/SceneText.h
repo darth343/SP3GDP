@@ -10,6 +10,7 @@
 #include "Map.h"
 #include "Vector2.h"
 #include "PlayerInfo.h"
+#include "GameObject.h"
 
 class SceneText : public Scene
 {
@@ -62,6 +63,7 @@ public:
 		GEO_BACKGROUND,
 		GEO_GROUNDTOP,
 		GEO_HEROWALK,
+		GEO_MONSTER,
 		GEO_TEXT,
 		NUM_GEOMETRY,
 	};
@@ -85,6 +87,7 @@ public:
 private:
 	unsigned m_vertexArrayID;
 	Mesh* meshList[NUM_GEOMETRY];
+	vector<GameObject *> m_goList;
 	unsigned m_programID;
 	unsigned m_parameters[U_TOTAL];
 

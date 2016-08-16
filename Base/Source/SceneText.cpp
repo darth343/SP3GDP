@@ -8,7 +8,7 @@
 #include "LoadTGA.h"
 #include <sstream>
 #include "SpriteAnimation.h"
-
+#include "Enemy.h"
 SceneText::SceneText()
 	:
 	m_cMap(NULL)
@@ -161,6 +161,9 @@ void SceneText::Init()
 	m_cMap->Init(Application::GetInstance().GetScreenHeight(), Application::GetInstance().GetScreenWidth(), 32);
 	m_cMap->LoadMap( "Image//MapDesign.csv");
 
+	Enemy* enemy = new Enemy(Vector3(100.f, 200.f, 1));
+	enemy->position.Set(150, 150);
+	m_goList.push_back(enemy);
 	// Initialise and load the REAR tile map
 	//m_cRearMap = new CMap();
 	//m_cRearMap->Init( 600, 800, 24, 32, 600, 1600 );
@@ -172,6 +175,10 @@ void SceneText::Init()
 
 	meshList[GEO_HEROWALK] = MeshBuilder::Generate2DMesh("Player", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_HEROWALK]->textureID = LoadTGA("Image//Hero.tga");
+
+	meshList[GEO_MONSTER] = MeshBuilder::Generate2DMesh("Monster", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
+	meshList[GEO_MONSTER]->textureID = LoadTGA("Image//Monster.tga");
+
 	theHero->SetPlayerMesh(meshList[GEO_HEROWALK]);
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
 	Mtx44 perspective;
@@ -244,8 +251,11 @@ void SceneText::Update(double dt)
 		this->theHero->MoveLeftRight(true, m_cMap, dt);
 	if (Application::IsKeyPressed('D'))
 		this->theHero->MoveLeftRight(false, m_cMap, dt);
-
 	theHero->HeroUpdate(m_cMap, dt, meshList);
+	for (int i = 0; i < m_goList.size(); ++i)
+	{
+		m_goList[i]->Update(dt, theHero, m_cMap);
+	}
 
 	fps = (float)(1.f / dt);
 }
@@ -514,6 +524,7 @@ void SceneText::Render()
 
 	RenderBackground();
 	RenderTileMap(m_cMap);
+	Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[0]->scale.x, m_goList[0]->scale.y, m_goList[0]->position.x - theHero->GetMapOffset().x, m_goList[0]->position.y - theHero->GetMapOffset().y, false, theHero->GetFlipStatus());
 	Render2DMesh(theHero->GetPlayerMesh(), false, 32.0f, theHero->GetPosition().x, theHero->GetPosition().y, false, theHero->GetFlipStatus());
 
 

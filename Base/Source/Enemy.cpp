@@ -1,8 +1,12 @@
 #include "Enemy.h"
 
-Enemy::Enemy()
+const float MOVEMENTSPEED = 10.f;
+
+Enemy::Enemy(Vector3 scale, int ID)
+: GameObject(scale)
+, monsterID(ID)
 {
-	enemyStates = E_NOSTATE;
+	enemyStates = E_PATROL;
 }
 
 Enemy::~Enemy()
@@ -25,7 +29,10 @@ int Enemy::GetMonsterID()
 {
 	return monsterID;
 }
-void Enemy::Update(float dt)
+void Enemy::Update(double dt, CPlayerInfo* player, CMap* m_cMap)
 {
-
+	if (CheckCollision(player, m_cMap))
+	{
+		cout << "Collided with " << monsterID << endl;
+	}
 }

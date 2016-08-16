@@ -1,26 +1,29 @@
 #ifndef ENEMY_H
 #define ENEMY_H
+#include "GameObject.h"
 
-class Enemy
+class Enemy : public GameObject
 {
 public:
-	Enemy();
+	Enemy(Vector3 scale = Vector3(1, 1, 1), int ID = 0);
 	~Enemy();
 
 	enum ENEMY_STATES
 	{
 		E_NOSTATE,
 		E_IDLE,
+		E_PATROL,
 		E_CHASE,
 		E_ATTACK,
 		E_DEAD,
 		E_TOTAL,
 	};
+
 	void TakeDamage(int);
 	float GetHealth();
 	float GetDamage();
 	int GetMonsterID();
-	void Update(float);
+	void Update(double dt, CPlayerInfo* player, CMap* m_cMap);
 
 private:
 	float health;
