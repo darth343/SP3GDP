@@ -26,6 +26,7 @@ SceneText::~SceneText()
 
 void SceneText::Init()
 {
+	//Hell ARUN, KY and WM
 	// Blue background
 	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
 	// Enable depth test
