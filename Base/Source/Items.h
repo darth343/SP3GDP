@@ -13,18 +13,18 @@ enum ITEM_TYPE
 	ITEM_TOTAL,
 };
 inline
-	std::ostream& operator<<(std::ostream& cout, ITEM_TYPE type)
+std::ostream& operator<<(std::ostream& cout, ITEM_TYPE type)
 {
-		switch (type)
-		{
-		case POTION:
-			cout << "POTION";
-			return cout;
-		case TRAP:
-			cout << "TRAP";
-			return cout;
-		}
+	switch (type)
+	{
+	case POTION:
+		cout << "POTION";
+		return cout;
+	case TRAP:
+		cout << "TRAP";
+		return cout;
 	}
+}
 class Items : public GameObject
 {
 public:

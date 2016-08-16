@@ -5,10 +5,6 @@ CMap::CMap(void)
 , theScreen_Width(0)
 , theNumOfTiles_Height(0)
 , theNumOfTiles_Width(0)
-, theMap_Height(0)
-, theMap_Width(0)
-, theNumOfTiles_MapHeight(0)
-, theNumOfTiles_MapWidth(0)
 , theTileSize(0)
 {
 	theMap.clear();
@@ -140,17 +136,4 @@ int CMap::getScreenHeight()
 int CMap::getScreenWidth()
 {
 	return theScreen_Width;
-}
-
-
-// Get the number of tiles for width of the map
-int CMap::getNumOfTiles_MapWidth(void)
-{
-	return theNumOfTiles_MapWidth;
-}
-
-// Get the number of tiles for width of the map
-int CMap::getNumOfTiles_MapHeight(void)
-{
-	return theNumOfTiles_MapHeight;
 }

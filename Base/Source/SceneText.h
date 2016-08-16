@@ -98,6 +98,7 @@ public:
 	void RenderPlayer();
 	void UselessUpdate(double dt); // Ask KY for details :>
 	void PlayerUpdate(double dt); // Update to the player 
+	void GOupdate(double dt); // Main GO Collisions
 	void RenderTestMap();
 
 private:

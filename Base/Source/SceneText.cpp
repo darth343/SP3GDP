@@ -163,10 +163,14 @@ void SceneText::Init()
 	// Initialise and load the tile map
 	m_cMap = new CMap();
 	m_cMap->Init(Application::GetInstance().GetScreenHeight(), Application::GetInstance().GetScreenWidth(), 32);
-	m_cMap->LoadMap( "Image//MapDesign.csv");
+	m_cMap->LoadMap("Image//MapDesign.csv");
 
-	Items * thePotion = new Items(Vector3(32.f, 32.f, 1));
+	Enemy * thePotion = new Enemy(Vector3(32.f, 32.f, 1));
 	thePotion->position.Set(150, 150, 1);
+	m_goList.push_back(thePotion);
+
+	thePotion = new Enemy(Vector3(32.f, 32.f, 1));
+	thePotion->position.Set(200, 150, 1);
 	m_goList.push_back(thePotion);
 
 	// Initialise and load the REAR tile map
@@ -262,21 +266,29 @@ void SceneText::PlayerUpdate(double dt)
 	theHero->HeroUpdate(m_cMap, dt, meshList);
 }
 
+void SceneText::GOupdate(double dt)
+{
+	for (int i = 0; i < m_goList.size(); ++i)
+	{
+		m_goList[i]->Update(dt, theHero->GetPosition(), theHero->GetMapOffset(), m_cMap);
+		for (int j = i + 1; j < m_goList.size(); ++j)
+		{
+			if (m_goList[i]->CheckCollision(m_goList[j], m_cMap))
+			{
+				// DO COLLISION RESPONSE BETWEEN TWO GAMEOBJECTS
+			}
+		}
+	}
+}
+
 void SceneText::Update(double dt)
 {
 	// Uncomment this if you want to access lights and stuff
-	//UselessUpdate(double dt);
-
+	// UselessUpdate(double dt);
 	PlayerUpdate(dt);
-		for (int i = 0; i < m_goList.size(); ++i)
-	{
-		m_goList[i]->Update(dt, theHero->GetPosition(), theHero->GetMapOffset(), m_cMap);
-	}
-
+	GOupdate(dt);
 	fps = (float)(1.f / dt);
 }
-
-static const float SKYBOXSIZE = 1000.f;
 
 void SceneText::RenderText(Mesh* mesh, std::string text, Color color)
 {
@@ -548,7 +560,10 @@ void SceneText::RenderTestMap()
 {
 	RenderBackground();
 	RenderTileMap(m_cMap);
-	Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[0]->scale.x, m_goList[0]->scale.y, m_goList[0]->position.x - theHero->GetMapOffset().x, m_goList[0]->position.y - theHero->GetMapOffset().y, false, theHero->GetFlipStatus());
+	for (int i = 0; i < m_goList.size(); ++i)
+	{
+		Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, theHero->GetFlipStatus());
+	}
 	RenderPlayer();
 
 	//On screen text

@@ -21,6 +21,9 @@ bool GameObject::CheckCollision(Vector3 playerPos, Vector3 mapOffset, CMap* m_cM
 	{
 		return false;
 	}
+}
 
-
+bool GameObject::CheckCollision(GameObject* go, CMap* m_cMap)
+{
+	return !(go->position.x > this->position.x + this->Max.x || go->position.x + go->Max.x < this->position.x || go->position.y + go->Max.y < this->position.y || go->position.y > this->position.y + this->Max.y);
 }

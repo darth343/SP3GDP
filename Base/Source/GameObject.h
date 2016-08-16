@@ -17,8 +17,9 @@ public:
 	};
 	GameObject(Vector3 scale = Vector3(1, 1, 1));
 	~GameObject() {};
-	virtual void Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap) = 0;
+	virtual void Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap){};
 	bool CheckCollision(Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap);
+	bool CheckCollision(GameObject* go, CMap* m_cMap);
 	void CollisionResponse();
 	bool active;
 	GAMEOBJECT_TYPE type;
