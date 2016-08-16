@@ -22,6 +22,7 @@ public:
 	void TakeDamage(int);
 	float GetHealth();
 	float GetDamage();
+	void SetDamage(float dmg);
 	int GetMonsterID();
 	void Update(double dt, CPlayerInfo* player, CMap* m_cMap);
 

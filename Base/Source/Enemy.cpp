@@ -7,6 +7,9 @@ Enemy::Enemy(Vector3 scale, int ID)
 , monsterID(ID)
 {
 	enemyStates = E_PATROL;
+	health = 100.0f;
+	damage = 5.0f;
+	monsterID = 0;
 }
 
 Enemy::~Enemy()
@@ -20,6 +23,10 @@ void Enemy::TakeDamage(int damage)
 float Enemy::GetDamage()
 {
 	return damage;
+}
+void Enemy::SetDamage(float dmg)
+{
+	this->damage = dmg;
 }
 float Enemy::GetHealth()
 {

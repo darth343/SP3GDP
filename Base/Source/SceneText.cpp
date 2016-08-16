@@ -140,6 +140,9 @@ void SceneText::Init()
 
 	camera.Init(Vector3(0, 0, 10), Vector3(0, 0, 0), Vector3(0, 1, 0));
 
+	//Init GameState Here for testing purposes
+	GS = TESTMAP;
+
 	for(int i = 0; i < NUM_GEOMETRY; ++i)
 	{
 		meshList[i] = NULL;
@@ -190,58 +193,61 @@ void SceneText::Init()
 	bLightEnabled = true;
 }
 
-void SceneText::Update(double dt)
+void SceneText::UselessUpdate(double dt)
 {
-	if(Application::IsKeyPressed('1'))
+	if (Application::IsKeyPressed('1'))
 		glEnable(GL_CULL_FACE);
-	if(Application::IsKeyPressed('2'))
+	if (Application::IsKeyPressed('2'))
 		glDisable(GL_CULL_FACE);
-	if(Application::IsKeyPressed('3'))
+	if (Application::IsKeyPressed('3'))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	if(Application::IsKeyPressed('4'))
+	if (Application::IsKeyPressed('4'))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	
-	if(Application::IsKeyPressed('5'))
+
+	if (Application::IsKeyPressed('5'))
 	{
 		lights[0].type = Light::LIGHT_POINT;
 		glUniform1i(m_parameters[U_LIGHT0_TYPE], lights[0].type);
 	}
-	else if(Application::IsKeyPressed('6'))
+	else if (Application::IsKeyPressed('6'))
 	{
 		lights[0].type = Light::LIGHT_DIRECTIONAL;
 		glUniform1i(m_parameters[U_LIGHT0_TYPE], lights[0].type);
 	}
-	else if(Application::IsKeyPressed('7'))
+	else if (Application::IsKeyPressed('7'))
 	{
 		lights[0].type = Light::LIGHT_SPOT;
 		glUniform1i(m_parameters[U_LIGHT0_TYPE], lights[0].type);
 	}
-	else if(Application::IsKeyPressed('8'))
+	else if (Application::IsKeyPressed('8'))
 	{
 		bLightEnabled = true;
 	}
-	else if(Application::IsKeyPressed('9'))
+	else if (Application::IsKeyPressed('9'))
 	{
 		bLightEnabled = false;
 	}
 
-	if(Application::IsKeyPressed('I'))
+	if (Application::IsKeyPressed('I'))
 		lights[0].position.z -= (float)(10.f * dt);
-	if(Application::IsKeyPressed('K'))
+	if (Application::IsKeyPressed('K'))
 		lights[0].position.z += (float)(10.f * dt);
-	if(Application::IsKeyPressed('J'))
+	if (Application::IsKeyPressed('J'))
 		lights[0].position.x -= (float)(10.f * dt);
-	if(Application::IsKeyPressed('L'))
+	if (Application::IsKeyPressed('L'))
 		lights[0].position.x += (float)(10.f * dt);
-	if(Application::IsKeyPressed('O'))
+	if (Application::IsKeyPressed('O'))
 		lights[0].position.y -= (float)(10.f * dt);
-	if(Application::IsKeyPressed('P'))
+	if (Application::IsKeyPressed('P'))
 		lights[0].position.y += (float)(10.f * dt);
 
 	rotateAngle -= Application::camera_yaw;// += (float)(10 * dt);
 
 	camera.Update(dt);
+}
 
+void SceneText::PlayerUpdate(double dt)
+{
 	// Update the hero
 	if (Application::IsKeyPressed('W'))
 		this->theHero->MoveUpDown(false, m_cMap, dt);
@@ -252,7 +258,15 @@ void SceneText::Update(double dt)
 	if (Application::IsKeyPressed('D'))
 		this->theHero->MoveLeftRight(false, m_cMap, dt);
 	theHero->HeroUpdate(m_cMap, dt, meshList);
-	for (int i = 0; i < m_goList.size(); ++i)
+}
+
+void SceneText::Update(double dt)
+{
+	// Uncomment this if you want to access lights and stuff
+	//UselessUpdate(double dt);
+
+	PlayerUpdate(dt);
+		for (int i = 0; i < m_goList.size(); ++i)
 	{
 		m_goList[i]->Update(dt, theHero, m_cMap);
 	}
@@ -498,41 +512,60 @@ void SceneText::RenderMesh(Mesh *mesh, bool enableLight)
 	}
 }
 
+void SceneText::RenderPlayer()
+{
+	Render2DMesh(theHero->GetPlayerMesh(), false, 32.0f, theHero->GetPosition().x, theHero->GetPosition().y, false, theHero->GetFlipStatus());
+}
+
 void SceneText::RenderBackground()
 {
 	// Render the crosshair
 	Render2DMesh(meshList[GEO_BACKGROUND], false, 1.0f);
 }
 
-void SceneText::Render()
+void SceneText::BasicRender()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 	Mtx44 perspective;
 	perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
 	//perspective.SetToOrtho(-80, 80, -60, 60, -1000, 1000);
 	projectionStack.LoadMatrix(perspective);
-	
+
 	// Camera matrix
 	viewStack.LoadIdentity();
 	viewStack.LookAt(
-						camera.position.x, camera.position.y, camera.position.z,
-						camera.target.x, camera.target.y, camera.target.z,
-						camera.up.x, camera.up.y, camera.up.z
-					);
+		camera.position.x, camera.position.y, camera.position.z,
+		camera.target.x, camera.target.y, camera.target.z,
+		camera.up.x, camera.up.y, camera.up.z
+		);
 	// Model matrix : an identity matrix (model will be at the origin)
 	modelStack.LoadIdentity();
+}
 
+void SceneText::RenderTestMap()
+{
 	RenderBackground();
 	RenderTileMap(m_cMap);
 	Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[0]->scale.x, m_goList[0]->scale.y, m_goList[0]->position.x - theHero->GetMapOffset().x, m_goList[0]->position.y - theHero->GetMapOffset().y, false, theHero->GetFlipStatus());
-	Render2DMesh(theHero->GetPlayerMesh(), false, 32.0f, theHero->GetPosition().x, theHero->GetPosition().y, false, theHero->GetFlipStatus());
-
+	RenderPlayer();
 
 	//On screen text
 	std::ostringstream ss;
 	ss.precision(5);
 	ss << "FPS: " << fps;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 30, 0, 0);
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 30, 0, 0);
+}
+
+void SceneText::Render()
+{
+	BasicRender(); // Basic Render stuff, please don't comment this out, like seriously
+
+	// Check for which GameState we are in
+	if (GS == TESTMAP)
+	{
+		RenderTestMap();
+	}
+
 }
 
 void SceneText::Exit()
@@ -560,6 +593,10 @@ void SceneText::RenderTileMap(CMap* map, Vector3 speed)
 			{
 				Render2DMesh(meshList[GEO_GROUNDTOP], false, 1.0f, x*map->GetTileSize() - (theHero->GetMapOffset().x * speed.x), y*map->GetTileSize() - (theHero->GetMapOffset().y* speed.y));
 			}
+			else if (map->theMap[y][x].BlockID == 2)
+				Render2DMesh(meshList[GEO_HEROWALK], false, 32.0f, x*map->GetTileSize() - (theHero->GetMapOffset().x * speed.x), y*map->GetTileSize() - (theHero->GetMapOffset().y* speed.y));
+
+
 		}
 	}
 }
