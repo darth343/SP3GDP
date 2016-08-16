@@ -141,10 +141,6 @@ void SceneText::Init()
 
 	camera.Init(Vector3(0, 0, 10), Vector3(0, 0, 0), Vector3(0, 1, 0));
 
-	vector<NPC> npcvec;
-	npc.ReadFromFile("Image//Text.txt");
-	npcvec = npc.GetNPCVec();
-
 	//cout << npcvec[1].GetDialogue() << endl;
 	//cout << npcvec[0].GetDialogue() << endl;
 	//Init GameState Here for testing purposes
@@ -182,6 +178,7 @@ void SceneText::Init()
 	theEnemy->position.Set(200, 200, 1);
 	m_goList.push_back(theEnemy);
 
+	npc.ReadFromFile("Image//Text.txt",m_goList);
 
 	// Initialise and load the REAR tile map
 	//m_cRearMap = new CMap();
@@ -211,7 +208,10 @@ void SceneText::Init()
 	rotateAngle = 0;
 	bLightEnabled = true;
 }
-
+void SceneText::DialogueFile(string filename)
+{
+	
+}
 void SceneText::UselessUpdate(double dt)
 {
 	if (Application::IsKeyPressed('1'))
@@ -582,6 +582,25 @@ void SceneText::RenderTestMap()
 				Items* temp = (Items*)m_goList[i];
 				if (temp->itemType == Items::POTION)
 					Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
+			}
+			if (m_goList[i]->type == GameObject::GO_NPC)
+			{
+				NPC* temp = (NPC*)m_goList[i];
+				if (temp->GetID() == "1")
+				{
+					m_goList[i]->position.Set(500, 400, 1);
+					Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
+				}
+				if (temp->GetID() == "2")
+				{
+					m_goList[i]->position.Set(300, 400, 1);
+					Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
+				}
+				if (temp->GetID() == "3")
+				{
+					m_goList[i]->position.Set(700, 400, 1);
+					Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
+				}
 			}
 			if (m_goList[i]->type == GameObject::GO_ENEMY)
 				Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[0]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);

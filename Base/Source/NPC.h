@@ -2,14 +2,18 @@
 #define NPC_H
 #include <string>
 #include <vector>
+#include "Vector3.h"
+#include "GameObject.h"
 
 using std::vector;
 using std::string;
 
-class NPC
+class NPC : public GameObject
 {
 public:
-	NPC();
+	NPC(Vector3);
+	NPC()
+	{}
 	~NPC();
 	enum NPC_ANIMATION
 	{
@@ -28,15 +32,13 @@ public:
 		NPC_DTOTAL,
 	};
 
-	bool ReadFromFile(string);
+	bool ReadFromFile(string,vector<GameObject*> &);
 	void SetDialogue(string);
-	int GetTextSize(string);
-	void Update(float);
+	void Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap);
 	void SetAnimationState(NPC_ANIMATION);
 	void SetDialogueState(NPC_DIALOGUE);
 	void SetID(string);
 	string GetID();
-	vector<NPC> GetNPCVec();
 	string GetDialogue();
 	NPC_ANIMATION GetAnimationState();
 	NPC_DIALOGUE GetDialogueState();
@@ -45,7 +47,7 @@ private:
 	string npcID;
 	int size;
 	string npcDialogue;
-	vector<NPC>npcs;
+	vector<NPC*>npcs;
 	NPC_ANIMATION npcAnimationState;
 	NPC_DIALOGUE npcDialogueState;
 };

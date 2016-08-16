@@ -95,6 +95,7 @@ public:
 	void Render2DMesh(Mesh *mesh, const bool enableLight, const float size = 1.0f, const float x = 0.0f, const float y = 0.0f, const bool rotate = false, const bool flip = false);
 	void Render2DMeshWScale(Mesh *mesh, const bool enableLight, const float sizeX, const float sizeY, const float x = 0.0f, const float y = 0.0f, const bool rotate = false, const bool flip = false);
 	void RenderTileMap(CMap* m_cMap, Vector3 speed = Vector3(1, 1, 1));
+	void DialogueFile(string);
 
 	void BasicRender(); // Basic Render Codes, do not touch unless needed 
 	void RenderPlayer();
@@ -111,7 +112,7 @@ private:
 	unsigned m_parameters[U_TOTAL];
 
 	Camera3 camera;
-
+	int npcsize = 0;
 	float rotateAngle;
 
 	MS modelStack;
