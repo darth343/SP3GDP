@@ -11,6 +11,7 @@
 #include "Vector2.h"
 #include "PlayerInfo.h"
 #include "GameObject.h"
+#include "NPC.h"
 
 class SceneText : public Scene
 {
@@ -73,6 +74,7 @@ public:
 		GEO_GROUNDTOP,
 		GEO_HEROWALK,
 		GEO_MONSTER,
+		GEO_POTION,
 		GEO_TEXT,
 		NUM_GEOMETRY,
 	};
@@ -121,6 +123,7 @@ private:
 	bool bLightEnabled;
 
 	float fps;
+	NPC npc;
 
 	// Handle to the tilemaps
 	CMap* m_cMap;

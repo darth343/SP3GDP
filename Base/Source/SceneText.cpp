@@ -141,6 +141,12 @@ void SceneText::Init()
 
 	camera.Init(Vector3(0, 0, 10), Vector3(0, 0, 0), Vector3(0, 1, 0));
 
+	vector<NPC> npcvec;
+	npc.ReadFromFile("Image//Text.txt");
+	npcvec = npc.GetNPCVec();
+
+	//cout << npcvec[1].GetDialogue() << endl;
+	//cout << npcvec[0].GetDialogue() << endl;
 	//Init GameState Here for testing purposes
 	GS = TESTMAP;
 
@@ -165,13 +171,17 @@ void SceneText::Init()
 	m_cMap->Init(Application::GetInstance().GetScreenHeight(), Application::GetInstance().GetScreenWidth(), 32);
 	m_cMap->LoadMap("Image//MapDesign.csv");
 
-	Enemy * thePotion = new Enemy(Vector3(32.f, 32.f, 1));
+	// Init for loading GameObjects
+	Items* thePotion = new Items(Vector3(32.f, 32.f, 1));
+	thePotion->type = GameObject::GO_ITEM;
 	thePotion->position.Set(150, 150, 1);
 	m_goList.push_back(thePotion);
 
-	thePotion = new Enemy(Vector3(32.f, 32.f, 1));
-	thePotion->position.Set(200, 150, 1);
-	m_goList.push_back(thePotion);
+	Enemy* theEnemy = new Enemy(Vector3(32.f, 32.f, 1));
+	theEnemy->type = GameObject::GO_ENEMY;
+	theEnemy->position.Set(200, 200, 1);
+	m_goList.push_back(theEnemy);
+
 
 	// Initialise and load the REAR tile map
 	//m_cRearMap = new CMap();
@@ -187,6 +197,9 @@ void SceneText::Init()
 
 	meshList[GEO_MONSTER] = MeshBuilder::Generate2DMesh("Monster", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_MONSTER]->textureID = LoadTGA("Image//Monster.tga");
+
+	meshList[GEO_POTION] = MeshBuilder::Generate2DMesh("Potion", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
+	meshList[GEO_POTION]->textureID = LoadTGA("Image//Potion.tga");
 
 	theHero->SetPlayerMesh(meshList[GEO_HEROWALK]);
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
@@ -560,9 +573,19 @@ void SceneText::RenderTestMap()
 {
 	RenderBackground();
 	RenderTileMap(m_cMap);
-	for (int i = 0; i < m_goList.size(); ++i)
+	for (int i = 0; i < m_goList.size(); i++)
 	{
-		Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, theHero->GetFlipStatus());
+		if (m_goList[i]->active == true)
+		{
+			if (m_goList[i]->type == GameObject::GO_ITEM)
+			{
+				Items* temp = (Items*)m_goList[i];
+				if (temp->itemType == Items::POTION)
+					Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
+			}
+			if (m_goList[i]->type == GameObject::GO_ENEMY)
+				Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[0]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
+		}
 	}
 	RenderPlayer();
 
@@ -597,9 +620,6 @@ void SceneText::Exit()
 	glDeleteVertexArrays(1, &m_vertexArrayID);
 }
 
-/********************************************************************************
- Render the tile map. This is a private function for use in this class only
- ********************************************************************************/
 void SceneText::RenderTileMap(CMap* map, Vector3 speed)
 {
 	for (int y = 0; y < map->theNumOfTiles_Height; ++y)
