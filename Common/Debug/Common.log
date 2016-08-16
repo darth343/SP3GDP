@@ -1,5 +1,5 @@
-﻿Build started 11/8/2016 10:27:18 PM.
-     1>Project "C:\Users\Arun\Documents\2016 S1\GDEV\Assigmnet\DM2231_Framework(11)\DM2231_Framework\Common\Common.vcxproj" on node 2 (Rebuild target(s)).
+﻿Build started 16/8/2016 9:50:29 AM.
+     1>Project "C:\Users\Arun\Documents\2016 S1\SP3\Common\Common.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _VARIADIC_MAX=10 /D WIN32 /D _DEBUG /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Source\MathUtility.cpp Source\MatrixStack.cpp Source\Mtx44.cpp Source\timer.cpp Source\Vector2.cpp Source\Vector3.cpp
          Vector3.cpp
@@ -10,15 +10,15 @@
          MathUtility.cpp
          Generating Code...
        Lib:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"C:\Users\Arun\Documents\2016 S1\GDEV\Assigmnet\DM2231_Framework(11)\DM2231_Framework\Debug\Common.lib" /NOLOGO Debug\MathUtility.obj
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"C:\Users\Arun\Documents\2016 S1\SP3\Debug\Common.lib" /NOLOGO Debug\MathUtility.obj
          Debug\MatrixStack.obj
          Debug\Mtx44.obj
          Debug\timer.obj
          Debug\Vector2.obj
          Debug\Vector3.obj
-         Common.vcxproj -> C:\Users\Arun\Documents\2016 S1\GDEV\Assigmnet\DM2231_Framework(11)\DM2231_Framework\Debug\Common.lib
-     1>Done Building Project "C:\Users\Arun\Documents\2016 S1\GDEV\Assigmnet\DM2231_Framework(11)\DM2231_Framework\Common\Common.vcxproj" (Rebuild target(s)).
+         Common.vcxproj -> C:\Users\Arun\Documents\2016 S1\SP3\Debug\Common.lib
+     1>Done Building Project "C:\Users\Arun\Documents\2016 S1\SP3\Common\Common.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:02.31
+Time Elapsed 00:00:02.73

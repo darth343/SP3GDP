@@ -409,9 +409,9 @@ int CPlayerInfo::GetAnimationCounter(void)
 }
 
 // Constrain the position of the Hero to within the border
-void CPlayerInfo::ConstrainHero(const int leftBorder, const int rightBorder, 
-								  const int topBorder, const int bottomBorder, 
-								  double dt, CMap* m_cMap, bool constrainX, bool constrainY)
+void CPlayerInfo::ConstrainHero(const int leftBorder, const int rightBorder,
+	const int topBorder, const int bottomBorder,
+	double dt, CMap* m_cMap, bool constrainX, bool constrainY)
 {
 	if (constrainX)
 	{
@@ -427,17 +427,24 @@ void CPlayerInfo::ConstrainHero(const int leftBorder, const int rightBorder,
 					mapOffset.x = 0;
 			}
 		}
-		if (mapOffset.x < m_cMap->getScreenWidth() - 1.f)
+		if (mapOffset.x < m_cMap->GetNumOfTiles_Width() * m_cMap->GetTileSize() - 800)
 		{
-			if (theHeroPosition.x > rightBorder)
+			if (mapOffset.x < m_cMap->getScreenWidth() - 1.f)
 			{
-				float displacement = theHeroPosition.x - rightBorder;
-				mapOffset.x += displacement;
-				theHeroPosition.x = rightBorder;
-				//mapOffset.x = mapOffset.x + (int)(CONSTRAINTSPEED * dt);
-				if (mapOffset.x > m_cMap->theScreen_Width)	// This must be changed to soft-coded
-					mapOffset.x = m_cMap->theScreen_Width;
+				if (theHeroPosition.x > rightBorder)
+				{
+					float displacement = theHeroPosition.x - rightBorder;
+					mapOffset.x += displacement;
+					theHeroPosition.x = rightBorder;
+					//mapOffset.x = mapOffset.x + (int)(CONSTRAINTSPEED * dt);
+					if (mapOffset.x > m_cMap->theScreen_Width)	// This must be changed to soft-coded
+						mapOffset.x = m_cMap->theScreen_Width;
+				}
 			}
+		}
+		else
+		{
+			mapOffset.x = m_cMap->GetNumOfTiles_Width() * m_cMap->GetTileSize() - 800;
 		}
 	}
 	else
@@ -452,25 +459,39 @@ void CPlayerInfo::ConstrainHero(const int leftBorder, const int rightBorder,
 	{
 		theHeroPosition.x = 0;
 	}
-	else if (theHeroPosition.x > ((m_cMap->GetNumOfTiles_Width()-1) * m_cMap->GetTileSize() - mapOffset.x) - m_cMap->GetTileSize())
+	else if (theHeroPosition.x >((m_cMap->GetNumOfTiles_Width() - 1) * m_cMap->GetTileSize() - mapOffset.x) - m_cMap->GetTileSize())
 	{
 		theHeroPosition.x = ((m_cMap->GetNumOfTiles_Width() - 1) * m_cMap->GetTileSize() - mapOffset.x) - m_cMap->GetTileSize();
 	}
 
 	if (constrainY)
 	{
-		if (theHeroPosition.y > topBorder)
+		if (mapOffset.y < m_cMap->GetNumOfTiles_Height() * m_cMap->GetTileSize() - 600)
 		{
-			float displacement = theHeroPosition.y - topBorder;
-			mapOffset.y += displacement;
-			theHeroPosition.y = topBorder;
+			if (theHeroPosition.y > topBorder)
+			{
+				float displacement = theHeroPosition.y - topBorder;
+				mapOffset.y += displacement;
+				theHeroPosition.y = topBorder;
+			}
+		}
+		else
+		{
+			mapOffset.y = m_cMap->GetNumOfTiles_Height() * m_cMap->GetTileSize() - 600;
 		}
 
-		if (theHeroPosition.y < bottomBorder)
+		if (mapOffset.y > 0)
 		{
-			float displacement = bottomBorder - theHeroPosition.y;
-			mapOffset.y -= displacement;
-			theHeroPosition.y = bottomBorder;
+			if (theHeroPosition.y < bottomBorder)
+			{
+				float displacement = bottomBorder - theHeroPosition.y;
+				mapOffset.y -= displacement;
+				theHeroPosition.y = bottomBorder;
+			}
+		}
+		else
+		{
+			mapOffset.y = 0;
 		}
 	}
 	else
