@@ -45,5 +45,7 @@ void Items::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap
 	{
 		addPotion();
 		active = false;
+		std::cout << getPotionCount() << std::endl;
+
 	}
 }

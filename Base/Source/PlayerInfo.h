@@ -61,7 +61,7 @@ private:
 	// For scrolling.
 	Vector3 mapOffset;
 	// Array for inventory
-	Items Inventory[ITEM_TOTAL];
+	Items Inventory[Items::ITEM_TOTAL];
 
 	float hp;
 	float damage;
