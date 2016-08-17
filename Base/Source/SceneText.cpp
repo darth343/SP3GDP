@@ -301,6 +301,7 @@ void SceneText::Update(double dt)
 	PlayerUpdate(dt);
 	GOupdate(dt);
 	fps = (float)(1.f / dt);
+	
 }
 
 void SceneText::RenderText(Mesh* mesh, std::string text, Color color)

@@ -12,6 +12,7 @@
 #include "PlayerInfo.h"
 #include "GameObject.h"
 #include "NPC.h"
+#include "EquipmentManager.h"
 
 class SceneText : public Scene
 {
@@ -97,12 +98,16 @@ public:
 	void RenderTileMap(CMap* m_cMap, Vector3 speed = Vector3(1, 1, 1));
 	void DialogueFile(string);
 
+	//Render FUnctions
 	void BasicRender(); // Basic Render Codes, do not touch unless needed 
 	void RenderPlayer();
+	void RenderTestMap();
+
+	//Update Functions
 	void UselessUpdate(double dt); // Ask KY for details :>
 	void PlayerUpdate(double dt); // Update to the player 
 	void GOupdate(double dt); // Main GO Collisions
-	void RenderTestMap();
+	
 
 private:
 	unsigned m_vertexArrayID;
@@ -132,6 +137,8 @@ private:
 	CPlayerInfo* theHero;
 	// GameState
 	GAMESTATE_TYPE GS; // Change GameState in SceneText.cpp line 144 for testing purposes
+	// Equipment Functions
+	EquipmentManager equipManager;
 };
 
 #endif

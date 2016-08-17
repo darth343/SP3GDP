@@ -8,8 +8,9 @@ CPlayerInfo::CPlayerInfo(void)
 	, playerMesh(NULL)
 	, FlipStatus(false)
 	, collideSomething(false)
-	, hp(100)
-	, damage(20)
+	, playerHP(100)
+	, playerDamage(20)
+	, playerDefense(20)
 {
 }
 
@@ -388,4 +389,36 @@ void CPlayerInfo::HeroUpdate(CMap* m_cMap, double dt, Mesh**meshList)
 		cout << "Collided with Enemy" << endl;
 	}
 	ConstrainHero(m_cMap->getScreenWidth() * 0.25, m_cMap->getScreenWidth() * 0.5, m_cMap->getScreenHeight() * 0.5, m_cMap->getScreenHeight() * 0.15, dt, m_cMap, true, true);
+}
+
+void CPlayerInfo::SetHP(float hp)
+{
+	hp = playerHP;
+}
+
+void CPlayerInfo::SetDMG(float dmg)
+{
+	dmg = playerHP;
+}
+
+void CPlayerInfo::SetDEF(float def)
+{
+	def = playerHP;
+}
+
+float CPlayerInfo::GetHP()
+{
+	return playerHP;
+}
+
+float CPlayerInfo::GetDMG()
+{
+	playerDamage = playerDamage + Equip.getEQAtk();
+	return playerDamage;
+}
+
+float CPlayerInfo::GetDEF()
+{
+	playerDefense = playerDefense + Equip.getEQDef();
+	return playerDefense;
 }
