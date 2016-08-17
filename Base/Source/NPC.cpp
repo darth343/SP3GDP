@@ -21,16 +21,6 @@ NPC::~NPC()
 	}
 }
 
-void NPC::UpdateMovement(Vector3 curPos, float max, bool movex, bool movey, bool spriteinvert)
-{
-	if (movex)
-		max += curPos.x;
-	if (movey)
-		max -= curPos.y;
-
-	if (curPos.x <= max)
-		position.x += 5;
-}
 //Text file is going to include NPC id, NPC animation state, NPC dialogue state, NPC dialogue
 void NPC::ReadFromFile(string filename, vector<GameObject*>&m_goList)
 {

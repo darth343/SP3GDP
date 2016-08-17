@@ -38,7 +38,6 @@ public:
 	void SetAnimationState(NPC_ANIMATION);
 	void SetDialogueState(NPC_DIALOGUE);
 	void SetID(float);
-	void UpdateMovement(Vector3 curPos, float max, bool movex, bool movey, bool spriteinvert);
 	vector<NPC*>GetVec();
 	int GetID();
 	string GetDialogue();

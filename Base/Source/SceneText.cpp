@@ -302,8 +302,8 @@ void SceneText::GOupdate(double dt)
 				temp->position.x -= 30 * dt;
 				else
 				{
-					if (temp->position.x < 500)
-						temp->position.x += 30 * dt;
+					/*if (temp->position.x < 500)
+						temp->position.x += 30 * dt;*/
 				}
 			}
 		}
