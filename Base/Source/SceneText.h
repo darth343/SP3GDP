@@ -137,6 +137,8 @@ private:
 	float fps;
 	NPC npc;
 	vector<NPC*>npcvec;
+	int dialogueNum = 0;
+	int npcNum = 0;
 
 	// Handle to the tilemaps
 	CMap* m_cMap;

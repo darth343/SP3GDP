@@ -41,14 +41,18 @@ public:
 	vector<NPC*>GetVec();
 	int GetID();
 	string GetDialogue();
+	int GetNum();
+	int GetDialogueNum();
+	void ScrollDialogue(int&);
+	int collideWhichNPC();
+	bool enterPressed;
 	NPC_ANIMATION GetAnimationState();
 	NPC_DIALOGUE GetDialogueState();
 
 private:
 	float npcID;
-	bool moveX;
-	bool moveY;
-	int size;
+	int collideWithNPC;
+	int num;
 	bool emptyString = false;
 	string npcDialogue;
 	vector<NPC*>npcs;

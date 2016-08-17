@@ -183,9 +183,18 @@ void SceneText::Init()
 
 	for (int i = 0; i < npc.GetVec().size(); i++)
 	{
-		npcvec[0]->position.Set(500, 400, 1);
-		npcvec[1]->position.Set(700, 400, 1);
-		npcvec[2]->position.Set(600, 400, 1);
+		if (npcvec[i]->GetID() == 1)
+		{
+			npcvec[i]->position.Set(500, 400, 1);
+		}
+		if (npcvec[i]->GetID() == 2)
+		{
+			npcvec[i]->position.Set(700, 400, 1);
+		}
+		if (npcvec[i]->GetID() == 3)
+		{
+			npcvec[i]->position.Set(600, 400, 1);
+		}
 		m_goList.push_back(dynamic_cast<NPC*>(npcvec[i]));
 	}
 
@@ -374,7 +383,7 @@ void SceneText::PlayerUpdate(double dt)
 	if (Application::IsKeyPressed('G'))
 		EnterBattleScene();
 }
-
+static bool enterpressed = false;
 void SceneText::GOupdate(double dt)
 {
 	for (int i = 0; i < m_goList.size(); ++i)
@@ -383,15 +392,38 @@ void SceneText::GOupdate(double dt)
 		if (m_goList[i]->type == GameObject::GO_NPC)
 		{
 			NPC* temp = (NPC*)m_goList[i];
-			if (temp->GetID() == 1 && temp->GetAnimationState()== NPC::NPC_AWANDERING)
+			if (temp->GetID() == 1)
 			{
-				if (temp->position.x > 300)
-				temp->position.x -= 30 * dt;
-				else
+				if (temp->GetAnimationState() == NPC::NPC_AWANDERING)
 				{
-					/*if (temp->position.x < 500)
-						temp->position.x += 30 * dt;*/
+					if (temp->position.x > 300)
+						temp->position.x -= 30 * dt;
 				}
+			}
+			if (temp->GetID() == 2)
+			{
+				if (temp->GetAnimationState() == NPC::NPC_AWANDERING)
+				{
+					if (temp->position.y > 100)
+						temp->position.y -= 30 * dt;
+				}
+			}
+			if (temp->GetID() == 3)
+			{
+				if (temp->GetAnimationState() == NPC::NPC_AWANDERING)
+				{
+					if (temp->position.y > 50)
+						temp->position.y -= 30 * dt;
+				}
+			}
+			if (temp->enterPressed && Application::IsKeyPressed(VK_RETURN) && !enterpressed)
+			{
+				enterpressed = true;
+				temp->ScrollDialogue(dialogueNum);
+			}
+			else if (!Application::IsKeyPressed(VK_RETURN) && enterpressed)
+			{
+				enterpressed = false;
 			}
 		}
 		for (int j = i + 1; j < m_goList.size(); ++j)
@@ -408,6 +440,8 @@ void SceneText::Update(double dt)
 {
 	// Uncomment this if you want to access lights and stuff
 	// UselessUpdate(double dt);
+	if (Application::IsKeyPressed('V'))
+		dialogueNum = 0;
 	PlayerUpdate(dt);
 	GOupdate(dt);
 	fps = (float)(1.f / dt);
@@ -679,10 +713,13 @@ void SceneText::BasicRender()
 	modelStack.LoadIdentity();
 }
 
+static bool touched = true;
 void SceneText::RenderTestMap()
 {
 	RenderBackground();
 	RenderTileMap(m_cMap);
+	std::ostringstream ss;
+
 	for (int i = 0; i < m_goList.size(); i++)
 	{
 		if (m_goList[i]->active == true)
@@ -696,18 +733,19 @@ void SceneText::RenderTestMap()
 			if (m_goList[i]->type == GameObject::GO_NPC)
 			{
 				NPC* temp = (NPC*)m_goList[i];
-				if (temp->GetID() == 1)
+				ss.str("");
+				ss.precision(5);
+
+				if (temp->enterPressed && temp->GetID() == temp->collideWhichNPC() && temp->GetNum() == dialogueNum)
 				{
-					Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
+					ss << "Dialogue: " << temp->GetDialogue();	
+					touched = true;
 				}
-				if (temp->GetID() == 2)
-				{
-					Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
-				}
-				if (temp->GetID() == 3)
-				{
-					Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
-				}
+
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 30, 0, 100);
+
+				if (temp->GetNum() == 0)
+				Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
 			}
 			if (m_goList[i]->type == GameObject::GO_ENEMY)
 				Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[0]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
@@ -716,7 +754,7 @@ void SceneText::RenderTestMap()
 	RenderPlayer();
 
 	//On screen text
-	std::ostringstream ss;
+	ss.str("");
 	ss.precision(5);
 	ss << "FPS: " << fps;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 30, 0, 0);
