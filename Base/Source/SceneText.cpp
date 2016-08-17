@@ -216,7 +216,90 @@ void SceneText::Init()
 	
 	rotateAngle = 0;
 	bLightEnabled = true;
+
+	//BattleScene Variables
+	enemyTurn = false;
+	playerTurn = true;
+
+	DNkeyPressed = UPkeyPressed = LEFTkeyPressed = RIGHTkeyPressed = false;
+
+	battleSelection = BS_ATTACK;
 }
+
+void SceneText::EnterBattleScene()
+{
+	//while (Scene still equal BattleScene)
+	while (playerTurn)
+	{
+		if (Application::IsKeyPressed(VK_UP))
+		{
+			if (UPkeyPressed)
+			{
+				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 2);
+
+				if (battleSelection < 1)
+					battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 4);
+				cout << "BS = " << battleSelection << endl;
+				UPkeyPressed = false;
+			}
+		}
+		else
+			UPkeyPressed = true;
+
+		if (Application::IsKeyPressed(VK_DOWN))
+		{
+			if (DNkeyPressed)
+			{
+				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 2);
+
+				if (battleSelection > BS_TOTAL - 1)
+					battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 4);
+				cout << "BS = " << battleSelection << endl;
+				DNkeyPressed = false;
+			}
+		}
+		else
+			DNkeyPressed = true;
+
+		if (Application::IsKeyPressed(VK_LEFT))
+		{
+			if (LEFTkeyPressed) 
+			{
+				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 1);
+				if (battleSelection < BS_ATTACK)
+				{
+					battleSelection = static_cast<BATTLE_SELECTION> (4);
+				}
+				cout << "BS = " << battleSelection << endl;
+				LEFTkeyPressed = false;
+			}
+		}
+		else
+			LEFTkeyPressed = true;
+		if (Application::IsKeyPressed(VK_RIGHT))
+		{
+			if (RIGHTkeyPressed)
+			{
+				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 1);
+				if (battleSelection == BS_TOTAL)
+				{
+					battleSelection = static_cast<BATTLE_SELECTION> (1);
+				}
+				cout << "BS = " << battleSelection << endl;
+				RIGHTkeyPressed = false;
+			}
+		}
+		else
+			RIGHTkeyPressed = true;
+
+		if (Application::IsKeyPressed(VK_RETURN))
+		{
+		}
+
+	}
+
+}
+
 void SceneText::DialogueFile(string filename)
 {
 	
@@ -286,6 +369,10 @@ void SceneText::PlayerUpdate(double dt)
 	if (Application::IsKeyPressed('D'))
 		this->theHero->MoveLeftRight(false, m_cMap, dt);
 	theHero->HeroUpdate(m_cMap, dt, meshList);
+
+	//For Testing Purpose
+	if (Application::IsKeyPressed('G'))
+		EnterBattleScene();
 }
 
 void SceneText::GOupdate(double dt)

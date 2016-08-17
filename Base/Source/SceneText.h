@@ -15,6 +15,15 @@
 
 class SceneText : public Scene
 {
+	enum BATTLE_SELECTION
+	{
+		BS_ATTACK = 1,
+		BS_ITEM,
+		BS_CAPTURE,
+		BS_RUN,
+		BS_TOTAL,
+	};
+
 	enum GAMESTATE_TYPE
 	{
 		START_SCREEN,
@@ -103,6 +112,8 @@ public:
 	void PlayerUpdate(double dt); // Update to the player 
 	void GOupdate(double dt); // Main GO Collisions
 	void RenderTestMap();
+	void EnterBattleScene(); //its like the update for BattleScene
+
 
 private:
 	unsigned m_vertexArrayID;
@@ -133,6 +144,17 @@ private:
 	CPlayerInfo* theHero;
 	// GameState
 	GAMESTATE_TYPE GS; // Change GameState in SceneText.cpp line 144 for testing purposes
+
+	//BattleScene Variables
+
+	//Selection chosen in battlescene
+	BATTLE_SELECTION battleSelection;
+
+	bool enemyTurn, playerTurn;
+	bool DNkeyPressed;
+	bool UPkeyPressed;
+	bool LEFTkeyPressed;
+	bool RIGHTkeyPressed;
 };
 
 #endif
