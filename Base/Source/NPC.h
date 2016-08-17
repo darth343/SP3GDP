@@ -43,8 +43,6 @@ public:
 	string GetDialogue();
 	NPC_ANIMATION GetAnimationState();
 	NPC_DIALOGUE GetDialogueState();
-	void moveX(bool);
-	void moveY(bool);
 
 private:
 	float npcID;
