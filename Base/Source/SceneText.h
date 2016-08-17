@@ -125,6 +125,7 @@ private:
 
 	float fps;
 	NPC npc;
+	vector<NPC*>npcvec;
 
 	// Handle to the tilemaps
 	CMap* m_cMap;
