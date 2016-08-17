@@ -73,5 +73,11 @@ private:
 	float playerDamage;
 	float playerDefense;
 
+
 	bool collideSomething;
+
+	float hp;
+	float damage;
+	bool collideWithEnemy;
+
 };

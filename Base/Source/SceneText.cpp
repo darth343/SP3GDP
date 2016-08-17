@@ -179,6 +179,24 @@ void SceneText::Init()
 	m_goList.push_back(theEnemy);
 
 	npc.ReadFromFile("Image//Text.txt",m_goList);
+	npcvec = npc.GetVec();
+
+	for (int i = 0; i < npc.GetVec().size(); i++)
+	{
+		if (npcvec[i]->GetID() == 1)
+		{
+			npcvec[i]->position.Set(500, 400, 1);
+		}
+		if (npcvec[i]->GetID() == 2)
+		{
+			npcvec[i]->position.Set(700, 400, 1);
+		}
+		if (npcvec[i]->GetID() == 3)
+		{
+			npcvec[i]->position.Set(600, 400, 1);
+		}
+		m_goList.push_back(dynamic_cast<NPC*>(npcvec[i]));
+	}
 
 	// Initialise and load the REAR tile map
 	//m_cRearMap = new CMap();
@@ -207,7 +225,90 @@ void SceneText::Init()
 	
 	rotateAngle = 0;
 	bLightEnabled = true;
+
+	//BattleScene Variables
+	enemyTurn = false;
+	playerTurn = true;
+
+	DNkeyPressed = UPkeyPressed = LEFTkeyPressed = RIGHTkeyPressed = false;
+
+	battleSelection = BS_ATTACK;
 }
+
+void SceneText::EnterBattleScene()
+{
+	//while (Scene still equal BattleScene)
+	while (playerTurn)
+	{
+		if (Application::IsKeyPressed(VK_UP))
+		{
+			if (UPkeyPressed)
+			{
+				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 2);
+
+				if (battleSelection < 1)
+					battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 4);
+				cout << "BS = " << battleSelection << endl;
+				UPkeyPressed = false;
+			}
+		}
+		else
+			UPkeyPressed = true;
+
+		if (Application::IsKeyPressed(VK_DOWN))
+		{
+			if (DNkeyPressed)
+			{
+				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 2);
+
+				if (battleSelection > BS_TOTAL - 1)
+					battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 4);
+				cout << "BS = " << battleSelection << endl;
+				DNkeyPressed = false;
+			}
+		}
+		else
+			DNkeyPressed = true;
+
+		if (Application::IsKeyPressed(VK_LEFT))
+		{
+			if (LEFTkeyPressed) 
+			{
+				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 1);
+				if (battleSelection < BS_ATTACK)
+				{
+					battleSelection = static_cast<BATTLE_SELECTION> (4);
+				}
+				cout << "BS = " << battleSelection << endl;
+				LEFTkeyPressed = false;
+			}
+		}
+		else
+			LEFTkeyPressed = true;
+		if (Application::IsKeyPressed(VK_RIGHT))
+		{
+			if (RIGHTkeyPressed)
+			{
+				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 1);
+				if (battleSelection == BS_TOTAL)
+				{
+					battleSelection = static_cast<BATTLE_SELECTION> (1);
+				}
+				cout << "BS = " << battleSelection << endl;
+				RIGHTkeyPressed = false;
+			}
+		}
+		else
+			RIGHTkeyPressed = true;
+
+		if (Application::IsKeyPressed(VK_RETURN))
+		{
+		}
+
+	}
+
+}
+
 void SceneText::DialogueFile(string filename)
 {
 	
@@ -277,13 +378,54 @@ void SceneText::PlayerUpdate(double dt)
 	if (Application::IsKeyPressed('D'))
 		this->theHero->MoveLeftRight(false, m_cMap, dt);
 	theHero->HeroUpdate(m_cMap, dt, meshList);
-}
 
+	//For Testing Purpose
+	if (Application::IsKeyPressed('G'))
+		EnterBattleScene();
+}
+static bool enterpressed = false;
 void SceneText::GOupdate(double dt)
 {
 	for (int i = 0; i < m_goList.size(); ++i)
 	{
 		m_goList[i]->Update(dt, theHero->GetPosition(), theHero->GetMapOffset(), m_cMap);
+		if (m_goList[i]->type == GameObject::GO_NPC)
+		{
+			NPC* temp = (NPC*)m_goList[i];
+			if (temp->GetID() == 1)
+			{
+				if (temp->GetAnimationState() == NPC::NPC_AWANDERING)
+				{
+					if (temp->position.x > 300)
+						temp->position.x -= 30 * dt;
+				}
+			}
+			if (temp->GetID() == 2)
+			{
+				if (temp->GetAnimationState() == NPC::NPC_AWANDERING)
+				{
+					if (temp->position.y > 100)
+						temp->position.y -= 30 * dt;
+				}
+			}
+			if (temp->GetID() == 3)
+			{
+				if (temp->GetAnimationState() == NPC::NPC_AWANDERING)
+				{
+					if (temp->position.y > 50)
+						temp->position.y -= 30 * dt;
+				}
+			}
+			if (temp->enterPressed && Application::IsKeyPressed(VK_RETURN) && !enterpressed)
+			{
+				enterpressed = true;
+				temp->ScrollDialogue(dialogueNum);
+			}
+			else if (!Application::IsKeyPressed(VK_RETURN) && enterpressed)
+			{
+				enterpressed = false;
+			}
+		}
 		for (int j = i + 1; j < m_goList.size(); ++j)
 		{
 			if (m_goList[i]->CheckCollision(m_goList[j], m_cMap))
@@ -298,6 +440,8 @@ void SceneText::Update(double dt)
 {
 	// Uncomment this if you want to access lights and stuff
 	// UselessUpdate(double dt);
+	if (Application::IsKeyPressed('V'))
+		dialogueNum = 0;
 	PlayerUpdate(dt);
 	GOupdate(dt);
 	fps = (float)(1.f / dt);
@@ -570,10 +714,13 @@ void SceneText::BasicRender()
 	modelStack.LoadIdentity();
 }
 
+static bool touched = true;
 void SceneText::RenderTestMap()
 {
 	RenderBackground();
 	RenderTileMap(m_cMap);
+	std::ostringstream ss;
+
 	for (int i = 0; i < m_goList.size(); i++)
 	{
 		if (m_goList[i]->active == true)
@@ -587,21 +734,19 @@ void SceneText::RenderTestMap()
 			if (m_goList[i]->type == GameObject::GO_NPC)
 			{
 				NPC* temp = (NPC*)m_goList[i];
-				if (temp->GetID() == "1")
+				ss.str("");
+				ss.precision(5);
+
+				if (temp->enterPressed && temp->GetID() == temp->collideWhichNPC() && temp->GetNum() == dialogueNum)
 				{
-					m_goList[i]->position.Set(500, 400, 1);
-					Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
+					ss << "Dialogue: " << temp->GetDialogue();	
+					touched = true;
 				}
-				if (temp->GetID() == "2")
-				{
-					m_goList[i]->position.Set(300, 400, 1);
-					Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
-				}
-				if (temp->GetID() == "3")
-				{
-					m_goList[i]->position.Set(700, 400, 1);
-					Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
-				}
+
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 30, 0, 100);
+
+				if (temp->GetNum() == 0)
+				Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
 			}
 			if (m_goList[i]->type == GameObject::GO_ENEMY)
 				Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[0]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
@@ -610,7 +755,7 @@ void SceneText::RenderTestMap()
 	RenderPlayer();
 
 	//On screen text
-	std::ostringstream ss;
+	ss.str("");
 	ss.precision(5);
 	ss << "FPS: " << fps;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 30, 0, 0);
