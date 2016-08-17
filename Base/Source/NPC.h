@@ -46,6 +46,7 @@ public:
 	void ScrollDialogue(int&);
 	int collideWhichNPC();
 	bool enterPressed;
+	int dialogueNumber;
 	NPC_ANIMATION GetAnimationState();
 	NPC_DIALOGUE GetDialogueState();
 

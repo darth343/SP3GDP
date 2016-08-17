@@ -179,6 +179,9 @@ private:
 	bool enemyTurn, playerTurn;
 
 	bool DNkeyPressed;
+	bool npc1;
+	bool npc2;
+	bool npc3;
 	bool UPkeyPressed;
 	bool LEFTkeyPressed;
 	bool RIGHTkeyPressed;

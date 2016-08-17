@@ -516,6 +516,7 @@ void SceneText::GOupdate(double dt)
 	for (int i = 0; i < m_goList.size(); ++i)
 	{
 		m_goList[i]->Update(dt, theHero->GetPosition(), theHero->GetMapOffset(), m_cMap);
+		//Movement of NPC
 		if (m_goList[i]->type == GameObject::GO_NPC)
 		{
 			NPC* temp = (NPC*)m_goList[i];
@@ -525,7 +526,10 @@ void SceneText::GOupdate(double dt)
 				{
 					if (temp->position.x > 300)
 						temp->position.x -= 30 * dt;
+					npc1 = true;
 				}
+				else
+					npc1 = false;
 			}
 			if (temp->GetID() == 2)
 			{
@@ -533,7 +537,10 @@ void SceneText::GOupdate(double dt)
 				{
 					if (temp->position.y > 100)
 						temp->position.y -= 30 * dt;
+					npc2 = true;
 				}
+				else
+					npc2 = false;
 			}
 			if (temp->GetID() == 3)
 			{
@@ -541,7 +548,10 @@ void SceneText::GOupdate(double dt)
 				{
 					if (temp->position.y > 50)
 						temp->position.y -= 30 * dt;
+					npc3 = true;
 				}
+				else
+					npc3 = false;
 			}
 			if (temp->enterPressed && Application::IsKeyPressed(VK_RETURN) && !enterpressed)
 			{
@@ -869,10 +879,12 @@ void SceneText::RenderTestMap()
 					ss << "Dialogue: " << temp->GetDialogue();	
 					touched = true;
 				}
+				if (npc1&&npc2&&npc3)
+					dialogueNum = 0;
 
 				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 30, 0, 100);
 
-				if (temp->GetNum() == 0)
+				//if (temp->GetNum() == 0)
 				Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
 			}
 			if (m_goList[i]->type == GameObject::GO_ENEMY)
