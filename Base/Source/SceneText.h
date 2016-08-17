@@ -22,6 +22,13 @@ class SceneText : public Scene
 		BS_ITEM,
 		BS_CAPTURE,
 		BS_RUN,
+
+		//Attack
+		BS_SLASH,
+		BS_STAB,
+		BS_SKILL,
+		BS_BACK,
+
 		BS_TOTAL,
 	};
 
@@ -30,6 +37,7 @@ class SceneText : public Scene
 		START_SCREEN,
 		TESTMAP,
 		INVENTORY_SCREEN,
+		BATTLE,
 
 		GS_TOTAL,
 	};
@@ -117,9 +125,6 @@ public:
 	void PlayerUpdate(double dt); // Update to the player 
 	void GOupdate(double dt); // Main GO Collisions
 
-	
-
-	void RenderTestMap();
 	void EnterBattleScene(); //its like the update for BattleScene
 
 
@@ -165,11 +170,19 @@ private:
 	//Selection chosen in battlescene
 	BATTLE_SELECTION battleSelection;
 
+	//Battle scene Selection
+	bool firstChoice, secondChoice;
+
+	//Escape chances
+	float escapePercentage;
+
 	bool enemyTurn, playerTurn;
+
 	bool DNkeyPressed;
 	bool UPkeyPressed;
 	bool LEFTkeyPressed;
 	bool RIGHTkeyPressed;
+	bool ENTERkeyPressed;
 
 };
 
