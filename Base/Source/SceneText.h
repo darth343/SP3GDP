@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "Mtx44.h"
 #include "Camera3.h"
+#include "Gauge.h"
 #include "Mesh.h"
 #include "MatrixStack.h"
 #include "Light.h"
@@ -40,7 +41,7 @@ class SceneText : public Scene
 		TESTMAP,
 		INVENTORY_SCREEN,
 		BATTLE,
-
+		CATCH,
 		GS_TOTAL,
 	};
 
@@ -169,6 +170,7 @@ private:
 	vector<NPC*>npcvec;
 	int dialogueNum = 0;
 	int npcNum = 0;
+	int npcID = 0;
 
 	// Handle to the tilemaps
 	CMap* m_cMap;

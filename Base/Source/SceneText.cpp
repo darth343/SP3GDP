@@ -183,17 +183,21 @@ void SceneText::Init()
 	thePotion->type = GameObject::GO_ITEM;
 	thePotion->position.Set(150, 150, 1);
 	m_goList.push_back(thePotion);
-	Items* theChargeRed = new Items(Vector3(500.f, 32.f, 1));
+
+	Gauge* theChargeRed = new Gauge(Vector3(500.f, 32.f, 1));
 	theChargeRed->type = GameObject::GO_REDBAR;
+	theChargeRed->gauge = Gauge::GREENBAR;
 	theChargeRed->position.Set(150, 150, 1);
 	m_goList.push_back(theChargeRed);
 
-	Items* theChargeGreen = new Items(Vector3(50.f, 32.f, 1));
+	Gauge* theChargeGreen = new Gauge(Vector3(50.f, 32.f, 1));
+	theChargeGreen->gauge = Gauge::GREENBAR;
 	theChargeGreen->type = GameObject::GO_GREENBAR;
 	theChargeGreen->position.Set(400, 150, 1);
 	m_goList.push_back(theChargeGreen);
 
-	Items* theChargeBar = new Items(Vector3(1.f, 32.f, 1));
+	Gauge* theChargeBar = new Gauge(Vector3(1.f, 32.f, 1));
+	theChargeBar->gauge = Gauge::MOVE;
 	theChargeBar->type = GameObject::GO_MOVE;
 	theChargeBar->position.Set(500, 150, 1);
 	m_goList.push_back(theChargeBar);
@@ -393,6 +397,8 @@ void SceneText::EnterBattleScene()
 
 				case BS_CAPTURE:
 					//Start Capture function && render capture function
+					GS = CATCH;
+					battleStart = false;
 					break;
 
 				case BS_RUN:
@@ -547,10 +553,7 @@ void SceneText::PlayerUpdate(double dt)
 	{
 		//enemyCatchPercentage += 10;
 	}
-	if (Application::IsKeyPressed('B'))
-	{
-		currHealth -= 20;
-	}
+	
 	//cout << enemyCatchPercentage << endl;
 
 	// Update the hero
@@ -577,22 +580,7 @@ void SceneText::GOupdate(double dt)
 
 		if (m_goList[i]->type == GameObject::GO_MOVE)
 		{
-			if (moveRight)
-			{
-				m_goList[i]->position.x += 100.f*dt;
-			}
-			if (m_goList[i]->position.x >= 650)
-			{
-				moveRight = false;
-				moveLeft = true;
-			}
-			if (moveLeft)
-				m_goList[i]->position.x -= 100.f *dt;
-			if (m_goList[i]->position.x <= 150)
-			{
-				moveRight = true;
-				moveLeft = false;
-			}
+			
 		}
 
 		if (m_goList[i]->type == GameObject::GO_GREENBAR)
@@ -609,6 +597,9 @@ void SceneText::GOupdate(double dt)
 		if (m_goList[i]->type == GameObject::GO_NPC)
 		{
 			NPC* temp = (NPC*)m_goList[i];
+			
+			if (temp->collideWhichNPC() == npcID)
+				temp->currState = currState;
 			
 			if (temp->collideWhichNPC() != 0 && Application::IsKeyPressed(VK_RETURN) && !enterpressed)
 			{
@@ -630,7 +621,7 @@ void SceneText::GOupdate(double dt)
 			}
 			else
 			{
-				cout << "NOT COLLIDED" << endl;
+			//	cout << "NOT COLLIDED" << endl;
 			}
 		}
 	}
@@ -924,7 +915,6 @@ void SceneText::BasicRender()
 	// Model matrix : an identity matrix (model will be at the origin)
 	modelStack.LoadIdentity();
 }
-
 static bool touched = true;
 void SceneText::RenderTestMap()
 {
@@ -936,18 +926,6 @@ void SceneText::RenderTestMap()
 	{
 		if (m_goList[i]->active == true)
 		{
-			if (m_goList[i]->type == GameObject::GO_REDBAR)
-			{
-				Render2DMeshWScale(meshList[GEO_RED], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
-			}
-			if (m_goList[i]->type == GameObject::GO_GREENBAR)
-			{
-				Render2DMeshWScale(meshList[GEO_GREEN], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
-			}
-			if (m_goList[i]->type == GameObject::GO_MOVE)
-			{
-				Render2DMeshWScale(meshList[GEO_BAR], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
-			}
 			if (m_goList[i]->type == GameObject::GO_ITEM)
 			{
 				Items* temp = (Items*)m_goList[i];
@@ -960,7 +938,7 @@ void SceneText::RenderTestMap()
 				ss.str("");
 				ss.precision(5);
 
-				if (temp->GetDialogueState() == currState && temp->GetID() == temp->collideWhichNPC())
+				if (temp->GetDialogueState() == temp->currState && temp->GetID() == temp->collideWhichNPC())
 				{
 					if (temp->GetNum() == dialogueNum)
 					{
@@ -976,6 +954,8 @@ void SceneText::RenderTestMap()
 						if (temp->GetID() == temp->collideWhichNPC())
 						{
 							currState = 2;
+							npcID = temp->GetID();
+							cout << temp->currState << " " <<  temp->GetID() << " " << temp->GetDialogueState() << endl;
 							dialogueNum = 0;
 						}
 					}
@@ -1026,6 +1006,9 @@ void SceneText::Render()
 	{
 		//RenderBattleScene....
 		RenderBattleScene();
+	}
+	if (GS == CATCH)
+	{
 	}
 
 }

@@ -20,7 +20,10 @@ NPC::~NPC()
 		npcs.pop_back();
 	}
 }
-
+void NPC::SetState(int &state)
+{
+	currState = state;
+}
 //Text file is going to include NPC id, NPC animation state, NPC dialogue state, NPC dialogue
 void NPC::ReadFromFile(string filename, vector<GameObject*>&m_goList)
 {
@@ -103,10 +106,6 @@ NPC::NPC_ANIMATION NPC::GetAnimationState()
 {
 	return npcAnimationState;
 }
-int NPC::GetDialogueNum()
-{
-	return 0;
-}
 void NPC::ScrollDialogue(int & dialogue)
 {
 	dialogue++;
@@ -161,13 +160,10 @@ void NPC::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 		if (Application::IsKeyPressed(VK_RETURN))
 		{
 			enterPressed = true;
-
 			if (this->GetID() == 1)
 				this->collideWithNPC = 1;
-
 			if (this->GetID() == 2)
 				this->collideWithNPC = 2;
-
 			if (this->GetID() == 3)
 				this->collideWithNPC = 3;
 		}
@@ -178,5 +174,4 @@ void NPC::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 		collideWithNPC = 0;
 		SetAnimationState(NPC::NPC_AWANDERING);
 	}
-
 }
