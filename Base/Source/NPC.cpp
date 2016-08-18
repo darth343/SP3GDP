@@ -1,6 +1,7 @@
 #include "NPC.h"
 #include <fstream>
 using std::ifstream;
+#include "Application.h"
 #include <iostream>
 using std::iostream;
 
@@ -30,10 +31,10 @@ void NPC::ReadFromFile(string filename, vector<GameObject*>&m_goList)
 	{
 		NPC* n = new NPC(Vector3(32.f, 32.f, 1));
 		n->type = GameObject::GO_NPC;
-		getline(myfile, temp, ',');
+		getline(myfile, temp, '`');
 		if (!temp.empty())
 		n->SetID(stoi(temp));
-		getline(myfile, temp, ',');
+		getline(myfile, temp, '`');
 		if (temp == "1")
 			n->SetAnimationState(NPC::NPC_AIDLE);
 		if (temp == "2")
@@ -42,13 +43,13 @@ void NPC::ReadFromFile(string filename, vector<GameObject*>&m_goList)
 			n->SetAnimationState(NPC::NPC_ADYING);
 		if (temp == "4")
 			n->SetAnimationState(NPC::NPC_ACRYING);
-		getline(myfile, temp, ',');
+		getline(myfile, temp, '`');
 		if (temp == "1")
 			n->SetDialogueState(NPC::NPC_DSTORY1);
 		if (temp == "2")
 			n->SetDialogueState(NPC::NPC_DSTORY2);
 		
-		getline(myfile, temp,',');
+		getline(myfile, temp,'`');
 		n->SetDialogue(temp);
 		getline(myfile, temp);
 		n->num = stoi(temp);
@@ -112,28 +113,69 @@ void NPC::ScrollDialogue(int & dialogue)
 }
 void NPC::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 {
+	if (this->GetID() == 1)
+	{
+		if (this->GetAnimationState() == NPC::NPC_AWANDERING)
+		{
+			if (this->position.x > 300)
+				this->position.x -= 30 * dt;
+			this->npc1 = true;
+		}
+		else
+			this->npc1 = false;
 
+		if (this->GetDialogueState() == 1)
+			this->maxDia = 4;
+		else if (this->GetDialogueState() == 2)
+			this->maxDia = 3;
+	}
+	if (this->GetID() == 2)
+	{
+		if (this->GetAnimationState() == NPC::NPC_AWANDERING)
+		{
+			if (this->position.y > 100)
+				this->position.y -= 30 * dt;
+			this->npc2 = true;
+		}
+		else
+			this->npc2 = false;
+	}
+	if (this->GetID() == 3)
+	{
+		if (this->GetAnimationState() == NPC::NPC_AWANDERING)
+		{
+			if (this->position.y > 50)
+				this->position.y -= 30 * dt;
+			this->npc3 = true;
+		}
+		else
+			this->npc3 = false;
+	}
 	if (this->active && CheckCollision(playerPos, mapOffset, m_cMap))
 	{
 		if (GetAnimationState() != NPC::NPC_ADYING)
 		{
 			SetAnimationState(NPC::NPC_AIDLE);
 		}
-		
-		enterPressed = true;
-		if (this->GetID() == 1)
-			this->collideWithNPC = 1;
+		collisionDetected = true;
+		if (Application::IsKeyPressed(VK_RETURN))
+		{
+			enterPressed = true;
 
-		if (this->GetID() == 2)
-			this->collideWithNPC = 2;
+			if (this->GetID() == 1)
+				this->collideWithNPC = 1;
 
-		if (this->GetID() == 3)
-			this->collideWithNPC = 3;
+			if (this->GetID() == 2)
+				this->collideWithNPC = 2;
+
+			if (this->GetID() == 3)
+				this->collideWithNPC = 3;
+		}
 	}
 	else 
 	{
 		enterPressed = false;
-		this->collideWithNPC = 0;
+		collideWithNPC = 0;
 		SetAnimationState(NPC::NPC_AWANDERING);
 	}
 

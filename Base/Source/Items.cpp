@@ -43,9 +43,8 @@ void Items::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap
 {
 	if (this->active && CheckCollision(playerPos, mapOffset, m_cMap))
 	{
-		addPotion();
-		active = false;
+		//addPotion();
+		//active = false;
 		std::cout << getPotionCount() << std::endl;
-
 	}
 }

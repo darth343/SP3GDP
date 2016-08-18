@@ -18,7 +18,7 @@ public:
 	MonsterManager();
 	~MonsterManager();
 
-	vector <Monster> Monsters;
+	vector <Monster> MonsterData; // Type, Name, HP, Atk, Def, Slot1, Slot2, Slot3, Slot4
 
 	void readMonsterCSV(const string fileName);
 

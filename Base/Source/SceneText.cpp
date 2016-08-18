@@ -183,12 +183,27 @@ void SceneText::Init()
 	thePotion->type = GameObject::GO_ITEM;
 	thePotion->position.Set(150, 150, 1);
 	m_goList.push_back(thePotion);
+	Items* theChargeRed = new Items(Vector3(500.f, 32.f, 1));
+	theChargeRed->type = GameObject::GO_REDBAR;
+	theChargeRed->position.Set(150, 150, 1);
+	m_goList.push_back(theChargeRed);
+
+	Items* theChargeGreen = new Items(Vector3(50.f, 32.f, 1));
+	theChargeGreen->type = GameObject::GO_GREENBAR;
+	theChargeGreen->position.Set(150, 150, 1);
+	m_goList.push_back(theChargeGreen);
+
+	Items* theChargeBar = new Items(Vector3(1.f, 32.f, 1));
+	theChargeBar->type = GameObject::GO_MOVE;
+	theChargeBar->position.Set(500, 150, 1);
+	m_goList.push_back(theChargeBar);
 
 	theEnemy = new Enemy(Vector3(32.f, 32.f, 1));
 	theEnemy->type = GameObject::GO_ENEMY;
 	theEnemy->position.Set(64, 224, 1);
 	m_goList.push_back(theEnemy);
-
+	enemyMaxHealth = 100;
+	enemyCatchPercentage = 0;
 	npc.ReadFromFile("Image//Text.txt",m_goList);
 	npcvec = npc.GetVec();
 
@@ -201,11 +216,21 @@ void SceneText::Init()
 		if (npcvec[i]->GetID() == 2)
 		{
 			npcvec[i]->position.Set(700, 400, 1);
+			if (npcvec[i]->GetDialogueState() == 1)
+				npcvec[i]->maxDia = 5;
+			else if (npcvec[i]->GetDialogueState() == 2)
+				npcvec[i]->maxDia = 4;
 		}
 		if (npcvec[i]->GetID() == 3)
 		{
 			npcvec[i]->position.Set(600, 400, 1);
+			if (npcvec[i]->GetDialogueState() == 1)
+				npcvec[i]->maxDia = 2;
+			else if (npcvec[i]->GetDialogueState() == 2)
+				npcvec[i]->maxDia = 2;
 		}
+		npcvec[i]->currDia = 1;
+
 		m_goList.push_back(dynamic_cast<NPC*>(npcvec[i]));
 	}
 
@@ -226,6 +251,11 @@ void SceneText::Init()
 
 	meshList[GEO_POTION] = MeshBuilder::Generate2DMesh("Potion", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_POTION]->textureID = LoadTGA("Image//Potion.tga");
+
+	meshList[GEO_GREEN] = MeshBuilder::Generate2DMesh("Potion", Color(0, 1, 0), 0.0f, 0.0f, 1.0f, 1.0f);
+	meshList[GEO_BAR] = MeshBuilder::Generate2DMesh("Potion", Color(1, 1, 0), 0.0f, 0.0f, 1.0f, 1.0f);
+	meshList[GEO_RED] = MeshBuilder::Generate2DMesh("Potion", Color(1, 0, 0), 0.0f, 0.0f, 1.0f, 1.0f);
+
 
 	theHero->SetPlayerMesh(meshList[GEO_HEROWALK]);
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
@@ -504,6 +534,18 @@ void SceneText::UselessUpdate(double dt)
 
 void SceneText::PlayerUpdate(double dt)
 {
+	enemyCatchPercentage = (enemyMaxHealth - currHealth) / 100 * 20;
+
+	if (Application::IsKeyPressed('V'))
+	{
+		//enemyCatchPercentage += 10;
+	}
+	if (Application::IsKeyPressed('B'))
+	{
+		currHealth -= 20;
+	}
+	cout << enemyCatchPercentage << endl;
+
 	// Update the hero
 	if (Application::IsKeyPressed('W'))
 		this->theHero->MoveUpDown(false, m_cMap, dt);
@@ -525,44 +567,38 @@ void SceneText::GOupdate(double dt)
 	for (int i = 0; i < m_goList.size(); ++i)
 	{
 		m_goList[i]->Update(dt, theHero->GetPosition(), theHero->GetMapOffset(), m_cMap);
+
+		if (m_goList[i]->type == GameObject::GO_MOVE)
+		{
+			if (moveRight)
+			{
+				m_goList[i]->position.x += 100.f*dt;
+			}
+			if (m_goList[i]->position.x >= 650)
+			{
+				moveRight = false;
+				moveLeft = true;
+			}
+			if (moveLeft)
+				m_goList[i]->position.x -= 100.f *dt;
+			if (m_goList[i]->position.x <= 150)
+			{
+				moveRight = true;
+				moveLeft = false;
+			}
+		}
+
+		if (m_goList[i]->type == GameObject::GO_GREENBAR)
+		{
+			m_goList[i]->scale.x = enemyCatchPercentage * 0.1;
+		}
+
 		//Movement of NPC
 		if (m_goList[i]->type == GameObject::GO_NPC)
 		{
 			NPC* temp = (NPC*)m_goList[i];
-			if (temp->GetID() == 1)
-			{
-				if (temp->GetAnimationState() == NPC::NPC_AWANDERING)
-				{
-					if (temp->position.x > 300)
-						temp->position.x -= 30 * dt;
-					npc1 = true;
-				}
-				else
-					npc1 = false;
-			}
-			if (temp->GetID() == 2)
-			{
-				if (temp->GetAnimationState() == NPC::NPC_AWANDERING)
-				{
-					if (temp->position.y > 100)
-						temp->position.y -= 30 * dt;
-					npc2 = true;
-				}
-				else
-					npc2 = false;
-			}
-			if (temp->GetID() == 3)
-			{
-				if (temp->GetAnimationState() == NPC::NPC_AWANDERING)
-				{
-					if (temp->position.y > 50)
-						temp->position.y -= 30 * dt;
-					npc3 = true;
-				}
-				else
-					npc3 = false;
-			}
-			if (temp->enterPressed && Application::IsKeyPressed(VK_RETURN) && !enterpressed)
+			
+			if (temp->collideWhichNPC() != 0 && Application::IsKeyPressed(VK_RETURN) && !enterpressed)
 			{
 				enterpressed = true;
 				temp->ScrollDialogue(dialogueNum);
@@ -574,8 +610,10 @@ void SceneText::GOupdate(double dt)
 		}
 		for (int j = i + 1; j < m_goList.size(); ++j)
 		{
+			if (m_goList[i]->type == GameObject::GO_GREENBAR && m_goList[j]->type == GameObject::GO_MOVE)
 			if (m_goList[i]->CheckCollision(m_goList[j], m_cMap))
 			{
+				cout << "ksdsk";
 				// DO COLLISION RESPONSE BETWEEN TWO GAMEOBJECTS
 			}
 		}
@@ -586,8 +624,6 @@ void SceneText::Update(double dt)
 {
 	// Uncomment this if you want to access lights and stuff
 	// UselessUpdate(double dt);
-	if (Application::IsKeyPressed('V'))
-		dialogueNum = 0;
 	PlayerUpdate(dt);
 	GOupdate(dt);
 	fps = (float)(1.f / dt);
@@ -884,6 +920,18 @@ void SceneText::RenderTestMap()
 	{
 		if (m_goList[i]->active == true)
 		{
+			if (m_goList[i]->type == GameObject::GO_REDBAR)
+			{
+				Render2DMeshWScale(meshList[GEO_RED], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
+			}
+			if (m_goList[i]->type == GameObject::GO_GREENBAR)
+			{
+				Render2DMeshWScale(meshList[GEO_GREEN], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
+			}
+			if (m_goList[i]->type == GameObject::GO_MOVE)
+			{
+				Render2DMeshWScale(meshList[GEO_BAR], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
+			}
 			if (m_goList[i]->type == GameObject::GO_ITEM)
 			{
 				Items* temp = (Items*)m_goList[i];
@@ -896,14 +944,26 @@ void SceneText::RenderTestMap()
 				ss.str("");
 				ss.precision(5);
 
-				if (temp->enterPressed && temp->GetID() == temp->collideWhichNPC() && temp->GetNum() == dialogueNum)
+				if (temp->GetDialogueState() == currState && temp->GetID() == temp->collideWhichNPC())
 				{
-					ss << "Dialogue: " << temp->GetDialogue();	
-					touched = true;
-				}
-				if (npc1&&npc2&&npc3)
-					dialogueNum = 0;
+					if (temp->GetNum() == dialogueNum)
+					{
+						ss << "Dialogue: " << temp->GetDialogue();
 
+					}
+					if (dialogueNum == temp->maxDia)
+					{
+						ss << "Enter to Exit";
+					}
+					else if (dialogueNum >= temp->maxDia)
+					{
+						if (temp->GetID() == temp->collideWhichNPC())
+						{
+							currState = 2;
+							dialogueNum = 0;
+						}
+					}
+				}
 				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 30, 0, 100);
 
 				//if (temp->GetNum() == 0)

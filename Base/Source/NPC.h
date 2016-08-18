@@ -45,6 +45,10 @@ public:
 	int GetDialogueNum();
 	void ScrollDialogue(int&);
 	int collideWhichNPC();
+	bool collisionDetected;
+	bool npc1;
+	bool npc2;
+	bool npc3;
 	bool enterPressed;
 	int dialogueNumber;
 	NPC_ANIMATION GetAnimationState();
@@ -54,6 +58,7 @@ private:
 	float npcID;
 	int collideWithNPC;
 	int num;
+	
 	bool emptyString = false;
 	string npcDialogue;
 	vector<NPC*>npcs;

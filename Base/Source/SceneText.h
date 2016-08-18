@@ -94,6 +94,9 @@ public:
 		GEO_GROUNDTOP,
 		GEO_HEROWALK,
 		GEO_MONSTER,
+		GEO_RED,
+		GEO_GREEN,
+		GEO_BAR,
 		GEO_POTION,
 		GEO_GREENTILE,
 		GEO_REDTILE,
@@ -131,9 +134,6 @@ public:
 	void GOupdate(double dt); // Main GO Collisions
 
 	void EnterBattleScene(); //its like the update for BattleScene
-
-
-
 private:
 	CharacterData FontData;
 	unsigned m_vertexArrayID;
@@ -145,11 +145,14 @@ private:
 	Camera3 camera;
 	int npcsize = 0;
 	float rotateAngle;
-
+	float enemyCatchPercentage;
+	float enemyMaxHealth;
+	float currHealth = 100;
 	MS modelStack;
 	MS viewStack;
 	MS projectionStack;
-
+	bool moveLeft=false;
+	bool moveRight = true;
 	Light lights[2];
 
 	bool bLightEnabled;
@@ -190,6 +193,7 @@ private:
 	bool battleStart;
 	bool DNkeyPressed;
 	bool npc1;
+	int currState = 1;
 	bool npc2;
 	bool npc3;
 	bool UPkeyPressed;
