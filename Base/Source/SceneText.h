@@ -13,14 +13,33 @@
 #include "GameObject.h"
 #include "NPC.h"
 #include "Enemy.h"
+#include "EquipmentManager.h"
+#include "CharacterData.h"
 
 class SceneText : public Scene
 {
+	enum BATTLE_SELECTION
+	{
+		BS_ATTACK = 1,
+		BS_ITEM,
+		BS_CAPTURE,
+		BS_RUN,
+
+		//Attack
+		BS_SLASH,
+		BS_STAB,
+		BS_SKILL,
+		BS_BACK,
+
+		BS_TOTAL,
+	};
+
 	enum GAMESTATE_TYPE
 	{
 		START_SCREEN,
 		TESTMAP,
 		INVENTORY_SCREEN,
+		BATTLE,
 
 		GS_TOTAL,
 	};
@@ -101,14 +120,22 @@ public:
 	void RenderTileMap(CMap* m_cMap, Vector3 speed = Vector3(1, 1, 1));
 	void DialogueFile(string);
 
+	//Render FUnctions
 	void BasicRender(); // Basic Render Codes, do not touch unless needed 
 	void RenderPlayer();
+	void RenderTestMap();
+
+	//Update Functions
 	void UselessUpdate(double dt); // Ask KY for details :>
 	void PlayerUpdate(double dt); // Update to the player 
 	void GOupdate(double dt); // Main GO Collisions
-	void RenderTestMap();
+
+	void EnterBattleScene(); //its like the update for BattleScene
+
+
 
 private:
+	CharacterData FontData;
 	unsigned m_vertexArrayID;
 	Mesh* meshList[NUM_GEOMETRY];
 	vector<GameObject *> m_goList;
@@ -129,8 +156,12 @@ private:
 
 	float fps;
 	NPC npc;
+
 	Enemy* theEnemy;
 	Pathfinder testpathfinder;
+	vector<NPC*>npcvec;
+	int dialogueNum = 0;
+	int npcNum = 0;
 
 	// Handle to the tilemaps
 	CMap* m_cMap;
@@ -138,6 +169,33 @@ private:
 	CPlayerInfo* theHero;
 	// GameState
 	GAMESTATE_TYPE GS; // Change GameState in SceneText.cpp line 144 for testing purposes
+
+	// Equipment Functions
+	EquipmentManager equipManager;
+
+
+	//BattleScene Variables
+
+	//Selection chosen in battlescene
+	BATTLE_SELECTION battleSelection;
+
+	//Battle scene Selection
+	bool firstChoice, secondChoice;
+
+	//Escape chances
+	float escapePercentage;
+
+	bool enemyTurn, playerTurn;
+
+	bool battleStart;
+	bool DNkeyPressed;
+	bool npc1;
+	bool npc2;
+	bool npc3;
+	bool UPkeyPressed;
+	bool LEFTkeyPressed;
+	bool RIGHTkeyPressed;
+	bool ENTERkeyPressed;
 };
 
 #endif

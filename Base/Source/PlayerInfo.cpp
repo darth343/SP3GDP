@@ -7,13 +7,19 @@ CPlayerInfo::CPlayerInfo(void)
 	: mapOffset(Vector3(0, 0, 0))
 	, playerMesh(NULL)
 	, FlipStatus(false)
+
 	, collideSomething(false)
+	, playerHP(100)
+	, playerDamage(20)
+	, playerDefense(20)
+	, collideWithEnemy(false)
 	, hp(100)
 	, damage(20)
+
 {
 }
 
-const float MOVEMENT_SPEED = 250.f;
+const float MOVEMENT_SPEED = 225.f;
 const float xOffset = 8.f;
 const float yOffset = 2.f;
 
@@ -385,8 +391,45 @@ void CPlayerInfo::HeroUpdate(CMap* m_cMap, double dt, Mesh**meshList)
 	Vector3 checkPosition = (theHeroPosition + mapOffset) * (1.f / m_cMap->GetTileSize());
 	if (m_cMap->theMap[(int)checkPosition.y][(int)checkPosition.x].BlockID == 2)
 	{
-		collideSomething = true;
+		collideWithEnemy = true;
 		cout << "Collided with Enemy" << endl;
 	}
+	if (collideWithEnemy)
+	{
+		//Enter BattleScene
+
+	}
 	ConstrainHero(m_cMap->getScreenWidth() * 0.25, m_cMap->getScreenWidth() * 0.5, m_cMap->getScreenHeight() * 0.5, m_cMap->getScreenHeight() * 0.15, dt, m_cMap, true, true);
+}
+
+void CPlayerInfo::SetHP(float hp)
+{
+	hp = playerHP;
+}
+
+void CPlayerInfo::SetDMG(float dmg)
+{
+	dmg = playerHP;
+}
+
+void CPlayerInfo::SetDEF(float def)
+{
+	def = playerHP;
+}
+
+float CPlayerInfo::GetHP()
+{
+	return playerHP;
+}
+
+float CPlayerInfo::GetDMG()
+{
+	playerDamage = playerDamage + Equip.getEQAtk();
+	return playerDamage;
+}
+
+float CPlayerInfo::GetDEF()
+{
+	playerDefense = playerDefense + Equip.getEQDef();
+	return playerDefense;
 }

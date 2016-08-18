@@ -32,20 +32,29 @@ public:
 		NPC_DTOTAL,
 	};
 
-	bool ReadFromFile(string,vector<GameObject*> &);
+	void ReadFromFile(string,vector<GameObject*> &);
 	void SetDialogue(string);
 	void Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap);
 	void SetAnimationState(NPC_ANIMATION);
 	void SetDialogueState(NPC_DIALOGUE);
-	void SetID(string);
-	string GetID();
+	void SetID(float);
+	vector<NPC*>GetVec();
+	int GetID();
 	string GetDialogue();
+	int GetNum();
+	int GetDialogueNum();
+	void ScrollDialogue(int&);
+	int collideWhichNPC();
+	bool enterPressed;
+	int dialogueNumber;
 	NPC_ANIMATION GetAnimationState();
 	NPC_DIALOGUE GetDialogueState();
 
 private:
-	string npcID;
-	int size;
+	float npcID;
+	int collideWithNPC;
+	int num;
+	bool emptyString = false;
 	string npcDialogue;
 	vector<NPC*>npcs;
 	NPC_ANIMATION npcAnimationState;

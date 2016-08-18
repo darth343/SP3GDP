@@ -8,25 +8,31 @@ NPC::NPC(Vector3 scale) : GameObject(scale)
 {
 	npcDialogueState = NPC_DNOSTATE;
 	npcAnimationState = NPC_ANOSTATE;
-	size = 0;
+	npcID = 0;
 }
 NPC::~NPC()
 {
+	while (npcs.size() > 0)
+	{
+		NPC *go = npcs.back();
+		delete go;
+		npcs.pop_back();
+	}
 }
 
 //Text file is going to include NPC id, NPC animation state, NPC dialogue state, NPC dialogue
-bool NPC::ReadFromFile(string filename, vector<GameObject*>&m_goList)
+void NPC::ReadFromFile(string filename, vector<GameObject*>&m_goList)
 {
 	ifstream myfile;
 	myfile.open(filename);
 	string temp;
-	while (!myfile.eof())
+	while (myfile.good())
 	{
 		NPC* n = new NPC(Vector3(32.f, 32.f, 1));
-
 		n->type = GameObject::GO_NPC;
 		getline(myfile, temp, ',');
-		n->SetID(temp);
+		if (!temp.empty())
+		n->SetID(stoi(temp));
 		getline(myfile, temp, ',');
 		if (temp == "1")
 			n->SetAnimationState(NPC::NPC_AIDLE);
@@ -36,32 +42,35 @@ bool NPC::ReadFromFile(string filename, vector<GameObject*>&m_goList)
 			n->SetAnimationState(NPC::NPC_ADYING);
 		if (temp == "4")
 			n->SetAnimationState(NPC::NPC_ACRYING);
-
 		getline(myfile, temp, ',');
 		if (temp == "1")
 			n->SetDialogueState(NPC::NPC_DSTORY1);
 		if (temp == "2")
 			n->SetDialogueState(NPC::NPC_DSTORY2);
-		if (temp == "")
-			break;
-		//getline(myfile, temp, ',');
-		//	cout << stoi(temp);
-		////	n->position.x = stoi(temp);
-		////n->position.x = stoi(x);
-		//getline(myfile, temp, ',');
-		//cout << temp;
-		////temp = stoi(temp);
-		//n->position.z = 1;
-		getline(myfile, temp, '\n');
+		
+		getline(myfile, temp,',');
 		n->SetDialogue(temp);
-		m_goList.push_back(n);
-
+		getline(myfile, temp);
+		n->num = stoi(temp);
+		npcs.push_back(n);
+		if (myfile.eof())
+		break;
 	}
 	myfile.close();
-	return true;
 }
-
-void NPC::SetID(string id)
+vector<NPC*> NPC::GetVec()
+{
+	return npcs;
+}
+int NPC::GetNum()
+{
+	return num;
+}
+int NPC::collideWhichNPC()
+{
+	return collideWithNPC;
+}
+void NPC::SetID(float id)
 {
 	npcID = id;
 }
@@ -77,7 +86,7 @@ void NPC::SetAnimationState(NPC::NPC_ANIMATION animationState)
 {
 	npcAnimationState = animationState;
 }
-string NPC::GetID()
+int NPC::GetID()
 {
 	return npcID;
 }
@@ -93,25 +102,39 @@ NPC::NPC_ANIMATION NPC::GetAnimationState()
 {
 	return npcAnimationState;
 }
+int NPC::GetDialogueNum()
+{
+	return 0;
+}
+void NPC::ScrollDialogue(int & dialogue)
+{
+	dialogue++;
+}
 void NPC::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 {
+
 	if (this->active && CheckCollision(playerPos, mapOffset, m_cMap))
 	{
-		if (npcID == "3")
-		{
-			//cout << "HI";
-			SetAnimationState(NPC::	NPC_AWANDERING);
-			cout <<"3" << GetAnimationState()<<endl;
-		}
-		if (npcID == "1")
-		{
-			SetAnimationState(NPC::NPC_ADYING);
-			cout << "1" << GetAnimationState() << endl;
-		}
-		if (npcID == "2")
+		if (GetAnimationState() != NPC::NPC_ADYING)
 		{
 			SetAnimationState(NPC::NPC_AIDLE);
-			cout << "2" << GetAnimationState() << endl;
 		}
+		
+		enterPressed = true;
+		if (this->GetID() == 1)
+			this->collideWithNPC = 1;
+
+		if (this->GetID() == 2)
+			this->collideWithNPC = 2;
+
+		if (this->GetID() == 3)
+			this->collideWithNPC = 3;
 	}
+	else 
+	{
+		enterPressed = false;
+		this->collideWithNPC = 0;
+		SetAnimationState(NPC::NPC_AWANDERING);
+	}
+
 }

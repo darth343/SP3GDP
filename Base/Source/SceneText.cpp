@@ -155,7 +155,7 @@ void SceneText::Init()
 	meshList[GEO_TEXT] = MeshBuilder::GenerateText("text", 16, 16);
 	meshList[GEO_TEXT]->textureID = LoadTGA("Image//calibri.tga");
 	meshList[GEO_TEXT]->material.kAmbient.Set(1, 0, 0);
-
+	FontData.Init("Image//FontData.csv");
 	// Load the ground mesh and texture
 	meshList[GEO_BACKGROUND] = MeshBuilder::Generate2DMesh("GEO_BACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
 	meshList[GEO_BACKGROUND]->textureID = LoadTGA("Image//background.tga");
@@ -190,6 +190,24 @@ void SceneText::Init()
 	m_goList.push_back(theEnemy);
 
 	npc.ReadFromFile("Image//Text.txt",m_goList);
+	npcvec = npc.GetVec();
+
+	for (int i = 0; i < npc.GetVec().size(); i++)
+	{
+		if (npcvec[i]->GetID() == 1)
+		{
+			npcvec[i]->position.Set(500, 400, 1);
+		}
+		if (npcvec[i]->GetID() == 2)
+		{
+			npcvec[i]->position.Set(700, 400, 1);
+		}
+		if (npcvec[i]->GetID() == 3)
+		{
+			npcvec[i]->position.Set(600, 400, 1);
+		}
+		m_goList.push_back(dynamic_cast<NPC*>(npcvec[i]));
+	}
 
 	// Initialise and load the REAR tile map
 	//m_cRearMap = new CMap();
@@ -218,7 +236,215 @@ void SceneText::Init()
 	
 	rotateAngle = 0;
 	bLightEnabled = true;
+
+	//BattleScene Variables
+	enemyTurn = false;
+	playerTurn = true;
+
+	firstChoice = true;
+	secondChoice = false;
+	battleStart = false;
+	DNkeyPressed = UPkeyPressed = LEFTkeyPressed = RIGHTkeyPressed = ENTERkeyPressed = false;
+
+	battleSelection = BS_ATTACK;
 }
+
+void SceneText::EnterBattleScene()
+{
+	GS = BATTLE;
+	/*cout << "Start battleScene" << endl;*/
+
+	if (playerTurn && !enemyTurn)
+	{
+		if (Application::IsKeyPressed(VK_UP))
+		{
+			if (UPkeyPressed)
+			{
+				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 2);
+
+				if (firstChoice && battleSelection < BS_ATTACK)
+					battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 4);
+				else if (secondChoice && battleSelection < BS_SLASH)
+					battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 4);
+
+				cout << "BS = " << battleSelection << endl;
+				UPkeyPressed = false;
+			}
+		}
+		else
+			UPkeyPressed = true;
+
+		if (Application::IsKeyPressed(VK_DOWN))
+		{
+			if (DNkeyPressed)
+			{
+				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 2);
+
+				if (firstChoice && battleSelection > BS_RUN)
+					battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 4);
+				else if (secondChoice && battleSelection > BS_BACK)
+					battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 4);
+
+				cout << "BS = " << battleSelection << endl;
+				DNkeyPressed = false;
+			}
+		}
+		else
+			DNkeyPressed = true;
+
+		if (Application::IsKeyPressed(VK_LEFT))
+		{
+			if (LEFTkeyPressed)
+			{
+				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 1);
+
+				if (firstChoice && battleSelection < BS_ATTACK)
+					battleSelection = BS_RUN;
+				else if (secondChoice && battleSelection < BS_SLASH)
+					battleSelection = BS_BACK;
+
+				cout << "BS = " << battleSelection << endl;
+				LEFTkeyPressed = false;
+			}
+		}
+		else
+			LEFTkeyPressed = true;
+
+		if (Application::IsKeyPressed(VK_RIGHT))
+		{
+			if (RIGHTkeyPressed)
+			{
+				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 1);
+
+				if (firstChoice && battleSelection > BS_RUN)
+					battleSelection = BS_ATTACK;
+				else if (secondChoice && battleSelection > BS_BACK)
+					battleSelection = BS_SLASH;
+
+				cout << "BS = " << battleSelection << endl;
+				RIGHTkeyPressed = false;
+			}
+		}
+		else
+			RIGHTkeyPressed = true;
+
+		if (Application::IsKeyPressed(VK_RETURN))
+		{
+			if (firstChoice && ENTERkeyPressed)
+			{
+				switch (battleSelection)
+				{
+				case BS_ATTACK:
+					//Render Attack skills choices (Slash, Stab, (Monster's Skills), Back)
+					battleSelection = BS_SLASH;
+					firstChoice = false;
+					secondChoice = true;
+					cout << "ATTACK! " << endl;
+					secondChoice = true;
+					firstChoice = false;
+					break;
+
+				case BS_ITEM:
+					//Render Item bag design
+					//Battle selection set to Item's
+					firstChoice = false;
+					secondChoice = true;
+					cout << "Item Bag" << battleSelection << endl;
+					secondChoice = true;
+					firstChoice = false;
+					break;
+
+				case BS_CAPTURE:
+					//Start Capture function && render capture function
+					break;
+
+				case BS_RUN:
+					cout << "RUN AWAY" << battleSelection << endl;
+					escapePercentage += Math::RandFloatMinMax(0.0f, 50.0f);
+					cout << "Escape % = " << escapePercentage << endl;
+					if (escapePercentage > 50.0f)
+					{
+						playerTurn = true;
+						enemyTurn = false;
+						escapePercentage = 25.0f;
+						cout << "ESCAPE LOHHHHHHHHHH!" << endl;
+						battleSelection = BS_ATTACK;
+						GS = TESTMAP;
+						//go back to exploring
+					}
+					else
+					{
+						/*enemyTurn = true;
+						playerTurn = false;*/
+						escapePercentage = 25.0f;
+						cout << "WHY YOU NO ESCAPE!!!!" << endl;
+						battleSelection = BS_ATTACK;
+					}
+					break;
+				}
+
+				ENTERkeyPressed = false;
+			}
+			else if (secondChoice && ENTERkeyPressed)
+			{
+				//Second Choice only applys to Attack and Item as it need to display a new numbers of choices
+				cout << "Second Choice Selection" << endl;
+				switch (battleSelection)
+				{
+				case BS_SLASH:
+					//minus enemy hp, then enemy turn = true, player turn = false
+					cout << "Slash enemy " << endl;
+
+					//if enemy not dead
+					enemyTurn = true;
+					playerTurn = false;
+					break;
+				case BS_STAB:
+					//minus enemy hp, then enemy turn = true, player turn = false
+					cout << "Stab enemy " << battleSelection << endl;
+
+					//if enemy not dead
+					enemyTurn = true;
+					playerTurn = false;
+					break;
+				case BS_SKILL:
+					//minus enemy hp, then enemy turn = true, player turn = false
+					cout << " Monster's skills " << battleSelection << endl;
+
+					//if enemy not dead
+					enemyTurn = true;
+					playerTurn = false;
+					break;
+				case BS_BACK:
+					cout << " Back " << battleSelection << endl;
+
+					firstChoice = true;
+					secondChoice = false;
+					battleSelection = BS_ATTACK;
+					//Render back 1st page choices (Attack, Item bag, Capture, Run)
+					break;
+
+				}
+
+				ENTERkeyPressed = false;
+				secondChoice = false;
+				firstChoice = true;
+			}
+
+		}
+		else
+			ENTERkeyPressed = true;
+
+	}
+
+	//Enemy's turn to hit back
+	if (enemyTurn && !playerTurn)
+	{
+
+	}
+
+}
+
 void SceneText::DialogueFile(string filename)
 {
 	
@@ -288,13 +514,64 @@ void SceneText::PlayerUpdate(double dt)
 	if (Application::IsKeyPressed('D'))
 		this->theHero->MoveLeftRight(false, m_cMap, dt);
 	theHero->HeroUpdate(m_cMap, dt, meshList);
-}
 
+	//For Testing Purpose
+	if (Application::IsKeyPressed('G'))
+		battleStart = true;
+}
+static bool enterpressed = false;
 void SceneText::GOupdate(double dt)
 {
 	for (int i = 0; i < m_goList.size(); ++i)
 	{
 		m_goList[i]->Update(dt, theHero->GetPosition(), theHero->GetMapOffset(), m_cMap);
+		//Movement of NPC
+		if (m_goList[i]->type == GameObject::GO_NPC)
+		{
+			NPC* temp = (NPC*)m_goList[i];
+			if (temp->GetID() == 1)
+			{
+				if (temp->GetAnimationState() == NPC::NPC_AWANDERING)
+				{
+					if (temp->position.x > 300)
+						temp->position.x -= 30 * dt;
+					npc1 = true;
+				}
+				else
+					npc1 = false;
+			}
+			if (temp->GetID() == 2)
+			{
+				if (temp->GetAnimationState() == NPC::NPC_AWANDERING)
+				{
+					if (temp->position.y > 100)
+						temp->position.y -= 30 * dt;
+					npc2 = true;
+				}
+				else
+					npc2 = false;
+			}
+			if (temp->GetID() == 3)
+			{
+				if (temp->GetAnimationState() == NPC::NPC_AWANDERING)
+				{
+					if (temp->position.y > 50)
+						temp->position.y -= 30 * dt;
+					npc3 = true;
+				}
+				else
+					npc3 = false;
+			}
+			if (temp->enterPressed && Application::IsKeyPressed(VK_RETURN) && !enterpressed)
+			{
+				enterpressed = true;
+				temp->ScrollDialogue(dialogueNum);
+			}
+			else if (!Application::IsKeyPressed(VK_RETURN) && enterpressed)
+			{
+				enterpressed = false;
+			}
+		}
 		for (int j = i + 1; j < m_goList.size(); ++j)
 		{
 			if (m_goList[i]->CheckCollision(m_goList[j], m_cMap))
@@ -309,23 +586,15 @@ void SceneText::Update(double dt)
 {
 	// Uncomment this if you want to access lights and stuff
 	// UselessUpdate(double dt);
-	//static float time = 0;
-	//time += dt;
-	//Vector3 checkPosition = (theHero->GetPosition() + theHero->GetMapOffset()) * (1.f / m_cMap->GetTileSize());
-	//Vector3 checkPosition2 = (theEnemy->position) * (1.f / m_cMap->GetTileSize());
-	//if (time > 0.2)
-	//{
-	//	testpathfinder.FindPath(m_cMap->theMap[(int)checkPosition.y][(int)checkPosition.x], m_cMap->theMap[(int)checkPosition2.y][(int)checkPosition2.x], m_cMap);
-	//	time = 0;
-	//}
-	//if (testpathfinder.found)
-	//{
-	//	cout << "found" << endl;
-	//	testpathfinder.initializedStartandEnd = false;
-	//}
+	if (Application::IsKeyPressed('V'))
+		dialogueNum = 0;
 	PlayerUpdate(dt);
 	GOupdate(dt);
 	fps = (float)(1.f / dt);
+
+	if (battleStart)
+		EnterBattleScene();
+	
 }
 
 void SceneText::RenderText(Mesh* mesh, std::string text, Color color)
@@ -375,10 +644,12 @@ void SceneText::RenderTextOnScreen(Mesh* mesh, std::string text, Color color, fl
 				glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, mesh->textureID);
 				glUniform1i(m_parameters[U_COLOR_TEXTURE], 0);
+				float pointer = 0.5f;
 				for(unsigned i = 0; i < text.length(); ++i)
 				{
 					Mtx44 characterSpacing;
-					characterSpacing.SetToTranslation(i + 0.5f, 0.3f, 0); //1.0f is the spacing of each character, you may change this value
+					pointer += FontData.charOffsets[text[Math::Min(i, i - 1)]] + 0.1f;
+					characterSpacing.SetToTranslation(pointer, 0.3f, 0); //1.0f is the spacing of each character, you may change this value
 					Mtx44 MVP = projectionStack.Top() * viewStack.Top() * modelStack.Top() * characterSpacing;
 					glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, &MVP.a[0]);
 	
@@ -435,6 +706,7 @@ void SceneText::RenderMeshIn2D(Mesh *mesh, const bool enableLight, const float s
 
 void SceneText::Render2DMeshWScale(Mesh *mesh, const bool enableLight, const float sizeX, const float sizeY, const float x, const float y, const bool rotate, const bool flip)
 {
+	glDisable(GL_CULL_FACE);
 	Mtx44 ortho;
 	ortho.SetToOrtho(0, 800, 0, 600, -10, 10);
 	projectionStack.PushMatrix();
@@ -443,7 +715,14 @@ void SceneText::Render2DMeshWScale(Mesh *mesh, const bool enableLight, const flo
 	viewStack.LoadIdentity();
 	modelStack.PushMatrix();
 	modelStack.LoadIdentity();
-	modelStack.Translate(x, y, 0);
+	if (flip)
+	{
+		modelStack.Translate(x+32, y, 0);
+	}
+	else
+	{
+		modelStack.Translate(x, y, 0);
+	}
 	modelStack.Scale(sizeX, sizeY, 1);
 	if (rotate)
 		modelStack.Rotate(rotateAngle, 0, 0, 1);
@@ -475,7 +754,7 @@ void SceneText::Render2DMeshWScale(Mesh *mesh, const bool enableLight, const flo
 	modelStack.PopMatrix();
 	viewStack.PopMatrix();
 	projectionStack.PopMatrix();
-
+	glEnable(GL_CULL_FACE);
 }
 
 void SceneText::Render2DMesh(Mesh *mesh, bool enableLight, float size, float x, float y, bool rotate, bool flip)
@@ -594,10 +873,12 @@ void SceneText::BasicRender()
 	modelStack.LoadIdentity();
 }
 
+static bool touched = true;
 void SceneText::RenderTestMap()
 {
 	RenderBackground();
 	RenderTileMap(m_cMap);
+	std::ostringstream ss;
 
 	for (int i = 0; i < m_goList.size(); i++)
 	{
@@ -612,46 +893,34 @@ void SceneText::RenderTestMap()
 			if (m_goList[i]->type == GameObject::GO_NPC)
 			{
 				NPC* temp = (NPC*)m_goList[i];
-				if (temp->GetID() == "1")
+				ss.str("");
+				ss.precision(5);
+
+				if (temp->enterPressed && temp->GetID() == temp->collideWhichNPC() && temp->GetNum() == dialogueNum)
 				{
-					m_goList[i]->position.Set(500, 400, 1);
-					Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
+					ss << "Dialogue: " << temp->GetDialogue();	
+					touched = true;
 				}
-				if (temp->GetID() == "2")
-				{
-					m_goList[i]->position.Set(300, 400, 1);
-					Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
-				}
-				if (temp->GetID() == "3")
-				{
-					m_goList[i]->position.Set(700, 400, 1);
-					Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
-				}
+				if (npc1&&npc2&&npc3)
+					dialogueNum = 0;
+
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 30, 0, 100);
+
+				//if (temp->GetNum() == 0)
+				Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
 			}
 			if (m_goList[i]->type == GameObject::GO_ENEMY)
-				Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[0]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
+			{
+				Enemy* temp = (Enemy*)m_goList[i];
+				Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[0]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, temp->flip);
+			}
 		}
 	}
-
-	//for (int i = 0; i < testpathfinder.openList.size(); ++i)
-	//{
-	//	Render2DMesh(meshList[GEO_BLUETILE], false, 1.0f, testpathfinder.openList[i]->posX * 32 - (theHero->GetMapOffset().x), testpathfinder.openList[i]->posY * 32 - (theHero->GetMapOffset().y));
-	//}
-
-	//for (int i = 0; i < testpathfinder.visitedList.size(); ++i)
-	//{
-	//	Render2DMesh(meshList[GEO_GREENTILE], false, 1.0f, testpathfinder.visitedList[i]->posX * 32 - (theHero->GetMapOffset().x), testpathfinder.visitedList[i]->posY * 32 - (theHero->GetMapOffset().y));
-	//}
-
-	//for (int i = 0; i < testpathfinder.pathToEnd.size(); ++i)
-	//{
-	//	Render2DMesh(meshList[GEO_REDTILE], false, 1.0f, testpathfinder.pathToEnd[i].Pos.x * 32 - (theHero->GetMapOffset().x), testpathfinder.pathToEnd[i].Pos.y * 32 - (theHero->GetMapOffset().y));
-	//}
 
 	RenderPlayer();
 
 	//On screen text
-	std::ostringstream ss;
+	ss.str("");
 	ss.precision(5);
 	ss << "FPS: " << fps;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 30, 0, 0);
@@ -665,6 +934,12 @@ void SceneText::Render()
 	if (GS == TESTMAP)
 	{
 		RenderTestMap();
+	}
+
+	if (GS == BATTLE)
+	{
+		//RenderBattleScene....
+		//cout << "Render Battle Scene" << endl;
 	}
 
 }

@@ -4,6 +4,7 @@
 #include "SpriteAnimation.h"
 #include "Mesh.h"
 #include "Items.h"
+#include "Equipment.h"
 
 class CPlayerInfo
 {
@@ -48,10 +49,13 @@ public:
 					   const int topBorder, const int bottomBorder, 
 					   double dt, CMap* m_cMap, bool constrainX, bool constrainY);
 
+	void SetHP(float hp);	
+	void SetDMG(float dmg);	
+	void SetDEF(float def);
+
 	float GetHP();
-	void SetHP(float hp);
 	float GetDMG();
-	void SetDMG(float hp);
+	float GetDEF();
 
 private:
 	// Hero's information
@@ -62,8 +66,18 @@ private:
 	Vector3 mapOffset;
 	// Array for inventory
 	Items Inventory[Items::ITEM_TOTAL];
+	//For Equipment
+	Equipment Equip;
+
+	float playerHP;
+	float playerDamage;
+	float playerDefense;
+
+
+	bool collideSomething;
 
 	float hp;
 	float damage;
-	bool collideSomething;
+	bool collideWithEnemy;
+
 };

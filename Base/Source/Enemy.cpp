@@ -1,12 +1,16 @@
 #include "Enemy.h"
+#include "Application.h"
 
-const float MOVEMENTSPEED = 100.f;
+const float MOVEMENTSPEED = 200.f;
+const float IDLE_TIMER = 1.0;
+//const float PATROL_TIMER = 10;
 const int TILES_BEFORECHASING = 7;
 const int TILES_BEFOREPATROLLING = 12;
 
 Enemy::Enemy(Vector3 scale, int ID)
 : GameObject(scale)
 , monsterID(ID)
+, flip(false)
 {
 	enemyStates = E_IDLE;
 	health = 100.0f;
@@ -44,10 +48,12 @@ void Enemy::MoveLeftRight(double dt, bool left)
 	if (left)
 	{
 		position.x -= dt * MOVEMENTSPEED;
+		flip = false;
 	}
 	else
 	{
 		position.x += dt * MOVEMENTSPEED;
+		flip = true;
 	}
 }
 
@@ -103,8 +109,10 @@ void Enemy::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap
 {
 	if (CheckCollision(playerPos, mapOffset, m_cMap))
 	{
-		cout << "Collided with " << monsterID << endl;
+		SceneText* theScene = (SceneText*)Application::GetInstance().GetScene();
+		theScene->EnterBattleScene();
 	}
+
 	static float IDLE_TIME = 0.f;
 	static float PATROL_TIME = 0.f;
 	switch (enemyStates)
@@ -116,7 +124,7 @@ void Enemy::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap
 		{
 			PATROL_TIME = 0.f;
 		}
-		if (IDLE_TIME > 2.f)
+		if (IDLE_TIME > IDLE_TIMER)
 		{
 			if (patrolPos.IsZero())
 			{

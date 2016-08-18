@@ -14,7 +14,7 @@ Pathfinder::~Pathfinder()
 
 void Pathfinder::FindPath(Tile startTile, Tile endTile, CMap* m_cMap)
 {
-	for (int i = 0; i < 15; ++i)
+	for (int i = 0; i < 20; ++i)
 	{
 		if (!initializedStartandEnd)
 		{
@@ -70,6 +70,8 @@ void Pathfinder::ContinueSearch(CMap* m_cMap)
 {
 	if (openList.empty())
 	{
+		initializedStartandEnd = false;
+		//cout << "BROKE" << endl;
 		return;
 	}
 

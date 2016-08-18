@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "Pathfinder.h"
 #include "Tile.h"
+
 class Enemy : public GameObject
 {
 public:
@@ -29,7 +30,8 @@ enum ENEMY_STATES
 	void MoveUpDown(double dt, bool up);
 	void Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap);
 	friend std::ostream& operator<<(std::ostream& cout, ENEMY_STATES state);
-
+	//Rendering Variables
+	bool flip;
 private:
 	float health;
 	float damage;
