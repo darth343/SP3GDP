@@ -12,6 +12,7 @@
 #include "PlayerInfo.h"
 #include "GameObject.h"
 #include "NPC.h"
+#include "Enemy.h"
 
 class SceneText : public Scene
 {
@@ -75,6 +76,9 @@ public:
 		GEO_HEROWALK,
 		GEO_MONSTER,
 		GEO_POTION,
+		GEO_GREENTILE,
+		GEO_REDTILE,
+		GEO_BLUETILE,
 		GEO_TEXT,
 		NUM_GEOMETRY,
 	};
@@ -125,6 +129,8 @@ private:
 
 	float fps;
 	NPC npc;
+	Enemy* theEnemy;
+	Pathfinder testpathfinder;
 
 	// Handle to the tilemaps
 	CMap* m_cMap;

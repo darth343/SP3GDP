@@ -161,6 +161,17 @@ void SceneText::Init()
 	meshList[GEO_BACKGROUND]->textureID = LoadTGA("Image//background.tga");
 	meshList[GEO_GROUNDTOP] = MeshBuilder::Generate2DMesh("GEO_GROUNDTOP", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
 	meshList[GEO_GROUNDTOP]->textureID = LoadTGA("Image//groundTop.tga");
+
+	meshList[GEO_GREENTILE] = MeshBuilder::Generate2DMesh("GEO_GREENTILE", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
+	meshList[GEO_GREENTILE]->textureID = LoadTGA("Image//greenTile.tga");
+
+	meshList[GEO_REDTILE] = MeshBuilder::Generate2DMesh("GEO_REDTILE", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
+	meshList[GEO_REDTILE]->textureID = LoadTGA("Image//redTile.tga");
+
+	meshList[GEO_BLUETILE] = MeshBuilder::Generate2DMesh("GEO_BLUETILE", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
+	meshList[GEO_BLUETILE]->textureID = LoadTGA("Image//blueTile.tga");
+
+
 	Math::InitRNG();
 	// Initialise and load the tile map
 	m_cMap = new CMap();
@@ -173,9 +184,9 @@ void SceneText::Init()
 	thePotion->position.Set(150, 150, 1);
 	m_goList.push_back(thePotion);
 
-	Enemy* theEnemy = new Enemy(Vector3(32.f, 32.f, 1));
+	theEnemy = new Enemy(Vector3(32.f, 32.f, 1));
 	theEnemy->type = GameObject::GO_ENEMY;
-	theEnemy->position.Set(200, 200, 1);
+	theEnemy->position.Set(64, 224, 1);
 	m_goList.push_back(theEnemy);
 
 	npc.ReadFromFile("Image//Text.txt",m_goList);
@@ -187,7 +198,7 @@ void SceneText::Init()
 
 	// Initialise the hero's position
 	theHero = new CPlayerInfo();
-	theHero->SetPosition(Vector3(50, 200, 0));
+	theHero->SetPosition(Vector3(530, 64, 0));
 
 	meshList[GEO_HEROWALK] = MeshBuilder::Generate2DMesh("Player", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_HEROWALK]->textureID = LoadTGA("Image//Hero.tga");
@@ -298,6 +309,20 @@ void SceneText::Update(double dt)
 {
 	// Uncomment this if you want to access lights and stuff
 	// UselessUpdate(double dt);
+	//static float time = 0;
+	//time += dt;
+	//Vector3 checkPosition = (theHero->GetPosition() + theHero->GetMapOffset()) * (1.f / m_cMap->GetTileSize());
+	//Vector3 checkPosition2 = (theEnemy->position) * (1.f / m_cMap->GetTileSize());
+	//if (time > 0.2)
+	//{
+	//	testpathfinder.FindPath(m_cMap->theMap[(int)checkPosition.y][(int)checkPosition.x], m_cMap->theMap[(int)checkPosition2.y][(int)checkPosition2.x], m_cMap);
+	//	time = 0;
+	//}
+	//if (testpathfinder.found)
+	//{
+	//	cout << "found" << endl;
+	//	testpathfinder.initializedStartandEnd = false;
+	//}
 	PlayerUpdate(dt);
 	GOupdate(dt);
 	fps = (float)(1.f / dt);
@@ -573,6 +598,7 @@ void SceneText::RenderTestMap()
 {
 	RenderBackground();
 	RenderTileMap(m_cMap);
+
 	for (int i = 0; i < m_goList.size(); i++)
 	{
 		if (m_goList[i]->active == true)
@@ -606,6 +632,22 @@ void SceneText::RenderTestMap()
 				Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[0]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
 		}
 	}
+
+	//for (int i = 0; i < testpathfinder.openList.size(); ++i)
+	//{
+	//	Render2DMesh(meshList[GEO_BLUETILE], false, 1.0f, testpathfinder.openList[i]->posX * 32 - (theHero->GetMapOffset().x), testpathfinder.openList[i]->posY * 32 - (theHero->GetMapOffset().y));
+	//}
+
+	//for (int i = 0; i < testpathfinder.visitedList.size(); ++i)
+	//{
+	//	Render2DMesh(meshList[GEO_GREENTILE], false, 1.0f, testpathfinder.visitedList[i]->posX * 32 - (theHero->GetMapOffset().x), testpathfinder.visitedList[i]->posY * 32 - (theHero->GetMapOffset().y));
+	//}
+
+	//for (int i = 0; i < testpathfinder.pathToEnd.size(); ++i)
+	//{
+	//	Render2DMesh(meshList[GEO_REDTILE], false, 1.0f, testpathfinder.pathToEnd[i].Pos.x * 32 - (theHero->GetMapOffset().x), testpathfinder.pathToEnd[i].Pos.y * 32 - (theHero->GetMapOffset().y));
+	//}
+
 	RenderPlayer();
 
 	//On screen text

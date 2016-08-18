@@ -1,6 +1,8 @@
 #ifndef ENEMY_H
 #define ENEMY_H
 #include "GameObject.h"
+#include "Pathfinder.h"
+#include "Tile.h"
 class Enemy : public GameObject
 {
 public:
@@ -22,6 +24,9 @@ enum ENEMY_STATES
 	float GetDamage();
 	void SetDamage(float dmg);
 	int GetMonsterID();
+	void MoveTo(double dt, Tile nextTile, CMap* m_cMap);
+	void MoveLeftRight(double dt, bool left);
+	void MoveUpDown(double dt, bool up);
 	void Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap);
 	friend std::ostream& operator<<(std::ostream& cout, ENEMY_STATES state);
 
@@ -29,6 +34,9 @@ private:
 	float health;
 	float damage;
 	int monsterID;
+	Vector3 prevHeroPos;
+	Vector3 patrolPos;
+	Pathfinder thePath;
 	ENEMY_STATES enemyStates;
 };
 

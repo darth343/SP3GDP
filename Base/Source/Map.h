@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 #include "Tile.h"
+#include "Node.h"
 using namespace std;
 
 class CMap
@@ -20,13 +21,11 @@ public:
 	int GetNumOfTiles_Width(void);		// Get the number of tiles for width of the screen
 	int GetTileSize(void);
 
-	int getNumOfTiles_MapHeight(void);		// Get the number of tiles for height of the map
-	int getNumOfTiles_MapWidth(void);		// Get the number of tiles for width of the map
-
 	int getScreenWidth(void);		// Get the number of tiles for height of the map
 	int getScreenHeight(void);		// Get the number of tiles for width of the map
 	
 	vector<vector<Tile>> theMap;
+	vector<vector<Node *>> theNodeMap;
 
 	int theScreen_Height;
 	int theScreen_Width;

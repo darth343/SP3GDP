@@ -68,6 +68,10 @@ bool CMap::LoadFile(const string mapName)
 		theMap.resize(theNumOfTiles_Height);
 		for (int i = 0; i < theNumOfTiles_Height; ++i)
 			theMap[i].resize(theNumOfTiles_Width);
+
+		theNodeMap.resize(theNumOfTiles_Height);
+		for (int i = 0; i < theNumOfTiles_Height; ++i)
+			theNodeMap[i].resize(theNumOfTiles_Width);
 		}
 		file.clear();
 		file.seekg(0);
@@ -105,6 +109,17 @@ bool CMap::LoadFile(const string mapName)
 					Tile tempTile(Vector3(theNumOfTiles_Width, y), ID, true);
 					theMap[y][x] = tempTile;
 				}
+			}
+		}
+		//Populate Node Map for PathFinding
+		int Node_ID = 0;
+		for (int y = 0; y < theNumOfTiles_Height; ++y)
+		{
+			for (int x = 0; x < theNumOfTiles_Width; ++x)
+			{
+				theNodeMap[y][x] = new Node(theMap[y][x]);
+				theNodeMap[y][x]->nodeID = Node_ID;
+				++Node_ID;
 			}
 		}
 	}

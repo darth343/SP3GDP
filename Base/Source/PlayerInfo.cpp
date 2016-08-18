@@ -286,6 +286,7 @@ void CPlayerInfo::ConstrainHero(const int leftBorder, const int rightBorder,
 	const int topBorder, const int bottomBorder,
 	double dt, CMap* m_cMap, bool constrainX, bool constrainY)
 {
+
 	if (constrainX)
 	{
 		if (mapOffset.x != 0)
