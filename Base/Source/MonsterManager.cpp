@@ -89,7 +89,23 @@ void MonsterManager::readMonsterCSV(const string fileName)
 			MON.setMonsterDef(stoi(temp));
 			temp.clear();
 
-			Monsters.push_back(MON);
+			getline(file, temp, ',');
+			MON.setSkillSlotOneName(temp);
+			temp.clear();
+
+			getline(file, temp, ',');
+			MON.setSkillSlotTwoName(temp);
+			temp.clear();
+
+			getline(file, temp, ',');
+			MON.setSkillSlotThreeName(temp);
+			temp.clear();
+
+			getline(file, temp, ',');
+			MON.setSkillSlotFourName(temp);
+			temp.clear();
+
+			MonsterData.push_back(MON);
 		}
 		file.close();
 	}
