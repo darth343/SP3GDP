@@ -190,7 +190,7 @@ void SceneText::Init()
 
 	Items* theChargeGreen = new Items(Vector3(50.f, 32.f, 1));
 	theChargeGreen->type = GameObject::GO_GREENBAR;
-	theChargeGreen->position.Set(150, 150, 1);
+	theChargeGreen->position.Set(400, 150, 1);
 	m_goList.push_back(theChargeGreen);
 
 	Items* theChargeBar = new Items(Vector3(1.f, 32.f, 1));
@@ -544,7 +544,7 @@ void SceneText::PlayerUpdate(double dt)
 	{
 		currHealth -= 20;
 	}
-	cout << enemyCatchPercentage << endl;
+	//cout << enemyCatchPercentage << endl;
 
 	// Update the hero
 	if (Application::IsKeyPressed('W'))
@@ -590,7 +590,12 @@ void SceneText::GOupdate(double dt)
 
 		if (m_goList[i]->type == GameObject::GO_GREENBAR)
 		{
+			float prevScale = m_goList[i]->scale.x;
 			m_goList[i]->scale.x = enemyCatchPercentage * 0.1;
+			if (m_goList[i]->scale.x > prevScale)
+			{
+				m_goList[i]->position.x -= (m_goList[i]->scale.x - prevScale) * 0.5;
+			}
 		}
 
 		//Movement of NPC
@@ -613,8 +618,12 @@ void SceneText::GOupdate(double dt)
 			if (m_goList[i]->type == GameObject::GO_GREENBAR && m_goList[j]->type == GameObject::GO_MOVE)
 			if (m_goList[i]->CheckCollision(m_goList[j], m_cMap))
 			{
-				cout << "ksdsk";
+				cout << "COLLIDED" << endl;
 				// DO COLLISION RESPONSE BETWEEN TWO GAMEOBJECTS
+			}
+			else
+			{
+				cout << "NOT COLLIDED" << endl;
 			}
 		}
 	}
