@@ -172,22 +172,27 @@ void SceneText::Init()
 	thePotion->type = GameObject::GO_ITEM;
 	thePotion->position.Set(150, 150, 1);
 	m_goList.push_back(thePotion);
+	Items* theChargeRed = new Items(Vector3(500.f, 32.f, 1));
+	theChargeRed->type = GameObject::GO_REDBAR;
+	theChargeRed->position.Set(150, 150, 1);
+	m_goList.push_back(theChargeRed);
 
-	Items* theChargeGreen = new Items(Vector3(32.f, 32.f, 1));
+	Items* theChargeGreen = new Items(Vector3(50.f, 32.f, 1));
 	theChargeGreen->type = GameObject::GO_GREENBAR;
-	theChargeGreen->position.Set(250, 150, 1);
+	theChargeGreen->position.Set(150, 150, 1);
 	m_goList.push_back(theChargeGreen);
 
 	Items* theChargeBar = new Items(Vector3(1.f, 32.f, 1));
 	theChargeBar->type = GameObject::GO_MOVE;
-	theChargeBar->position.Set(250, 150, 1);
+	theChargeBar->position.Set(500, 150, 1);
 	m_goList.push_back(theChargeBar);
 
 	Enemy* theEnemy = new Enemy(Vector3(32.f, 32.f, 1));
 	theEnemy->type = GameObject::GO_ENEMY;
 	theEnemy->position.Set(200, 200, 1);
 	m_goList.push_back(theEnemy);
-
+	enemyMaxHealth = 100;
+	enemyCatchPercentage = 0;
 	npc.ReadFromFile("Image//Text.txt",m_goList);
 	npcvec = npc.GetVec();
 
@@ -238,6 +243,7 @@ void SceneText::Init()
 
 	meshList[GEO_GREEN] = MeshBuilder::Generate2DMesh("Potion", Color(0, 1, 0), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_BAR] = MeshBuilder::Generate2DMesh("Potion", Color(1, 1, 0), 0.0f, 0.0f, 1.0f, 1.0f);
+	meshList[GEO_RED] = MeshBuilder::Generate2DMesh("Potion", Color(1, 0, 0), 0.0f, 0.0f, 1.0f, 1.0f);
 
 
 	theHero->SetPlayerMesh(meshList[GEO_HEROWALK]);
@@ -517,6 +523,18 @@ void SceneText::UselessUpdate(double dt)
 
 void SceneText::PlayerUpdate(double dt)
 {
+	enemyCatchPercentage = (enemyMaxHealth - currHealth) / 100 * 20;
+
+	if (Application::IsKeyPressed('V'))
+	{
+		//enemyCatchPercentage += 10;
+	}
+	if (Application::IsKeyPressed('B'))
+	{
+		currHealth -= 20;
+	}
+	cout << enemyCatchPercentage << endl;
+
 	// Update the hero
 	if (Application::IsKeyPressed('W'))
 		this->theHero->MoveUpDown(false, m_cMap, dt);
@@ -538,25 +556,30 @@ void SceneText::GOupdate(double dt)
 	for (int i = 0; i < m_goList.size(); ++i)
 	{
 		m_goList[i]->Update(dt, theHero->GetPosition(), theHero->GetMapOffset(), m_cMap);
-		
+
 		if (m_goList[i]->type == GameObject::GO_MOVE)
 		{
 			if (moveRight)
 			{
 				m_goList[i]->position.x += 100.f*dt;
 			}
-			if (m_goList[i]->position.x >= 700)
+			if (m_goList[i]->position.x >= 650)
 			{
 				moveRight = false;
 				moveLeft = true;
 			}
 			if (moveLeft)
 				m_goList[i]->position.x -= 100.f *dt;
-			if (m_goList[i]->position.x <= 100)
+			if (m_goList[i]->position.x <= 150)
 			{
 				moveRight = true;
 				moveLeft = false;
 			}
+		}
+
+		if (m_goList[i]->type == GameObject::GO_GREENBAR)
+		{
+			m_goList[i]->scale.x = enemyCatchPercentage * 0.1;
 		}
 
 		//Movement of NPC
@@ -590,8 +613,6 @@ void SceneText::Update(double dt)
 {
 	// Uncomment this if you want to access lights and stuff
 	// UselessUpdate(double dt);
-	if (Application::IsKeyPressed('V'))
-		dialogueNum = 0;
 	PlayerUpdate(dt);
 	GOupdate(dt);
 	fps = (float)(1.f / dt);
@@ -878,11 +899,9 @@ void SceneText::RenderTestMap()
 	{
 		if (m_goList[i]->active == true)
 		{
-			if (m_goList[i]->type == GameObject::GO_ITEM)
+			if (m_goList[i]->type == GameObject::GO_REDBAR)
 			{
-				Items* temp = (Items*)m_goList[i];
-				if (temp->itemType == Items::POTION)
-					Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
+				Render2DMeshWScale(meshList[GEO_RED], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
 			}
 			if (m_goList[i]->type == GameObject::GO_GREENBAR)
 			{
@@ -891,6 +910,12 @@ void SceneText::RenderTestMap()
 			if (m_goList[i]->type == GameObject::GO_MOVE)
 			{
 				Render2DMeshWScale(meshList[GEO_BAR], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
+			}
+			if (m_goList[i]->type == GameObject::GO_ITEM)
+			{
+				Items* temp = (Items*)m_goList[i];
+				if (temp->itemType == Items::POTION)
+					Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
 			}
 			if (m_goList[i]->type == GameObject::GO_NPC)
 			{
@@ -919,8 +944,6 @@ void SceneText::RenderTestMap()
 					}
 				}
 				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 30, 0, 100);
-
-				
 
 				//if (temp->GetNum() == 0)
 				Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);

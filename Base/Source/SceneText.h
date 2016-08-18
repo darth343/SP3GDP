@@ -139,7 +139,9 @@ private:
 	Camera3 camera;
 	int npcsize = 0;
 	float rotateAngle;
-
+	float enemyCatchPercentage;
+	float enemyMaxHealth;
+	float currHealth = 100;
 	MS modelStack;
 	MS viewStack;
 	MS projectionStack;
