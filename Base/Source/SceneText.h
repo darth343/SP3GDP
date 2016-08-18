@@ -178,6 +178,7 @@ private:
 
 	bool enemyTurn, playerTurn;
 
+	bool battleStart;
 	bool DNkeyPressed;
 	bool npc1;
 	bool npc2;
