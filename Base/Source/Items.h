@@ -17,7 +17,6 @@ public:
 		ITEM_TOTAL,
 	};
 
-
 	Items(Vector3 scale = Vector3(1, 1, 1));
 	~Items();
 	

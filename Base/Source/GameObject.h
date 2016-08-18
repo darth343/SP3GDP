@@ -14,6 +14,9 @@ public:
 		GO_ITEM,
 		GO_ENEMY,
 		GO_NPC,
+		GO_REDBAR,
+		GO_GREENBAR,
+		GO_MOVE,
 		GO_TOTAL,
 	};
 	GameObject(Vector3 scale = Vector3(1, 1, 1));
@@ -27,7 +30,9 @@ public:
 	Vector3 position;
 	Vector3 direction;
 	Vector3 scale;
-
+	int maxDia;
+	int currDia;
+	int dialogueNum = 0;
 	// Collision Stuff
 	Vector3 Min;
 	Vector3 Max;

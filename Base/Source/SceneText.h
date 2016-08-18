@@ -92,6 +92,9 @@ public:
 		GEO_GROUNDTOP,
 		GEO_HEROWALK,
 		GEO_MONSTER,
+		GEO_RED,
+		GEO_GREEN,
+		GEO_BAR,
 		GEO_POTION,
 		GEO_TEXT,
 		NUM_GEOMETRY,
@@ -126,9 +129,6 @@ public:
 	void GOupdate(double dt); // Main GO Collisions
 
 	void EnterBattleScene(); //its like the update for BattleScene
-
-
-
 private:
 	unsigned m_vertexArrayID;
 	Mesh* meshList[NUM_GEOMETRY];
@@ -143,7 +143,8 @@ private:
 	MS modelStack;
 	MS viewStack;
 	MS projectionStack;
-
+	bool moveLeft=false;
+	bool moveRight = true;
 	Light lights[2];
 
 	bool bLightEnabled;

@@ -123,6 +123,11 @@ void NPC::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 		}
 		else
 			this->npc1 = false;
+
+		if (this->GetDialogueState() == 1)
+			this->maxDia = 4;
+		else if (this->GetDialogueState() == 2)
+			this->maxDia = 3;
 	}
 	if (this->GetID() == 2)
 	{
