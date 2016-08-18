@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "Mtx44.h"
 #include "Camera3.h"
+#include "Gauge.h"
 #include "Mesh.h"
 #include "MatrixStack.h"
 #include "Light.h"
@@ -12,7 +13,9 @@
 #include "PlayerInfo.h"
 #include "GameObject.h"
 #include "NPC.h"
+#include "Enemy.h"
 #include "EquipmentManager.h"
+#include "CharacterData.h"
 
 class SceneText : public Scene
 {
@@ -38,7 +41,7 @@ class SceneText : public Scene
 		TESTMAP,
 		INVENTORY_SCREEN,
 		BATTLE,
-
+		CATCH,
 		GS_TOTAL,
 	};
 
@@ -94,8 +97,14 @@ public:
 		GEO_MONSTER,
 		GEO_RED,
 		GEO_GREEN,
+		GEO_BATTLESCENE,
+		GEO_BATTLEMONSTER,
+		GEO_BATTLEDIALOUGEBACKGROUND,
 		GEO_BAR,
 		GEO_POTION,
+		GEO_GREENTILE,
+		GEO_REDTILE,
+		GEO_BLUETILE,
 		GEO_TEXT,
 		NUM_GEOMETRY,
 	};
@@ -122,6 +131,7 @@ public:
 	void BasicRender(); // Basic Render Codes, do not touch unless needed 
 	void RenderPlayer();
 	void RenderTestMap();
+	void RenderBattleScene();
 
 	//Update Functions
 	void UselessUpdate(double dt); // Ask KY for details :>
@@ -130,6 +140,7 @@ public:
 
 	void EnterBattleScene(); //its like the update for BattleScene
 private:
+	CharacterData FontData;
 	unsigned m_vertexArrayID;
 	Mesh* meshList[NUM_GEOMETRY];
 	vector<GameObject *> m_goList;
@@ -139,7 +150,9 @@ private:
 	Camera3 camera;
 	int npcsize = 0;
 	float rotateAngle;
-
+	float enemyCatchPercentage;
+	float enemyMaxHealth;
+	float currHealth = 100;
 	MS modelStack;
 	MS viewStack;
 	MS projectionStack;
@@ -151,9 +164,13 @@ private:
 
 	float fps;
 	NPC npc;
+
+	Enemy* theEnemy;
+	Pathfinder testpathfinder;
 	vector<NPC*>npcvec;
 	int dialogueNum = 0;
 	int npcNum = 0;
+	int npcID = 0;
 
 	// Handle to the tilemaps
 	CMap* m_cMap;
@@ -188,7 +205,6 @@ private:
 	bool LEFTkeyPressed;
 	bool RIGHTkeyPressed;
 	bool ENTERkeyPressed;
-
 };
 
 #endif

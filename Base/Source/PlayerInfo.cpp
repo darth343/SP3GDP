@@ -19,7 +19,7 @@ CPlayerInfo::CPlayerInfo(void)
 {
 }
 
-const float MOVEMENT_SPEED = 250.f;
+const float MOVEMENT_SPEED = 225.f;
 const float xOffset = 8.f;
 const float yOffset = 2.f;
 
@@ -292,6 +292,7 @@ void CPlayerInfo::ConstrainHero(const int leftBorder, const int rightBorder,
 	const int topBorder, const int bottomBorder,
 	double dt, CMap* m_cMap, bool constrainX, bool constrainY)
 {
+
 	if (constrainX)
 	{
 		if (mapOffset.x != 0)

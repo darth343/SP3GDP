@@ -155,12 +155,23 @@ void SceneText::Init()
 	meshList[GEO_TEXT] = MeshBuilder::GenerateText("text", 16, 16);
 	meshList[GEO_TEXT]->textureID = LoadTGA("Image//calibri.tga");
 	meshList[GEO_TEXT]->material.kAmbient.Set(1, 0, 0);
-
+	FontData.Init("Image//FontData.csv");
 	// Load the ground mesh and texture
 	meshList[GEO_BACKGROUND] = MeshBuilder::Generate2DMesh("GEO_BACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
 	meshList[GEO_BACKGROUND]->textureID = LoadTGA("Image//background.tga");
 	meshList[GEO_GROUNDTOP] = MeshBuilder::Generate2DMesh("GEO_GROUNDTOP", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
 	meshList[GEO_GROUNDTOP]->textureID = LoadTGA("Image//groundTop.tga");
+
+	meshList[GEO_GREENTILE] = MeshBuilder::Generate2DMesh("GEO_GREENTILE", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
+	meshList[GEO_GREENTILE]->textureID = LoadTGA("Image//greenTile.tga");
+
+	meshList[GEO_REDTILE] = MeshBuilder::Generate2DMesh("GEO_REDTILE", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
+	meshList[GEO_REDTILE]->textureID = LoadTGA("Image//redTile.tga");
+
+	meshList[GEO_BLUETILE] = MeshBuilder::Generate2DMesh("GEO_BLUETILE", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
+	meshList[GEO_BLUETILE]->textureID = LoadTGA("Image//blueTile.tga");
+
+
 	Math::InitRNG();
 	// Initialise and load the tile map
 	m_cMap = new CMap();
@@ -173,21 +184,30 @@ void SceneText::Init()
 	thePotion->position.Set(150, 150, 1);
 	m_goList.push_back(thePotion);
 
-	Items* theChargeGreen = new Items(Vector3(32.f, 32.f, 1));
+	Gauge* theChargeRed = new Gauge(Vector3(500.f, 32.f, 1));
+	theChargeRed->type = GameObject::GO_REDBAR;
+	theChargeRed->gauge = Gauge::GREENBAR;
+	theChargeRed->position.Set(150, 150, 1);
+	m_goList.push_back(theChargeRed);
+
+	Gauge* theChargeGreen = new Gauge(Vector3(50.f, 32.f, 1));
+	theChargeGreen->gauge = Gauge::GREENBAR;
 	theChargeGreen->type = GameObject::GO_GREENBAR;
-	theChargeGreen->position.Set(250, 150, 1);
+	theChargeGreen->position.Set(400, 150, 1);
 	m_goList.push_back(theChargeGreen);
 
-	Items* theChargeBar = new Items(Vector3(1.f, 32.f, 1));
+	Gauge* theChargeBar = new Gauge(Vector3(1.f, 32.f, 1));
+	theChargeBar->gauge = Gauge::MOVE;
 	theChargeBar->type = GameObject::GO_MOVE;
-	theChargeBar->position.Set(250, 150, 1);
+	theChargeBar->position.Set(500, 150, 1);
 	m_goList.push_back(theChargeBar);
 
-	Enemy* theEnemy = new Enemy(Vector3(32.f, 32.f, 1));
+	theEnemy = new Enemy(Vector3(32.f, 32.f, 1));
 	theEnemy->type = GameObject::GO_ENEMY;
-	theEnemy->position.Set(200, 200, 1);
+	theEnemy->position.Set(64, 224, 1);
 	m_goList.push_back(theEnemy);
-
+	enemyMaxHealth = 100;
+	enemyCatchPercentage = 0;
 	npc.ReadFromFile("Image//Text.txt",m_goList);
 	npcvec = npc.GetVec();
 
@@ -225,7 +245,7 @@ void SceneText::Init()
 
 	// Initialise the hero's position
 	theHero = new CPlayerInfo();
-	theHero->SetPosition(Vector3(50, 200, 0));
+	theHero->SetPosition(Vector3(530, 64, 0));
 
 	meshList[GEO_HEROWALK] = MeshBuilder::Generate2DMesh("Player", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_HEROWALK]->textureID = LoadTGA("Image//Hero.tga");
@@ -238,7 +258,15 @@ void SceneText::Init()
 
 	meshList[GEO_GREEN] = MeshBuilder::Generate2DMesh("Potion", Color(0, 1, 0), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_BAR] = MeshBuilder::Generate2DMesh("Potion", Color(1, 1, 0), 0.0f, 0.0f, 1.0f, 1.0f);
+	meshList[GEO_RED] = MeshBuilder::Generate2DMesh("Potion", Color(1, 0, 0), 0.0f, 0.0f, 1.0f, 1.0f);
 
+	meshList[GEO_BATTLESCENE] = MeshBuilder::Generate2DMesh("GEO_BATTLESCENE", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_BATTLESCENE]->textureID = LoadTGA("Image//battleScene.tga");
+	meshList[GEO_BATTLEMONSTER] = MeshBuilder::Generate2DMesh("GEO_BATTLESCENE", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_BATTLEMONSTER]->textureID = LoadTGA("Image//battleMonster.tga");
+
+	meshList[GEO_BATTLEDIALOUGEBACKGROUND] = MeshBuilder::Generate2DMesh("GEO_BATTLEDIALOUGEBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_BATTLEDIALOUGEBACKGROUND]->textureID = LoadTGA("Image//dialougeBG.tga");
 
 	theHero->SetPlayerMesh(meshList[GEO_HEROWALK]);
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
@@ -265,7 +293,7 @@ void SceneText::Init()
 void SceneText::EnterBattleScene()
 {
 	GS = BATTLE;
-	cout << "Start battleScene" << endl;
+	/*cout << "Start battleScene" << endl;*/
 
 	if (playerTurn && !enemyTurn)
 	{
@@ -369,6 +397,8 @@ void SceneText::EnterBattleScene()
 
 				case BS_CAPTURE:
 					//Start Capture function && render capture function
+					GS = CATCH;
+					battleStart = false;
 					break;
 
 				case BS_RUN:
@@ -517,6 +547,15 @@ void SceneText::UselessUpdate(double dt)
 
 void SceneText::PlayerUpdate(double dt)
 {
+	enemyCatchPercentage = (enemyMaxHealth - currHealth) / 100 * 20;
+
+	if (Application::IsKeyPressed('V'))
+	{
+		//enemyCatchPercentage += 10;
+	}
+	
+	//cout << enemyCatchPercentage << endl;
+
 	// Update the hero
 	if (Application::IsKeyPressed('W'))
 		this->theHero->MoveUpDown(false, m_cMap, dt);
@@ -538,24 +577,19 @@ void SceneText::GOupdate(double dt)
 	for (int i = 0; i < m_goList.size(); ++i)
 	{
 		m_goList[i]->Update(dt, theHero->GetPosition(), theHero->GetMapOffset(), m_cMap);
-		
+
 		if (m_goList[i]->type == GameObject::GO_MOVE)
 		{
-			if (moveRight)
+			
+		}
+
+		if (m_goList[i]->type == GameObject::GO_GREENBAR)
+		{
+			float prevScale = m_goList[i]->scale.x;
+			m_goList[i]->scale.x = enemyCatchPercentage * 0.1;
+			if (m_goList[i]->scale.x > prevScale)
 			{
-				m_goList[i]->position.x += 100.f*dt;
-			}
-			if (m_goList[i]->position.x >= 700)
-			{
-				moveRight = false;
-				moveLeft = true;
-			}
-			if (moveLeft)
-				m_goList[i]->position.x -= 100.f *dt;
-			if (m_goList[i]->position.x <= 100)
-			{
-				moveRight = true;
-				moveLeft = false;
+				m_goList[i]->position.x -= (m_goList[i]->scale.x - prevScale) * 0.5;
 			}
 		}
 
@@ -563,6 +597,9 @@ void SceneText::GOupdate(double dt)
 		if (m_goList[i]->type == GameObject::GO_NPC)
 		{
 			NPC* temp = (NPC*)m_goList[i];
+			
+			if (temp->collideWhichNPC() == npcID)
+				temp->currState = currState;
 			
 			if (temp->collideWhichNPC() != 0 && Application::IsKeyPressed(VK_RETURN) && !enterpressed)
 			{
@@ -579,8 +616,12 @@ void SceneText::GOupdate(double dt)
 			if (m_goList[i]->type == GameObject::GO_GREENBAR && m_goList[j]->type == GameObject::GO_MOVE)
 			if (m_goList[i]->CheckCollision(m_goList[j], m_cMap))
 			{
-				cout << "ksdsk";
+				cout << "COLLIDED" << endl;
 				// DO COLLISION RESPONSE BETWEEN TWO GAMEOBJECTS
+			}
+			else
+			{
+			//	cout << "NOT COLLIDED" << endl;
 			}
 		}
 	}
@@ -590,8 +631,6 @@ void SceneText::Update(double dt)
 {
 	// Uncomment this if you want to access lights and stuff
 	// UselessUpdate(double dt);
-	if (Application::IsKeyPressed('V'))
-		dialogueNum = 0;
 	PlayerUpdate(dt);
 	GOupdate(dt);
 	fps = (float)(1.f / dt);
@@ -648,10 +687,12 @@ void SceneText::RenderTextOnScreen(Mesh* mesh, std::string text, Color color, fl
 				glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, mesh->textureID);
 				glUniform1i(m_parameters[U_COLOR_TEXTURE], 0);
+				float pointer = 0.5f;
 				for(unsigned i = 0; i < text.length(); ++i)
 				{
 					Mtx44 characterSpacing;
-					characterSpacing.SetToTranslation(i + 0.5f, 0.3f, 0); //1.0f is the spacing of each character, you may change this value
+					pointer += FontData.charOffsets[text[Math::Min(i, i - 1)]] + 0.1f;
+					characterSpacing.SetToTranslation(pointer, 0.3f, 0); //1.0f is the spacing of each character, you may change this value
 					Mtx44 MVP = projectionStack.Top() * viewStack.Top() * modelStack.Top() * characterSpacing;
 					glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, &MVP.a[0]);
 	
@@ -708,6 +749,7 @@ void SceneText::RenderMeshIn2D(Mesh *mesh, const bool enableLight, const float s
 
 void SceneText::Render2DMeshWScale(Mesh *mesh, const bool enableLight, const float sizeX, const float sizeY, const float x, const float y, const bool rotate, const bool flip)
 {
+	glDisable(GL_CULL_FACE);
 	Mtx44 ortho;
 	ortho.SetToOrtho(0, 800, 0, 600, -10, 10);
 	projectionStack.PushMatrix();
@@ -716,7 +758,14 @@ void SceneText::Render2DMeshWScale(Mesh *mesh, const bool enableLight, const flo
 	viewStack.LoadIdentity();
 	modelStack.PushMatrix();
 	modelStack.LoadIdentity();
-	modelStack.Translate(x, y, 0);
+	if (flip)
+	{
+		modelStack.Translate(x+32, y, 0);
+	}
+	else
+	{
+		modelStack.Translate(x, y, 0);
+	}
 	modelStack.Scale(sizeX, sizeY, 1);
 	if (rotate)
 		modelStack.Rotate(rotateAngle, 0, 0, 1);
@@ -748,7 +797,7 @@ void SceneText::Render2DMeshWScale(Mesh *mesh, const bool enableLight, const flo
 	modelStack.PopMatrix();
 	viewStack.PopMatrix();
 	projectionStack.PopMatrix();
-
+	glEnable(GL_CULL_FACE);
 }
 
 void SceneText::Render2DMesh(Mesh *mesh, bool enableLight, float size, float x, float y, bool rotate, bool flip)
@@ -866,7 +915,6 @@ void SceneText::BasicRender()
 	// Model matrix : an identity matrix (model will be at the origin)
 	modelStack.LoadIdentity();
 }
-
 static bool touched = true;
 void SceneText::RenderTestMap()
 {
@@ -884,21 +932,13 @@ void SceneText::RenderTestMap()
 				if (temp->itemType == Items::POTION)
 					Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
 			}
-			if (m_goList[i]->type == GameObject::GO_GREENBAR)
-			{
-				Render2DMeshWScale(meshList[GEO_GREEN], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
-			}
-			if (m_goList[i]->type == GameObject::GO_MOVE)
-			{
-				Render2DMeshWScale(meshList[GEO_BAR], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
-			}
 			if (m_goList[i]->type == GameObject::GO_NPC)
 			{
 				NPC* temp = (NPC*)m_goList[i];
 				ss.str("");
 				ss.precision(5);
 
-				if (temp->GetDialogueState() == currState && temp->GetID() == temp->collideWhichNPC())
+				if (temp->GetDialogueState() == temp->currState && temp->GetID() == temp->collideWhichNPC())
 				{
 					if (temp->GetNum() == dialogueNum)
 					{
@@ -914,21 +954,25 @@ void SceneText::RenderTestMap()
 						if (temp->GetID() == temp->collideWhichNPC())
 						{
 							currState = 2;
+							npcID = temp->GetID();
+							cout << temp->currState << " " <<  temp->GetID() << " " << temp->GetDialogueState() << endl;
 							dialogueNum = 0;
 						}
 					}
 				}
 				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 30, 0, 100);
 
-				
-
 				//if (temp->GetNum() == 0)
 				Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
 			}
 			if (m_goList[i]->type == GameObject::GO_ENEMY)
-				Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[0]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
+			{
+				Enemy* temp = (Enemy*)m_goList[i];
+				Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[0]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, temp->flip);
+			}
 		}
 	}
+
 	RenderPlayer();
 
 	//On screen text
@@ -936,6 +980,16 @@ void SceneText::RenderTestMap()
 	ss.precision(5);
 	ss << "FPS: " << fps;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 30, 0, 0);
+}
+
+void SceneText::RenderBattleScene()
+{
+	//RenderBackground of battle scene
+	Render2DMesh(meshList[GEO_BATTLESCENE], false, 1.0f);
+
+	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false,0.3,0.3,300,240, false, false);
+
+	Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false, false);
 }
 
 void SceneText::Render()
@@ -951,7 +1005,10 @@ void SceneText::Render()
 	if (GS == BATTLE)
 	{
 		//RenderBattleScene....
-		//cout << "Render Battle Scene" << endl;
+		RenderBattleScene();
+	}
+	if (GS == CATCH)
+	{
 	}
 
 }
