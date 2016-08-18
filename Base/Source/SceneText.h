@@ -181,6 +181,7 @@ private:
 	bool battleStart;
 	bool DNkeyPressed;
 	bool npc1;
+	int currState = 1;
 	bool npc2;
 	bool npc3;
 	bool UPkeyPressed;

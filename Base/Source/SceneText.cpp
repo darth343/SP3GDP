@@ -186,15 +186,29 @@ void SceneText::Init()
 		if (npcvec[i]->GetID() == 1)
 		{
 			npcvec[i]->position.Set(500, 400, 1);
+			if (npcvec[i]->GetDialogueState() == 1)
+				npcvec[i]->maxDia = 4;
+			else if (npcvec[i]->GetDialogueState() == 2)
+				npcvec[i]->maxDia = 3;
 		}
 		if (npcvec[i]->GetID() == 2)
 		{
 			npcvec[i]->position.Set(700, 400, 1);
+			if (npcvec[i]->GetDialogueState() == 1)
+				npcvec[i]->maxDia = 5;
+			else if (npcvec[i]->GetDialogueState() == 2)
+				npcvec[i]->maxDia = 4;
 		}
 		if (npcvec[i]->GetID() == 3)
 		{
 			npcvec[i]->position.Set(600, 400, 1);
+			if (npcvec[i]->GetDialogueState() == 1)
+				npcvec[i]->maxDia = 2;
+			else if (npcvec[i]->GetDialogueState() == 2)
+				npcvec[i]->maxDia = 2;
 		}
+		npcvec[i]->currDia = 1;
+
 		m_goList.push_back(dynamic_cast<NPC*>(npcvec[i]));
 	}
 
@@ -518,40 +532,8 @@ void SceneText::GOupdate(double dt)
 		if (m_goList[i]->type == GameObject::GO_NPC)
 		{
 			NPC* temp = (NPC*)m_goList[i];
-			if (temp->GetID() == 1)
-			{
-				if (temp->GetAnimationState() == NPC::NPC_AWANDERING)
-				{
-					if (temp->position.x > 300)
-						temp->position.x -= 30 * dt;
-					npc1 = true;
-				}
-				else
-					npc1 = false;
-			}
-			if (temp->GetID() == 2)
-			{
-				if (temp->GetAnimationState() == NPC::NPC_AWANDERING)
-				{
-					if (temp->position.y > 100)
-						temp->position.y -= 30 * dt;
-					npc2 = true;
-				}
-				else
-					npc2 = false;
-			}
-			if (temp->GetID() == 3)
-			{
-				if (temp->GetAnimationState() == NPC::NPC_AWANDERING)
-				{
-					if (temp->position.y > 50)
-						temp->position.y -= 30 * dt;
-					npc3 = true;
-				}
-				else
-					npc3 = false;
-			}
-			if (temp->enterPressed && Application::IsKeyPressed(VK_RETURN) && !enterpressed)
+			
+			if (temp->collideWhichNPC() != 0 && Application::IsKeyPressed(VK_RETURN) && !enterpressed)
 			{
 				enterpressed = true;
 				temp->ScrollDialogue(dialogueNum);
@@ -875,15 +857,29 @@ void SceneText::RenderTestMap()
 				ss.str("");
 				ss.precision(5);
 
-				if (temp->enterPressed && temp->GetID() == temp->collideWhichNPC() && temp->GetNum() == dialogueNum)
+				if (temp->GetDialogueState() == currState && temp->GetID() == temp->collideWhichNPC())
 				{
-					ss << "Dialogue: " << temp->GetDialogue();	
-					touched = true;
-				}
-				if (npc1&&npc2&&npc3)
-					dialogueNum = 0;
+					if (temp->GetNum() == dialogueNum)
+					{
+						ss << "Dialogue: " << temp->GetDialogue();
 
+					}
+					if (dialogueNum == temp->maxDia)
+					{
+						ss << "Enter to Exit";
+					}
+					else if (dialogueNum >= temp->maxDia)
+					{
+						if (temp->GetID() == temp->collideWhichNPC())
+						{
+							currState = 2;
+							dialogueNum = 0;
+						}
+					}
+				}
 				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 30, 0, 100);
+
+				
 
 				//if (temp->GetNum() == 0)
 				Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
