@@ -186,15 +186,29 @@ void SceneText::Init()
 		if (npcvec[i]->GetID() == 1)
 		{
 			npcvec[i]->position.Set(500, 400, 1);
+			if (npcvec[i]->GetDialogueState() == 1)
+				npcvec[i]->maxDia = 4;
+			else if (npcvec[i]->GetDialogueState() == 2)
+				npcvec[i]->maxDia = 3;
 		}
 		if (npcvec[i]->GetID() == 2)
 		{
 			npcvec[i]->position.Set(700, 400, 1);
+			if (npcvec[i]->GetDialogueState() == 1)
+				npcvec[i]->maxDia = 5;
+			else if (npcvec[i]->GetDialogueState() == 2)
+				npcvec[i]->maxDia = 4;
 		}
 		if (npcvec[i]->GetID() == 3)
 		{
 			npcvec[i]->position.Set(600, 400, 1);
+			if (npcvec[i]->GetDialogueState() == 1)
+				npcvec[i]->maxDia = 2;
+			else if (npcvec[i]->GetDialogueState() == 2)
+				npcvec[i]->maxDia = 2;
 		}
+		npcvec[i]->currDia = 1;
+
 		m_goList.push_back(dynamic_cast<NPC*>(npcvec[i]));
 	}
 
@@ -230,7 +244,10 @@ void SceneText::Init()
 	enemyTurn = false;
 	playerTurn = true;
 
-	DNkeyPressed = UPkeyPressed = LEFTkeyPressed = RIGHTkeyPressed = false;
+	firstChoice = true;
+	secondChoice = false;
+	battleStart = false;
+	DNkeyPressed = UPkeyPressed = LEFTkeyPressed = RIGHTkeyPressed = ENTERkeyPressed = false;
 
 	battleSelection = BS_ATTACK;
 }
@@ -238,202 +255,197 @@ void SceneText::Init()
 void SceneText::EnterBattleScene()
 {
 	GS = BATTLE;
-	cout << "Start " << endl;
-	cout << "Selection = " << battleSelection << endl;
+	cout << "Start battleScene" << endl;
 
-	//RECODE
-	//while (Scene still equal BattleScene)
-	while (GS == BATTLE)
+	if (playerTurn && !enemyTurn)
 	{
-		if (playerTurn && !enemyTurn)
+		if (Application::IsKeyPressed(VK_UP))
 		{
-			if (Application::IsKeyPressed(VK_UP))
+			if (UPkeyPressed)
 			{
-				if (UPkeyPressed)
-				{
-					battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 2);
+				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 2);
 
-					if (firstChoice && battleSelection < BS_ATTACK)
-						battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 4);
-					else if (secondChoice && battleSelection < BS_SLASH)
-						battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 4);
+				if (firstChoice && battleSelection < BS_ATTACK)
+					battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 4);
+				else if (secondChoice && battleSelection < BS_SLASH)
+					battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 4);
 
-					cout << "BS = " << battleSelection << endl;
-					UPkeyPressed = false;
-				}
+				cout << "BS = " << battleSelection << endl;
+				UPkeyPressed = false;
 			}
-			else
-				UPkeyPressed = true;
+		}
+		else
+			UPkeyPressed = true;
 
-			if (Application::IsKeyPressed(VK_DOWN))
+		if (Application::IsKeyPressed(VK_DOWN))
+		{
+			if (DNkeyPressed)
 			{
-				if (DNkeyPressed)
-				{
-					battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 2);
+				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 2);
 
-					if (firstChoice && battleSelection > BS_RUN)
-						battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 4);
-					else if (secondChoice && battleSelection > BS_BACK)
-						battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 4);
+				if (firstChoice && battleSelection > BS_RUN)
+					battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 4);
+				else if (secondChoice && battleSelection > BS_BACK)
+					battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 4);
 
-					cout << "BS = " << battleSelection << endl;
-					DNkeyPressed = false;
-				}
+				cout << "BS = " << battleSelection << endl;
+				DNkeyPressed = false;
 			}
-			else
-				DNkeyPressed = true;
+		}
+		else
+			DNkeyPressed = true;
 
-			if (Application::IsKeyPressed(VK_LEFT))
+		if (Application::IsKeyPressed(VK_LEFT))
+		{
+			if (LEFTkeyPressed)
 			{
-				if (LEFTkeyPressed)
-				{
-					battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 1);
+				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 1);
 
-					if (firstChoice && battleSelection < BS_ATTACK)
-						battleSelection = BS_RUN;
-					else if (secondChoice && battleSelection < BS_SLASH)
-						battleSelection = BS_BACK;
+				if (firstChoice && battleSelection < BS_ATTACK)
+					battleSelection = BS_RUN;
+				else if (secondChoice && battleSelection < BS_SLASH)
+					battleSelection = BS_BACK;
 
-					cout << "BS = " << battleSelection << endl;
-					LEFTkeyPressed = false;
-				}
+				cout << "BS = " << battleSelection << endl;
+				LEFTkeyPressed = false;
 			}
-			else
-				LEFTkeyPressed = true;
+		}
+		else
+			LEFTkeyPressed = true;
 
-			if (Application::IsKeyPressed(VK_RIGHT))
+		if (Application::IsKeyPressed(VK_RIGHT))
+		{
+			if (RIGHTkeyPressed)
 			{
-				if (RIGHTkeyPressed)
-				{
-					battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 1);
+				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 1);
 
-					if (firstChoice && battleSelection > BS_RUN)
-						battleSelection = BS_ATTACK;
-					else if (secondChoice && battleSelection > BS_BACK)
-						battleSelection = BS_SLASH;
+				if (firstChoice && battleSelection > BS_RUN)
+					battleSelection = BS_ATTACK;
+				else if (secondChoice && battleSelection > BS_BACK)
+					battleSelection = BS_SLASH;
 
-					cout << "BS = " << battleSelection << endl;
-					RIGHTkeyPressed = false;
-				}
+				cout << "BS = " << battleSelection << endl;
+				RIGHTkeyPressed = false;
 			}
-			else
-				RIGHTkeyPressed = true;
+		}
+		else
+			RIGHTkeyPressed = true;
 
-			if (Application::IsKeyPressed(VK_RETURN))
+		if (Application::IsKeyPressed(VK_RETURN))
+		{
+			if (firstChoice && ENTERkeyPressed)
 			{
-				if (firstChoice && ENTERkeyPressed)
+				switch (battleSelection)
 				{
-					switch (battleSelection)
+				case BS_ATTACK:
+					//Render Attack skills choices (Slash, Stab, (Monster's Skills), Back)
+					battleSelection = BS_SLASH;
+					firstChoice = false;
+					secondChoice = true;
+					cout << "ATTACK! " << endl;
+					secondChoice = true;
+					firstChoice = false;
+					break;
+
+				case BS_ITEM:
+					//Render Item bag design
+					//Battle selection set to Item's
+					firstChoice = false;
+					secondChoice = true;
+					cout << "Item Bag" << battleSelection << endl;
+					secondChoice = true;
+					firstChoice = false;
+					break;
+
+				case BS_CAPTURE:
+					//Start Capture function && render capture function
+					break;
+
+				case BS_RUN:
+					cout << "RUN AWAY" << battleSelection << endl;
+					escapePercentage += Math::RandFloatMinMax(0.0f, 50.0f);
+					cout << "Escape % = " << escapePercentage << endl;
+					if (escapePercentage > 50.0f)
 					{
-					case BS_ATTACK:
-						//Render Attack skills choices (Slash, Stab, (Monster's Skills), Back)
-						battleSelection = BS_SLASH;
-						firstChoice = false;
-						secondChoice = true;
-						cout << "ATTACK! " << endl;
-						secondChoice = true;
-						firstChoice = false;
-						break;
-
-					case BS_ITEM:
-						//Render Item bag design
-						//Battle selection set to Item's
-						firstChoice = false;
-						secondChoice = true;
-						cout << "Item Bag" << battleSelection << endl;
-						secondChoice = true;
-						firstChoice = false;
-						break;
-
-					case BS_CAPTURE:
-						//Start Capture function && render capture function
-						break;
-
-					case BS_RUN:
-						cout << "RUN AWAY" << battleSelection << endl;
-						escapePercentage += Math::RandFloatMinMax(0.0f, 50.0f);
-						cout << "Escape % = " << escapePercentage << endl;
-						if (escapePercentage > 50.0f)
-						{
-							playerTurn = true;
-							enemyTurn = false;
-							escapePercentage = 25.0f;
-							cout << "ESCAPE LOHHHHHHHHHH!" << endl;
-							battleSelection = BS_ATTACK;
-							GS = TESTMAP;
-							//go back to exploring
-						}
-						else
-						{
-							/*enemyTurn = true;
-							playerTurn = false;*/
-							escapePercentage = 25.0f;
-							cout << "WHY YOU NO ESCAPE!!!!" << endl;
-							battleSelection = BS_ATTACK;
-						}
-						break;
-					}
-
-					ENTERkeyPressed = false;
-				}
-				else if (secondChoice && ENTERkeyPressed)
-				{
-					//Second Choice only applys to Attack and Item as it need to display a new numbers of choices
-					cout << "Second Choice Selection" << endl;
-					switch (battleSelection)
-					{
-					case BS_SLASH:
-						//minus enemy hp, then enemy turn = true, player turn = false
-						cout << "Slash enemy " << endl;
-
-						//if enemy not dead
-						enemyTurn = true;
-						playerTurn = false;
-						break;
-					case BS_STAB:
-						//minus enemy hp, then enemy turn = true, player turn = false
-						cout << "Stab enemy " << battleSelection << endl;
-
-						//if enemy not dead
-						enemyTurn = true;
-						playerTurn = false;
-						break;
-					case BS_SKILL:
-						//minus enemy hp, then enemy turn = true, player turn = false
-						cout << " Monster's skills " << battleSelection << endl;
-
-						//if enemy not dead
-						enemyTurn = true;
-						playerTurn = false;
-						break;
-					case BS_BACK:
-						cout << " Back " << battleSelection << endl;
-
-						firstChoice = true;
-						secondChoice = false;
+						playerTurn = true;
+						enemyTurn = false;
+						escapePercentage = 25.0f;
+						cout << "ESCAPE LOHHHHHHHHHH!" << endl;
 						battleSelection = BS_ATTACK;
-						//Render back 1st page choices (Attack, Item bag, Capture, Run)
-						break;
-
+						GS = TESTMAP;
+						//go back to exploring
 					}
+					else
+					{
+						/*enemyTurn = true;
+						playerTurn = false;*/
+						escapePercentage = 25.0f;
+						cout << "WHY YOU NO ESCAPE!!!!" << endl;
+						battleSelection = BS_ATTACK;
+					}
+					break;
+				}
 
-					ENTERkeyPressed = false;
-					secondChoice = false;
+				ENTERkeyPressed = false;
+			}
+			else if (secondChoice && ENTERkeyPressed)
+			{
+				//Second Choice only applys to Attack and Item as it need to display a new numbers of choices
+				cout << "Second Choice Selection" << endl;
+				switch (battleSelection)
+				{
+				case BS_SLASH:
+					//minus enemy hp, then enemy turn = true, player turn = false
+					cout << "Slash enemy " << endl;
+
+					//if enemy not dead
+					enemyTurn = true;
+					playerTurn = false;
+					break;
+				case BS_STAB:
+					//minus enemy hp, then enemy turn = true, player turn = false
+					cout << "Stab enemy " << battleSelection << endl;
+
+					//if enemy not dead
+					enemyTurn = true;
+					playerTurn = false;
+					break;
+				case BS_SKILL:
+					//minus enemy hp, then enemy turn = true, player turn = false
+					cout << " Monster's skills " << battleSelection << endl;
+
+					//if enemy not dead
+					enemyTurn = true;
+					playerTurn = false;
+					break;
+				case BS_BACK:
+					cout << " Back " << battleSelection << endl;
+
 					firstChoice = true;
+					secondChoice = false;
+					battleSelection = BS_ATTACK;
+					//Render back 1st page choices (Attack, Item bag, Capture, Run)
+					break;
+
 				}
 
+				ENTERkeyPressed = false;
+				secondChoice = false;
+				firstChoice = true;
 			}
-			else
-				ENTERkeyPressed = true;
 
 		}
+		else
+			ENTERkeyPressed = true;
 
-		//Enemy's turn to hit back
-		if (enemyTurn)
-		{
-
-		}
 	}
+
+	//Enemy's turn to hit back
+	if (enemyTurn && !playerTurn)
+	{
+
+	}
+
 }
 
 void SceneText::DialogueFile(string filename)
@@ -508,7 +520,7 @@ void SceneText::PlayerUpdate(double dt)
 
 	//For Testing Purpose
 	if (Application::IsKeyPressed('G'))
-		EnterBattleScene();
+		battleStart = true;
 }
 static bool enterpressed = false;
 void SceneText::GOupdate(double dt)
@@ -520,40 +532,8 @@ void SceneText::GOupdate(double dt)
 		if (m_goList[i]->type == GameObject::GO_NPC)
 		{
 			NPC* temp = (NPC*)m_goList[i];
-			if (temp->GetID() == 1)
-			{
-				if (temp->GetAnimationState() == NPC::NPC_AWANDERING)
-				{
-					if (temp->position.x > 300)
-						temp->position.x -= 30 * dt;
-					npc1 = true;
-				}
-				else
-					npc1 = false;
-			}
-			if (temp->GetID() == 2)
-			{
-				if (temp->GetAnimationState() == NPC::NPC_AWANDERING)
-				{
-					if (temp->position.y > 100)
-						temp->position.y -= 30 * dt;
-					npc2 = true;
-				}
-				else
-					npc2 = false;
-			}
-			if (temp->GetID() == 3)
-			{
-				if (temp->GetAnimationState() == NPC::NPC_AWANDERING)
-				{
-					if (temp->position.y > 50)
-						temp->position.y -= 30 * dt;
-					npc3 = true;
-				}
-				else
-					npc3 = false;
-			}
-			if (temp->enterPressed && Application::IsKeyPressed(VK_RETURN) && !enterpressed)
+			
+			if (temp->collideWhichNPC() != 0 && Application::IsKeyPressed(VK_RETURN) && !enterpressed)
 			{
 				enterpressed = true;
 				temp->ScrollDialogue(dialogueNum);
@@ -582,6 +562,9 @@ void SceneText::Update(double dt)
 	PlayerUpdate(dt);
 	GOupdate(dt);
 	fps = (float)(1.f / dt);
+
+	if (battleStart)
+		EnterBattleScene();
 	
 }
 
@@ -874,15 +857,29 @@ void SceneText::RenderTestMap()
 				ss.str("");
 				ss.precision(5);
 
-				if (temp->enterPressed && temp->GetID() == temp->collideWhichNPC() && temp->GetNum() == dialogueNum)
+				if (temp->GetDialogueState() == currState && temp->GetID() == temp->collideWhichNPC())
 				{
-					ss << "Dialogue: " << temp->GetDialogue();	
-					touched = true;
-				}
-				if (npc1&&npc2&&npc3)
-					dialogueNum = 0;
+					if (temp->GetNum() == dialogueNum)
+					{
+						ss << "Dialogue: " << temp->GetDialogue();
 
+					}
+					if (dialogueNum == temp->maxDia)
+					{
+						ss << "Enter to Exit";
+					}
+					else if (dialogueNum >= temp->maxDia)
+					{
+						if (temp->GetID() == temp->collideWhichNPC())
+						{
+							currState = 2;
+							dialogueNum = 0;
+						}
+					}
+				}
 				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 30, 0, 100);
+
+				
 
 				//if (temp->GetNum() == 0)
 				Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
