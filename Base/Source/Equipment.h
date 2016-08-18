@@ -1,4 +1,5 @@
 #pragma once
+#include "MonsterManager.h"
 #include <string>
 
 using std::string;
@@ -41,6 +42,8 @@ private:
 	int EQDef; // Def value of Equipment
 	int EQHP; // HP value of Equipment
 	//int crit // Crit Chance of Equipment
+
+	Monster MonMon;
 
 
 

@@ -118,7 +118,7 @@ public:
 	void RenderTileMap(CMap* m_cMap, Vector3 speed = Vector3(1, 1, 1));
 	void DialogueFile(string);
 
-	//Render FUnctions
+	//Render Functions
 	void BasicRender(); // Basic Render Codes, do not touch unless needed 
 	void RenderPlayer();
 	void RenderTestMap();
@@ -164,7 +164,6 @@ private:
 
 	// Equipment Functions
 	EquipmentManager equipManager;
-
 
 	//BattleScene Variables
 
