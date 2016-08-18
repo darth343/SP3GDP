@@ -96,6 +96,9 @@ public:
 		GEO_MONSTER,
 		GEO_RED,
 		GEO_GREEN,
+		GEO_BATTLESCENE,
+		GEO_BATTLEMONSTER,
+		GEO_BATTLEDIALOUGEBACKGROUND,
 		GEO_BAR,
 		GEO_POTION,
 		GEO_GREENTILE,
@@ -127,6 +130,7 @@ public:
 	void BasicRender(); // Basic Render Codes, do not touch unless needed 
 	void RenderPlayer();
 	void RenderTestMap();
+	void RenderBattleScene();
 
 	//Update Functions
 	void UselessUpdate(double dt); // Ask KY for details :>

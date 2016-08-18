@@ -256,6 +256,13 @@ void SceneText::Init()
 	meshList[GEO_BAR] = MeshBuilder::Generate2DMesh("Potion", Color(1, 1, 0), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_RED] = MeshBuilder::Generate2DMesh("Potion", Color(1, 0, 0), 0.0f, 0.0f, 1.0f, 1.0f);
 
+	meshList[GEO_BATTLESCENE] = MeshBuilder::Generate2DMesh("GEO_BATTLESCENE", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_BATTLESCENE]->textureID = LoadTGA("Image//battleScene.tga");
+	meshList[GEO_BATTLEMONSTER] = MeshBuilder::Generate2DMesh("GEO_BATTLESCENE", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_BATTLEMONSTER]->textureID = LoadTGA("Image//battleMonster.tga");
+
+	meshList[GEO_BATTLEDIALOUGEBACKGROUND] = MeshBuilder::Generate2DMesh("GEO_BATTLEDIALOUGEBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_BATTLEDIALOUGEBACKGROUND]->textureID = LoadTGA("Image//dialougeBG.tga");
 
 	theHero->SetPlayerMesh(meshList[GEO_HEROWALK]);
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
@@ -995,6 +1002,16 @@ void SceneText::RenderTestMap()
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 30, 0, 0);
 }
 
+void SceneText::RenderBattleScene()
+{
+	//RenderBackground of battle scene
+	Render2DMesh(meshList[GEO_BATTLESCENE], false, 1.0f);
+
+	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false,0.3,0.3,300,240, false, false);
+
+	Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false, false);
+}
+
 void SceneText::Render()
 {
 	BasicRender(); // Basic Render stuff, please don't comment this out, like seriously
@@ -1008,7 +1025,7 @@ void SceneText::Render()
 	if (GS == BATTLE)
 	{
 		//RenderBattleScene....
-		//cout << "Render Battle Scene" << endl;
+		RenderBattleScene();
 	}
 
 }
