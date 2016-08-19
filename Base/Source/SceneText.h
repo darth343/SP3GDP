@@ -98,6 +98,7 @@ public:
 		GEO_RED,
 		GEO_GREEN,
 		GEO_BATTLESCENE,
+		GEO_BATTLEARROW,
 		GEO_BATTLEMONSTER,
 		GEO_BATTLEDIALOUGEBACKGROUND,
 		GEO_BAR,
@@ -193,18 +194,20 @@ private:
 	//Escape chances
 	float escapePercentage;
 
+	//BattleScene Arow position
+	float arrowPosX;
+	float arrowPosY;
+
+	//Current Turn for battle scene
 	bool enemyTurn, playerTurn;
 
+	//Stating whether has the battle started or not 
 	bool battleStart;
-	bool DNkeyPressed;
-	bool npc1;
+
 	int currState = 1;
+	bool npc1;
 	bool npc2;
 	bool npc3;
-	bool UPkeyPressed;
-	bool LEFTkeyPressed;
-	bool RIGHTkeyPressed;
-	bool ENTERkeyPressed;
 };
 
 #endif

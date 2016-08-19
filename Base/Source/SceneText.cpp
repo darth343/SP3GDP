@@ -268,6 +268,9 @@ void SceneText::Init()
 	meshList[GEO_BATTLEDIALOUGEBACKGROUND] = MeshBuilder::Generate2DMesh("GEO_BATTLEDIALOUGEBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
 	meshList[GEO_BATTLEDIALOUGEBACKGROUND]->textureID = LoadTGA("Image//dialougeBG.tga");
 
+	meshList[GEO_BATTLEARROW] = MeshBuilder::Generate2DMesh("GEO_BATTLEARROW", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_BATTLEARROW]->textureID = LoadTGA("Image//arrow.tga");
+
 	theHero->SetPlayerMesh(meshList[GEO_HEROWALK]);
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
 	Mtx44 perspective;
@@ -285,10 +288,20 @@ void SceneText::Init()
 	firstChoice = true;
 	secondChoice = false;
 	battleStart = false;
-	DNkeyPressed = UPkeyPressed = LEFTkeyPressed = RIGHTkeyPressed = ENTERkeyPressed = false;
+
+	//Aarow position for Battle Scene
+	arrowPosX = 125;
+	arrowPosY = 92.5;
 
 	battleSelection = BS_ATTACK;
 }
+
+//BattleScene Key press 
+static bool DNkeyPressed = false;
+static bool UPkeyPressed = false;
+static bool LEFTkeyPressed = false;
+static bool RIGHTkeyPressed = false;
+static bool ENTERkeyPressed = false;
 
 void SceneText::EnterBattleScene()
 {
@@ -344,6 +357,9 @@ void SceneText::EnterBattleScene()
 				else if (secondChoice && battleSelection < BS_SLASH)
 					battleSelection = BS_BACK;
 
+				if (arrowPosX > 290)
+					arrowPosX -= 290;
+
 				cout << "BS = " << battleSelection << endl;
 				LEFTkeyPressed = false;
 			}
@@ -361,6 +377,9 @@ void SceneText::EnterBattleScene()
 					battleSelection = BS_ATTACK;
 				else if (secondChoice && battleSelection > BS_BACK)
 					battleSelection = BS_SLASH;
+
+				if (arrowPosX < 290)
+					arrowPosX += 290;
 
 				cout << "BS = " << battleSelection << endl;
 				RIGHTkeyPressed = false;
@@ -991,12 +1010,28 @@ void SceneText::RenderBattleScene()
 
 	Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false, false);
 
-	ostringstream ss;
+	Render2DMeshWScale(meshList[GEO_BATTLEARROW], false, 0.1, 0.05, arrowPosX, arrowPosY, false, false);
+
+	std::ostringstream ss;
+	ss.str("");
+	ss.precision(5);
+	ss << "Attack";
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 200, 100);
 
 	ss.str("");
 	ss.precision(5);
-	ss << "ABCDEFGHIJKLMNOPQRSTUVWXYZ: " << fps;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 30, 60, 30);
+	ss << "Item";
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 500, 100);
+
+	ss.str("");
+	ss.precision(5);
+	ss << "Capture";
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 200, 50);
+
+	ss.str("");
+	ss.precision(5);
+	ss << "Run";
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 500, 50);
 }
 
 void SceneText::Render()
