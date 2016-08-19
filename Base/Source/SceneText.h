@@ -225,8 +225,6 @@ private:
 	bool RIGHTkeyPressed;
 	bool ENTERkeyPressed;
 	bool IkeyPressed;
-
->>>>>>> origin/master
 };
 
 #endif
