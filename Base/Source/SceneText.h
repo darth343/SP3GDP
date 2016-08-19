@@ -98,6 +98,7 @@ public:
 		GEO_RED,
 		GEO_GREEN,
 		GEO_NPC,
+		GEO_NPCPIC,
 		GEO_BATTLESCENE,
 		GEO_BATTLEARROW,
 		GEO_BATTLEMONSTER,
@@ -166,6 +167,7 @@ private:
 
 	bool bLightEnabled;
 
+	bool renderNPCstuff = false;
 	float fps;
 	NPC npc;
 

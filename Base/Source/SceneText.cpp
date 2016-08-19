@@ -38,7 +38,6 @@ void SceneText::Init()
 	glEnable(GL_CULL_FACE);
 	
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -167,6 +166,9 @@ void SceneText::Init()
 
 	meshList[GEO_NPC] = MeshBuilder::Generate2DMesh("GEO_GREENTILE", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
 	meshList[GEO_NPC]->textureID = LoadTGA("Image//NPC1.tga");
+
+	meshList[GEO_NPCPIC] = MeshBuilder::Generate2DMesh("GEO_GREENTILE", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
+	meshList[GEO_NPCPIC]->textureID = LoadTGA("Image//NPC_1PIC.tga");
 
 	meshList[GEO_REDTILE] = MeshBuilder::Generate2DMesh("GEO_REDTILE", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
 	meshList[GEO_REDTILE]->textureID = LoadTGA("Image//redTile.tga");
@@ -672,7 +674,6 @@ void SceneText::RenderTextOnScreen(Mesh* mesh, std::string text, Color color, fl
 {
 	if(!mesh || mesh->textureID <= 0)
 		return;
-
 	Mtx44 ortho;
 	ortho.SetToOrtho(0, 800, 0, 600, -10, 10);
 	projectionStack.PushMatrix();
@@ -706,6 +707,7 @@ void SceneText::RenderTextOnScreen(Mesh* mesh, std::string text, Color color, fl
 			modelStack.PopMatrix();
 		viewStack.PopMatrix();
 	projectionStack.PopMatrix();
+
 }
 
 void SceneText::RenderMeshIn2D(Mesh *mesh, const bool enableLight, const float size, const float x, const float y, const bool rotate)
@@ -923,6 +925,12 @@ void SceneText::RenderTestMap()
 {
 	RenderBackground();
 	RenderTileMap(m_cMap);
+	if (renderNPCstuff)
+	{
+		Render2DMeshWScale(meshList[GEO_NPCPIC], false, 300, 300, 100, 100, false, false);
+		Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false, false);
+	}
+
 	std::ostringstream ss;
 
 	for (int i = 0; i < m_goList.size(); i++)
@@ -935,18 +943,28 @@ void SceneText::RenderTestMap()
 				if (temp->itemType == Items::POTION)
 					Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
 			}
+
 			if (m_goList[i]->type == GameObject::GO_NPC)
 			{
+
 				NPC* temp = (NPC*)m_goList[i];
+				
 				ss.str("");
 				ss.precision(5);
+				Render2DMeshWScale(meshList[GEO_NPC], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
+
 				if (temp->GetDialogueState() == temp->currState && temp->GetID() == temp->collideWhichNPC())
 				{
+					if (dialogueNum == temp->maxDia)
+						ss << "Enter to Exit";
 					if (temp->GetNum() == dialogueNum)
 						ss << "Dialogue: " << temp->GetDialogue();
 
-					if (dialogueNum == temp->maxDia)
-						ss << "Enter to Exit";
+					if (dialogueNum >= 1 && dialogueNum <= temp->maxDia)
+					{
+						renderNPCstuff = true;
+						RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 30, 60, 100);
+					}
 
 					else if (dialogueNum >= temp->maxDia)
 					{
@@ -955,13 +973,12 @@ void SceneText::RenderTestMap()
 							npcID = temp->collideWhichNPC();
 							currState = 2;
 							dialogueNum = 0;
+							renderNPCstuff = false;
 						}
 					}
-				}
-				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 30, 0, 100);
+					
 
-				//if (temp->GetNum() == 0)
-				Render2DMeshWScale(meshList[GEO_NPC], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
+				}
 			}
 			if (m_goList[i]->type == GameObject::GO_ENEMY)
 			{
@@ -1067,18 +1084,18 @@ void SceneText::RenderBattleScene()
 				if (m_goList[i]->type == GameObject::GO_REDBAR)
 				{
 					m_goList[i]->active = true;
-					Render2DMeshWScale(meshList[GEO_RED], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
+					Render2DMeshWScale(meshList[GEO_RED], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x, m_goList[i]->position.y, false, false);
 				}
 				if (m_goList[i]->type == GameObject::GO_GREENBAR)
 				{
 					m_goList[i]->active = true;
 
-					Render2DMeshWScale(meshList[GEO_GREEN], false,m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
+					Render2DMeshWScale(meshList[GEO_GREEN], false,m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x, m_goList[i]->position.y, false, false);
 				}
 				if (m_goList[i]->type == GameObject::GO_MOVE)
 				{
 					m_goList[i]->active = true;
-					Render2DMeshWScale(meshList[GEO_BAR], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
+					Render2DMeshWScale(meshList[GEO_BAR], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x, m_goList[i]->position.y, false, false);
 				}
 			}
 	}
