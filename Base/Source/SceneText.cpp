@@ -700,6 +700,16 @@ void SceneText::PlayerUpdate(double dt)
 	//For Testing Purpose
 	if (Application::IsKeyPressed('G'))
 		battleStart = true;
+
+	if (Application::IsKeyPressed('I') && !IkeyPressed && GS)
+	{
+		GS = INVENTORY_SCREEN;
+		IkeyPressed = true;
+	}
+	else if (!Application::IsKeyPressed('I') && IkeyPressed)
+	{
+		IkeyPressed = false;
+	}
 }
 
 void SceneText::GOupdate(double dt)
@@ -725,19 +735,9 @@ void SceneText::GOupdate(double dt)
 	}
 }
 
-void SceneText::UpdateInventory()
+void SceneText::UpdateInventory(double dt)
 {
-	if (Application::IsKeyPressed('I') && !IkeyPressed && GS != INVENTORY_SCREEN)
-	{
-		GS = INVENTORY_SCREEN;
-		IkeyPressed = true;
-	}
-	else if (!Application::IsKeyPressed('I') && IkeyPressed)
-	{
-		IkeyPressed = false;
-	}
-
-	if (Application::IsKeyPressed('I') && !IkeyPressed && GS == INVENTORY_SCREEN)
+	if (Application::IsKeyPressed('I') && !IkeyPressed)
 	{
 		GS = TESTMAP;
 		IkeyPressed = true;
@@ -745,6 +745,54 @@ void SceneText::UpdateInventory()
 	else if (!Application::IsKeyPressed('I') && IkeyPressed)
 	{
 		IkeyPressed = false;
+	}
+
+	cursorDebounce += (float)dt;
+	if (cursorDebounce > 0.5f)
+	{
+		if (Application::IsKeyPressed(VK_UP) && UPkeyPressed)
+		{
+			cursorDebounce = 0;
+			UPkeyPressed = false;
+
+			if (itemCursorPos != 0)
+				itemCursorPos -= 1;
+			else
+				itemCursorPos = 2;
+
+			cout << "UP" << endl;
+			cout << itemCursorPos << endl;
+			UPkeyPressed = false;
+		}
+		else
+			UPkeyPressed = true;
+
+		if (Application::IsKeyPressed(VK_DOWN) && DNkeyPressed)
+		{
+			cursorDebounce = 0;
+			DNkeyPressed = false;
+
+			if (itemCursorPos != 2)
+				itemCursorPos += 1;
+			else
+				itemCursorPos = 0;
+
+			cout << "DN" << endl;
+			cout << itemCursorPos << endl;
+			DNkeyPressed = false;
+		}
+		else
+			DNkeyPressed = true;
+	}
+
+	if (Application::IsKeyPressed(VK_RETURN) && !ENTERkeyPressed)
+		ENTERkeyPressed = true;
+	if (firstChoice)
+	{
+		switch (GS)
+		{
+
+		}
 	}
 }
 
@@ -784,7 +832,7 @@ void SceneText::Update(double dt)
 		CatchUpdate(dt);
 		break;
 	case INVENTORY_SCREEN:
-		UpdateInventory();
+		UpdateInventory(dt);
 		break;
 	}
 

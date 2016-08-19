@@ -145,7 +145,7 @@ public:
 	void UselessUpdate(double dt); // Ask KY for details :>
 	void PlayerUpdate(double dt); // Update to the player 
 	void GOupdate(double dt); // Main GO Collisions
-	void UpdateInventory(); // Updates for All Inventory 
+	void UpdateInventory(double dt); // Updates for All Inventory 
 	void EnterBattleScene(Enemy* enemy); //its like the update for BattleScene
 	void BattleSceneUpdate();
 	void CatchUpdate(double dt);
@@ -233,6 +233,10 @@ private:
 	bool RIGHTkeyPressed;
 	bool ENTERkeyPressed;
 	bool IkeyPressed;
+
+
+	int itemCursorPos = 0;
+	float cursorDebounce = 0;
 };
 
 #endif
