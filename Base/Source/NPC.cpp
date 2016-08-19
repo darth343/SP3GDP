@@ -22,7 +22,7 @@ NPC::~NPC()
 }
 void NPC::SetState(int &state)
 {
-	currState = state;
+	this->currState = state;
 }
 //Text file is going to include NPC id, NPC animation state, NPC dialogue state, NPC dialogue
 void NPC::ReadFromFile(string filename, vector<GameObject*>&m_goList)
@@ -51,6 +51,8 @@ void NPC::ReadFromFile(string filename, vector<GameObject*>&m_goList)
 			n->SetDialogueState(NPC::NPC_DSTORY1);
 		if (temp == "2")
 			n->SetDialogueState(NPC::NPC_DSTORY2);
+		if (temp == "3")
+			n->SetDialogueState(NPC::NPC_DSTORY3);
 		
 		getline(myfile, temp,'`');
 		n->SetDialogue(temp);
@@ -112,21 +114,20 @@ void NPC::ScrollDialogue(int & dialogue)
 }
 void NPC::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 {
+	//MOVEMENT
 	if (this->GetID() == 1)
 	{
 		if (this->GetAnimationState() == NPC::NPC_AWANDERING)
 		{
 			if (this->position.x > 300)
 				this->position.x -= 30 * dt;
-			this->npc1 = true;
 		}
-		else
-			this->npc1 = false;
-
+	
 		if (this->GetDialogueState() == 1)
 			this->maxDia = 4;
 		else if (this->GetDialogueState() == 2)
 			this->maxDia = 3;
+		this->maxState = 2;
 	}
 	if (this->GetID() == 2)
 	{
@@ -134,10 +135,15 @@ void NPC::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 		{
 			if (this->position.y > 100)
 				this->position.y -= 30 * dt;
-			this->npc2 = true;
 		}
-		else
-			this->npc2 = false;
+
+		if (this->GetDialogueState() == 1)
+			this->maxDia = 5;
+		else if (this->GetDialogueState() == 2)
+			this->maxDia = 4;
+		else if (this->GetDialogueState() == 3)
+			this->maxDia = 4;
+		this->maxState = 2;
 	}
 	if (this->GetID() == 3)
 	{
@@ -145,10 +151,13 @@ void NPC::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 		{
 			if (this->position.y > 50)
 				this->position.y -= 30 * dt;
-			this->npc3 = true;
 		}
-		else
-			this->npc3 = false;
+
+		if (this->GetDialogueState() == 1)
+			this->maxDia = 2;
+		else if (this->GetDialogueState() == 2)
+			this->maxDia = 2;
+		this->maxState = 2;
 	}
 	if (this->active && CheckCollision(playerPos, mapOffset, m_cMap))
 	{
@@ -160,12 +169,7 @@ void NPC::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 		if (Application::IsKeyPressed(VK_RETURN))
 		{
 			enterPressed = true;
-			if (this->GetID() == 1)
-				this->collideWithNPC = 1;
-			if (this->GetID() == 2)
-				this->collideWithNPC = 2;
-			if (this->GetID() == 3)
-				this->collideWithNPC = 3;
+			this->collideWithNPC = this->GetID();
 		}
 	}
 	else 

@@ -97,6 +97,7 @@ public:
 		GEO_MONSTER,
 		GEO_RED,
 		GEO_GREEN,
+		GEO_NPC,
 		GEO_BATTLESCENE,
 		GEO_BATTLEARROW,
 		GEO_BATTLEMONSTER,
@@ -154,6 +155,8 @@ private:
 	float enemyCatchPercentage;
 	float enemyMaxHealth;
 	float currHealth = 100;
+	float xtranslate;
+	float ytranslate;
 	MS modelStack;
 	MS viewStack;
 	MS projectionStack;
@@ -168,7 +171,6 @@ private:
 
 	Enemy* theEnemy;
 	Pathfinder testpathfinder;
-	vector<NPC*>npcvec;
 	int dialogueNum = 0;
 	int npcNum = 0;
 	int npcID = 0;
