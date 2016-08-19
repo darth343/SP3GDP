@@ -136,6 +136,7 @@ public:
 	void BasicRender(); // Basic Render Codes, do not touch unless needed 
 	void RenderPlayer(); // RenderPlayer
 	void RenderTestMap(); //RenderTestMap
+	void RenderCatch();
 	void RenderBattleScene(); //RenderBattleScene
 	void RenderMonster(); // Render Monsters here
 	void RenderInventory(); // Render Inventory Main Screen here
@@ -145,9 +146,16 @@ public:
 	void PlayerUpdate(double dt); // Update to the player 
 	void GOupdate(double dt); // Main GO Collisions
 	void UpdateInventory(); // Updates for All Inventory 
-
-	void EnterBattleScene(); //its like the update for BattleScene
+	void EnterBattleScene(Enemy* enemy); //its like the update for BattleScene
+	void BattleSceneUpdate();
+	void CatchUpdate(double dt);
+	void SetBattleStatus(bool status);
+	bool GetBattleStatus();
 private:
+	Gauge* greenbar;
+	Gauge* redbar;
+	Gauge* chargebar;
+	Enemy* EnemyInBattle;
 	CharacterData FontData;
 	unsigned m_vertexArrayID;
 	Mesh* meshList[NUM_GEOMETRY];
@@ -225,8 +233,6 @@ private:
 	bool RIGHTkeyPressed;
 	bool ENTERkeyPressed;
 	bool IkeyPressed;
-
->>>>>>> origin/master
 };
 
 #endif

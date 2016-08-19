@@ -19,6 +19,7 @@ public:
 		GO_MOVE,
 		GO_TOTAL,
 	};
+
 	GameObject(Vector3 scale = Vector3(1, 1, 1));
 	~GameObject() {};
 	virtual void Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap){};

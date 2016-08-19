@@ -1,6 +1,10 @@
 #include "Gauge.h"
+const float GAUGE_SPEED = 200.f;
 
-Gauge::Gauge(Vector3 scale) : GameObject(scale)
+
+Gauge::Gauge(Vector3 scale) 
+: GameObject(scale)
+, moveRight(true)
 {
 }
 Gauge::~Gauge()
@@ -8,31 +12,25 @@ Gauge::~Gauge()
 }
 void Gauge::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 {
-	if (gauge == MOVE)
+	if (moveRight)
 	{
-		if (moveRight)
-		{
-			this->position.x += 100.f*dt;
-		}
-		if (this->position.x >= 650)
-		{
-			moveRight = false;
-			moveLeft = true;
-		}
-		if (!moveRight)
-		{
-			if (moveLeft)
-				this->position.x -= 100.f *dt;
-			if (this->position.x <= 150)
-			{
-				moveRight = true;
-				moveLeft = false;
-			}
-		}
+		this->position.x += GAUGE_SPEED * dt;
 	}
-	if (this->active && CheckCollision(playerPos, mapOffset, m_cMap))
+	if (this->position.x >= 650)
 	{
-		//addPotion();
-		//active = false;
+		this->position.x = 650;
+		moveRight = false;
+		moveLeft = true;
+	}
+	if (!moveRight)
+	{
+		if (moveLeft)
+			this->position.x -= GAUGE_SPEED * dt;
+		if (this->position.x <= 150)
+		{
+			this->position.x = 150;
+			moveRight = true;
+			moveLeft = false;
+		}
 	}
 }

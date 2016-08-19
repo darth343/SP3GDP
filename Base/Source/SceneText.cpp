@@ -11,9 +11,10 @@
 #include "Enemy.h"
 #include "Items.h"
 SceneText::SceneText()
-	:
-	m_cMap(NULL)
-	, IkeyPressed(false)
+:
+m_cMap(NULL)
+, EnemyInBattle(NULL)
+, IkeyPressed(false)
 {
 }
 
@@ -191,23 +192,20 @@ void SceneText::Init()
 	thePotion->position.Set(150, 150, 1);
 	m_goList.push_back(thePotion);
 
-	Gauge* theChargeRed = new Gauge(Vector3(500.f, 32.f, 1));
-	theChargeRed->type = GameObject::GO_REDBAR;
-	theChargeRed->gauge = Gauge::GREENBAR;
-	theChargeRed->position.Set(150, 150, 1);
-	m_goList.push_back(theChargeRed);
+	redbar = new Gauge(Vector3(500.f, 32.f, 1));
+	redbar->type = GameObject::GO_REDBAR;
+	redbar->gauge = Gauge::GREENBAR;
+	redbar->position.Set(150, 150, 1);
 
-	Gauge* theChargeGreen = new Gauge(Vector3(50.f, 32.f, 1));
-	theChargeGreen->gauge = Gauge::GREENBAR;
-	theChargeGreen->type = GameObject::GO_GREENBAR;
-	theChargeGreen->position.Set(400, 150, 1);
-	m_goList.push_back(theChargeGreen);
+	greenbar= new Gauge(Vector3(50.f, 32.f, 1));
+	greenbar->gauge = Gauge::GREENBAR;
+	greenbar->type = GameObject::GO_GREENBAR;
+	greenbar->position.Set(400, 150, 1);
 
-	Gauge* theChargeBar = new Gauge(Vector3(1.f, 32.f, 1));
-	theChargeBar->gauge = Gauge::MOVE;
-	theChargeBar->type = GameObject::GO_MOVE;
-	theChargeBar->position.Set(500, 150, 1);
-	m_goList.push_back(theChargeBar);
+	chargebar = new Gauge(Vector3(1.f, 32.f, 1));
+	chargebar->gauge = Gauge::MOVE;
+	chargebar->type = GameObject::GO_MOVE;
+	chargebar->position.Set(500, 150, 1);
 
 	theEnemy = new Enemy(Vector3(32.f, 32.f, 1));
 	theEnemy->type = GameObject::GO_ENEMY;
@@ -296,11 +294,132 @@ static bool LEFTkeyPressed = false;
 static bool RIGHTkeyPressed = false;
 static bool ENTERkeyPressed = false;
 
-void SceneText::EnterBattleScene()
+void SceneText::SetBattleStatus(bool status)
 {
-	GS = BATTLE;
-	/*cout << "Start battleScene" << endl;*/
+	battleStart = status;
+}
 
+bool SceneText::GetBattleStatus()
+{
+	return battleStart;
+}
+
+void SceneText::CatchUpdate(double dt)
+{
+	enemyCatchPercentage = (enemyMaxHealth - currHealth) / 100 * 20;
+
+	if (Application::IsKeyPressed('V'))
+	{
+		currHealth -= 10;
+	}
+
+	float prevScale = greenbar->scale.x;
+	greenbar->scale.x = enemyCatchPercentage * 0.1;
+	if (greenbar->scale.x > prevScale)
+	{
+		greenbar->position.x -= (greenbar->scale.x - prevScale) * 0.5;
+	}
+
+	chargebar->Update(dt);
+
+	if (Application::IsKeyPressed(VK_RETURN) && !ENTERkeyPressed)
+	{
+		ENTERkeyPressed = true;
+		if (chargebar->CheckCollision(greenbar, m_cMap))
+		{
+			cout << "CAPTURED" << endl;
+			GS = TESTMAP;
+
+			// Despawn monster once captured
+			for (int i = 0; i < m_goList.size(); ++i)
+			{
+				if (m_goList[i] == EnemyInBattle)
+				{
+					delete EnemyInBattle;
+					m_goList.erase(m_goList.begin() + i);
+				}
+			}
+		}
+		else if (!chargebar->CheckCollision(greenbar, m_cMap))
+		{
+			//cout << "NOT CAPTURED" << endl;
+			GS = BATTLE;
+		}
+	}
+	else if (!Application::IsKeyPressed(VK_RETURN) && ENTERkeyPressed)
+	{
+		ENTERkeyPressed = false;
+	}
+	//else
+	//{
+	//	cout << "ENTER KEY FKED UP AND DOWN" << endl;
+	//}
+
+	//if (chargebar->CheckCollision(greenbar, m_cMap))
+	//{
+	//	cout << "COLLIDED" << endl;
+	//	// DO COLLISION RESPONSE BETWEEN TWO GAMEOBJECTS
+	//	if (Application::IsKeyPressed(VK_RETURN) && !ENTERkeyPressed)
+	//	{
+	//		ENTERkeyPressed = true;
+	//		cout << "CORRECT" << endl;
+	//		GS = TESTMAP;
+
+	//		// Despawn monster once captured
+	//		for (int i = 0; i < m_goList.size(); ++i)
+	//		{
+	//			if (m_goList[i] == EnemyInBattle)
+	//			{
+	//				delete EnemyInBattle;
+	//				m_goList.erase(m_goList.begin() + i);
+	//			}
+	//		}
+	//	}
+	//	else if (!Application::IsKeyPressed(VK_RETURN) && ENTERkeyPressed)
+	//	{
+	//		ENTERkeyPressed = false;
+	//	}
+	//}
+	//else
+	//{
+	//	cout << ENTERkeyPressed << endl;
+	//	if (Application::IsKeyPressed(VK_RETURN) && !ENTERkeyPressed)
+	//	{
+	//		cout << "NOT COLLIDED" << endl;
+	//		GS = BATTLE;
+	//	}
+	//	else if (!Application::IsKeyPressed(VK_RETURN) && ENTERkeyPressed)
+	//	{
+	//		ENTERkeyPressed = false;
+	//	}
+	//}
+
+	//if (m_goList[i]->type == GameObject::GO_GREENBAR && m_goList[j]->type == GameObject::GO_MOVE && m_goList[i]->active)
+	//if (m_goList[i]->CheckCollision(m_goList[j], m_cMap))
+	//{
+	//	cout << "COLLIDED" << endl;
+	//	// DO COLLISION RESPONSE BETWEEN TWO GAMEOBJECTS
+	//	if (Application::IsKeyPressed(VK_SPACE))
+	//	{
+	//		cout << "CORRECT!";
+	//		//get monster into the inventory of monsters
+	//		GS = TESTMAP;
+	//	}
+	//	m_goList[i]->active = false;
+	//}
+	//else
+	//{
+	//	//	cout << "NOT COLLIDED" << endl;
+	//	if (Application::IsKeyPressed(VK_SPACE))
+	//	{
+	//		GS = BATTLE;
+	//	}
+	//	m_goList[i]->active = false;
+	//}
+}
+
+void SceneText::BattleSceneUpdate()
+{
 	if (playerTurn && !enemyTurn)
 	{
 		if (Application::IsKeyPressed(VK_UP))
@@ -375,9 +494,10 @@ void SceneText::EnterBattleScene()
 		else
 			RIGHTkeyPressed = true;
 
-		if (Application::IsKeyPressed(VK_RETURN))
+		if (Application::IsKeyPressed(VK_RETURN) && !ENTERkeyPressed)
 		{
-			if (firstChoice && ENTERkeyPressed)
+			ENTERkeyPressed = true;
+			if (firstChoice)
 			{
 				switch (battleSelection)
 				{
@@ -419,7 +539,15 @@ void SceneText::EnterBattleScene()
 						cout << "ESCAPE LOHHHHHHHHHH!" << endl;
 						battleSelection = BS_ATTACK;
 						GS = TESTMAP;
-						//go back to exploring
+						// Despawn monster once run away
+						for (int i = 0; i < m_goList.size(); ++i)
+						{
+							if (m_goList[i] == EnemyInBattle)
+							{
+								delete EnemyInBattle;
+								m_goList.erase(m_goList.begin() + i);
+							}
+						}
 					}
 					else
 					{
@@ -431,10 +559,8 @@ void SceneText::EnterBattleScene()
 					}
 					break;
 				}
-
-				ENTERkeyPressed = false;
 			}
-			else if (secondChoice && ENTERkeyPressed)
+			else if (secondChoice)
 			{
 				//Second Choice only applys to Attack and Item as it need to display a new numbers of choices
 				cout << "Second Choice Selection" << endl;
@@ -474,15 +600,15 @@ void SceneText::EnterBattleScene()
 					break;
 
 				}
-
-				ENTERkeyPressed = false;
 				secondChoice = false;
 				firstChoice = true;
 			}
 
 		}
-		else
-			ENTERkeyPressed = true;
+		else if (!Application::IsKeyPressed(VK_RETURN) && ENTERkeyPressed)
+		{
+			ENTERkeyPressed = false;
+		}
 
 	}
 
@@ -492,6 +618,12 @@ void SceneText::EnterBattleScene()
 
 	}
 
+}
+
+void SceneText::EnterBattleScene(Enemy* enemy)
+{
+	EnemyInBattle = enemy;
+	GS = BATTLE;
 }
 
 void SceneText::DialogueFile(string filename)
@@ -554,15 +686,6 @@ void SceneText::UselessUpdate(double dt)
 
 void SceneText::PlayerUpdate(double dt)
 {
-	enemyCatchPercentage = (enemyMaxHealth - currHealth) / 100 * 20;
-
-	if (Application::IsKeyPressed('V'))
-	{
-		currHealth -= 10;
-	}
-	
-	//cout << enemyCatchPercentage << endl;
-
 	// Update the hero
 	if (Application::IsKeyPressed('W'))
 		this->theHero->MoveUpDown(false, m_cMap, dt);
@@ -584,15 +707,6 @@ void SceneText::GOupdate(double dt)
 	for (int i = 0; i < m_goList.size(); ++i)
 	{
 		m_goList[i]->Update(dt, theHero->GetPosition(), theHero->GetMapOffset(), m_cMap);
-		if (m_goList[i]->type == GameObject::GO_GREENBAR)
-		{
-			float prevScale = m_goList[i]->scale.x;
-			m_goList[i]->scale.x = enemyCatchPercentage * 0.1;
-			if (m_goList[i]->scale.x > prevScale)
-			{
-				m_goList[i]->position.x -= (m_goList[i]->scale.x - prevScale) * 0.5;
-			}
-		}
 		if (m_goList[i]->type == GameObject::GO_NPC)
 		{
 			NPC* temp = (NPC*)m_goList[i];
@@ -607,31 +721,6 @@ void SceneText::GOupdate(double dt)
 			}
 			else if (!Application::IsKeyPressed(VK_RETURN) && enterpressed)
 				enterpressed = false;
-		}
-		for (int j = i + 1; j < m_goList.size(); ++j)
-		{
-			if (m_goList[i]->type == GameObject::GO_GREENBAR && m_goList[j]->type == GameObject::GO_MOVE && m_goList[i]->active)
-			if (m_goList[i]->CheckCollision(m_goList[j], m_cMap))
-			{
-				cout << "COLLIDED" << endl;
-				// DO COLLISION RESPONSE BETWEEN TWO GAMEOBJECTS
-				if (Application::IsKeyPressed(VK_SPACE))
-				{
-					cout << "CORRECT!";
-					//get monster into the inventory of monsters
-					GS = TESTMAP;
-				}
-				m_goList[i]->active = false;
-			}
-			else
-			{
-			//	cout << "NOT COLLIDED" << endl;
-				if (Application::IsKeyPressed(VK_SPACE))
-				{
-					GS = BATTLE;
-				}
-				m_goList[i]->active = false;
-			}
 		}
 	}
 }
@@ -682,17 +771,24 @@ void SceneText::RenderInventory()
 
 void SceneText::Update(double dt)
 {
-	// Uncomment this if you want to access lights and stuff
-	// UselessUpdate(double dt);
-	PlayerUpdate(dt);
-	GOupdate(dt);
+	switch (GS)
+	{
+	case TESTMAP:
+		PlayerUpdate(dt);
+		GOupdate(dt);
+		break;
+	case BATTLE:
+		BattleSceneUpdate();
+		break;
+	case CATCH:
+		CatchUpdate(dt);
+		break;
+	case INVENTORY_SCREEN:
+		UpdateInventory();
+		break;
+	}
+
 	fps = (float)(1.f / dt);
-
-	if (battleStart)
-		EnterBattleScene();
-
-	UpdateInventory();
-	
 }
 
 void SceneText::RenderText(Mesh* mesh, std::string text, Color color)
@@ -745,7 +841,7 @@ void SceneText::RenderTextOnScreen(Mesh* mesh, std::string text, Color color, fl
 				for(unsigned i = 0; i < text.length(); ++i)
 				{
 					Mtx44 characterSpacing;
-					pointer += FontData.charOffsets[text[Math::Min(i, i - 1)]] + 0.18f;
+					pointer += FontData.charOffsets[text[Math::Min(i, i - 1)]] + 0.16f;
 					characterSpacing.SetToTranslation(pointer, 0.3f, 0); //1.0f is the spacing of each character, you may change this value
 					Mtx44 MVP = projectionStack.Top() * viewStack.Top() * modelStack.Top() * characterSpacing;
 					glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, &MVP.a[0]);
@@ -950,7 +1046,7 @@ void SceneText::RenderBackground()
 {
 	if (GS == TESTMAP)
 		Render2DMesh(meshList[GEO_BACKGROUND], false, 1.0f); // World Overlay Background
-	else if (GS == BATTLE)
+	else if (GS == BATTLE || GS == CATCH)
 		Render2DMesh(meshList[GEO_BATTLESCENE], false, 1.0f); //RenderBackground of battle scene
 	else if (GS == INVENTORY_SCREEN)
 		Render2DMesh(meshList[GEO_INVENTORYBACKGROUND], false, 1.0f); //RenderBackground of inventory scene
@@ -1053,31 +1149,41 @@ void SceneText::RenderTestMap()
 
 void SceneText::RenderMonster()
 {
-	if (MonType.getMonsterType() == BANSHEE)
-		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	else if (MonType.getMonsterType() == CEREBUS)
-		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	else if (MonType.getMonsterType() == DRAGON)
-		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	else if (MonType.getMonsterType() == GOLEM)
-		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	else if (MonType.getMonsterType() == HYDRA)
-		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	else if (MonType.getMonsterType() == MANTICORE)
-		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	else if (MonType.getMonsterType() == OGRE)
-		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	else if (MonType.getMonsterType() == PEGASUS)
-		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	else if (MonType.getMonsterType() == WRAITH)
-		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	else if (MonType.getMonsterType() == SPHINX)
-		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	else if (MonType.getMonsterType() == SCYLLA)
-		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	else if (MonType.getMonsterType() == MINOTAUR)
+	//if (MonType.getMonsterType() == BANSHEE)
+	//	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	//else if (MonType.getMonsterType() == CEREBUS)
+	//	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	//else if (MonType.getMonsterType() == DRAGON)
+	//	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	//else if (MonType.getMonsterType() == GOLEM)
+	//	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	//else if (MonType.getMonsterType() == HYDRA)
+	//	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	//else if (MonType.getMonsterType() == MANTICORE)
+	//	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	//else if (MonType.getMonsterType() == OGRE)
+	//	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	//else if (MonType.getMonsterType() == PEGASUS)
+	//	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	//else if (MonType.getMonsterType() == WRAITH)
+	//	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	//else if (MonType.getMonsterType() == SPHINX)
+	//	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	//else if (MonType.getMonsterType() == SCYLLA)
+	//	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	//else if (MonType.getMonsterType() == MINOTAUR)
 		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
 	
+}
+
+void SceneText::RenderCatch()
+{
+	RenderBackground();
+	RenderMonster();
+
+	Render2DMeshWScale(meshList[GEO_RED], false, redbar->scale.x, redbar->scale.y, redbar->position.x, redbar->position.y, false, false);
+	Render2DMeshWScale(meshList[GEO_GREEN], false, greenbar->scale.x, greenbar->scale.y, greenbar->position.x, greenbar->position.y, false, false);
+	Render2DMeshWScale(meshList[GEO_BAR], false, chargebar->scale.x, chargebar->scale.y, chargebar->position.x, chargebar->position.y, false, false);
 }
 
 void SceneText::RenderBattleScene()
@@ -1157,29 +1263,6 @@ void SceneText::RenderBattleScene()
 		else if (!playerTurn && enemyTurn)
 		{
 		}
-
-	}
-	for (int i = 0; i < m_goList.size(); i++)
-	{
-		if (GS == CATCH)
-		{
-				if (m_goList[i]->type == GameObject::GO_REDBAR)
-				{
-					m_goList[i]->active = true;
-					Render2DMeshWScale(meshList[GEO_RED], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x, m_goList[i]->position.y, false, false);
-				}
-				if (m_goList[i]->type == GameObject::GO_GREENBAR)
-				{
-					m_goList[i]->active = true;
-
-					Render2DMeshWScale(meshList[GEO_GREEN], false,m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x, m_goList[i]->position.y, false, false);
-				}
-				if (m_goList[i]->type == GameObject::GO_MOVE)
-				{
-					m_goList[i]->active = true;
-					Render2DMeshWScale(meshList[GEO_BAR], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x, m_goList[i]->position.y, false, false);
-				}
-			}
 	}
 }
 
@@ -1188,26 +1271,21 @@ void SceneText::Render()
 	BasicRender(); // Basic Render stuff, please don't comment this out, like seriously
 
 	// Check for which GameState we are in
-	if (GS == TESTMAP)
+	switch (GS)
 	{
+	case TESTMAP:
 		RenderTestMap();
-	}
-	else if (GS == BATTLE)
-	{
-		//RenderBattleScene....
+		break;
+	case BATTLE:
 		RenderBattleScene();
-	}
-	else if (GS == CATCH)
-	{
-	}
-	else if (GS == INVENTORY_SCREEN)
-	{
-
+		break;
+	case CATCH:
+		RenderCatch();
+		break;
+	case INVENTORY_SCREEN:
 		RenderBackground();
 		RenderInventory();
-
-		RenderBattleScene();
-
+		break;
 	}
 
 }
