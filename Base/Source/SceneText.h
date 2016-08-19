@@ -85,6 +85,7 @@ public:
 		GEO_GREEN,
 		GEO_NPC,
 		GEO_NPCPIC,
+		GEO_NPCPIC2,
 		GEO_BATTLESCENE,
 		GEO_BATTLEARROW,
 		GEO_BATTLEMONSTER,
@@ -146,7 +147,7 @@ private:
 	vector<GameObject *> m_goList;
 	unsigned m_programID;
 	unsigned m_parameters[U_TOTAL];
-
+	int npcPic = 0;
 	Camera3 camera;
 	int npcsize = 0;
 	float rotateAngle;

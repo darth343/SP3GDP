@@ -161,7 +161,7 @@ void SceneText::Init()
 	meshList[GEO_BACKGROUND] = MeshBuilder::Generate2DMesh("GEO_BACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
 	meshList[GEO_BACKGROUND]->textureID = LoadTGA("Image//background.tga");
 	meshList[GEO_GROUNDTOP] = MeshBuilder::Generate2DMesh("GEO_GROUNDTOP", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
-	meshList[GEO_GROUNDTOP]->textureID = LoadTGA("Image//groundTop.tga");
+	meshList[GEO_GROUNDTOP]->textureID = LoadTGA("Image//ground_1.tga");
 	meshList[GEO_INVENTORYBACKGROUND] = MeshBuilder::Generate2DMesh("GEO_INVENTORYBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
 	meshList[GEO_INVENTORYBACKGROUND]->textureID = LoadTGA("Image//InventoryBackground.tga");
 
@@ -171,8 +171,24 @@ void SceneText::Init()
 	meshList[GEO_NPC] = MeshBuilder::Generate2DMesh("GEO_GREENTILE", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
 	meshList[GEO_NPC]->textureID = LoadTGA("Image//NPC1.tga");
 
-	meshList[GEO_NPCPIC] = MeshBuilder::Generate2DMesh("GEO_GREENTILE", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
-	meshList[GEO_NPCPIC]->textureID = LoadTGA("Image//NPC_1PIC.tga");
+
+	meshList[GEO_NPCPIC] = MeshBuilder::GenerateSpriteAnimation("girl", 1, 6);
+	meshList[GEO_NPCPIC]->textureID = LoadTGA("Image//NPC1_GIF.tga");
+	SpriteAnimation *sa = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC]);
+	if (sa)
+	{
+		sa->m_anim = new Animation();
+		sa->m_anim->Set(0, 5, 0, 1.f, true);
+	}
+
+	meshList[GEO_NPCPIC2] = MeshBuilder::GenerateSpriteAnimation("girl", 1, 6);
+	meshList[GEO_NPCPIC2]->textureID = LoadTGA("Image//NPC2_GIF.tga");
+	SpriteAnimation *pic2 = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC2]);
+	if (pic2)
+	{
+		pic2->m_anim = new Animation();
+		pic2->m_anim->Set(0, 5, 0, 1.f, true);
+	}
 
 	meshList[GEO_REDTILE] = MeshBuilder::Generate2DMesh("GEO_REDTILE", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
 	meshList[GEO_REDTILE]->textureID = LoadTGA("Image//redTile.tga");
@@ -490,6 +506,21 @@ void SceneText::PlayerUpdate(double dt)
 	if (Application::IsKeyPressed('D'))
 		this->theHero->MoveLeftRight(false, m_cMap, dt);
 	theHero->HeroUpdate(m_cMap, dt, meshList);
+	SpriteAnimation *sa = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC]);
+	if (sa)
+	{
+		sa->Update(dt);
+		sa->m_anim->animActive = true;
+	}
+	SpriteAnimation *pic2 = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC2]);
+	if (pic2)
+	{
+		pic2->Update(dt);
+		pic2->m_anim->animActive = true;
+	}
+	//For Testing Purpose
+	if (Application::IsKeyPressed('G'))
+		battleStart = true;
 }
 
 void SceneText::GOupdate(double dt)
@@ -876,7 +907,10 @@ void SceneText::RenderTestMap()
 	RenderTileMap(m_cMap);
 	if (renderNPCstuff)
 	{
-		Render2DMeshWScale(meshList[GEO_NPCPIC], false, 300, 300, 100, 100, false, false);
+		if (npcPic == 1)
+		Render2DMeshWScale(meshList[GEO_NPCPIC], false, 350, 350, 650, 220, false, false);
+		if (npcPic == 2)
+			Render2DMeshWScale(meshList[GEO_NPCPIC2], false, 350, 350, 650, 220, false, false);
 		Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false, false);
 	}
 
@@ -892,12 +926,9 @@ void SceneText::RenderTestMap()
 				if (temp->itemType == Items::POTION)
 					Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
 			}
-
 			if (m_goList[i]->type == GameObject::GO_NPC)
 			{
-
 				NPC* temp = (NPC*)m_goList[i];
-				
 				ss.str("");
 				ss.precision(5);
 				Render2DMeshWScale(meshList[GEO_NPC], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
@@ -906,9 +937,11 @@ void SceneText::RenderTestMap()
 				{
 					if (dialogueNum == temp->maxDia)
 						ss << "Enter to Exit";
+					npcPic = temp->collideWhichNPC();
 					if (temp->GetNum() == dialogueNum)
 						ss << "Dialogue: " << temp->GetDialogue();
 
+						{
 					if (dialogueNum >= 1 && dialogueNum <= temp->maxDia)
 					{
 						renderNPCstuff = true;
@@ -918,15 +951,12 @@ void SceneText::RenderTestMap()
 					else if (dialogueNum >= temp->maxDia)
 					{
 						if (temp->GetID() == temp->collideWhichNPC())
-						{
 							npcID = temp->collideWhichNPC();
 							currState = 2;
 							dialogueNum = 0;
 							renderNPCstuff = false;
 						}
 					}
-					
-
 				}
 			}
 			if (m_goList[i]->type == GameObject::GO_ENEMY)
