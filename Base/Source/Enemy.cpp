@@ -114,7 +114,6 @@ void Enemy::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap
 	if (CheckCollision(playerPos, mapOffset, m_cMap))
 	{
 		SceneText* theScene = (SceneText*)Application::GetInstance().GetScene();
-		theScene->SetBattleStatus(true);
 		theScene->EnterBattleScene(this);
 	}
 

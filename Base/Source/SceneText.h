@@ -16,25 +16,10 @@
 #include "Enemy.h"
 #include "EquipmentManager.h"
 #include "CharacterData.h"
+#include "BattleSystem.h"
 
 class SceneText : public Scene
 {
-	enum BATTLE_SELECTION
-	{
-		BS_ATTACK = 1,
-		BS_ITEM,
-		BS_CAPTURE,
-		BS_RUN,
-
-		//Attack
-		BS_SLASH,
-		BS_STAB,
-		BS_SKILL,
-		BS_BACK,
-
-		BS_TOTAL,
-	};
-
 	enum GAMESTATE_TYPE
 	{
 		START_SCREEN,
@@ -100,6 +85,7 @@ public:
 		GEO_GREEN,
 		GEO_NPC,
 		GEO_NPCPIC,
+		GEO_NPCPIC2,
 		GEO_BATTLESCENE,
 		GEO_BATTLEARROW,
 		GEO_BATTLEMONSTER,
@@ -147,10 +133,9 @@ public:
 	void GOupdate(double dt); // Main GO Collisions
 	void UpdateInventory(double dt); // Updates for All Inventory 
 	void EnterBattleScene(Enemy* enemy); //its like the update for BattleScene
-	void BattleSceneUpdate();
 	void CatchUpdate(double dt);
-	void SetBattleStatus(bool status);
-	bool GetBattleStatus();
+	void SetGS(string gs);
+
 private:
 	Gauge* greenbar;
 	Gauge* redbar;
@@ -162,7 +147,7 @@ private:
 	vector<GameObject *> m_goList;
 	unsigned m_programID;
 	unsigned m_parameters[U_TOTAL];
-
+	int npcPic = 0;
 	Camera3 camera;
 	int npcsize = 0;
 	float rotateAngle;
@@ -202,26 +187,9 @@ private:
 	// Equipment Functions
 	EquipmentManager equipManager;
 
-	//BattleScene Variables
-
-	//Selection chosen in battlescene
-	BATTLE_SELECTION battleSelection;
-
-	//Battle scene Selection
-	bool firstChoice, secondChoice;
-
-	//Escape chances
-	float escapePercentage;
-
-	//BattleScene Arow position
-	float arrowPosX;
-	float arrowPosY;
-
-	//Current Turn for battle scene
-	bool enemyTurn, playerTurn;
-
-	//Stating whether has the battle started or not 
-	bool battleStart;
+	
+	// Battle system
+	BattleSystem battleScene;
 
 	int currState = 1;
 	bool npc1;
