@@ -24,17 +24,20 @@ void Equipment::setEQName(string name)
 
 void Equipment::setEQAtk(int atk)
 {
-	this->EQAtk = atk;
+	atk = MonMon.getMonsterAtk();
+	EQAtk = atk;
 }
 
 void Equipment::setEQDef(int def)
 {
-	this->EQDef = def;
+	def = MonMon.getMonsterDef;
+	EQDef = def;
 }
 
 void Equipment::setEQHP(int hP)
 {
-	this->EQHP = hP;
+	hP = MonMon.getMonsterHP;
+	EQHP = hP;
 }
 
 int Equipment::getEQType()

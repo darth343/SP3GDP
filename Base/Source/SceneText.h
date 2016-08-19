@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "Mtx44.h"
 #include "Camera3.h"
+#include "Gauge.h"
 #include "Mesh.h"
 #include "MatrixStack.h"
 #include "Light.h"
@@ -40,7 +41,7 @@ class SceneText : public Scene
 		TESTMAP,
 		INVENTORY_SCREEN,
 		BATTLE,
-
+		CATCH,
 		GS_TOTAL,
 	};
 
@@ -96,6 +97,9 @@ public:
 		GEO_MONSTER,
 		GEO_RED,
 		GEO_GREEN,
+		GEO_BATTLESCENE,
+		GEO_BATTLEMONSTER,
+		GEO_BATTLEDIALOUGEBACKGROUND,
 		GEO_BAR,
 		GEO_POTION,
 		GEO_GREENTILE,
@@ -123,10 +127,11 @@ public:
 	void RenderTileMap(CMap* m_cMap, Vector3 speed = Vector3(1, 1, 1));
 	void DialogueFile(string);
 
-	//Render FUnctions
+	//Render Functions
 	void BasicRender(); // Basic Render Codes, do not touch unless needed 
 	void RenderPlayer();
 	void RenderTestMap();
+	void RenderBattleScene();
 
 	//Update Functions
 	void UselessUpdate(double dt); // Ask KY for details :>
@@ -165,6 +170,7 @@ private:
 	vector<NPC*>npcvec;
 	int dialogueNum = 0;
 	int npcNum = 0;
+	int npcID = 0;
 
 	// Handle to the tilemaps
 	CMap* m_cMap;
@@ -175,7 +181,6 @@ private:
 
 	// Equipment Functions
 	EquipmentManager equipManager;
-
 
 	//BattleScene Variables
 
