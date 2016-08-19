@@ -345,9 +345,6 @@ void SceneText::EnterBattleScene()
 				else if (secondChoice && battleSelection < BS_SLASH)
 					battleSelection = BS_BACK;
 
-				if (arrowPosX > 290)
-					arrowPosX -= 290;
-
 				cout << "BS = " << battleSelection << endl;
 				LEFTkeyPressed = false;
 			}
@@ -365,9 +362,6 @@ void SceneText::EnterBattleScene()
 					battleSelection = BS_ATTACK;
 				else if (secondChoice && battleSelection > BS_BACK)
 					battleSelection = BS_SLASH;
-
-				if (arrowPosX < 290)
-					arrowPosX += 290;
 
 				cout << "BS = " << battleSelection << endl;
 				RIGHTkeyPressed = false;
@@ -995,32 +989,76 @@ void SceneText::RenderBattleScene()
 
 	if (GS == BATTLE)
 	{
-		Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false, false);
 
-		Render2DMeshWScale(meshList[GEO_BATTLEARROW], false, 0.1, 0.05, arrowPosX, arrowPosY, false, false);
+		switch (battleSelection)
+		{
+			case BS_SLASH:
+			case BS_ATTACK:
+				arrowPosX = 125;
+				arrowPosY = 92.5;
+				break;
+			case BS_SKILL:
+			case BS_CAPTURE:
+				arrowPosX = 125;
+				arrowPosY = 42.5;
+				break;
+			case BS_STAB:
+			case BS_ITEM:
+				arrowPosX = 420;
+				arrowPosY = 92.5;
+				break;
+			case BS_BACK:
+			case BS_RUN:
+				arrowPosX = 420;
+				arrowPosY = 42.5;
+				break;
+		}
 
-		std::ostringstream ss;
-		ss.str("");
-		ss.precision(5);
-		ss << "Attack";
-		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 200, 100);
+		//When it is player's turn
+		if (playerTurn && !enemyTurn)
+		{
 
-		ss.str("");
-		ss.precision(5);
-		ss << "Item";
-		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 500, 100);
+			Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false, false);
 
-		ss.str("");
-		ss.precision(5);
-		ss << "Capture";
-		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 200, 50);
+			Render2DMeshWScale(meshList[GEO_BATTLEARROW], false, 0.1, 0.05, arrowPosX, arrowPosY, false, false);
 
-		ss.str("");
-		ss.precision(5);
-		ss << "Run";
-		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 500, 50);
-		ss << "ABCDEFGHIJKLMNOPQRSTUVWXYZ: " << fps;
-		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 30, 60, 30);
+			std::ostringstream ss;
+			ss.str("");
+			ss.precision(5);
+			if (firstChoice && !secondChoice)
+				ss << "Attack";
+			else if (secondChoice && !firstChoice)
+				ss << "Slash";
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 200, 100);
+
+			ss.str("");
+			ss.precision(5);
+			if (firstChoice && !secondChoice)
+				ss << "Item";
+			else if (secondChoice && !firstChoice)
+				ss << "Stab";
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 500, 100);
+
+			ss.str("");
+			ss.precision(5);
+			if (firstChoice && !secondChoice)
+				ss << "Capture";
+			else if (secondChoice && !firstChoice)
+				ss << "Monster's Skill";
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 200, 50);
+
+			ss.str("");
+			ss.precision(5);
+			if (firstChoice && !secondChoice)
+				ss << "Run";
+			else if (secondChoice && !firstChoice)
+				ss << "Back";
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 500, 50);
+		}
+		else if (!playerTurn && enemyTurn)
+		{
+		}
+
 	}
 	for (int i = 0; i < m_goList.size(); i++)
 	{
