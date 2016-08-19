@@ -16,7 +16,6 @@ enum ENEMY_STATES
 	E_IDLE,
 	E_PATROL,
 	E_CHASE,
-	E_ATTACK,
 	E_DEAD,
 	E_TOTAL,
 };
@@ -25,13 +24,12 @@ enum ENEMY_STATES
 	float GetDamage();
 	void SetDamage(float dmg);
 	int GetMonsterID();
+	bool GetFlipStatus();
 	void MoveTo(double dt, Tile nextTile, CMap* m_cMap);
 	void MoveLeftRight(double dt, bool left);
 	void MoveUpDown(double dt, bool up);
 	void Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap);
 	friend std::ostream& operator<<(std::ostream& cout, ENEMY_STATES state);
-	//Rendering Variables
-	bool flip;
 private:
 	float health;
 	float damage;
@@ -40,6 +38,8 @@ private:
 	Vector3 patrolPos;
 	Pathfinder thePath;
 	ENEMY_STATES enemyStates;
+	//Rendering Variables
+	bool flip;
 };
 
 #endif // !ENEMY_H

@@ -3,7 +3,6 @@
 
 const float MOVEMENTSPEED = 200.f;
 const float IDLE_TIMER = 1.0;
-//const float PATROL_TIMER = 10;
 const int TILES_BEFORECHASING = 7;
 const int TILES_BEFOREPATROLLING = 12;
 
@@ -41,6 +40,11 @@ float Enemy::GetHealth()
 int Enemy::GetMonsterID()
 {
 	return monsterID;
+}
+
+bool Enemy::GetFlipStatus()
+{
+	return flip;
 }
 
 void Enemy::MoveLeftRight(double dt, bool left)
@@ -225,20 +229,7 @@ void Enemy::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap
 			enemyStates = E_IDLE;
 		break;
 	}
-	case E_ATTACK:
-	{
-		if (IDLE_TIME > 0.f)
-		{
-			IDLE_TIME = 0.f;
-		}
-		if (PATROL_TIME > 0.f)
-		{
-			PATROL_TIME = 0.f;
-		}
-		break;
 	}
-	}
-	//cout << enemyStates << endl;
 }
 
 std::ostream& operator<<(std::ostream& cout, Enemy::ENEMY_STATES state)
@@ -256,10 +247,6 @@ std::ostream& operator<<(std::ostream& cout, Enemy::ENEMY_STATES state)
 	case Enemy::E_CHASE:
 		{
 			return cout << "CHASING";
-		}
-	case Enemy::E_ATTACK:
-		{
-			return cout << "ATTACKING";
 		}
 	}
 }

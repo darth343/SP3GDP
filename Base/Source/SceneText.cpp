@@ -694,7 +694,7 @@ void SceneText::RenderTextOnScreen(Mesh* mesh, std::string text, Color color, fl
 				{
 					Mtx44 characterSpacing;
 					pointer += FontData.charOffsets[text[Math::Min(i, i - 1)]] + 0.1f;
-					characterSpacing.SetToTranslation(pointer, 0.3f, 0); //1.0f is the spacing of each character, you may change this value
+					characterSpacing.SetToTranslation(pointer, 0.4f, 0); //1.0f is the spacing of each character, you may change this value
 					Mtx44 MVP = projectionStack.Top() * viewStack.Top() * modelStack.Top() * characterSpacing;
 					glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, &MVP.a[0]);
 	
@@ -981,7 +981,7 @@ void SceneText::RenderTestMap()
 			if (m_goList[i]->type == GameObject::GO_ENEMY)
 			{
 				Enemy* temp = (Enemy*)m_goList[i];
-				Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[0]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, temp->flip);
+				Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[0]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, temp->GetFlipStatus());
 			}
 		}
 	}
