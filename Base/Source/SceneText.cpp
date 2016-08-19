@@ -701,7 +701,7 @@ void SceneText::PlayerUpdate(double dt)
 	if (Application::IsKeyPressed('G'))
 		battleStart = true;
 }
-static bool enterpressed = false;
+
 void SceneText::GOupdate(double dt)
 {
 	for (int i = 0; i < m_goList.size(); ++i)
@@ -714,13 +714,13 @@ void SceneText::GOupdate(double dt)
 			if (temp->collideWhichNPC() == npcID)
 				temp->SetState(currState);
 
-			if (temp->collideWhichNPC() != 0 && Application::IsKeyPressed(VK_RETURN) && !enterpressed)
+			if (temp->collideWhichNPC() != 0 && Application::IsKeyPressed(VK_RETURN) && !ENTERkeyPressed)
 			{
-				enterpressed = true;
+				ENTERkeyPressed = true;
 				temp->ScrollDialogue(dialogueNum);
 			}
-			else if (!Application::IsKeyPressed(VK_RETURN) && enterpressed)
-				enterpressed = false;
+			else if (!Application::IsKeyPressed(VK_RETURN) && ENTERkeyPressed)
+				ENTERkeyPressed = false;
 		}
 	}
 }
@@ -838,11 +838,19 @@ void SceneText::RenderTextOnScreen(Mesh* mesh, std::string text, Color color, fl
 				glBindTexture(GL_TEXTURE_2D, mesh->textureID);
 				glUniform1i(m_parameters[U_COLOR_TEXTURE], 0);
 				float pointer = 0.2f;
-				for(unsigned i = 0; i < text.length(); ++i)
+				ytranslate = 0.5f;
+				for (unsigned i = 0; i < text.length(); ++i)
 				{
 					Mtx44 characterSpacing;
-					pointer += FontData.charOffsets[text[Math::Min(i, i - 1)]] + 0.16f;
-					characterSpacing.SetToTranslation(pointer, 0.3f, 0); //1.0f is the spacing of each character, you may change this value
+					if (i > 0) {
+						pointer += FontData.charOffsets[text[Math::Min(i, i - 1)]] + 0.18f;
+						if (pointer >= 23.f) {
+							ytranslate -= 1.f;
+							pointer = 0.2f;
+						}
+					}
+					//pointer += FontData.charOffsets[text[Math::Min(i, i - 1)]] + 0.18f;
+					characterSpacing.SetToTranslation(pointer, ytranslate, 0); //1.0f is the spacing of each character, you may change this value
 					Mtx44 MVP = projectionStack.Top() * viewStack.Top() * modelStack.Top() * characterSpacing;
 					glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, &MVP.a[0]);
 
@@ -1148,30 +1156,30 @@ void SceneText::RenderTestMap()
 }
 
 void SceneText::RenderMonster()
-{
-	//if (MonType.getMonsterType() == BANSHEE)
-	//	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	//else if (MonType.getMonsterType() == CEREBUS)
-	//	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	//else if (MonType.getMonsterType() == DRAGON)
-	//	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	//else if (MonType.getMonsterType() == GOLEM)
-	//	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	//else if (MonType.getMonsterType() == HYDRA)
-	//	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	//else if (MonType.getMonsterType() == MANTICORE)
-	//	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	//else if (MonType.getMonsterType() == OGRE)
-	//	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	//else if (MonType.getMonsterType() == PEGASUS)
-	//	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	//else if (MonType.getMonsterType() == WRAITH)
-	//	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	//else if (MonType.getMonsterType() == SPHINX)
-	//	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	//else if (MonType.getMonsterType() == SCYLLA)
-	//	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	//else if (MonType.getMonsterType() == MINOTAUR)
+{/*
+	if (MonType.getMonsterType() == BANSHEE)
+		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	else if (MonType.getMonsterType() == CEREBUS)
+		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	else if (MonType.getMonsterType() == DRAGON)
+		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	else if (MonType.getMonsterType() == GOLEM)
+		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	else if (MonType.getMonsterType() == HYDRA)
+		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	else if (MonType.getMonsterType() == MANTICORE)
+		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	else if (MonType.getMonsterType() == OGRE)
+		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	else if (MonType.getMonsterType() == PEGASUS)
+		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	else if (MonType.getMonsterType() == WRAITH)
+		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	else if (MonType.getMonsterType() == SPHINX)
+		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	else if (MonType.getMonsterType() == SCYLLA)
+		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	else if (MonType.getMonsterType() == MINOTAUR)*/
 		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
 	
 }
