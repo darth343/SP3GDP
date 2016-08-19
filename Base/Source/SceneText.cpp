@@ -687,12 +687,12 @@ void SceneText::RenderTextOnScreen(Mesh* mesh, std::string text, Color color, fl
 				glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, mesh->textureID);
 				glUniform1i(m_parameters[U_COLOR_TEXTURE], 0);
-				float pointer = 0.5f;
+				float pointer = 0.2f;
 				for(unsigned i = 0; i < text.length(); ++i)
 				{
 					Mtx44 characterSpacing;
-					pointer += FontData.charOffsets[text[Math::Min(i, i - 1)]] + 0.1f;
-					characterSpacing.SetToTranslation(pointer, 0.4f, 0); //1.0f is the spacing of each character, you may change this value
+					pointer += FontData.charOffsets[text[Math::Min(i, i - 1)]] + 0.18f;
+					characterSpacing.SetToTranslation(pointer, 0.3f, 0); //1.0f is the spacing of each character, you may change this value
 					Mtx44 MVP = projectionStack.Top() * viewStack.Top() * modelStack.Top() * characterSpacing;
 					glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, &MVP.a[0]);
 	
@@ -979,7 +979,7 @@ void SceneText::RenderTestMap()
 	ss.str("");
 	ss.precision(5);
 	ss << "FPS: " << fps;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 30, 0, 0);
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 0), 30, 0, 0);
 }
 
 void SceneText::RenderBattleScene()
@@ -990,6 +990,13 @@ void SceneText::RenderBattleScene()
 	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false,0.3,0.3,300,240, false, false);
 
 	Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false, false);
+
+	ostringstream ss;
+
+	ss.str("");
+	ss.precision(5);
+	ss << "ABCDEFGHIJKLMNOPQRSTUVWXYZ: " << fps;
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 30, 60, 30);
 }
 
 void SceneText::Render()

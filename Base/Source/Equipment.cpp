@@ -30,13 +30,13 @@ void Equipment::setEQAtk(int atk)
 
 void Equipment::setEQDef(int def)
 {
-	def = MonMon.getMonsterDef;
+	def = MonMon.getMonsterDef();
 	EQDef = def;
 }
 
 void Equipment::setEQHP(int hP)
 {
-	hP = MonMon.getMonsterHP;
+	hP = MonMon.getMonsterHP();
 	EQHP = hP;
 }
 
