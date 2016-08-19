@@ -108,6 +108,7 @@ public:
 	int getSkillSlotThree();
 	int getSkillSlotFour();
 
+	// Monster Skills
 	int Slash();
 	int Bite();
 	int Charge();

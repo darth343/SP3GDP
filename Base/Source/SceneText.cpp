@@ -13,6 +13,7 @@
 SceneText::SceneText()
 	:
 	m_cMap(NULL)
+	, IkeyPressed(false)
 {
 }
 
@@ -161,6 +162,8 @@ void SceneText::Init()
 	meshList[GEO_BACKGROUND]->textureID = LoadTGA("Image//background.tga");
 	meshList[GEO_GROUNDTOP] = MeshBuilder::Generate2DMesh("GEO_GROUNDTOP", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
 	meshList[GEO_GROUNDTOP]->textureID = LoadTGA("Image//groundTop.tga");
+	meshList[GEO_INVENTORYBACKGROUND] = MeshBuilder::Generate2DMesh("GEO_INVENTORYBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_INVENTORYBACKGROUND]->textureID = LoadTGA("Image//InventoryBackground.tga");
 
 	meshList[GEO_GREENTILE] = MeshBuilder::Generate2DMesh("GEO_GREENTILE", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
 	meshList[GEO_GREENTILE]->textureID = LoadTGA("Image//greenTile.tga");
@@ -492,6 +495,7 @@ void SceneText::DialogueFile(string filename)
 {
 	
 }
+
 void SceneText::UselessUpdate(double dt)
 {
 	if (Application::IsKeyPressed('1'))
@@ -627,6 +631,50 @@ void SceneText::GOupdate(double dt)
 	}
 }
 
+void SceneText::UpdateInventory()
+{
+	if (Application::IsKeyPressed('I') && !IkeyPressed && GS != INVENTORY_SCREEN)
+	{
+		GS = INVENTORY_SCREEN;
+		IkeyPressed = true;
+	}
+	else if (!Application::IsKeyPressed('I') && IkeyPressed)
+	{
+		IkeyPressed = false;
+	}
+
+	if (Application::IsKeyPressed('I') && !IkeyPressed && GS == INVENTORY_SCREEN)
+	{
+		GS = TESTMAP;
+		IkeyPressed = true;
+	}
+	else if (!Application::IsKeyPressed('I') && IkeyPressed)
+	{
+		IkeyPressed = false;
+	}
+}
+
+void SceneText::RenderInventory()
+{
+	std::ostringstream ss;
+	ss.str("");
+	ss.precision(5);
+	ss << "Items: " << endl;
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 60, 300, 450);
+
+	std::ostringstream ss2;
+	ss2.str("");
+	ss2.precision(5);
+	ss2 << "Equips: " << endl;
+	RenderTextOnScreen(meshList[GEO_TEXT], ss2.str(), Color(1, 0, 0), 60, 300, 390);
+
+	std::ostringstream ss3;
+	ss3.str("");
+	ss3.precision(5);
+	ss3 << "Tamagotchi: " << endl;
+	RenderTextOnScreen(meshList[GEO_TEXT], ss3.str(), Color(1, 0, 0), 60, 300, 330);
+}
+
 void SceneText::Update(double dt)
 {
 	// Uncomment this if you want to access lights and stuff
@@ -637,6 +685,8 @@ void SceneText::Update(double dt)
 
 	if (battleStart)
 		EnterBattleScene();
+
+	UpdateInventory();
 	
 }
 
@@ -893,8 +943,12 @@ void SceneText::RenderPlayer()
 
 void SceneText::RenderBackground()
 {
-	// Render the crosshair
-	Render2DMesh(meshList[GEO_BACKGROUND], false, 1.0f);
+	if (GS == TESTMAP)
+		Render2DMesh(meshList[GEO_BACKGROUND], false, 1.0f); // World Overlay Background
+	else if (GS == BATTLE)
+		Render2DMesh(meshList[GEO_BATTLESCENE], false, 1.0f); //RenderBackground of battle scene
+	else if (GS == INVENTORY_SCREEN)
+		Render2DMesh(meshList[GEO_INVENTORYBACKGROUND], false, 1.0f); //RenderBackground of inventory scene
 }
 
 void SceneText::BasicRender()
@@ -982,12 +1036,40 @@ void SceneText::RenderTestMap()
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 30, 0, 0);
 }
 
-void SceneText::RenderBattleScene()
+void SceneText::RenderMonster()
 {
-	//RenderBackground of battle scene
-	Render2DMesh(meshList[GEO_BATTLESCENE], false, 1.0f);
+	if (MonType.getMonsterType() == BANSHEE)
+		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	else if (MonType.getMonsterType() == CEREBUS)
+		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	else if (MonType.getMonsterType() == DRAGON)
+		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	else if (MonType.getMonsterType() == GOLEM)
+		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	else if (MonType.getMonsterType() == HYDRA)
+		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	else if (MonType.getMonsterType() == MANTICORE)
+		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	else if (MonType.getMonsterType() == OGRE)
+		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	else if (MonType.getMonsterType() == PEGASUS)
+		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	else if (MonType.getMonsterType() == WRAITH)
+		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	else if (MonType.getMonsterType() == SPHINX)
+		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	else if (MonType.getMonsterType() == SCYLLA)
+		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	else if (MonType.getMonsterType() == MINOTAUR)
+		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
+	
+}
 
-	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false,0.3,0.3,300,240, false, false);
+void SceneText::RenderBattleScene()
+{	
+	RenderBackground();
+
+	RenderMonster();
 
 	Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false, false);
 }
@@ -1001,14 +1083,18 @@ void SceneText::Render()
 	{
 		RenderTestMap();
 	}
-
-	if (GS == BATTLE)
+	else if (GS == BATTLE)
 	{
 		//RenderBattleScene....
 		RenderBattleScene();
 	}
-	if (GS == CATCH)
+	else if (GS == CATCH)
 	{
+	}
+	else if (GS == INVENTORY_SCREEN)
+	{
+		RenderBackground();
+		RenderInventory();
 	}
 
 }

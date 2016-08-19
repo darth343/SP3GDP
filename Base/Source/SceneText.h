@@ -40,6 +40,7 @@ class SceneText : public Scene
 		START_SCREEN,
 		TESTMAP,
 		INVENTORY_SCREEN,
+		TAMAGOTCHI_SCREEN,
 		BATTLE,
 		CATCH,
 		GS_TOTAL,
@@ -100,6 +101,7 @@ public:
 		GEO_BATTLESCENE,
 		GEO_BATTLEMONSTER,
 		GEO_BATTLEDIALOUGEBACKGROUND,
+		GEO_INVENTORYBACKGROUND,
 		GEO_BAR,
 		GEO_POTION,
 		GEO_GREENTILE,
@@ -129,14 +131,17 @@ public:
 
 	//Render Functions
 	void BasicRender(); // Basic Render Codes, do not touch unless needed 
-	void RenderPlayer();
-	void RenderTestMap();
-	void RenderBattleScene();
+	void RenderPlayer(); // RenderPlayer
+	void RenderTestMap(); //RenderTestMap
+	void RenderBattleScene(); //RenderBattleScene
+	void RenderMonster(); // Render Monsters here
+	void RenderInventory(); // Render Inventory Main Screen here
 
 	//Update Functions
 	void UselessUpdate(double dt); // Ask KY for details :>
 	void PlayerUpdate(double dt); // Update to the player 
 	void GOupdate(double dt); // Main GO Collisions
+	void UpdateInventory(); // Updates for All Inventory 
 
 	void EnterBattleScene(); //its like the update for BattleScene
 private:
@@ -178,6 +183,8 @@ private:
 	CPlayerInfo* theHero;
 	// GameState
 	GAMESTATE_TYPE GS; // Change GameState in SceneText.cpp line 144 for testing purposes
+	// Monster Calls
+	Monster MonType;
 
 	// Equipment Functions
 	EquipmentManager equipManager;
@@ -205,6 +212,7 @@ private:
 	bool LEFTkeyPressed;
 	bool RIGHTkeyPressed;
 	bool ENTERkeyPressed;
+	bool IkeyPressed;
 };
 
 #endif
