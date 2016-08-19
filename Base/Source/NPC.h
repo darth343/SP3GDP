@@ -29,6 +29,7 @@ public:
 		NPC_DNOSTATE,
 		NPC_DSTORY1,
 		NPC_DSTORY2,
+		NPC_DSTORY3,
 		NPC_DTOTAL,
 	};
 
@@ -52,6 +53,7 @@ public:
 	int dialogueNumber;
 	NPC_ANIMATION GetAnimationState();
 	NPC_DIALOGUE GetDialogueState();
+	int maxState = 1;
 
 private:
 	float npcID;

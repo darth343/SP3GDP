@@ -98,7 +98,10 @@ public:
 		GEO_MONSTER,
 		GEO_RED,
 		GEO_GREEN,
+		GEO_NPC,
+		GEO_NPCPIC,
 		GEO_BATTLESCENE,
+		GEO_BATTLEARROW,
 		GEO_BATTLEMONSTER,
 		GEO_BATTLEDIALOUGEBACKGROUND,
 		GEO_INVENTORYBACKGROUND,
@@ -158,6 +161,8 @@ private:
 	float enemyCatchPercentage;
 	float enemyMaxHealth;
 	float currHealth = 100;
+	float xtranslate;
+	float ytranslate;
 	MS modelStack;
 	MS viewStack;
 	MS projectionStack;
@@ -167,12 +172,12 @@ private:
 
 	bool bLightEnabled;
 
+	bool renderNPCstuff = false;
 	float fps;
 	NPC npc;
 
 	Enemy* theEnemy;
 	Pathfinder testpathfinder;
-	vector<NPC*>npcvec;
 	int dialogueNum = 0;
 	int npcNum = 0;
 	int npcID = 0;
@@ -200,19 +205,28 @@ private:
 	//Escape chances
 	float escapePercentage;
 
+	//BattleScene Arow position
+	float arrowPosX;
+	float arrowPosY;
+
+	//Current Turn for battle scene
 	bool enemyTurn, playerTurn;
 
+	//Stating whether has the battle started or not 
 	bool battleStart;
-	bool DNkeyPressed;
-	bool npc1;
+
 	int currState = 1;
+	bool npc1;
 	bool npc2;
 	bool npc3;
+
 	bool UPkeyPressed;
 	bool LEFTkeyPressed;
 	bool RIGHTkeyPressed;
 	bool ENTERkeyPressed;
 	bool IkeyPressed;
+
+>>>>>>> origin/master
 };
 
 #endif

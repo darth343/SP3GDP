@@ -39,7 +39,6 @@ void SceneText::Init()
 	glEnable(GL_CULL_FACE);
 	
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -168,12 +167,17 @@ void SceneText::Init()
 	meshList[GEO_GREENTILE] = MeshBuilder::Generate2DMesh("GEO_GREENTILE", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
 	meshList[GEO_GREENTILE]->textureID = LoadTGA("Image//greenTile.tga");
 
+	meshList[GEO_NPC] = MeshBuilder::Generate2DMesh("GEO_GREENTILE", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
+	meshList[GEO_NPC]->textureID = LoadTGA("Image//NPC1.tga");
+
+	meshList[GEO_NPCPIC] = MeshBuilder::Generate2DMesh("GEO_GREENTILE", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
+	meshList[GEO_NPCPIC]->textureID = LoadTGA("Image//NPC_1PIC.tga");
+
 	meshList[GEO_REDTILE] = MeshBuilder::Generate2DMesh("GEO_REDTILE", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
 	meshList[GEO_REDTILE]->textureID = LoadTGA("Image//redTile.tga");
 
 	meshList[GEO_BLUETILE] = MeshBuilder::Generate2DMesh("GEO_BLUETILE", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
 	meshList[GEO_BLUETILE]->textureID = LoadTGA("Image//blueTile.tga");
-
 
 	Math::InitRNG();
 	// Initialise and load the tile map
@@ -209,33 +213,19 @@ void SceneText::Init()
 	theEnemy->type = GameObject::GO_ENEMY;
 	theEnemy->position.Set(64, 224, 1);
 	m_goList.push_back(theEnemy);
-	enemyMaxHealth = 100;
+	enemyMaxHealth= currHealth = 100;
 	enemyCatchPercentage = 0;
 	npc.ReadFromFile("Image//Text.txt",m_goList);
-	npcvec = npc.GetVec();
+	vector<NPC*>npcvec = npc.GetVec();
 
 	for (int i = 0; i < npc.GetVec().size(); i++)
 	{
 		if (npcvec[i]->GetID() == 1)
-		{
 			npcvec[i]->position.Set(500, 400, 1);
-		}
 		if (npcvec[i]->GetID() == 2)
-		{
 			npcvec[i]->position.Set(700, 400, 1);
-			if (npcvec[i]->GetDialogueState() == 1)
-				npcvec[i]->maxDia = 5;
-			else if (npcvec[i]->GetDialogueState() == 2)
-				npcvec[i]->maxDia = 4;
-		}
 		if (npcvec[i]->GetID() == 3)
-		{
 			npcvec[i]->position.Set(600, 400, 1);
-			if (npcvec[i]->GetDialogueState() == 1)
-				npcvec[i]->maxDia = 2;
-			else if (npcvec[i]->GetDialogueState() == 2)
-				npcvec[i]->maxDia = 2;
-		}
 		npcvec[i]->currDia = 1;
 
 		m_goList.push_back(dynamic_cast<NPC*>(npcvec[i]));
@@ -271,6 +261,9 @@ void SceneText::Init()
 	meshList[GEO_BATTLEDIALOUGEBACKGROUND] = MeshBuilder::Generate2DMesh("GEO_BATTLEDIALOUGEBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
 	meshList[GEO_BATTLEDIALOUGEBACKGROUND]->textureID = LoadTGA("Image//dialougeBG.tga");
 
+	meshList[GEO_BATTLEARROW] = MeshBuilder::Generate2DMesh("GEO_BATTLEARROW", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_BATTLEARROW]->textureID = LoadTGA("Image//arrow.tga");
+
 	theHero->SetPlayerMesh(meshList[GEO_HEROWALK]);
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
 	Mtx44 perspective;
@@ -288,10 +281,20 @@ void SceneText::Init()
 	firstChoice = true;
 	secondChoice = false;
 	battleStart = false;
-	DNkeyPressed = UPkeyPressed = LEFTkeyPressed = RIGHTkeyPressed = ENTERkeyPressed = false;
+
+	//Aarow position for Battle Scene
+	arrowPosX = 125;
+	arrowPosY = 92.5;
 
 	battleSelection = BS_ATTACK;
 }
+
+//BattleScene Key press 
+static bool DNkeyPressed = false;
+static bool UPkeyPressed = false;
+static bool LEFTkeyPressed = false;
+static bool RIGHTkeyPressed = false;
+static bool ENTERkeyPressed = false;
 
 void SceneText::EnterBattleScene()
 {
@@ -555,7 +558,7 @@ void SceneText::PlayerUpdate(double dt)
 
 	if (Application::IsKeyPressed('V'))
 	{
-		//enemyCatchPercentage += 10;
+		currHealth -= 10;
 	}
 	
 	//cout << enemyCatchPercentage << endl;
@@ -581,12 +584,6 @@ void SceneText::GOupdate(double dt)
 	for (int i = 0; i < m_goList.size(); ++i)
 	{
 		m_goList[i]->Update(dt, theHero->GetPosition(), theHero->GetMapOffset(), m_cMap);
-
-		if (m_goList[i]->type == GameObject::GO_MOVE)
-		{
-			
-		}
-
 		if (m_goList[i]->type == GameObject::GO_GREENBAR)
 		{
 			float prevScale = m_goList[i]->scale.x;
@@ -596,36 +593,44 @@ void SceneText::GOupdate(double dt)
 				m_goList[i]->position.x -= (m_goList[i]->scale.x - prevScale) * 0.5;
 			}
 		}
-
-		//Movement of NPC
 		if (m_goList[i]->type == GameObject::GO_NPC)
 		{
 			NPC* temp = (NPC*)m_goList[i];
 			
 			if (temp->collideWhichNPC() == npcID)
-				temp->currState = currState;
-			
+				temp->SetState(currState);
+
 			if (temp->collideWhichNPC() != 0 && Application::IsKeyPressed(VK_RETURN) && !enterpressed)
 			{
 				enterpressed = true;
 				temp->ScrollDialogue(dialogueNum);
 			}
 			else if (!Application::IsKeyPressed(VK_RETURN) && enterpressed)
-			{
 				enterpressed = false;
-			}
 		}
 		for (int j = i + 1; j < m_goList.size(); ++j)
 		{
-			if (m_goList[i]->type == GameObject::GO_GREENBAR && m_goList[j]->type == GameObject::GO_MOVE)
+			if (m_goList[i]->type == GameObject::GO_GREENBAR && m_goList[j]->type == GameObject::GO_MOVE && m_goList[i]->active)
 			if (m_goList[i]->CheckCollision(m_goList[j], m_cMap))
 			{
 				cout << "COLLIDED" << endl;
 				// DO COLLISION RESPONSE BETWEEN TWO GAMEOBJECTS
+				if (Application::IsKeyPressed(VK_SPACE))
+				{
+					cout << "CORRECT!";
+					//get monster into the inventory of monsters
+					GS = TESTMAP;
+				}
+				m_goList[i]->active = false;
 			}
 			else
 			{
 			//	cout << "NOT COLLIDED" << endl;
+				if (Application::IsKeyPressed(VK_SPACE))
+				{
+					GS = BATTLE;
+				}
+				m_goList[i]->active = false;
 			}
 		}
 	}
@@ -719,7 +724,6 @@ void SceneText::RenderTextOnScreen(Mesh* mesh, std::string text, Color color, fl
 {
 	if(!mesh || mesh->textureID <= 0)
 		return;
-
 	Mtx44 ortho;
 	ortho.SetToOrtho(0, 800, 0, 600, -10, 10);
 	projectionStack.PushMatrix();
@@ -737,15 +741,15 @@ void SceneText::RenderTextOnScreen(Mesh* mesh, std::string text, Color color, fl
 				glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, mesh->textureID);
 				glUniform1i(m_parameters[U_COLOR_TEXTURE], 0);
-				float pointer = 0.5f;
+				float pointer = 0.2f;
 				for(unsigned i = 0; i < text.length(); ++i)
 				{
 					Mtx44 characterSpacing;
-					pointer += FontData.charOffsets[text[Math::Min(i, i - 1)]] + 0.1f;
+					pointer += FontData.charOffsets[text[Math::Min(i, i - 1)]] + 0.18f;
 					characterSpacing.SetToTranslation(pointer, 0.3f, 0); //1.0f is the spacing of each character, you may change this value
 					Mtx44 MVP = projectionStack.Top() * viewStack.Top() * modelStack.Top() * characterSpacing;
 					glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, &MVP.a[0]);
-	
+
 					mesh->Render((unsigned)text[i] * 6, 6);
 				}
 				glBindTexture(GL_TEXTURE_2D, 0);
@@ -753,6 +757,7 @@ void SceneText::RenderTextOnScreen(Mesh* mesh, std::string text, Color color, fl
 			modelStack.PopMatrix();
 		viewStack.PopMatrix();
 	projectionStack.PopMatrix();
+
 }
 
 void SceneText::RenderMeshIn2D(Mesh *mesh, const bool enableLight, const float size, const float x, const float y, const bool rotate)
@@ -974,6 +979,12 @@ void SceneText::RenderTestMap()
 {
 	RenderBackground();
 	RenderTileMap(m_cMap);
+	if (renderNPCstuff)
+	{
+		Render2DMeshWScale(meshList[GEO_NPCPIC], false, 300, 300, 100, 100, false, false);
+		Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false, false);
+	}
+
 	std::ostringstream ss;
 
 	for (int i = 0; i < m_goList.size(); i++)
@@ -986,43 +997,47 @@ void SceneText::RenderTestMap()
 				if (temp->itemType == Items::POTION)
 					Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
 			}
+
 			if (m_goList[i]->type == GameObject::GO_NPC)
 			{
+
 				NPC* temp = (NPC*)m_goList[i];
+				
 				ss.str("");
 				ss.precision(5);
+				Render2DMeshWScale(meshList[GEO_NPC], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
 
 				if (temp->GetDialogueState() == temp->currState && temp->GetID() == temp->collideWhichNPC())
 				{
+					if (dialogueNum == temp->maxDia)
+						ss << "Enter to Exit";
 					if (temp->GetNum() == dialogueNum)
-					{
 						ss << "Dialogue: " << temp->GetDialogue();
 
-					}
-					if (dialogueNum == temp->maxDia)
+					if (dialogueNum >= 1 && dialogueNum <= temp->maxDia)
 					{
-						ss << "Enter to Exit";
+						renderNPCstuff = true;
+						RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 30, 60, 100);
 					}
+
 					else if (dialogueNum >= temp->maxDia)
 					{
 						if (temp->GetID() == temp->collideWhichNPC())
 						{
+							npcID = temp->collideWhichNPC();
 							currState = 2;
-							npcID = temp->GetID();
-							cout << temp->currState << " " <<  temp->GetID() << " " << temp->GetDialogueState() << endl;
 							dialogueNum = 0;
+							renderNPCstuff = false;
 						}
 					}
-				}
-				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 30, 0, 100);
+					
 
-				//if (temp->GetNum() == 0)
-				Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, false);
+				}
 			}
 			if (m_goList[i]->type == GameObject::GO_ENEMY)
 			{
 				Enemy* temp = (Enemy*)m_goList[i];
-				Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[0]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, temp->flip);
+				Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[0]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false, temp->GetFlipStatus());
 			}
 		}
 	}
@@ -1033,7 +1048,7 @@ void SceneText::RenderTestMap()
 	ss.str("");
 	ss.precision(5);
 	ss << "FPS: " << fps;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 30, 0, 0);
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 0), 30, 0, 0);
 }
 
 void SceneText::RenderMonster()
@@ -1071,7 +1086,101 @@ void SceneText::RenderBattleScene()
 
 	RenderMonster();
 
-	Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false, false);
+	if (GS == BATTLE)
+	{
+
+		switch (battleSelection)
+		{
+			case BS_SLASH:
+			case BS_ATTACK:
+				arrowPosX = 125;
+				arrowPosY = 92.5;
+				break;
+			case BS_SKILL:
+			case BS_CAPTURE:
+				arrowPosX = 125;
+				arrowPosY = 42.5;
+				break;
+			case BS_STAB:
+			case BS_ITEM:
+				arrowPosX = 420;
+				arrowPosY = 92.5;
+				break;
+			case BS_BACK:
+			case BS_RUN:
+				arrowPosX = 420;
+				arrowPosY = 42.5;
+				break;
+		}
+
+		//When it is player's turn
+		if (playerTurn && !enemyTurn)
+		{
+
+			Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false, false);
+
+			Render2DMeshWScale(meshList[GEO_BATTLEARROW], false, 0.1, 0.05, arrowPosX, arrowPosY, false, false);
+
+			std::ostringstream ss;
+			ss.str("");
+			ss.precision(5);
+			if (firstChoice && !secondChoice)
+				ss << "Attack";
+			else if (secondChoice && !firstChoice)
+				ss << "Slash";
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 200, 100);
+
+			ss.str("");
+			ss.precision(5);
+			if (firstChoice && !secondChoice)
+				ss << "Item";
+			else if (secondChoice && !firstChoice)
+				ss << "Stab";
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 500, 100);
+
+			ss.str("");
+			ss.precision(5);
+			if (firstChoice && !secondChoice)
+				ss << "Capture";
+			else if (secondChoice && !firstChoice)
+				ss << "Monster's Skill";
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 200, 50);
+
+			ss.str("");
+			ss.precision(5);
+			if (firstChoice && !secondChoice)
+				ss << "Run";
+			else if (secondChoice && !firstChoice)
+				ss << "Back";
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 500, 50);
+		}
+		else if (!playerTurn && enemyTurn)
+		{
+		}
+
+	}
+	for (int i = 0; i < m_goList.size(); i++)
+	{
+		if (GS == CATCH)
+		{
+				if (m_goList[i]->type == GameObject::GO_REDBAR)
+				{
+					m_goList[i]->active = true;
+					Render2DMeshWScale(meshList[GEO_RED], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x, m_goList[i]->position.y, false, false);
+				}
+				if (m_goList[i]->type == GameObject::GO_GREENBAR)
+				{
+					m_goList[i]->active = true;
+
+					Render2DMeshWScale(meshList[GEO_GREEN], false,m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x, m_goList[i]->position.y, false, false);
+				}
+				if (m_goList[i]->type == GameObject::GO_MOVE)
+				{
+					m_goList[i]->active = true;
+					Render2DMeshWScale(meshList[GEO_BAR], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x, m_goList[i]->position.y, false, false);
+				}
+			}
+	}
 }
 
 void SceneText::Render()
@@ -1093,8 +1202,12 @@ void SceneText::Render()
 	}
 	else if (GS == INVENTORY_SCREEN)
 	{
+
 		RenderBackground();
 		RenderInventory();
+
+		RenderBattleScene();
+
 	}
 
 }
