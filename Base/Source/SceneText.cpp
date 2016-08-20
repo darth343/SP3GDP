@@ -14,6 +14,7 @@ SceneText::SceneText()
 :
 m_cMap(NULL)
 , EnemyInBattle(NULL)
+, NPCInConvo(NULL)
 , IkeyPressed(false)
 {
 }
@@ -34,7 +35,7 @@ void SceneText::Init()
 	//cout << npcvec[0].GetDialogue() << endl;
 	//Init GameState Here for testing purposes
 	GS = TESTMAP;
-
+	MS = PLAY;
 	// Initialise and load the tile map
 	m_cMap = new CMap();
 	m_cMap->Init(Application::GetInstance().GetScreenHeight(), Application::GetInstance().GetScreenWidth(), 32);
@@ -91,31 +92,6 @@ void SceneText::Init()
 	// Initialise the hero's position
 	theHero = new CPlayerInfo();
 	theHero->SetPosition(Vector3(530, 64, 0));
-
-	meshList[GEO_HEROWALK] = MeshBuilder::Generate2DMesh("Player", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
-	meshList[GEO_HEROWALK]->textureID = LoadTGA("Image//Hero.tga");
-
-	meshList[GEO_MONSTER] = MeshBuilder::Generate2DMesh("Monster", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
-	meshList[GEO_MONSTER]->textureID = LoadTGA("Image//Monster.tga");
-
-	meshList[GEO_POTION] = MeshBuilder::Generate2DMesh("Potion", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
-	meshList[GEO_POTION]->textureID = LoadTGA("Image//Potion.tga");
-
-	meshList[GEO_GREEN] = MeshBuilder::Generate2DMesh("Potion", Color(0, 1, 0), 0.0f, 0.0f, 1.0f, 1.0f);
-	meshList[GEO_BAR] = MeshBuilder::Generate2DMesh("Potion", Color(1, 1, 0), 0.0f, 0.0f, 1.0f, 1.0f);
-	meshList[GEO_RED] = MeshBuilder::Generate2DMesh("Potion", Color(1, 0, 0), 0.0f, 0.0f, 1.0f, 1.0f);
-
-	meshList[GEO_BATTLESCENE] = MeshBuilder::Generate2DMesh("GEO_BATTLESCENE", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
-	meshList[GEO_BATTLESCENE]->textureID = LoadTGA("Image//battleScene.tga");
-	meshList[GEO_BATTLEMONSTER] = MeshBuilder::Generate2DMesh("GEO_BATTLESCENE", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
-	meshList[GEO_BATTLEMONSTER]->textureID = LoadTGA("Image//battleMonster.tga");
-
-	meshList[GEO_BATTLEDIALOUGEBACKGROUND] = MeshBuilder::Generate2DMesh("GEO_BATTLEDIALOUGEBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
-	meshList[GEO_BATTLEDIALOUGEBACKGROUND]->textureID = LoadTGA("Image//dialougeBG.tga");
-
-	meshList[GEO_BATTLEARROW] = MeshBuilder::Generate2DMesh("GEO_BATTLEARROW", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
-	meshList[GEO_BATTLEARROW]->textureID = LoadTGA("Image//arrow.tga");
-
 	theHero->SetPlayerMesh(meshList[GEO_HEROWALK]);
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
 	Mtx44 perspective;
@@ -123,20 +99,24 @@ void SceneText::Init()
 	//perspective.SetToOrtho(-80, 80, -60, 60, -1000, 1000);
 	projectionStack.LoadMatrix(perspective);
 
-	//BattleScene Variables
-	enemyTurn = false;
-	playerTurn = true;
-
-	firstChoice = true;
-	secondChoice = false;
-	battleStart = false;
-
-	//Aarow position for Battle Scene
-	arrowPosX = 125;
-	arrowPosY = 92.5;
-
-	battleSelection = BS_ATTACK;
 }
+
+void SceneText::SetGS(string set)
+{
+	if (set == "START_SCREEN")
+		GS = START_SCREEN;
+	else if (set == "TESTMAP")
+		GS = TESTMAP;
+	else if (set == "INVENTORY_SCREEN")
+		GS = INVENTORY_SCREEN;
+	else if (set == "TAMAGOTCHI_SCREEN")
+		GS = TAMAGOTCHI_SCREEN;
+	else if (set == "BATTLE")
+		GS = BATTLE;
+	else if (set == "CATCH")
+		GS = CATCH;
+}
+
 
 //BattleScene Key press 
 static bool DNkeyPressed = false;
@@ -145,15 +125,6 @@ static bool LEFTkeyPressed = false;
 static bool RIGHTkeyPressed = false;
 static bool ENTERkeyPressed = false;
 
-void SceneText::SetBattleStatus(bool status)
-{
-	battleStart = status;
-}
-
-bool SceneText::GetBattleStatus()
-{
-	return battleStart;
-}
 
 void SceneText::CatchUpdate(double dt)
 {
@@ -193,7 +164,6 @@ void SceneText::CatchUpdate(double dt)
 		}
 		else if (!chargebar->CheckCollision(greenbar, m_cMap))
 		{
-			//cout << "NOT CAPTURED" << endl;
 			GS = BATTLE;
 		}
 	}
@@ -201,10 +171,6 @@ void SceneText::CatchUpdate(double dt)
 	{
 		ENTERkeyPressed = false;
 	}
-	//else
-	//{
-	//	cout << "ENTER KEY FKED UP AND DOWN" << endl;
-	//}
 
 	//if (chargebar->CheckCollision(greenbar, m_cMap))
 	//{
@@ -269,210 +235,9 @@ void SceneText::CatchUpdate(double dt)
 	//}
 }
 
-void SceneText::BattleSceneUpdate()
-{
-	if (playerTurn && !enemyTurn)
-	{
-		if (Application::IsKeyPressed(VK_UP))
-		{
-			if (UPkeyPressed)
-			{
-				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 2);
-
-				if (firstChoice && battleSelection < BS_ATTACK)
-					battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 4);
-				else if (secondChoice && battleSelection < BS_SLASH)
-					battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 4);
-
-				cout << "BS = " << battleSelection << endl;
-				UPkeyPressed = false;
-			}
-		}
-		else
-			UPkeyPressed = true;
-
-		if (Application::IsKeyPressed(VK_DOWN))
-		{
-			if (DNkeyPressed)
-			{
-				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 2);
-
-				if (firstChoice && battleSelection > BS_RUN)
-					battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 4);
-				else if (secondChoice && battleSelection > BS_BACK)
-					battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 4);
-
-				cout << "BS = " << battleSelection << endl;
-				DNkeyPressed = false;
-			}
-		}
-		else
-			DNkeyPressed = true;
-
-		if (Application::IsKeyPressed(VK_LEFT))
-		{
-			if (LEFTkeyPressed)
-			{
-				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 1);
-
-				if (firstChoice && battleSelection < BS_ATTACK)
-					battleSelection = BS_RUN;
-				else if (secondChoice && battleSelection < BS_SLASH)
-					battleSelection = BS_BACK;
-
-				cout << "BS = " << battleSelection << endl;
-				LEFTkeyPressed = false;
-			}
-		}
-		else
-			LEFTkeyPressed = true;
-
-		if (Application::IsKeyPressed(VK_RIGHT))
-		{
-			if (RIGHTkeyPressed)
-			{
-				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 1);
-
-				if (firstChoice && battleSelection > BS_RUN)
-					battleSelection = BS_ATTACK;
-				else if (secondChoice && battleSelection > BS_BACK)
-					battleSelection = BS_SLASH;
-
-				cout << "BS = " << battleSelection << endl;
-				RIGHTkeyPressed = false;
-			}
-		}
-		else
-			RIGHTkeyPressed = true;
-
-		if (Application::IsKeyPressed(VK_RETURN) && !ENTERkeyPressed)
-		{
-			ENTERkeyPressed = true;
-			if (firstChoice)
-			{
-				switch (battleSelection)
-				{
-				case BS_ATTACK:
-					//Render Attack skills choices (Slash, Stab, (Monster's Skills), Back)
-					battleSelection = BS_SLASH;
-					firstChoice = false;
-					secondChoice = true;
-					cout << "ATTACK! " << endl;
-					secondChoice = true;
-					firstChoice = false;
-					break;
-
-				case BS_ITEM:
-					//Render Item bag design
-					//Battle selection set to Item's
-					firstChoice = false;
-					secondChoice = true;
-					cout << "Item Bag" << battleSelection << endl;
-					secondChoice = true;
-					firstChoice = false;
-					break;
-
-				case BS_CAPTURE:
-					//Start Capture function && render capture function
-					GS = CATCH;
-					battleStart = false;
-					break;
-
-				case BS_RUN:
-					cout << "RUN AWAY" << battleSelection << endl;
-					escapePercentage += Math::RandFloatMinMax(0.0f, 50.0f);
-					cout << "Escape % = " << escapePercentage << endl;
-					if (escapePercentage > 50.0f)
-					{
-						playerTurn = true;
-						enemyTurn = false;
-						escapePercentage = 25.0f;
-						cout << "ESCAPE LOHHHHHHHHHH!" << endl;
-						battleSelection = BS_ATTACK;
-						GS = TESTMAP;
-						// Despawn monster once run away
-						for (int i = 0; i < m_goList.size(); ++i)
-						{
-							if (m_goList[i] == EnemyInBattle)
-							{
-								delete EnemyInBattle;
-								m_goList.erase(m_goList.begin() + i);
-							}
-						}
-					}
-					else
-					{
-						/*enemyTurn = true;
-						playerTurn = false;*/
-						escapePercentage = 25.0f;
-						cout << "WHY YOU NO ESCAPE!!!!" << endl;
-						battleSelection = BS_ATTACK;
-					}
-					break;
-				}
-			}
-			else if (secondChoice)
-			{
-				//Second Choice only applys to Attack and Item as it need to display a new numbers of choices
-				cout << "Second Choice Selection" << endl;
-				switch (battleSelection)
-				{
-				case BS_SLASH:
-					//minus enemy hp, then enemy turn = true, player turn = false
-					cout << "Slash enemy " << endl;
-
-					//if enemy not dead
-					enemyTurn = true;
-					playerTurn = false;
-					break;
-				case BS_STAB:
-					//minus enemy hp, then enemy turn = true, player turn = false
-					cout << "Stab enemy " << battleSelection << endl;
-
-					//if enemy not dead
-					enemyTurn = true;
-					playerTurn = false;
-					break;
-				case BS_SKILL:
-					//minus enemy hp, then enemy turn = true, player turn = false
-					cout << " Monster's skills " << battleSelection << endl;
-
-					//if enemy not dead
-					enemyTurn = true;
-					playerTurn = false;
-					break;
-				case BS_BACK:
-					cout << " Back " << battleSelection << endl;
-
-					firstChoice = true;
-					secondChoice = false;
-					battleSelection = BS_ATTACK;
-					//Render back 1st page choices (Attack, Item bag, Capture, Run)
-					break;
-
-				}
-				secondChoice = false;
-				firstChoice = true;
-			}
-
-		}
-		else if (!Application::IsKeyPressed(VK_RETURN) && ENTERkeyPressed)
-		{
-			ENTERkeyPressed = false;
-		}
-
-	}
-
-	//Enemy's turn to hit back
-	if (enemyTurn && !playerTurn)
-	{
-
-	}
-
-}
-
 void SceneText::EnterBattleScene(Enemy* enemy)
 {
+	battleScene.SetBattleStart(true);
 	EnemyInBattle = enemy;
 	GS = BATTLE;
 }
@@ -494,10 +259,28 @@ void SceneText::PlayerUpdate(double dt)
 	if (Application::IsKeyPressed('D'))
 		this->theHero->MoveLeftRight(false, m_cMap, dt);
 	theHero->HeroUpdate(m_cMap, dt, meshList);
+	SpriteAnimation *sa = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC]);
+	if (sa)
+	{
+		sa->Update(dt);
+		sa->m_anim->animActive = true;
+	}
+	SpriteAnimation *pic2 = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC2]);
+	if (pic2)
+	{
+		pic2->Update(dt);
+		pic2->m_anim->animActive = true;
+	}
 
-	//For Testing Purpose
-	if (Application::IsKeyPressed('G'))
-		battleStart = true;
+	if (Application::IsKeyPressed('I') && !IkeyPressed && GS)
+	{
+		GS = INVENTORY_SCREEN;
+		IkeyPressed = true;
+	}
+	else if (!Application::IsKeyPressed('I') && IkeyPressed)
+	{
+		IkeyPressed = false;
+	}
 }
 
 void SceneText::GOupdate(double dt)
@@ -523,14 +306,9 @@ void SceneText::GOupdate(double dt)
 	}
 }
 
-void SceneText::UpdateInventory()
+void SceneText::UpdateInventory(double dt)
 {
-	if (!Application::IsKeyPressed('I') && IkeyPressed)
-	{
-		IkeyPressed = false;
-	}
-
-	if (Application::IsKeyPressed('I') && !IkeyPressed && GS == INVENTORY_SCREEN)
+	if (Application::IsKeyPressed('I') && !IkeyPressed)
 	{
 		GS = TESTMAP;
 		IkeyPressed = true;
@@ -539,6 +317,46 @@ void SceneText::UpdateInventory()
 	{
 		IkeyPressed = false;
 	}
+
+	cursorDebounce += (float)dt;
+	if (cursorDebounce > 0.5f)
+	{
+		if (Application::IsKeyPressed(VK_UP) && UPkeyPressed)
+		{
+			cursorDebounce = 0;
+			UPkeyPressed = false;
+
+			if (itemCursorPos != 0)
+				itemCursorPos -= 1;
+			else
+				itemCursorPos = 2;
+
+			cout << "UP" << endl;
+			cout << itemCursorPos << endl;
+			UPkeyPressed = false;
+		}
+		else
+			UPkeyPressed = true;
+
+		if (Application::IsKeyPressed(VK_DOWN) && DNkeyPressed)
+		{
+			cursorDebounce = 0;
+			DNkeyPressed = false;
+
+			if (itemCursorPos != 2)
+				itemCursorPos += 1;
+			else
+				itemCursorPos = 0;
+
+			cout << "DN" << endl;
+			cout << itemCursorPos << endl;
+			DNkeyPressed = false;
+		}
+		else
+			DNkeyPressed = true;
+	}
+	if (Application::IsKeyPressed(VK_RETURN) && !ENTERkeyPressed)
+		ENTERkeyPressed = true;
 }
 
 void SceneText::RenderInventory()
@@ -562,22 +380,27 @@ void SceneText::RenderInventory()
 	RenderTextOnScreen(meshList[GEO_TEXT], ss3.str(), Color(1, 0, 0), 60, 300, 330);
 }
 
+void SceneText::MapUpdate(double dt)
+{
+	PlayerUpdate(dt);
+	GOupdate(dt);
+}
+
 void SceneText::Update(double dt)
 {
 	switch (GS)
 	{
 	case TESTMAP:
-		PlayerUpdate(dt);
-		GOupdate(dt);
+		MapUpdate(dt);
 		break;
 	case BATTLE:
-		BattleSceneUpdate();
+			battleScene.UpdateBattleSystem(UPkeyPressed, DNkeyPressed, LEFTkeyPressed, RIGHTkeyPressed, ENTERkeyPressed);
 		break;
 	case CATCH:
 		CatchUpdate(dt);
 		break;
 	case INVENTORY_SCREEN:
-		UpdateInventory();
+		UpdateInventory(dt);
 		break;
 	}
 
@@ -596,7 +419,10 @@ void SceneText::RenderTestMap()
 	RenderTileMap(m_cMap);
 	if (renderNPCstuff)
 	{
-		Render2DMeshWScale(meshList[GEO_NPCPIC], false, 300, 300, 100, 100, false);
+		if (npcPic == 1)
+		Render2DMeshWScale(meshList[GEO_NPCPIC], false, 350, 350, 650, 220, false);
+		if (npcPic == 2)
+			Render2DMeshWScale(meshList[GEO_NPCPIC2], false, 350, 350, 650, 220, false);
 		Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false);
 	}
 
@@ -612,12 +438,9 @@ void SceneText::RenderTestMap()
 				if (temp->itemType == Items::POTION)
 					Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false);
 			}
-
 			if (m_goList[i]->type == GameObject::GO_NPC)
 			{
-
 				NPC* temp = (NPC*)m_goList[i];
-				
 				ss.str("");
 				ss.precision(5);
 				Render2DMeshWScale(meshList[GEO_NPC], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false);
@@ -626,9 +449,11 @@ void SceneText::RenderTestMap()
 				{
 					if (dialogueNum == temp->maxDia)
 						ss << "Enter to Exit";
+					npcPic = temp->collideWhichNPC();
 					if (temp->GetNum() == dialogueNum)
 						ss << "Dialogue: " << temp->GetDialogue();
 
+						{
 					if (dialogueNum >= 1 && dialogueNum <= temp->maxDia)
 					{
 						renderNPCstuff = true;
@@ -638,15 +463,12 @@ void SceneText::RenderTestMap()
 					else if (dialogueNum >= temp->maxDia)
 					{
 						if (temp->GetID() == temp->collideWhichNPC())
-						{
 							npcID = temp->collideWhichNPC();
 							currState = 2;
 							dialogueNum = 0;
 							renderNPCstuff = false;
 						}
 					}
-					
-
 				}
 			}
 			if (m_goList[i]->type == GameObject::GO_ENEMY)
@@ -714,72 +536,67 @@ void SceneText::RenderBattleScene()
 	if (GS == BATTLE)
 	{
 
-		switch (battleSelection)
+		switch (battleScene.GetBattleSelection())
 		{
-			case BS_SLASH:
-			case BS_ATTACK:
-				arrowPosX = 125;
-				arrowPosY = 92.5;
+			case BattleSystem::BATTLE_SELECTION::BS_SLASH:
+			case BattleSystem::BATTLE_SELECTION::BS_ATTACK:
+				battleScene.SetArrowPos(110, 98, 0);
 				break;
-			case BS_SKILL:
-			case BS_CAPTURE:
-				arrowPosX = 125;
-				arrowPosY = 42.5;
+			case BattleSystem::BATTLE_SELECTION::BS_SKILL:
+			case BattleSystem::BATTLE_SELECTION::BS_CAPTURE:
+				battleScene.SetArrowPos(113, 48, 0);
 				break;
-			case BS_STAB:
-			case BS_ITEM:
-				arrowPosX = 420;
-				arrowPosY = 92.5;
+			case BattleSystem::BATTLE_SELECTION::BS_STAB:
+			case BattleSystem::BATTLE_SELECTION::BS_ITEM:
+				battleScene.SetArrowPos(405, 98, 0);
 				break;
-			case BS_BACK:
-			case BS_RUN:
-				arrowPosX = 420;
-				arrowPosY = 42.5;
+			case BattleSystem::BATTLE_SELECTION::BS_BACK:
+			case BattleSystem::BATTLE_SELECTION::BS_RUN:
+				battleScene.SetArrowPos(405, 48, 0);
 				break;
 		}
 
 		//When it is player's turn
-		if (playerTurn && !enemyTurn)
+		if (battleScene.GetPlayerTurn() && !battleScene.GetEnemyTurn())
 		{
-
 			Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false);
 
-			Render2DMeshWScale(meshList[GEO_BATTLEARROW], false, 0.1, 0.05, arrowPosX, arrowPosY, false);
+			Render2DMeshWScale(meshList[GEO_BATTLEARROW], false, 0.1, 0.05, battleScene.GetArrowPosX(), battleScene.GetArrowPosY(), false);
 
 			std::ostringstream ss;
 			ss.str("");
 			ss.precision(5);
-			if (firstChoice && !secondChoice)
+			if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice())
 				ss << "Attack";
-			else if (secondChoice && !firstChoice)
+			else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice())
 				ss << "Slash";
 			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 200, 100);
 
 			ss.str("");
 			ss.precision(5);
-			if (firstChoice && !secondChoice)
+			if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice())
 				ss << "Item";
-			else if (secondChoice && !firstChoice)
+			else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice())
 				ss << "Stab";
 			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 500, 100);
 
 			ss.str("");
 			ss.precision(5);
-			if (firstChoice && !secondChoice)
+			if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice())
 				ss << "Capture";
-			else if (secondChoice && !firstChoice)
+			else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice())
 				ss << "Monster's Skill";
 			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 200, 50);
 
 			ss.str("");
 			ss.precision(5);
-			if (firstChoice && !secondChoice)
+			if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice())
 				ss << "Run";
-			else if (secondChoice && !firstChoice)
+			else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice())
 				ss << "Back";
 			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 500, 50);
 		}
-		else if (!playerTurn && enemyTurn)
+		else if (!battleScene.GetPlayerTurn() && battleScene.GetEnemyTurn())
 		{
 		}
 	}

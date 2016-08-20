@@ -1,4 +1,4 @@
-﻿Build started 16/8/2016 1:12:53 PM.
+﻿Build started 20/8/2016 12:19:16 PM.
      1>Project "C:\Users\Arun\Documents\2016 S1\SP3GDP\Common\Common.vcxproj" on node 2 (Build target(s)).
      1>Lib:
          Common.vcxproj -> C:\Users\Arun\Documents\2016 S1\SP3GDP\Debug\Common.lib
@@ -6,4 +6,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:00.04
+Time Elapsed 00:00:00.05

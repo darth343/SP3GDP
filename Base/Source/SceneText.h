@@ -11,25 +11,10 @@
 #include "Enemy.h"
 #include "EquipmentManager.h"
 #include "CharacterData.h"
+#include "BattleSystem.h"
 
 class SceneText : public SceneBase
 {
-	enum BATTLE_SELECTION
-	{
-		BS_ATTACK = 1,
-		BS_ITEM,
-		BS_CAPTURE,
-		BS_RUN,
-
-		//Attack
-		BS_SLASH,
-		BS_STAB,
-		BS_SKILL,
-		BS_BACK,
-
-		BS_TOTAL,
-	};
-
 	enum GAMESTATE_TYPE
 	{
 		START_SCREEN,
@@ -39,6 +24,13 @@ class SceneText : public SceneBase
 		BATTLE,
 		CATCH,
 		GS_TOTAL,
+	};
+
+	enum MAP_STATE
+	{
+		PLAY,
+		IN_DIALOUGE,
+		MS_TOTAL,
 	};
 
 public:
@@ -62,21 +54,24 @@ public:
 	void RenderInventory(); // Render Inventory Main Screen here
 
 	//Update Functions
-	void UselessUpdate(double dt); // Ask KY for details :>
+	void MapUpdate(double dt);
 	void PlayerUpdate(double dt); // Update to the player 
 	void GOupdate(double dt); // Main GO Collisions
-	void UpdateInventory(); // Updates for All Inventory 
+	void UpdateInventory(double dt); // Updates for All Inventory 
 	void EnterBattleScene(Enemy* enemy); //its like the update for BattleScene
-	void BattleSceneUpdate();
 	void CatchUpdate(double dt);
-	void SetBattleStatus(bool status);
-	bool GetBattleStatus();
+	void SetGS(string gs);
+
 private:
+	NPC npc;
 	Gauge* greenbar;
 	Gauge* redbar;
 	Gauge* chargebar;
+	Enemy* theEnemy;
 	Enemy* EnemyInBattle;
+	Pathfinder testpathfinder;
 	vector<GameObject *> m_goList;
+	int npcPic = 0;
 	int npcsize = 0;
 	float enemyCatchPercentage;
 	float enemyMaxHealth;
@@ -84,46 +79,22 @@ private:
 	bool moveLeft=false;
 	bool moveRight = true;
 	bool renderNPCstuff = false;
-	NPC npc;
-
-	Enemy* theEnemy;
-	Pathfinder testpathfinder;
 	int dialogueNum = 0;
 	int npcNum = 0;
 	int npcID = 0;
 
-	// Handle to the tilemaps
-	CMap* m_cMap;
-	// Hero's information
-	CPlayerInfo* theHero;
-	// GameState
+	CMap* m_cMap;	// Handle to the tilemaps
+	CPlayerInfo* theHero; // Hero's information
 	GAMESTATE_TYPE GS; // Change GameState in SceneText.cpp line 144 for testing purposes
-	// Monster Calls
-	Monster MonType;
+	MAP_STATE MS;
+	Monster MonType; // Monster Calls
 
 	// Equipment Functions
 	EquipmentManager equipManager;
 
-	//BattleScene Variables
-
-	//Selection chosen in battlescene
-	BATTLE_SELECTION battleSelection;
-
-	//Battle scene Selection
-	bool firstChoice, secondChoice;
-
-	//Escape chances
-	float escapePercentage;
-
-	//BattleScene Arow position
-	float arrowPosX;
-	float arrowPosY;
-
-	//Current Turn for battle scene
-	bool enemyTurn, playerTurn;
-
-	//Stating whether has the battle started or not 
-	bool battleStart;
+	
+	// Battle system
+	BattleSystem battleScene;
 
 	int currState = 1;
 	bool npc1;
@@ -135,6 +106,10 @@ private:
 	bool RIGHTkeyPressed;
 	bool ENTERkeyPressed;
 	bool IkeyPressed;
+
+
+	int itemCursorPos = 0;
+	float cursorDebounce = 0;
 };
 
 #endif
