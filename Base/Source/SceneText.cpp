@@ -14,7 +14,7 @@ SceneText::SceneText()
 :
 m_cMap(NULL)
 , EnemyInBattle(NULL)
-, NPCInConvo(NULL)
+//, NPCInConvo(NULL)
 , IkeyPressed(false)
 {
 }
@@ -420,7 +420,7 @@ void SceneText::RenderTestMap()
 	if (renderNPCstuff)
 	{
 		if (npcPic == 1)
-		Render2DMeshWScale(meshList[GEO_NPCPIC], false, 350, 350, 650, 220, false);
+			Render2DMeshWScale(meshList[GEO_NPCPIC], false, 350, 350, 650, 220, false);
 		if (npcPic == 2)
 			Render2DMeshWScale(meshList[GEO_NPCPIC2], false, 350, 350, 650, 220, false);
 		Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false);
