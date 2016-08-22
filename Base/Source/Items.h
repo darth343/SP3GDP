@@ -21,8 +21,8 @@ public:
 	~Items();
 	
 	// Function to increase Item Count
-	void addPotion();
-	void addTrap();
+	void addPotion(int);
+	void addTrap(int);
 
 	//Function to decrease Item Count
 	void removePotion();

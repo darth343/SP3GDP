@@ -15,7 +15,6 @@ SceneText::SceneText()
 m_cMap(NULL)
 , EnemyInBattle(NULL)
 //, NPCInConvo(NULL)
-, IkeyPressed(false)
 {
 }
 
@@ -117,13 +116,6 @@ void SceneText::SetGS(string set)
 		GS = CATCH;
 }
 
-//BattleScene Key press 
-static bool DNkeyPressed = false;
-static bool UPkeyPressed = false;
-static bool LEFTkeyPressed = false;
-static bool RIGHTkeyPressed = false;
-static bool ENTERkeyPressed = false;
-
 void SceneText::CatchUpdate(double dt)
 {
 	enemyCatchPercentage = (enemyMaxHealth - currHealth) / 100 * 20;
@@ -143,9 +135,9 @@ void SceneText::CatchUpdate(double dt)
 	chargebar->Update(dt, 200.f);
 	greenbar->Update(dt, 400.f);
 
-	if (Application::IsKeyPressed(VK_RETURN) && !ENTERkeyPressed)
+	if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 	{
-		ENTERkeyPressed = true;
+		SharedData::GetInstance()->ENTERkeyPressed = true;
 		if (chargebar->CheckCollision(greenbar, m_cMap))
 		{
 			cout << "CAPTURED" << endl;
@@ -166,9 +158,9 @@ void SceneText::CatchUpdate(double dt)
 			GS = BATTLE;
 		}
 	}
-	else if (!Application::IsKeyPressed(VK_RETURN) && ENTERkeyPressed)
+	else if (!Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
 	{
-		ENTERkeyPressed = false;
+		SharedData::GetInstance()->ENTERkeyPressed = false;
 	}
 
 	//if (chargebar->CheckCollision(greenbar, m_cMap))
@@ -241,11 +233,6 @@ void SceneText::EnterBattleScene(Enemy* enemy)
 	GS = BATTLE;
 }
 
-void SceneText::DialogueFile(string filename)
-{
-	
-}
-
 void SceneText::PlayerUpdate(double dt)
 {
 	// Update the hero
@@ -270,15 +257,21 @@ void SceneText::PlayerUpdate(double dt)
 		pic2->Update(dt);
 		pic2->m_anim->animActive = true;
 	}
+	SpriteAnimation *pic3 = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC3]);
+	if (pic3)
+	{
+		pic3->Update(dt);
+		pic3->m_anim->animActive = true;
+	}
 
-	if (Application::IsKeyPressed('I') && !IkeyPressed && GS)
+	if (Application::IsKeyPressed('I') && !SharedData::GetInstance()->IkeyPressed && GS)
 	{
 		GS = INVENTORY_SCREEN;
-		IkeyPressed = true;
+		SharedData::GetInstance()->IkeyPressed = true;
 	}
-	else if (!Application::IsKeyPressed('I') && IkeyPressed)
+	else if (!Application::IsKeyPressed('I') && SharedData::GetInstance()->IkeyPressed)
 	{
-		IkeyPressed = false;
+		SharedData::GetInstance()->IkeyPressed = false;
 	}
 }
 
@@ -294,36 +287,36 @@ void SceneText::GOupdate(double dt)
 			if (temp->collideWhichNPC() == npcID)
 				temp->SetState(currState);
 
-			if (temp->collideWhichNPC() != 0 && Application::IsKeyPressed(VK_RETURN) && !ENTERkeyPressed)
+			if (temp->collideWhichNPC() != 0 && Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 			{
-				ENTERkeyPressed = true;
+				SharedData::GetInstance()->ENTERkeyPressed = true;
 				temp->ScrollDialogue(dialogueNum);
 			}
-			else if (!Application::IsKeyPressed(VK_RETURN) && ENTERkeyPressed)
-				ENTERkeyPressed = false;
+			else if (!Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
+				SharedData::GetInstance()->ENTERkeyPressed = false;
 		}
 	}
 }
 
 void SceneText::UpdateInventory(double dt)
 {
-	if (Application::IsKeyPressed('I') && !IkeyPressed)
+	if (Application::IsKeyPressed('I') && !SharedData::GetInstance()->IkeyPressed)
 	{
 		GS = TESTMAP;
-		IkeyPressed = true;
+		SharedData::GetInstance()->IkeyPressed = true;
 	}
-	else if (!Application::IsKeyPressed('I') && IkeyPressed)
+	else if (!Application::IsKeyPressed('I') && SharedData::GetInstance()->IkeyPressed)
 	{
-		IkeyPressed = false;
+		SharedData::GetInstance()->IkeyPressed = false;
 	}
 
 	cursorDebounce += (float)dt;
 	if (cursorDebounce > 0.5f)
 	{
-		if (Application::IsKeyPressed(VK_UP) && UPkeyPressed)
+		if (Application::IsKeyPressed(VK_UP) && SharedData::GetInstance()->UPkeyPressed)
 		{
 			cursorDebounce = 0;
-			UPkeyPressed = false;
+			SharedData::GetInstance()->UPkeyPressed = false;
 
 			if (itemCursorPos != 0)
 				itemCursorPos -= 1;
@@ -332,15 +325,15 @@ void SceneText::UpdateInventory(double dt)
 
 			cout << "UP" << endl;
 			cout << itemCursorPos << endl;
-			UPkeyPressed = false;
+			SharedData::GetInstance()->UPkeyPressed = false;
 		}
 		else
-			UPkeyPressed = true;
+			SharedData::GetInstance()->UPkeyPressed = true;
 
-		if (Application::IsKeyPressed(VK_DOWN) && DNkeyPressed)
+		if (Application::IsKeyPressed(VK_DOWN) && SharedData::GetInstance()->DNkeyPressed)
 		{
 			cursorDebounce = 0;
-			DNkeyPressed = false;
+			SharedData::GetInstance()->DNkeyPressed = false;
 
 			if (itemCursorPos != 2)
 				itemCursorPos += 1;
@@ -349,13 +342,13 @@ void SceneText::UpdateInventory(double dt)
 
 			cout << "DN" << endl;
 			cout << itemCursorPos << endl;
-			DNkeyPressed = false;
+			SharedData::GetInstance()->DNkeyPressed = false;
 		}
 		else
-			DNkeyPressed = true;
+			SharedData::GetInstance()->DNkeyPressed = true;
 	}
-	if (Application::IsKeyPressed(VK_RETURN) && !ENTERkeyPressed)
-		ENTERkeyPressed = true;
+	if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
+		SharedData::GetInstance()->ENTERkeyPressed = true;
 }
 
 void SceneText::RenderInventory()
@@ -398,7 +391,7 @@ void SceneText::Update(double dt)
 		MapUpdate(dt);
 		break;
 	case BATTLE:
-			battleScene.UpdateBattleSystem(UPkeyPressed, DNkeyPressed, LEFTkeyPressed, RIGHTkeyPressed, ENTERkeyPressed);
+		battleScene.UpdateBattleSystem(SharedData::GetInstance()->UPkeyPressed, SharedData::GetInstance()->DNkeyPressed, SharedData::GetInstance()->LEFTkeyPressed, SharedData::GetInstance()->RIGHTkeyPressed, SharedData::GetInstance()->ENTERkeyPressed);
 		break;
 	case CATCH:
 		CatchUpdate(dt);
@@ -430,6 +423,8 @@ void SceneText::RenderTestMap()
 			Render2DMeshWScale(meshList[GEO_NPCPIC], false, 350, 350, 650, 220, false);
 		if (npcPic == 2)
 			Render2DMeshWScale(meshList[GEO_NPCPIC2], false, 350, 350, 650, 220, false);
+		if (npcPic == 3)
+			Render2DMeshWScale(meshList[GEO_NPCPIC3], false, 350, 350, 650, 220, false);
 		Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false);
 	}
 
@@ -457,10 +452,10 @@ void SceneText::RenderTestMap()
 					if (dialogueNum == temp->maxDia)
 						ss << "Enter to Exit";
 					npcPic = temp->collideWhichNPC();
+
 					if (temp->GetNum() == dialogueNum)
 						ss << "Dialogue: " << temp->GetDialogue();
 
-						{
 					if (dialogueNum >= 1 && dialogueNum <= temp->maxDia)
 					{
 						renderNPCstuff = true;
@@ -474,7 +469,6 @@ void SceneText::RenderTestMap()
 							currState = 2;
 							dialogueNum = 0;
 							renderNPCstuff = false;
-						}
 					}
 				}
 			}

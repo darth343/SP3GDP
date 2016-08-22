@@ -9,14 +9,14 @@ Items::~Items()
 {
 }
 
-void Items::addPotion()
+void Items::addPotion(int count)
 {
-	numPotions += 1;
+	numPotions += count;
 }
 
-void Items::addTrap()
+void Items::addTrap(int count)
 {
-	numTraps += 1;
+	numTraps += count;
 }
 
 void Items::removePotion()
@@ -43,7 +43,7 @@ void Items::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap
 {
 	if (this->active && CheckCollision(playerPos, mapOffset, m_cMap))
 	{
-		addPotion();
+		addPotion(1);
 		active = false;
 		std::cout << getPotionCount() << std::endl;
 	}

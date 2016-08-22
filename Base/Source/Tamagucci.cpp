@@ -1,5 +1,6 @@
 #include "Tamagucci.h"
 #include "Application.h"
+
 TAMAGUCCI::TAMAGUCCI()
 {
 	button = T_FOOD;
@@ -44,18 +45,27 @@ std::ostream& operator<<(std::ostream& cout, TAMAGUCCI::TAMABUTTONS buttons)
 void TAMAGUCCI::UpdateTamagucci()
 {
 	GetTamagucciInput();
-	cout << button << endl;
 }
 
 void TAMAGUCCI::GetTamagucciInput()
 {
-	if (Application::IsKeyPressed(VK_RIGHT))
+	if (Application::IsKeyPressed(VK_RIGHT) && !SharedData::GetInstance()->RIGHTkeyPressed)
 	{
+		SharedData::GetInstance()->RIGHTkeyPressed = true;
 		button = static_cast<TAMABUTTONS>(1 + button);
 	}
-	if (Application::IsKeyPressed(VK_LEFT))
+	else if (!Application::IsKeyPressed(VK_RIGHT) && SharedData::GetInstance()->RIGHTkeyPressed)
 	{
-		button = static_cast<TAMABUTTONS>(1 - button);
+		SharedData::GetInstance()->RIGHTkeyPressed = false;
+	}
+	if (Application::IsKeyPressed(VK_LEFT) && !SharedData::GetInstance()->LEFTkeyPressed)
+	{
+		SharedData::GetInstance()->LEFTkeyPressed = true;
+		button = static_cast<TAMABUTTONS>(button - 1);
+	}
+	else if (!Application::IsKeyPressed(VK_LEFT) && SharedData::GetInstance()->LEFTkeyPressed)
+	{
+		SharedData::GetInstance()->LEFTkeyPressed = false;
 	}
 	if (button == TOTAL_TBUTTONS)
 		button = T_FOOD;

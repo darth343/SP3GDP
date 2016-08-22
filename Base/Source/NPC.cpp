@@ -2,6 +2,7 @@
 #include <fstream>
 using std::ifstream;
 #include "Application.h"
+#include "SharedData.h"
 #include <iostream>
 using std::iostream;
 
@@ -115,49 +116,52 @@ void NPC::ScrollDialogue(int & dialogue)
 void NPC::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 {
 	//MOVEMENT
-	if (this->GetID() == 1)
+	if (SharedData::GetInstance()->gameState == SharedData::GAME_S1)
 	{
-		if (this->GetAnimationState() == NPC::NPC_AWANDERING)
+		if (this->GetID() == 1)
 		{
-			if (this->position.x > 300)
-				this->position.x -= 30 * dt;
-		}
-	
-		if (this->GetDialogueState() == 1)
-			this->maxDia = 4;
-		else if (this->GetDialogueState() == 2)
-			this->maxDia = 3;
-		this->maxState = 2;
-	}
-	if (this->GetID() == 2)
-	{
-		if (this->GetAnimationState() == NPC::NPC_AWANDERING)
-		{
-			if (this->position.y > 100)
-				this->position.y -= 30 * dt;
-		}
+			if (this->GetAnimationState() == NPC::NPC_AWANDERING)
+			{
+				if (this->position.x > 300)
+					this->position.x -= 30 * dt;
+			}
 
-		if (this->GetDialogueState() == 1)
-			this->maxDia = 5;
-		else if (this->GetDialogueState() == 2)
-			this->maxDia = 4;
-		else if (this->GetDialogueState() == 3)
-			this->maxDia = 4;
-		this->maxState = 2;
-	}
-	if (this->GetID() == 3)
-	{
-		if (this->GetAnimationState() == NPC::NPC_AWANDERING)
-		{
-			if (this->position.y > 50)
-				this->position.y -= 30 * dt;
+			if (this->GetDialogueState() == 1)
+				this->maxDia = 4;
+			else if (this->GetDialogueState() == 2)
+				this->maxDia = 3;
+			this->maxState = 2;
 		}
+		if (this->GetID() == 2)
+		{
+			if (this->GetAnimationState() == NPC::NPC_AWANDERING)
+			{
+				if (this->position.y > 100)
+					this->position.y -= 30 * dt;
+			}
 
-		if (this->GetDialogueState() == 1)
-			this->maxDia = 2;
-		else if (this->GetDialogueState() == 2)
-			this->maxDia = 2;
-		this->maxState = 2;
+			if (this->GetDialogueState() == 1)
+				this->maxDia = 5;
+			else if (this->GetDialogueState() == 2)
+				this->maxDia = 4;
+			else if (this->GetDialogueState() == 3)
+				this->maxDia = 4;
+			this->maxState = 2;
+		}
+		if (this->GetID() == 3)
+		{
+			if (this->GetAnimationState() == NPC::NPC_AWANDERING)
+			{
+				if (this->position.y > 50)
+					this->position.y -= 30 * dt;
+			}
+
+			if (this->GetDialogueState() == 1)
+				this->maxDia = 2;
+			else if (this->GetDialogueState() == 2)
+				this->maxDia = 2;
+			this->maxState = 2;
+		}
 	}
 	if (this->active && CheckCollision(playerPos, mapOffset, m_cMap))
 	{
