@@ -146,6 +146,7 @@ void BattleSystem::RunBattleChoice()
 				cout << "ESCAPE LOHHHHHHHHHH!" << endl;
 				battleSelection = BS_ATTACK;
 				mainScene->SetGS("TESTMAP");
+				mainScene->RemoveEnemy();
 
 			}
 			else

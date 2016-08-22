@@ -7,6 +7,14 @@ TAMAGUCCI::TAMAGUCCI()
 	choice = T_NOTHING;
 	entertainmentChoice = E_NOTHING;
 	foodChoice = FC_KB;
+	tamtam = new GameObject;
+	tamtam->position.Set(350, 250, 1);
+	tamtam->scale.Set(64, 64, 1);
+
+	tamdrop = new GameObject;
+	tamdrop->position.Set(Math::RandFloatMinMax(0, 730), 600, 1);
+	tamdrop->type = GameObject::GO_TAMDROP1;
+	tamdrop->scale.Set(64, 64, 1);
 }
 
 TAMAGUCCI::~TAMAGUCCI()
@@ -62,10 +70,23 @@ std::ostream& operator<<(std::ostream& cout, TAMAGUCCI::FOODCHOICES foodchoice)
 	return cout;
 }
 
-void TAMAGUCCI::UpdateTamagucci()
+void TAMAGUCCI::UpdateTamagucci(double dt)
 {
 	if (state == FIRSTMENU || state == SECONDMENU)
 	GetTamagucciInput();
+	if (state == RUNCHOICE)
+	{
+		switch (runChoice)
+		{
+		case R_ENTERTAINMENTCHOICES:
+		{
+									   if (entertainmentChoice == E_CATCHING)
+									   {
+										   MiniGame(dt);
+									   }
+		}
+		}
+	}
 }
 
 void TAMAGUCCI::GetTamagucciInput()
@@ -188,9 +209,68 @@ void TAMAGUCCI::GetTamagucciInput()
 				{
 					SharedData::GetInstance()->LEFTkeyPressed = false;
 				}
+
+				// ENTER BUTTON
+				if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
+				{
+					SharedData::GetInstance()->ENTERkeyPressed = true;
+					if (entertainmentChoice == E_CATCHING)
+					{
+						runChoice = R_ENTERTAINMENTCHOICES;
+						state = RUNCHOICE;
+					}
+				}
+				else if (!Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
+				{
+					SharedData::GetInstance()->ENTERkeyPressed = false;
+				}
 		}
 			break;
 		}
 		break;
 	}
+}
+
+void TAMAGUCCI::MiniGameUpdatePosition(double dt)
+{
+	tamtam->position.y = 100;
+	if (tamtam->position.x < 730)
+	{
+		if (Application::IsKeyPressed(VK_RIGHT) || Application::IsKeyPressed('D'))
+		{
+			tamtam->position.x += 100 * dt;
+		}
+	}
+	if (tamtam->position.x > 0)
+	{
+		if (Application::IsKeyPressed(VK_LEFT) || Application::IsKeyPressed('A'))
+			tamtam->position.x -= 100 * dt;
+	}
+}
+
+void TAMAGUCCI::MiniGame(double dt)
+{
+	MiniGameUpdatePosition(dt);
+	tamdrop->position.y -= 100 * dt;
+	if (tamtam->CheckCollision(tamdrop))
+	{
+		tamdrop->position.Set(Math::RandFloatMinMax(0, 730), 600, 0);
+	}
+	if (tamdrop->position.y <= 0)
+		tamdrop->position.Set(Math::RandFloatMinMax(0, 730), 600, 0);
+}
+
+GameObject* TAMAGUCCI::GetTamTam()
+{
+	return tamtam;
+}
+
+GameObject* TAMAGUCCI::GetTamDrop()
+{
+	return tamdrop;
+}
+
+TAMAGUCCI::CHOICES TAMAGUCCI::GetState()
+{
+	return runChoice;
 }

@@ -62,8 +62,10 @@ public:
 	void EnterBattleScene(Enemy* enemy); //its like the update for BattleScene
 	void CatchUpdate(double dt);
 	void SetGS(string gs);
-	void RemoveEnemy(Enemy* enemy);
+	void RemoveEnemy();
 	void RenderNPCDialogue(double dt);
+	void RenderTamagucci();
+	void TamagucciUpdate(double dt);
 private:
 	NPC npc;
 	Gauge* greenbar;
@@ -71,6 +73,8 @@ private:
 	Gauge* chargebar;
 	Enemy* theEnemy;
 	Enemy* EnemyInBattle;
+	TAMAGUCCI* tamtam;
+	TAMAGUCCI* tamdrop;
 	Pathfinder testpathfinder;
 	TAMAGUCCI tamagucci;
 	vector<GameObject *> m_goList;

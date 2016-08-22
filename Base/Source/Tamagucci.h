@@ -1,10 +1,12 @@
 #ifndef TAMAGUCCI_H
 #define TAMAGUCCI_H
 #include "Vector3.h"
+#include "GameObject.h"
 #include <vector>
 using std::vector;
 class TAMAGUCCI
 {
+public:
 	enum TAMAGUCCISTATES
 	{
 		FIRSTMENU,
@@ -41,17 +43,30 @@ class TAMAGUCCI
 		E_TOTAL,
 	};
 
-public:
+	enum CHOICES
+	{
+		R_NOTHING,
+		R_ENTERTAINMENTCHOICES,
+	};
+
 	TAMAGUCCI();
 	~TAMAGUCCI();
-	void UpdateTamagucci();
+	void UpdateTamagucci(double dt);
 	void GetTamagucciInput();
+	void MiniGame(double dt);
+	void MiniGameUpdatePosition(double dt);
 	friend std::ostream& operator<<(std::ostream& cout, TAMABUTTONS buttons);
 	friend std::ostream& operator<<(std::ostream& cout, FOODCHOICES foodchoice);
+	CHOICES GetState();
+	GameObject* GetTamTam();
+	GameObject* GetTamDrop();
 private:
+	GameObject* tamtam;
+	GameObject* tamdrop;
 	TAMAGUCCISTATES state;
 	TAMABUTTONS choice;
 	FOODCHOICES foodChoice;
+	CHOICES runChoice;
 	ENTERTAINMENTCHOICES entertainmentChoice;
 	vector<Vector3> pooPositions;
 	int hungerLevel;
