@@ -2,8 +2,9 @@
 #define TAMAGUCCI_H
 #include "Vector3.h"
 #include <vector>
+#include "GameObject.h"
 using std::vector;
-class TAMAGUCCI
+class TAMAGUCCI : public GameObject
 {
 	enum TAMABUTTONS
 	{
@@ -21,7 +22,9 @@ public:
 	~TAMAGUCCI();
 	void UpdateTamagucci();
 	void GetTamagucciInput();
+	void MiniGame(Vector3 &, double dt);
 	friend std::ostream& operator<<(std::ostream& cout, TAMABUTTONS buttons);
+
 private:
 	TAMABUTTONS button;
 	vector<Vector3> pooPositions;

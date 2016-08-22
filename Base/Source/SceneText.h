@@ -64,6 +64,8 @@ public:
 	void SetGS(string gs);
 	void RemoveEnemy(Enemy* enemy);
 	void RenderNPCDialogue(double dt);
+	void RenderTamagucci();
+	void TamagucciUpdate(double dt);
 private:
 	NPC npc;
 	Gauge* greenbar;
@@ -71,6 +73,8 @@ private:
 	Gauge* chargebar;
 	Enemy* theEnemy;
 	Enemy* EnemyInBattle;
+	TAMAGUCCI* tamtam;
+	TAMAGUCCI* tamdrop;
 	Pathfinder testpathfinder;
 	TAMAGUCCI tamagucci;
 	vector<GameObject *> m_goList;

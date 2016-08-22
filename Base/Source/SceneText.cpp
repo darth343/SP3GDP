@@ -56,6 +56,16 @@ void SceneText::Init()
 	greenbar->type = GameObject::GO_GREENBAR;
 	greenbar->position.Set(400, 150, 1);
 
+	tamtam = new TAMAGUCCI;
+	tamtam->position.Set(350, 250,1);
+	tamtam->scale.Set(64, 64, 1);
+	tamdrop = new TAMAGUCCI;
+	tamdrop->position.Set(Math::RandFloatMinMax(0, 730), 600, 1);
+	tamdrop->type = GameObject::GO_TAMDROP1;
+	tamdrop->scale.Set(64, 64, 1);
+	m_goList.push_back(tamtam);
+	m_goList.push_back(tamdrop);
+
 	chargebar = new Gauge(Vector3(1.f, 32.f, 1));
 	chargebar->gauge = Gauge::MOVE;
 	chargebar->type = GameObject::GO_MOVE;
@@ -283,7 +293,7 @@ void SceneText::GOupdate(double dt)
 		if (m_goList[i]->type == GameObject::GO_NPC)
 		{
 			NPC* temp = (NPC*)m_goList[i];
-			
+
 			if (temp->collideWhichNPC() == npcID)
 				temp->SetState(currState);
 
@@ -297,7 +307,24 @@ void SceneText::GOupdate(double dt)
 		}
 	}
 }
+//For the mini game
+void SceneText::TamagucciUpdate(double dt)
+{
+	tamagucci.MiniGame(tamtam->position, dt);
 
+	tamdrop->position.y -= 100 * dt;
+	if (tamdrop->position.y <= 0)
+		tamdrop->position.Set(Math::RandFloatMinMax(0, 730), 600, 0);
+
+	if (tamtam->CheckCollision(tamdrop, m_cMap))
+	{
+		tamdrop->position.Set(Math::RandFloatMinMax(0, 730), 600, 0);
+	}
+	if (!tamtam->CheckCollision(tamdrop, m_cMap))
+	{
+		cout << "AHAJHJAHSJ";
+	}
+}
 void SceneText::UpdateInventory(double dt)
 {
 	if (Application::IsKeyPressed('I') && !SharedData::GetInstance()->IkeyPressed)
@@ -380,9 +407,11 @@ void SceneText::MapUpdate(double dt)
 
 void SceneText::Update(double dt)
 {
+
 	if (Application::IsKeyPressed('Z'))
 	{
 		GS = TAMAGUCCI_SCREEN;
+
 	}
 
 	switch (GS)
@@ -400,10 +429,10 @@ void SceneText::Update(double dt)
 		UpdateInventory(dt);
 		break;
 	case TAMAGUCCI_SCREEN:
+		TamagucciUpdate(dt);
 		tamagucci.UpdateTamagucci();
 		break;
 	}
-
 	fps = (float)(1.f / dt);
 }
 
@@ -517,7 +546,22 @@ void SceneText::RenderMonster()
 		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false);
 	
 }
-
+void SceneText::RenderTamagucci()
+{
+	RenderBackground(meshList[GEO_TAMAGUCCIBACKGROUND]);
+	Render2DMeshWScale(meshList[GEO_TAMAGUCCI], false, tamtam->scale.x, tamtam->scale.y, tamtam->position.x, tamtam->position.y, false);
+	for (int i = 0; i < m_goList.size(); i++)
+	{
+		if (m_goList[i]->active == true && m_goList[i]->type == GameObject::GO_TAMDROP1)
+		{
+			Render2DMeshWScale(meshList[GEO_STAR], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x, m_goList[i]->position.y, false);
+		}
+		if (m_goList[i]->active == true && m_goList[i]->type == GameObject::GO_TAMDROP2)
+		{
+			Render2DMeshWScale(meshList[GEO_TAMAGUCCI], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x, m_goList[i]->position.y, false);
+		}
+	}
+}
 void SceneText::RenderCatch()
 {
 	RenderBackground(meshList[GEO_BATTLESCENE]);
@@ -623,10 +667,10 @@ void SceneText::Render()
 		RenderInventory();
 		break;
 	case TAMAGUCCI_SCREEN:
-		RenderBackground(meshList[GEO_TAMAGUCCIBACKGROUND]);
+		tamagucci.UpdateTamagucci();
+		RenderTamagucci();
 		break;
 	}
-
 }
 
 void SceneText::Exit()

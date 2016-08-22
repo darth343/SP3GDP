@@ -67,8 +67,25 @@ void TAMAGUCCI::GetTamagucciInput()
 	{
 		SharedData::GetInstance()->LEFTkeyPressed = false;
 	}
+
 	if (button == TOTAL_TBUTTONS)
 		button = T_FOOD;
 	else if (button == T_NOTHING)
 		button = T_BOND;
+}
+void TAMAGUCCI::MiniGame(Vector3 &position,double dt)
+{
+	position.y = 100;
+	if (position.x < 730)
+	{
+		if (Application::IsKeyPressed(VK_RIGHT))
+		{
+			position.x += 100*dt;
+		}
+	}
+	if (position.x > 0)
+	{
+		if (Application::IsKeyPressed(VK_LEFT))
+			position.x -= 100*dt;
+	}
 }
