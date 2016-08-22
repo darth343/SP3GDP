@@ -3,11 +3,12 @@
 #include "GameObject.h"
 #include "Pathfinder.h"
 #include "Tile.h"
+#include "Monster.h"
 
 class Enemy : public GameObject
 {
 public:
-	Enemy(Vector3 scale = Vector3(1, 1, 1), int ID = 0);
+	Enemy(Monster, Vector3 scale = Vector3(1, 1, 1));
 	~Enemy();
 
 enum ENEMY_STATES
@@ -23,21 +24,21 @@ enum ENEMY_STATES
 	float GetHealth();
 	float GetDamage();
 	void SetDamage(float dmg);
-	int GetMonsterID();
 	bool GetFlipStatus();
 	void MoveTo(double dt, Tile nextTile, CMap* m_cMap);
 	void MoveLeftRight(double dt, bool left);
 	void MoveUpDown(double dt, bool up);
 	void Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap);
 	friend std::ostream& operator<<(std::ostream& cout, ENEMY_STATES state);
+
 private:
 	float health;
 	float damage;
-	int monsterID;
 	Vector3 prevHeroPos;
 	Vector3 patrolPos;
 	Pathfinder thePath;
 	ENEMY_STATES enemyStates;
+	Monster MonID;
 	//Rendering Variables
 	bool flip;
 };

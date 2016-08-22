@@ -153,6 +153,5 @@ private:
 	MONSTER_BUFFDEBUFF_SKILLS skillSlotThree;
 	MONSTER_SPECIFIC_SKILLS skillSlotFour;
 
-
 };
 

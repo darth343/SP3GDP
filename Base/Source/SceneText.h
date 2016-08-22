@@ -110,6 +110,8 @@ private:
 
 	int itemCursorPos = 0;
 	float cursorDebounce = 0;
+
+	bool captured;
 };
 
 #endif

@@ -61,8 +61,9 @@ void SceneText::Init()
 	chargebar->gauge = Gauge::MOVE;
 	chargebar->type = GameObject::GO_MOVE;
 	chargebar->position.Set(500, 150, 1);
-
-	theEnemy = new Enemy(Vector3(32.f, 32.f, 1));
+	Monster temp;
+	temp.setMonsterName("PLACEHOLDER");
+	theEnemy = new Enemy(temp, Vector3(32.f, 32.f, 1));
 	theEnemy->type = GameObject::GO_ENEMY;
 	theEnemy->position.Set(64, 224, 1);
 	m_goList.push_back(theEnemy);
@@ -149,6 +150,7 @@ void SceneText::CatchUpdate(double dt)
 		ENTERkeyPressed = true;
 		if (chargebar->CheckCollision(greenbar, m_cMap))
 		{
+			captured = true;
 			cout << "CAPTURED" << endl;
 			GS = TESTMAP;
 

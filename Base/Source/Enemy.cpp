@@ -6,15 +6,15 @@ const float IDLE_TIMER = 1.0;
 const int TILES_BEFORECHASING = 7;
 const int TILES_BEFOREPATROLLING = 12;
 
-Enemy::Enemy(Vector3 scale, int ID)
+Enemy::Enemy(Monster ID, Vector3 scale)
 : GameObject(scale)
-, monsterID(ID)
+, MonID(ID)
 , flip(false)
 {
 	enemyStates = E_IDLE;
 	health = 100.0f;
 	damage = 5.0f;
-	monsterID = 0;
+
 }
 
 Enemy::~Enemy()
@@ -36,10 +36,6 @@ void Enemy::SetDamage(float dmg)
 float Enemy::GetHealth()
 {
 	return health;
-}
-int Enemy::GetMonsterID()
-{
-	return monsterID;
 }
 
 bool Enemy::GetFlipStatus()
@@ -250,3 +246,4 @@ std::ostream& operator<<(std::ostream& cout, Enemy::ENEMY_STATES state)
 		}
 	}
 }
+
