@@ -60,15 +60,19 @@ public:
 	CHOICES GetState();
 	GameObject* GetTamTam();
 	GameObject* GetTamDrop();
+	GameObject* GetTamDrop2();
+
 private:
 	GameObject* tamtam;
 	GameObject* tamdrop;
+	GameObject* tamdrop2;
 	TAMAGUCCISTATES state;
 	TAMABUTTONS choice;
 	FOODCHOICES foodChoice;
 	CHOICES runChoice;
 	ENTERTAINMENTCHOICES entertainmentChoice;
 	vector<Vector3> pooPositions;
+	int minigame1Score;
 	int hungerLevel;
 	int energyLevel;
 	int happinessLevel;
