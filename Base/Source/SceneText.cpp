@@ -125,7 +125,6 @@ static bool LEFTkeyPressed = false;
 static bool RIGHTkeyPressed = false;
 static bool ENTERkeyPressed = false;
 
-
 void SceneText::CatchUpdate(double dt)
 {
 	enemyCatchPercentage = (enemyMaxHealth - currHealth) / 100 * 20;
@@ -242,11 +241,6 @@ void SceneText::EnterBattleScene(Enemy* enemy)
 	GS = BATTLE;
 }
 
-void SceneText::DialogueFile(string filename)
-{
-	
-}
-
 void SceneText::PlayerUpdate(double dt)
 {
 	// Update the hero
@@ -270,6 +264,12 @@ void SceneText::PlayerUpdate(double dt)
 	{
 		pic2->Update(dt);
 		pic2->m_anim->animActive = true;
+	}
+	SpriteAnimation *pic3 = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC3]);
+	if (pic3)
+	{
+		pic3->Update(dt);
+		pic3->m_anim->animActive = true;
 	}
 
 	if (Application::IsKeyPressed('I') && !IkeyPressed && GS)
@@ -423,6 +423,8 @@ void SceneText::RenderTestMap()
 			Render2DMeshWScale(meshList[GEO_NPCPIC], false, 350, 350, 650, 220, false);
 		if (npcPic == 2)
 			Render2DMeshWScale(meshList[GEO_NPCPIC2], false, 350, 350, 650, 220, false);
+		if (npcPic == 3)
+			Render2DMeshWScale(meshList[GEO_NPCPIC3], false, 350, 350, 650, 220, false);
 		Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false);
 	}
 
@@ -450,10 +452,10 @@ void SceneText::RenderTestMap()
 					if (dialogueNum == temp->maxDia)
 						ss << "Enter to Exit";
 					npcPic = temp->collideWhichNPC();
+
 					if (temp->GetNum() == dialogueNum)
 						ss << "Dialogue: " << temp->GetDialogue();
 
-						{
 					if (dialogueNum >= 1 && dialogueNum <= temp->maxDia)
 					{
 						renderNPCstuff = true;
@@ -467,7 +469,6 @@ void SceneText::RenderTestMap()
 							currState = 2;
 							dialogueNum = 0;
 							renderNPCstuff = false;
-						}
 					}
 				}
 			}

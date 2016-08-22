@@ -146,6 +146,8 @@ void SceneBase::Init()
 	meshList[GEO_NPCPIC]->textureID = LoadTGA("Image//NPC1_GIF.tga");
 	meshList[GEO_NPCPIC2] = MeshBuilder::GenerateSpriteAnimation("sprite", 1, 6);
 	meshList[GEO_NPCPIC2]->textureID = LoadTGA("Image//NPC2_GIF.tga");
+	meshList[GEO_NPCPIC3] = MeshBuilder::GenerateSpriteAnimation("sprite", 1, 6);
+	meshList[GEO_NPCPIC3]->textureID = LoadTGA("Image//NPC3_GIF.tga");
 	meshList[GEO_REDTILE] = MeshBuilder::Generate2DMesh("GEO_REDTILE", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
 	meshList[GEO_REDTILE]->textureID = LoadTGA("Image//redTile.tga");
 	meshList[GEO_BLUETILE] = MeshBuilder::Generate2DMesh("GEO_BLUETILE", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
@@ -180,6 +182,12 @@ void SceneBase::Init()
 	{
 		pic2->m_anim = new Animation();
 		pic2->m_anim->Set(0, 5, 0, 1.f, true);
+	}
+	SpriteAnimation *pic3 = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC3]);
+	if (pic3)
+	{
+		pic3->m_anim = new Animation();
+		pic3->m_anim->Set(0, 5, 0, 1.f, true);
 	}
 
 
