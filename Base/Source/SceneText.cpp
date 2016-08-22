@@ -546,12 +546,32 @@ void SceneText::RenderMonster()
 }
 void SceneText::RenderTamagucci()
 {
+	static float xpos = 0.f;
+	static float ypos = 0.f;
+	if (Application::IsKeyPressed('I'))
+	{
+		ypos += 1.0f;
+	}
+	if (Application::IsKeyPressed('K'))
+	{
+		ypos -= 1.0f;
+	}
+	if (Application::IsKeyPressed('J'))
+	{
+		xpos -= 1.0f;
+	}
+	if (Application::IsKeyPressed('L'))
+	{
+		xpos += 1.0f;
+	}
+	cout << xpos << " " << ypos << endl;
 	RenderBackground(meshList[GEO_TAMAGUCCIBACKGROUND]);
+	Render2DMeshWScale(meshList[GEO_TAMAGUCCIUIBACKGROUND], false, 1, 1, 400, -291, false);
+	Render2DMeshWScale(meshList[GEO_TAMAGUCCIUIBACKGROUND], false, 1, 1, 400, 892, false);
 	switch (tamagucci.GetState())
 	{
 	case TAMAGUCCI::R_ENTERTAINMENTCHOICES:
 		Render2DMeshWScale(meshList[GEO_STAR], false, tamagucci.GetTamDrop()->scale.x, tamagucci.GetTamDrop()->scale.y, tamagucci.GetTamDrop()->position.x, tamagucci.GetTamDrop()->position.y, false);
-		Render2DMeshWScale(meshList[GEO_TAMAGUCCI], false, tamagucci.GetTamTam()->scale.x, tamagucci.GetTamTam()->scale.y, tamagucci.GetTamTam()->position.x, tamagucci.GetTamTam()->position.y, false);
 		break;
 		//if (tamagucci.)
 		//{
@@ -562,6 +582,7 @@ void SceneText::RenderTamagucci()
 		//	Render2DMeshWScale(meshList[GEO_TAMAGUCCI], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x, m_goList[i]->position.y, false);
 		//}
 	}
+	Render2DMeshWScale(meshList[GEO_TAMAGUCCI], false, tamagucci.GetTamTam()->scale.x, tamagucci.GetTamTam()->scale.y, tamagucci.GetTamTam()->position.x, tamagucci.GetTamTam()->position.y, false);
 }
 void SceneText::RenderCatch()
 {
