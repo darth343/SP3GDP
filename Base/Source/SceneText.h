@@ -42,7 +42,6 @@ public:
 	virtual void Render();
 	virtual void Exit();
 	void RenderTileMap(CMap* m_cMap, Vector3 speed = Vector3(1, 1, 1));
-	void DialogueFile(string);
 
 	//Render Functions
 	void BasicRender(); // Basic Render Codes, do not touch unless needed 
@@ -61,6 +60,7 @@ public:
 	void EnterBattleScene(Enemy* enemy); //its like the update for BattleScene
 	void CatchUpdate(double dt);
 	void SetGS(string gs);
+	void RenderNPCDialogue(double dt);
 
 private:
 	NPC npc;
@@ -71,17 +71,13 @@ private:
 	Enemy* EnemyInBattle;
 	Pathfinder testpathfinder;
 	vector<GameObject *> m_goList;
-	int npcPic = 0;
-	int npcsize = 0;
+	int npcPic = 0; //Which npc picture to show on the dialogue
 	float enemyCatchPercentage;
 	float enemyMaxHealth;
 	float currHealth = 100;
-	bool moveLeft=false;
-	bool moveRight = true;
 	bool renderNPCstuff = false;
-	int dialogueNum = 0;
-	int npcNum = 0;
-	int npcID = 0;
+	int dialogueNum = 0; //Checking which dialogue to show from npc
+	int npcID = 0; //Changing state of npc dialogue
 
 	CMap* m_cMap;	// Handle to the tilemaps
 	CPlayerInfo* theHero; // Hero's information
@@ -91,15 +87,11 @@ private:
 
 	// Equipment Functions
 	EquipmentManager equipManager;
-
 	
 	// Battle system
 	BattleSystem battleScene;
 
-	int currState = 1;
-	bool npc1;
-	bool npc2;
-	bool npc3;
+	int currState = 1; //The current state of npc dialogue
 
 	bool UPkeyPressed;
 	bool LEFTkeyPressed;
