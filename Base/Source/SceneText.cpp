@@ -109,14 +109,13 @@ void SceneText::SetGS(string set)
 		GS = TESTMAP;
 	else if (set == "INVENTORY_SCREEN")
 		GS = INVENTORY_SCREEN;
-	else if (set == "TAMAGOTCHI_SCREEN")
-		GS = TAMAGOTCHI_SCREEN;
+	else if (set == "TAMAGUCCI_SCREEN")
+		GS = TAMAGUCCI_SCREEN;
 	else if (set == "BATTLE")
 		GS = BATTLE;
 	else if (set == "CATCH")
 		GS = CATCH;
 }
-
 
 //BattleScene Key press 
 static bool DNkeyPressed = false;
@@ -124,7 +123,6 @@ static bool UPkeyPressed = false;
 static bool LEFTkeyPressed = false;
 static bool RIGHTkeyPressed = false;
 static bool ENTERkeyPressed = false;
-
 
 void SceneText::CatchUpdate(double dt)
 {
@@ -142,7 +140,8 @@ void SceneText::CatchUpdate(double dt)
 		greenbar->position.x -= (greenbar->scale.x - prevScale) * 0.5;
 	}
 
-	chargebar->Update(dt);
+	chargebar->Update(dt, 200.f);
+	greenbar->Update(dt, 400.f);
 
 	if (Application::IsKeyPressed(VK_RETURN) && !ENTERkeyPressed)
 	{
@@ -388,6 +387,11 @@ void SceneText::MapUpdate(double dt)
 
 void SceneText::Update(double dt)
 {
+	if (Application::IsKeyPressed('Z'))
+	{
+		GS = TAMAGUCCI_SCREEN;
+	}
+
 	switch (GS)
 	{
 	case TESTMAP:
@@ -401,6 +405,9 @@ void SceneText::Update(double dt)
 		break;
 	case INVENTORY_SCREEN:
 		UpdateInventory(dt);
+		break;
+	case TAMAGUCCI_SCREEN:
+		tamagucci.UpdateTamagucci();
 		break;
 	}
 
@@ -620,6 +627,9 @@ void SceneText::Render()
 	case INVENTORY_SCREEN:
 		RenderBackground(meshList[GEO_INVENTORYBACKGROUND]);
 		RenderInventory();
+		break;
+	case TAMAGUCCI_SCREEN:
+		RenderBackground(meshList[GEO_TAMAGUCCIBACKGROUND]);
 		break;
 	}
 

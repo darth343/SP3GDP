@@ -12,6 +12,7 @@
 #include "EquipmentManager.h"
 #include "CharacterData.h"
 #include "BattleSystem.h"
+#include "Tamagucci.h"
 
 class SceneText : public SceneBase
 {
@@ -20,7 +21,7 @@ class SceneText : public SceneBase
 		START_SCREEN,
 		TESTMAP,
 		INVENTORY_SCREEN,
-		TAMAGOTCHI_SCREEN,
+		TAMAGUCCI_SCREEN,
 		BATTLE,
 		CATCH,
 		GS_TOTAL,
@@ -61,6 +62,7 @@ public:
 	void EnterBattleScene(Enemy* enemy); //its like the update for BattleScene
 	void CatchUpdate(double dt);
 	void SetGS(string gs);
+	void RemoveEnemy(Enemy* enemy);
 
 private:
 	NPC npc;
@@ -70,6 +72,7 @@ private:
 	Enemy* theEnemy;
 	Enemy* EnemyInBattle;
 	Pathfinder testpathfinder;
+	TAMAGUCCI tamagucci;
 	vector<GameObject *> m_goList;
 	int npcPic = 0;
 	int npcsize = 0;
