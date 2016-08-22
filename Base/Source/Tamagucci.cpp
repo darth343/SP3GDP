@@ -15,6 +15,11 @@ TAMAGUCCI::TAMAGUCCI()
 	tamdrop->position.Set(Math::RandFloatMinMax(0, 730), 600, 1);
 	tamdrop->type = GameObject::GO_TAMDROP1;
 	tamdrop->scale.Set(64, 64, 1);
+
+	tamdrop2 = new GameObject;
+	tamdrop2->position.Set(Math::RandFloatMinMax(0, 730), 650, 1);
+	tamdrop2->type = GameObject::GO_TAMDROP2;
+	tamdrop2->scale.Set(64, 64, 1);
 }
 
 TAMAGUCCI::~TAMAGUCCI()
@@ -238,13 +243,13 @@ void TAMAGUCCI::MiniGameUpdatePosition(double dt)
 	{
 		if (Application::IsKeyPressed(VK_RIGHT) || Application::IsKeyPressed('D'))
 		{
-			tamtam->position.x += 100 * dt;
+			tamtam->position.x += 300 * dt;
 		}
 	}
 	if (tamtam->position.x > 0)
 	{
 		if (Application::IsKeyPressed(VK_LEFT) || Application::IsKeyPressed('A'))
-			tamtam->position.x -= 100 * dt;
+			tamtam->position.x -= 300 * dt;
 	}
 }
 
@@ -252,12 +257,25 @@ void TAMAGUCCI::MiniGame(double dt)
 {
 	MiniGameUpdatePosition(dt);
 	tamdrop->position.y -= 100 * dt;
+	tamdrop2->position.y -= 80 * dt;
 	if (tamtam->CheckCollision(tamdrop))
 	{
 		tamdrop->position.Set(Math::RandFloatMinMax(0, 730), 600, 0);
+		minigame1Score += 5;
 	}
 	if (tamdrop->position.y <= 0)
 		tamdrop->position.Set(Math::RandFloatMinMax(0, 730), 600, 0);
+
+	if (tamtam->CheckCollision(tamdrop2))
+	{
+		tamdrop2->position.Set(Math::RandFloatMinMax(0, 730), 650, 0);
+		minigame1Score -= 5;
+	}
+	if (tamdrop2->position.y <= 0)
+		tamdrop2->position.Set(Math::RandFloatMinMax(0, 730), 650, 0);
+
+	if (minigame1Score >= 20)
+		choice = T_NOTHING;
 }
 
 GameObject* TAMAGUCCI::GetTamTam()
@@ -268,6 +286,11 @@ GameObject* TAMAGUCCI::GetTamTam()
 GameObject* TAMAGUCCI::GetTamDrop()
 {
 	return tamdrop;
+}
+
+GameObject* TAMAGUCCI::GetTamDrop2()
+{
+	return tamdrop2;
 }
 
 TAMAGUCCI::CHOICES TAMAGUCCI::GetState()

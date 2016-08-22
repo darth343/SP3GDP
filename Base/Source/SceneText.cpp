@@ -263,6 +263,12 @@ void SceneText::PlayerUpdate(double dt)
 		pic3->Update(dt);
 		pic3->m_anim->animActive = true;
 	}
+	/*SpriteAnimation *arrow = dynamic_cast<SpriteAnimation*>(meshList[GEO_BATTLEARROW]);
+	if (arrow)
+	{
+		arrow->Update(dt);
+		arrow->m_anim->animActive = true;
+	}*/
 
 	if (Application::IsKeyPressed('I') && !SharedData::GetInstance()->IkeyPressed && GS)
 	{
@@ -551,6 +557,7 @@ void SceneText::RenderTamagucci()
 	{
 	case TAMAGUCCI::R_ENTERTAINMENTCHOICES:
 		Render2DMeshWScale(meshList[GEO_STAR], false, tamagucci.GetTamDrop()->scale.x, tamagucci.GetTamDrop()->scale.y, tamagucci.GetTamDrop()->position.x, tamagucci.GetTamDrop()->position.y, false);
+		Render2DMeshWScale(meshList[GEO_POOP], false, tamagucci.GetTamDrop2()->scale.x, tamagucci.GetTamDrop2()->scale.y, tamagucci.GetTamDrop2()->position.x, tamagucci.GetTamDrop2()->position.y, false);
 		Render2DMeshWScale(meshList[GEO_TAMAGUCCI], false, tamagucci.GetTamTam()->scale.x, tamagucci.GetTamTam()->scale.y, tamagucci.GetTamTam()->position.x, tamagucci.GetTamTam()->position.y, false);
 		break;
 		//if (tamagucci.)
