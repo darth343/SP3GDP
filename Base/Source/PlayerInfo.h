@@ -52,6 +52,7 @@ public:
 	void SetHP(float hp);	
 	void SetDMG(float dmg);	
 	void SetDEF(float def);
+	void TakeDMG(float dmg);
 
 	float GetHP();
 	float GetDMG();
@@ -72,12 +73,4 @@ private:
 	float playerHP;
 	float playerDamage;
 	float playerDefense;
-
-
-	bool collideSomething;
-
-	float hp;
-	float damage;
-	bool collideWithEnemy;
-
 };

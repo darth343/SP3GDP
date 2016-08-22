@@ -66,6 +66,19 @@ public:
 	void RenderNPCDialogue(double dt);
 	void RenderTamagucci();
 	void TamagucciUpdate(double dt);
+
+	float GetBattleMonsterPosX();
+	float GetBattleMonsterPosY();
+	void SetBattleMonsterPosX(float x);
+	void SetBattleMonsterPosY(float y);
+
+	float GetBattleMonsterScaleX();
+	void SetBattleMonsterScaleX(float x);
+	float GetBattleMonsterScaleY();
+	void SetBattleMonsterScaleY(float y);
+
+	bool GetMonsterScaleUp();
+	void SetMonsterScaleUp(bool set);
 private:
 	NPC npc;
 	Gauge* greenbar;
@@ -97,6 +110,10 @@ private:
 	
 	// Battle system
 	BattleSystem battleScene;
+	Vector3 battleMonsterPos;
+	Vector3 battleMonsterScale;
+
+	bool monsterScaleUp;
 
 	int currState = 1; //The current state of npc dialogue
 

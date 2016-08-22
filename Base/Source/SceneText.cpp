@@ -98,6 +98,61 @@ void SceneText::Init()
 	//perspective.SetToOrtho(-80, 80, -60, 60, -1000, 1000);
 	projectionStack.LoadMatrix(perspective);
 
+	battleMonsterPos.Set(300, 240, 0);
+	battleMonsterScale.Set(0.3, 0.3, 1);
+
+	monsterScaleUp = true;
+
+}
+
+bool SceneText::GetMonsterScaleUp()
+{
+	return monsterScaleUp;
+}
+
+void SceneText::SetMonsterScaleUp(bool set)
+{
+	this->monsterScaleUp = set;
+}
+
+float SceneText::GetBattleMonsterScaleX()
+{
+	return battleMonsterScale.x;
+}
+
+void SceneText::SetBattleMonsterScaleX(float x)
+{
+	this->battleMonsterScale.x = x;
+}
+
+float SceneText::GetBattleMonsterScaleY()
+{
+	return battleMonsterScale.y;
+}
+
+void SceneText::SetBattleMonsterScaleY(float y)
+{
+	this->battleMonsterScale.y = y;
+}
+
+float SceneText::GetBattleMonsterPosX()
+{
+	return battleMonsterPos.x;
+}
+
+float SceneText::GetBattleMonsterPosY()
+{
+	return battleMonsterPos.y;
+}
+
+void SceneText::SetBattleMonsterPosX(float x)
+{
+	this->battleMonsterPos.x = x;
+}
+
+void SceneText::SetBattleMonsterPosY(float y)
+{
+	this->battleMonsterPos.y = y;
 }
 
 void SceneText::SetGS(string set)
@@ -118,7 +173,7 @@ void SceneText::SetGS(string set)
 
 void SceneText::CatchUpdate(double dt)
 {
-	enemyCatchPercentage = (enemyMaxHealth - currHealth) / 100 * 20;
+	enemyCatchPercentage = (enemyMaxHealth - EnemyInBattle->GetHealth()) / 100 * 20;
 
 	if (Application::IsKeyPressed('V'))
 	{
@@ -415,7 +470,7 @@ void SceneText::Update(double dt)
 		MapUpdate(dt);
 		break;
 	case BATTLE:
-		battleScene.UpdateBattleSystem(SharedData::GetInstance()->UPkeyPressed, SharedData::GetInstance()->DNkeyPressed, SharedData::GetInstance()->LEFTkeyPressed, SharedData::GetInstance()->RIGHTkeyPressed, SharedData::GetInstance()->ENTERkeyPressed);
+		battleScene.UpdateBattleSystem(SharedData::GetInstance()->UPkeyPressed, SharedData::GetInstance()->DNkeyPressed, SharedData::GetInstance()->LEFTkeyPressed, SharedData::GetInstance()->RIGHTkeyPressed, SharedData::GetInstance()->ENTERkeyPressed, theHero, EnemyInBattle);
 		break;
 	case CATCH:
 		CatchUpdate(dt);
@@ -547,7 +602,29 @@ void SceneText::RenderMonster()
 	else if (MonType.getMonsterType() == SCYLLA)
 		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
 	else if (MonType.getMonsterType() == MINOTAUR)*/
-		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false);
+	if (battleScene.GetMonsterHitAnimation())
+	{
+		if (battleMonsterScale.x < 0.5 && battleMonsterScale.y < 0.5 && monsterScaleUp)
+		{
+			battleMonsterScale.x += 0.01;
+			battleMonsterScale.y += 0.01;
+			if (battleMonsterScale.x > 0.5 || battleMonsterScale.y > 0.5)
+				monsterScaleUp = false;
+		}
+		if (battleMonsterScale.x > 0.3  && !monsterScaleUp || battleMonsterScale.y > 0.3 && !monsterScaleUp)
+		{
+			battleMonsterScale.x -= 0.01;
+			battleMonsterScale.y -= 0.01;
+			if (battleMonsterScale.x < 0.3 || battleMonsterScale.y < 0.3)
+			{
+				battleScene.SetMonsterHitAnimation(false);
+				monsterScaleUp = true;
+			}
+		}
+
+	}
+	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
+
 	
 }
 void SceneText::RenderTamagucci()

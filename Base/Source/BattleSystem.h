@@ -1,5 +1,7 @@
 #pragma once
 #include "Vector3.h"
+#include "PlayerInfo.h"
+#include "Enemy.h"
 
 using std::string;
 
@@ -32,7 +34,10 @@ public:
 	void SetFirstChoice(bool set);
 	void SetSecondChoice(bool set);
 	void SetEscapeChance(float percetage);
-	void SetBattleSelection(BATTLE_SELECTION selection);
+	void SetBattleSelection(BATTLE_SELECTION selection);	
+	void SetMonsterHitAnimation(bool set);
+
+	void Reset();
 
 	bool GetBattleStart();
 	bool GetEnemyTurn();
@@ -41,10 +46,11 @@ public:
 	float GetArrowPosY();
 	bool GetFirstChoice();
 	bool GetSecondChoice();
+	bool GetMonsterHitAnimation();
 	BATTLE_SELECTION GetBattleSelection();
 
-	void UpdateBattleSystem(static bool& UPkeyPressed, static bool& DNkeyPressed, static bool& LEFTkeyPressed, static bool& RIGHTkeyPressed, static bool& ENTERkeyPressed);
-	void RunBattleChoice();
+	void UpdateBattleSystem(static bool& UPkeyPressed, static bool& DNkeyPressed, static bool& LEFTkeyPressed, static bool& RIGHTkeyPressed, static bool& ENTERkeyPressed, CPlayerInfo* theHero, Enemy* enemy);
+	void RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy);
 	void GetBattleChoiceInput(static bool& UPkeyPressed, static bool& DNkeyPressed, static bool& LEFTkeyPressed, static bool& RIGHTkeyPressed, static bool& ENTERkeyPressed);
 private:
 
@@ -59,6 +65,8 @@ private:
 	float escapePercentage;			  //Escape chances
 
 	BATTLE_SELECTION battleSelection; //Selection chosen in battlescene
+	
+	bool monsterHitAnimation;
 
 
 
