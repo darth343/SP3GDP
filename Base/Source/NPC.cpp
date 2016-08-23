@@ -33,7 +33,7 @@ void NPC::ReadFromFile(string filename, vector<GameObject*>&m_goList)
 	string temp;
 	while (myfile.good())
 	{
-		NPC* n = new NPC(Vector3(32.f, 32.f, 1));
+		NPC* n = new NPC(Vector3(27.f, 32.f, 1));
 		n->type = GameObject::GO_NPC;
 		getline(myfile, temp, '`');
 		if (!temp.empty())
@@ -80,6 +80,22 @@ int NPC::collideWhichNPC()
 void NPC::SetID(float id)
 {
 	npcID = id;
+	if (id == 1)
+	{
+		this->moveLeft = true;
+		this->moveRight = false;
+	}
+	if (id == 2)
+	{
+		this->moveLeft = false;
+		this->moveRight = true;
+	}
+	if (id == 3)
+	{
+		this->moveLeft = false;
+		this->moveRight = true;
+	}
+
 }
 void NPC::SetDialogue(string dialogue)
 {
@@ -122,22 +138,53 @@ void NPC::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 		{
 			if (this->GetAnimationState() == NPC::NPC_AWANDERING)
 			{
-				if (this->position.x > 300)
+				if (this->moveLeft)
+				{
 					this->position.x -= 30 * dt;
+					if (this->position.x < 300)
+					{
+						moveRight = true;
+						moveLeft = false;
+					}
+				}
+				if (this->moveRight)
+				{
+					this->position.x += 30 * dt;
+					if (this->position.x > 500)
+					{
+						moveLeft = true;
+						moveRight = false;
+					}
+				}
 			}
 
 			if (this->GetDialogueState() == 1)
 				this->maxDia = 4;
 			else if (this->GetDialogueState() == 2)
 				this->maxDia = 3;
-			this->maxState = 2;
 		}
 		if (this->GetID() == 2)
 		{
 			if (this->GetAnimationState() == NPC::NPC_AWANDERING)
 			{
-				if (this->position.y > 100)
-					this->position.y -= 30 * dt;
+				if (moveLeft)
+				{
+					this->position.x -= 40 * dt;
+					if (this->position.x < 80)
+					{
+						moveLeft = false;
+						moveRight = true;
+					}
+				}
+				if (this->moveRight)
+				{
+					this->position.x += 40 * dt;
+					if (this->position.x > 200)
+					{
+						moveLeft = true;
+						moveRight = false;
+					}
+				}
 			}
 
 			if (this->GetDialogueState() == 1)
@@ -146,21 +193,35 @@ void NPC::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 				this->maxDia = 4;
 			else if (this->GetDialogueState() == 3)
 				this->maxDia = 4;
-			this->maxState = 2;
 		}
 		if (this->GetID() == 3)
 		{
 			if (this->GetAnimationState() == NPC::NPC_AWANDERING)
 			{
-				if (this->position.y > 50)
-					this->position.y -= 30 * dt;
+				if (moveLeft)
+				{
+					this->position.x -= 40 * dt;
+					if (this->position.x < 80)
+					{
+						moveLeft = false;
+						moveRight = true;
+					}
+				}
+				if (this->moveRight)
+				{
+					this->position.x += 40 * dt;
+					if (this->position.x > 200)
+					{
+						moveLeft = true;
+						moveRight = false;
+					}
+				}
 			}
 
 			if (this->GetDialogueState() == 1)
 				this->maxDia = 2;
 			else if (this->GetDialogueState() == 2)
 				this->maxDia = 2;
-			this->maxState = 2;
 		}
 	}
 	if (this->active && CheckCollision(playerPos, mapOffset, m_cMap))
@@ -182,4 +243,12 @@ void NPC::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 		collideWithNPC = 0;
 		SetAnimationState(NPC::NPC_AWANDERING);
 	}
+}
+bool NPC::GetMoveLeft()
+{
+	return this->moveLeft;
+}
+bool NPC::GetMoveRight()
+{
+	return this->moveRight;
 }

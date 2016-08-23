@@ -5,7 +5,7 @@ TAMAGUCCI::TAMAGUCCI()
 {
 	ResetTamagotchi();
 	tamtam = new GameObject;
-	tamtam->position.Set(350, 250, 1);
+	tamtam->position.Set(350, 100, 1);
 	tamtam->scale.Set(64, 64, 1);
 
 	tamdrop = new GameObject;
@@ -17,6 +17,11 @@ TAMAGUCCI::TAMAGUCCI()
 	tamdrop2->position.Set(Math::RandFloatMinMax(0, 730), 650, 1);
 	tamdrop2->type = GameObject::GO_TAMDROP2;
 	tamdrop2->scale.Set(64, 64, 1);
+	hungerLevel = 5;
+	energyLevel = 5;
+	happinessLevel = 5;
+	direction = true;
+	randomPosSet = false;
 }
 
 TAMAGUCCI::~TAMAGUCCI()
@@ -72,11 +77,34 @@ TAMAGUCCI::~TAMAGUCCI()
 //	return cout;
 //}
 
+void TAMAGUCCI::moveUpdate(double dt)
+{
+	if (direction)
+	{
+		tamtam->position.x -= 100.f * dt;
+		if (tamtam->position.x < 0)
+		{
+			tamtam->position.x = 0;
+			direction = false;
+		}
+	}
+	else
+	{
+		tamtam->position.x += 100.f * dt;
+		if (tamtam->position.x + tamtam->scale.x > 800)
+		{
+			tamtam->position.x = 800 - tamtam->scale.x;
+			direction = true;
+		}
+	}
+}
+
 void TAMAGUCCI::UpdateTamagucci(double dt)
 {
 	switch (tamagotchiState)
 	{
 	case MENU:
+		moveUpdate(dt);
 		GetTamagucciInput();
 		break;
 	case GAME:
@@ -87,22 +115,6 @@ void TAMAGUCCI::UpdateTamagucci(double dt)
 		}
 		break;
 	}
-	//if (state == FIRSTMENU || state == SECONDMENU)
-	//GetTamagucciInput();
-
-	//if (state == RUNCHOICE)
-	//{
-	//	switch (runChoice)
-	//	{
-	//		case R_ENTERTAINMENTCHOICES:
-	//		{
-	//			if (entertainmentChoice == E_CATCHING)
-	//			{
-	//				 MiniGame(dt);
-	//			}
-	//		}
-	//	}
-	//}
 }
 
 void TAMAGUCCI::GetTamagucciInput()
@@ -240,21 +252,42 @@ void TAMAGUCCI::GetTamagucciInput()
 		break;
 	}
 }
+int TAMAGUCCI::GetScore()
+{
+	return minigame1Score;
+}
+
+int TAMAGUCCI::getHungerlevel()
+{
+	return hungerLevel;
+}
+
+int TAMAGUCCI::getEnergylevel()
+{
+	return energyLevel;
+}
+
+int TAMAGUCCI::getHappinesslevel()
+{
+	return happinessLevel;
+}
 
 void TAMAGUCCI::MiniGameUpdatePosition(double dt)
 {
-	tamtam->position.y = 100;
-	if (tamtam->position.x < 730)
+	if (minigame1Score < 20)
 	{
-		if (Application::IsKeyPressed(VK_RIGHT) || Application::IsKeyPressed('D'))
+		if (tamtam->position.x < 730)
 		{
-			tamtam->position.x += 300 * dt;
+			if (Application::IsKeyPressed(VK_RIGHT) || Application::IsKeyPressed('D'))
+			{
+				tamtam->position.x += 300 * dt;
+			}
 		}
-	}
-	if (tamtam->position.x > 0)
-	{
-		if (Application::IsKeyPressed(VK_LEFT) || Application::IsKeyPressed('A'))
-			tamtam->position.x -= 300 * dt;
+		if (tamtam->position.x > 0)
+		{
+			if (Application::IsKeyPressed(VK_LEFT) || Application::IsKeyPressed('A'))
+				tamtam->position.x -= 300 * dt;
+		}
 	}
 }
 
@@ -270,9 +303,8 @@ void TAMAGUCCI::ResetTamagotchi()
 
 void TAMAGUCCI::MiniGame(double dt)
 {
+	bool GoBack = false;
 	MiniGameUpdatePosition(dt);
-	tamdrop->position.y -= tamDropVel * dt;
-	tamdrop2->position.y -= tamDropVel * dt;
 	if (tamtam->CheckCollision(tamdrop))
 	{
 		tamdrop->position.Set(Math::RandFloatMinMax(0, 730), 600, 0);
@@ -297,9 +329,22 @@ void TAMAGUCCI::MiniGame(double dt)
 		tamDropVel = Math::RandFloatMinMax(100, 130);
 	}
 	cout << minigame1Score << endl;
-	if (minigame1Score >= 20)
+	cout << coolDown << endl;
+	if (minigame1Score >= 20 && !GoBack)
+	{
+		coolDown -= dt;
+	}
+	else
+	{
+		tamdrop->position.y -= tamDropVel * dt;
+		tamdrop2->position.y -= tamDropVel * dt;
+	}
+	if (coolDown <= 0)
 	{
 		ResetTamagotchi();
+		GoBack = true;
+		minigame1Score = 0;
+		coolDown = 3.f;
 	}
 }
 
@@ -307,12 +352,10 @@ GameObject* TAMAGUCCI::GetTamTam()
 {
 	return tamtam;
 }
-
 GameObject* TAMAGUCCI::GetTamDrop()
 {
 	return tamdrop;
 }
-
 GameObject* TAMAGUCCI::GetTamDrop2()
 {
 	return tamdrop2;
@@ -327,6 +370,7 @@ TAMAGUCCI::MENUSTATE TAMAGUCCI::getMenuState()
 {
 	return menuState;
 }
+
 TAMAGUCCI::GAMEOPTIONS TAMAGUCCI::getGameChoice()
 {
 	return gameChoice;

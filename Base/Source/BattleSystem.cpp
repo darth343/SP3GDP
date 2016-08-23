@@ -207,6 +207,7 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 				Reset();
 				mainScene->SetGS("TESTMAP");
 				//destory enemy here
+				mainScene->RemoveEnemy();
 			}
 
 			break;

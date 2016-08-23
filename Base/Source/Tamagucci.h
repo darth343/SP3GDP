@@ -52,7 +52,8 @@ public:
 	void MiniGame(double dt);
 	void MiniGameUpdatePosition(double dt);
 	void ResetTamagotchi();
-	friend std::ostream& operator<<(std::ostream& cout, FIRSTMENUPOPTIONS buttons);
+	int GetScore();
+	//friend std::ostream& operator<<(std::ostream& cout, FIRSTMENUPOPTIONS buttons);
 	//friend std::ostream& operator<<(std::ostream& cout, FOODCHOICES foodchoice);
 	TAMAGOTCHISTATE getTamagotchiState();
 	MENUSTATE getMenuState();
@@ -62,23 +63,30 @@ public:
 	GameObject* GetTamTam();
 	GameObject* GetTamDrop();
 	GameObject* GetTamDrop2();
-
+	int getHungerlevel();
+	int getEnergylevel();
+	int getHappinesslevel();
+	void moveUpdate(double dt);
 private:
 	GameObject* tamtam;
 	GameObject* tamdrop;
 	GameObject* tamdrop2;
 	float tamDropVel = 100; 
+	float coolDown = 3.f;
 	vector<Vector3> pooPositions;
 	int minigame1Score;
 	int hungerLevel;
 	int energyLevel;
 	int happinessLevel;
-
 	//MENU STUFF
 	TAMAGOTCHISTATE tamagotchiState;
 	MENUSTATE menuState;
 	FIRSTMENUPOPTIONS firstMenuOption;
 	FOODCHOICES foodChoice;
 	GAMEOPTIONS gameChoice;
+	//MOVEMENT STUFF
+	bool direction;
+	Vector3 randPos;
+	bool randomPosSet;
 };
 #endif // !TAMAGUCCI_H

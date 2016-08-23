@@ -99,6 +99,7 @@ public:
 	void renderTamagotchiMenu();
 	void renderFirstTamagotchiFirstMenu(float yOffset = 0);
 	void renderTamagotchiGame();
+	void renderTamagotchiUI();
 private:
 	NPC npc;
 	Gauge* greenbar;
