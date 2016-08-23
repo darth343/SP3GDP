@@ -139,9 +139,6 @@ private:
 
 	bool monsterScaleUp;
 
-
-	int currState = 1; //The current state of npc dialogue
-
 	int itemCursorPos = 0;
 	float cursorDebounce = 0;
 

@@ -38,6 +38,7 @@ public:
 	bool LEFTkeyPressed;
 	bool RIGHTkeyPressed;
 	bool ENTERkeyPressed;
+	bool BACKkeyPressed;
 	bool IkeyPressed;
 
 
@@ -51,6 +52,7 @@ private:
 		LEFTkeyPressed = false;
 		RIGHTkeyPressed = false;
 		ENTERkeyPressed = false;
+		BACKkeyPressed = false;
 		IkeyPressed = false;
 	}
 	~SharedData()

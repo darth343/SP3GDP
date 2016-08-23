@@ -17,8 +17,8 @@ public:
 	void addToInventory(Monster monster);
 	void removeFromInventory(Items::ITEM_TYPE);
 	void printInventory();
-	void Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap);
-
+	int getPotionInventory();
+	int getTrapInventory();
 
 private:
 	vector<Equipment> EQinventory;

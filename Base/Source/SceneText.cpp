@@ -439,29 +439,28 @@ void SceneText::UpdateInventory(double dt)
 		}
 		else
 			SharedData::GetInstance()->DNkeyPressed = true;
+
+
+		if (Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed == false)
+		{
+			cursorDebounce = 0;
+			SharedData::GetInstance()->ENTERkeyPressed = true;
+			cout << "ENTER" << endl;
+			if (itemCursorPos == 0)
+			{
+				GS = ITEM_SCREEN;
+			}
+			if (itemCursorPos == 1)
+			{
+				GS = EQUIP_SCREEN;
+			}
+			if (itemCursorPos == 2)
+			{
+				GS = TAMAGUCCI_SCREEN;
+			}
+			SharedData::GetInstance()->ENTERkeyPressed = false;
+		}
 	}
-
-	if (Application::IsKeyPressed(VK_RETURN) && !ENTERkeyPressed)
-	{
-		ENTERkeyPressed = true;
-
-		if (itemCursorPos == 0)
-		{
-			GS = ITEM_SCREEN;
-		}
-		if (itemCursorPos == 1)
-		{
-			GS = EQUIP_SCREEN;
-		}
-		if (itemCursorPos == 2)
-		{
-			GS = TAMAGOTCHI_SCREEN;
-		}
-	}	
-
-	if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
-		SharedData::GetInstance()->ENTERkeyPressed = true;
-
 }
 
 void SceneText::RenderInventory()
@@ -490,13 +489,13 @@ void SceneText::RenderItemScreen()
 	std::ostringstream ss;
 	ss.str("");
 	ss.precision(5);
-	ss << "Potion: " << endl;
+	ss << "Potion: " << SharedData::GetInstance()->inventory.getPotionInventory() << endl;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 60, 300, 450);
 
 	std::ostringstream ss2;
 	ss2.str("");
 	ss2.precision(5);
-	ss2 << "Traps: " << endl;
+	ss2 << "Traps: " << SharedData::GetInstance()->inventory.getTrapInventory()  << endl;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss2.str(), Color(1, 0, 0), 60, 300, 390);
 
 }
@@ -521,7 +520,7 @@ void SceneText::ItemScreenUpdate(double dt)
 			cursorDebounce = 0;
 			UPkeyPressed = false;
 
-			if (itemCursorPos != 0)
+			if (itemCursorPos == 0)
 				itemCursorPos += 1;
 			else
 				itemCursorPos = 0;
@@ -538,10 +537,10 @@ void SceneText::ItemScreenUpdate(double dt)
 			cursorDebounce = 0;
 			DNkeyPressed = false;
 
-			if (itemCursorPos != 1)
-				itemCursorPos -= 0;
+			if (itemCursorPos == 0)
+				itemCursorPos += 1;
 			else
-				itemCursorPos = 1;
+				itemCursorPos = 0;
 
 			cout << "DN" << endl;
 			cout << itemCursorPos << endl;
@@ -549,13 +548,28 @@ void SceneText::ItemScreenUpdate(double dt)
 		}
 		else
 			DNkeyPressed = true;
-	}
-	if (Application::IsKeyPressed(VK_RETURN) && !ENTERkeyPressed)	
-		ENTERkeyPressed = true;
-	if (Application::IsKeyPressed(VK_BACK) && !BACKkeyPressed)
-	{
-		BACKkeyPressed = true;
-		GS = INVENTORY_SCREEN;
+
+		if (Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed == false)
+		{
+			cursorDebounce = 0;
+			SharedData::GetInstance()->ENTERkeyPressed = true;
+			if (itemCursorPos == 0)
+			{
+				SharedData::GetInstance()->inventory.removeFromInventory(Items::POTION);
+			}
+			if (itemCursorPos == 1)
+			{
+				SharedData::GetInstance()->inventory.removeFromInventory(Items::TRAP);
+			}
+			SharedData::GetInstance()->ENTERkeyPressed = false;
+		}
+		if (Application::IsKeyPressed(VK_BACK) && SharedData::GetInstance()->BACKkeyPressed == false)
+		{
+			cursorDebounce = 0;
+			cout << "Back" << endl;
+			BACKkeyPressed = true;
+			GS = INVENTORY_SCREEN;
+		}
 	}
 }
 
@@ -703,6 +717,8 @@ void SceneText::RenderTestMap()
 				Items* temp = (Items*)m_goList[i];
 				if (temp->itemType == Items::POTION)
 					Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false);
+				if (temp->itemType == Items::TRAP)
+					Render2DMeshWScale(meshList[GEO_TRAP], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false);
 			}
 			if (m_goList[i]->type == GameObject::GO_NPC)
 			{

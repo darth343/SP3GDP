@@ -22,11 +22,11 @@ void Inventory::addToInventory(Items::ITEM_TYPE type)
 
 void Inventory::removeFromInventory(Items::ITEM_TYPE type)
 {
-	if (type == Items::POTION)
+	if (type == Items::POTION && ItemInventory[Items::POTION] != 0)
 	{
 		ItemInventory[Items::POTION]--;
 	}
-	if (type == Items::TRAP)
+	if (type == Items::TRAP && ItemInventory[Items::TRAP] != 0)
 	{
 		ItemInventory[Items::TRAP]--;
 	}
@@ -39,7 +39,6 @@ void Inventory::addToInventory(Monster monster)
 	temp.setEQAtk(monster.getMonsterAtk());
 	temp.setEQDef(monster.getMonsterDef());
 	temp.setEQHP(monster.getMonsterHP());
-
 
 	EQinventory.push_back(temp);
 }
@@ -54,12 +53,13 @@ void Inventory::printInventory()
 	return;
 }
 
-void Inventory::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
-{
-	//if (this->active && CheckCollision(playerPos, mapOffset, m_cMap))
-	//{
-	//	addToInventory(Items::POTION);
-	//	printInventory();
-	//	active = false;
-	//}
+int Inventory::getPotionInventory()
+{	
+	return ItemInventory[0];	
 }
+
+int Inventory::getTrapInventory()
+{
+	return ItemInventory[1];
+}
+
