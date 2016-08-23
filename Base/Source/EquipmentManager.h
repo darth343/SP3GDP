@@ -24,6 +24,7 @@ public:
 	friend ostream &operator<<(ostream &output, Equipment EQData); // Overload for testPrint function
 	void testPrint(); // For Debugging purposes
 
+
 private:
 
 };

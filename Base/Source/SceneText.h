@@ -12,6 +12,8 @@
 #include "EquipmentManager.h"
 #include "CharacterData.h"
 #include "BattleSystem.h"
+#include "Inventory.h"
+#include "SharedData.h"
 
 class SceneText : public SceneBase
 {
@@ -20,6 +22,8 @@ class SceneText : public SceneBase
 		START_SCREEN,
 		TESTMAP,
 		INVENTORY_SCREEN,
+		ITEM_SCREEN,
+		EQUIP_SCREEN,
 		TAMAGOTCHI_SCREEN,
 		BATTLE,
 		CATCH,
@@ -51,6 +55,8 @@ public:
 	void RenderBattleScene(); //RenderBattleScene
 	void RenderMonster(); // Render Monsters here
 	void RenderInventory(); // Render Inventory Main Screen here
+	void RenderItemScreen();
+	void RenderEquipScreen();
 
 	//Update Functions
 	void MapUpdate(double dt);
@@ -61,6 +67,9 @@ public:
 	void CatchUpdate(double dt);
 	void SetGS(string gs);
 	void RenderNPCDialogue(double dt);
+	void ItemScreenUpdate(double dt);
+	void EquipScreenUpdate(double dt);
+	
 
 private:
 	NPC npc;
@@ -83,13 +92,11 @@ private:
 	CPlayerInfo* theHero; // Hero's information
 	GAMESTATE_TYPE GS; // Change GameState in SceneText.cpp line 144 for testing purposes
 	MAP_STATE MS;
-	Monster MonType; // Monster Calls
-
-	// Equipment Functions
-	EquipmentManager equipManager;
+	
 	
 	// Battle system
 	BattleSystem battleScene;
+
 
 	int currState = 1; //The current state of npc dialogue
 
@@ -98,6 +105,7 @@ private:
 	bool RIGHTkeyPressed;
 	bool ENTERkeyPressed;
 	bool IkeyPressed;
+	bool BACKkeyPressed;
 
 
 	int itemCursorPos = 0;

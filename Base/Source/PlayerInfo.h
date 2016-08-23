@@ -64,8 +64,7 @@ private:
 	Mesh* playerMesh;
 	// For scrolling.
 	Vector3 mapOffset;
-	// Array for inventory
-	Items Inventory[Items::ITEM_TOTAL];
+
 	//For Equipment
 	Equipment Equip;
 

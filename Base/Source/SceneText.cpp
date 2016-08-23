@@ -125,6 +125,8 @@ static bool UPkeyPressed = false;
 static bool LEFTkeyPressed = false;
 static bool RIGHTkeyPressed = false;
 static bool ENTERkeyPressed = false;
+static bool IkeyPressed = false;
+static bool BACKkeyPressed = false;
 
 void SceneText::CatchUpdate(double dt)
 {
@@ -151,6 +153,9 @@ void SceneText::CatchUpdate(double dt)
 		{
 			captured = true;
 			cout << "CAPTURED" << endl;
+			Monster temp;
+			SharedData::GetInstance()->inventory.addToInventory(temp);
+			SharedData::GetInstance()->inventory.printInventory();
 			GS = TESTMAP;
 
 			// Despawn monster once captured
@@ -358,7 +363,22 @@ void SceneText::UpdateInventory(double dt)
 			DNkeyPressed = true;
 	}
 	if (Application::IsKeyPressed(VK_RETURN) && !ENTERkeyPressed)
+	{
 		ENTERkeyPressed = true;
+
+		if (itemCursorPos == 0)
+		{
+			GS = ITEM_SCREEN;
+		}
+		if (itemCursorPos == 1)
+		{
+			GS = EQUIP_SCREEN;
+		}
+		if (itemCursorPos == 2)
+		{
+			GS = TAMAGOTCHI_SCREEN;
+		}
+	}	
 }
 
 void SceneText::RenderInventory()
@@ -382,6 +402,148 @@ void SceneText::RenderInventory()
 	RenderTextOnScreen(meshList[GEO_TEXT], ss3.str(), Color(1, 0, 0), 60, 300, 330);
 }
 
+void SceneText::RenderItemScreen()
+{
+	std::ostringstream ss;
+	ss.str("");
+	ss.precision(5);
+	ss << "Potion: " << endl;
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 60, 300, 450);
+
+	std::ostringstream ss2;
+	ss2.str("");
+	ss2.precision(5);
+	ss2 << "Traps: " << endl;
+	RenderTextOnScreen(meshList[GEO_TEXT], ss2.str(), Color(1, 0, 0), 60, 300, 390);
+
+}
+
+void SceneText::ItemScreenUpdate(double dt)
+{
+	if (Application::IsKeyPressed('I') && !IkeyPressed)
+	{
+		GS = TESTMAP;
+		IkeyPressed = true;
+	}
+	else if (!Application::IsKeyPressed('I') && IkeyPressed)
+	{
+		IkeyPressed = false;
+	}
+
+	cursorDebounce += (float)dt;
+	if (cursorDebounce > 0.5f)
+	{
+		if (Application::IsKeyPressed(VK_UP) && UPkeyPressed)
+		{
+			cursorDebounce = 0;
+			UPkeyPressed = false;
+
+			if (itemCursorPos != 0)
+				itemCursorPos += 1;
+			else
+				itemCursorPos = 0;
+
+			cout << "UP" << endl;
+			cout << itemCursorPos << endl;
+			UPkeyPressed = false;
+		}
+		else
+			UPkeyPressed = true;
+
+		if (Application::IsKeyPressed(VK_DOWN) && DNkeyPressed)
+		{
+			cursorDebounce = 0;
+			DNkeyPressed = false;
+
+			if (itemCursorPos != 1)
+				itemCursorPos -= 0;
+			else
+				itemCursorPos = 1;
+
+			cout << "DN" << endl;
+			cout << itemCursorPos << endl;
+			DNkeyPressed = false;
+		}
+		else
+			DNkeyPressed = true;
+	}
+	if (Application::IsKeyPressed(VK_RETURN) && !ENTERkeyPressed)	
+		ENTERkeyPressed = true;
+	if (Application::IsKeyPressed(VK_BACK) && !BACKkeyPressed)
+	{
+		BACKkeyPressed = true;
+		GS = INVENTORY_SCREEN;
+	}
+}
+
+void SceneText::RenderEquipScreen()
+{
+	std::ostringstream ss;
+	ss.str("");
+	ss.precision(5);
+	ss << "Equips: " << endl;
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 60, 300, 450);
+
+}
+
+void SceneText::EquipScreenUpdate(double dt)
+{
+	if (Application::IsKeyPressed('I') && !IkeyPressed)
+	{
+		GS = TESTMAP;
+		IkeyPressed = true;
+	}
+	else if (!Application::IsKeyPressed('I') && IkeyPressed)
+	{
+		IkeyPressed = false;
+	}
+
+	cursorDebounce += (float)dt;
+	if (cursorDebounce > 0.5f)
+	{
+		if (Application::IsKeyPressed(VK_UP) && UPkeyPressed)
+		{
+			cursorDebounce = 0;
+			UPkeyPressed = false;
+
+			if (itemCursorPos != 0)
+				itemCursorPos = 1;
+			else
+				itemCursorPos = 0;
+
+			cout << "UP" << endl;
+			cout << itemCursorPos << endl;
+			UPkeyPressed = false;
+		}
+		else
+			UPkeyPressed = true;
+
+		if (Application::IsKeyPressed(VK_DOWN) && DNkeyPressed)
+		{
+			cursorDebounce = 0;
+			DNkeyPressed = false;
+
+			if (itemCursorPos != 1)
+				itemCursorPos = 0;
+			else
+				itemCursorPos = 1;
+
+			cout << "DN" << endl;
+			cout << itemCursorPos << endl;
+			DNkeyPressed = false;
+		}
+		else
+			DNkeyPressed = true;
+	}
+	if (Application::IsKeyPressed(VK_RETURN) && !ENTERkeyPressed)
+		ENTERkeyPressed = true;
+	if (Application::IsKeyPressed(VK_BACK) && !BACKkeyPressed)
+	{
+		BACKkeyPressed = true;
+		GS = INVENTORY_SCREEN;
+	}
+}
+
 void SceneText::MapUpdate(double dt)
 {
 	PlayerUpdate(dt);
@@ -403,6 +565,12 @@ void SceneText::Update(double dt)
 		break;
 	case INVENTORY_SCREEN:
 		UpdateInventory(dt);
+		break;
+	case ITEM_SCREEN:
+		ItemScreenUpdate(dt);
+		break;
+	case EQUIP_SCREEN:
+		EquipScreenUpdate(dt);
 		break;
 	}
 
@@ -623,6 +791,14 @@ void SceneText::Render()
 	case INVENTORY_SCREEN:
 		RenderBackground(meshList[GEO_INVENTORYBACKGROUND]);
 		RenderInventory();
+		break;
+	case ITEM_SCREEN:
+		RenderBackground(meshList[GEO_INVENTORYBACKGROUND]);
+		RenderItemScreen();
+		break;
+	case EQUIP_SCREEN:
+		RenderBackground(meshList[GEO_INVENTORYBACKGROUND]);
+		RenderEquipScreen();
 		break;
 	}
 
