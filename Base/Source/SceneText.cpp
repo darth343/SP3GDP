@@ -316,24 +316,7 @@ void SceneText::PlayerUpdate(double dt)
 	if (Application::IsKeyPressed('D'))
 		this->theHero->MoveLeftRight(false, m_cMap, dt);
 	theHero->HeroUpdate(m_cMap, dt, meshList);
-	SpriteAnimation *sa = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC]);
-	if (sa)
-	{
-		sa->Update(dt);
-		sa->m_anim->animActive = true;
-	}
-	SpriteAnimation *pic2 = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC2]);
-	if (pic2)
-	{
-		pic2->Update(dt);
-		pic2->m_anim->animActive = true;
-	}
-	SpriteAnimation *pic3 = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC3]);
-	if (pic3)
-	{
-		pic3->Update(dt);
-		pic3->m_anim->animActive = true;
-	}
+	
 	/*SpriteAnimation *arrow = dynamic_cast<SpriteAnimation*>(meshList[GEO_BATTLEARROW]);
 	if (arrow)
 	{
@@ -354,6 +337,24 @@ void SceneText::PlayerUpdate(double dt)
 
 void SceneText::GOupdate(double dt)
 {
+	SpriteAnimation *sa = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC]);
+	if (sa)
+	{
+		sa->Update(dt);
+		sa->m_anim->animActive = true;
+	}
+	SpriteAnimation *pic2 = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC2]);
+	if (pic2)
+	{
+		pic2->Update(dt);
+		pic2->m_anim->animActive = true;
+	}
+	SpriteAnimation *pic3 = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC3]);
+	if (pic3)
+	{
+		pic3->Update(dt);
+		pic3->m_anim->animActive = true;
+	}
 	for (int i = 0; i < m_goList.size(); ++i)
 	{
 		m_goList[i]->Update(dt, theHero->GetPosition(), theHero->GetMapOffset(), m_cMap);
@@ -366,6 +367,7 @@ void SceneText::GOupdate(double dt)
 
 			if (temp->collideWhichNPC() != 0 && Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 			{
+				MS = IN_DIALOUGE;
 				SharedData::GetInstance()->ENTERkeyPressed = true;
 				temp->ScrollDialogue(dialogueNum);
 			}
@@ -455,7 +457,7 @@ void SceneText::UpdateInventory(double dt)
 		}
 		if (itemCursorPos == 2)
 		{
-			GS = TAMAGOTCHI_SCREEN;
+			//GS = TAMAGOTCHI_SCREEN;
 		}
 	}	
 
@@ -629,7 +631,12 @@ void SceneText::EquipScreenUpdate(double dt)
 
 void SceneText::MapUpdate(double dt)
 {
+	if (MS == PLAY)
 	PlayerUpdate(dt);
+	GOupdate(dt);
+}
+void SceneText::NPCUpdate(double dt)
+{
 	GOupdate(dt);
 }
 
@@ -733,6 +740,7 @@ void SceneText::RenderTestMap()
 							currState = 2;
 							dialogueNum = 0;
 							renderNPCstuff = false;
+							MS = PLAY;
 					}
 				}
 			}
@@ -817,29 +825,51 @@ void SceneText::RenderTamagucci()
 {
 	static float xpos = 0.f;
 	static float ypos = 0.f;
-	if (Application::IsKeyPressed('I'))
+	Vector3 arrowPos;
+	ostringstream ss;
+	RenderBackground(meshList[GEO_TAMLIVINGROOM]);
+
+	Render2DMeshWScale(meshList[GEO_TAMAGUCCIUIBACKGROUND], false, 1, 1, 400, -350, false);
+	Render2DMeshWScale(meshList[GEO_TAMAGUCCIUIBACKGROUND], false, 1, 1, 400, 950, false);
+
+	switch (tamagucci.GetStates())
 	{
-		ypos += 1.0f;
+	case TAMAGUCCI::T_FOOD:
+		arrowPos.Set(30, 60);
+		break;
+	case TAMAGUCCI::T_SLEEP:
+		arrowPos.Set(170, 60);
+		break;
+	case TAMAGUCCI::T_ENTERTAINMENT:
+		arrowPos.Set(310, 60);
+		break;
+	case TAMAGUCCI::T_CLEAN:
+		arrowPos.Set(480, 60);
+		break;
+	case TAMAGUCCI::T_STATS:
+		arrowPos.Set(620, 60);
+		break;
 	}
-	if (Application::IsKeyPressed('K'))
-	{
-		ypos -= 1.0f;
-	}
-	if (Application::IsKeyPressed('J'))
-	{
-		xpos -= 1.0f;
-	}
-	if (Application::IsKeyPressed('L'))
-	{
-		xpos += 1.0f;
-	}
-	cout << xpos << " " << ypos << endl;
-	RenderBackground(meshList[GEO_TAMAGUCCIBACKGROUND]);
-	Render2DMeshWScale(meshList[GEO_TAMAGUCCIUIBACKGROUND], false, 1, 1, 400, -291, false);
-	Render2DMeshWScale(meshList[GEO_TAMAGUCCIUIBACKGROUND], false, 1, 1, 400, 892, false);
+	ss << "Foods";
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 80, 60);
+	ss.str("");
+	ss << "Sleep";
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 230, 60);
+	ss.str("");
+	ss << "Entertain";
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 360, 60);
+	ss.str("");
+	ss << "Clean";
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 530, 60);
+	ss.str("");
+	ss << "Stats";
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 660, 60);
+	Render2DMeshWScale(meshList[GEO_BATTLEARROW], false, 0.05, 0.03, arrowPos.x, arrowPos.y, false);
+
 	switch (tamagucci.GetState())
 	{
 	case TAMAGUCCI::R_ENTERTAINMENTCHOICES:
+		RenderBackground(meshList[GEO_TAMBG1]);
 		Render2DMeshWScale(meshList[GEO_STAR], false, tamagucci.GetTamDrop()->scale.x, tamagucci.GetTamDrop()->scale.y, tamagucci.GetTamDrop()->position.x, tamagucci.GetTamDrop()->position.y, false);
 		Render2DMeshWScale(meshList[GEO_POOP], false, tamagucci.GetTamDrop2()->scale.x, tamagucci.GetTamDrop2()->scale.y, tamagucci.GetTamDrop2()->position.x, tamagucci.GetTamDrop2()->position.y, false);
 		break;

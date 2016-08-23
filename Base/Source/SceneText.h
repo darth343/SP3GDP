@@ -95,6 +95,8 @@ public:
 
 	bool GetMonsterScaleUp();
 	void SetMonsterScaleUp(bool set);
+
+	void NPCUpdate(double dt);
 private:
 	NPC npc;
 	Gauge* greenbar;
@@ -104,6 +106,7 @@ private:
 	Enemy* EnemyInBattle;
 	TAMAGUCCI* tamtam;
 	TAMAGUCCI* tamdrop;
+	TAMAGUCCI::TAMABUTTONS tamStates;
 	Pathfinder testpathfinder;
 	TAMAGUCCI tamagucci;
 	vector<GameObject *> m_goList;
@@ -126,9 +129,6 @@ private:
 	Vector3 battleMonsterPos;
 	Vector3 battleMonsterScale;
 
-
-
-	int currState = 1; //The current state of npc dialogue
 
 	bool UPkeyPressed;
 	bool LEFTkeyPressed;

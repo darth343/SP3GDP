@@ -58,6 +58,8 @@ public:
 	friend std::ostream& operator<<(std::ostream& cout, TAMABUTTONS buttons);
 	friend std::ostream& operator<<(std::ostream& cout, FOODCHOICES foodchoice);
 	CHOICES GetState();
+	TAMABUTTONS GetStates();
+	ENTERTAINMENTCHOICES GetEntertainChoices();
 	GameObject* GetTamTam();
 	GameObject* GetTamDrop();
 	GameObject* GetTamDrop2();
@@ -66,6 +68,7 @@ private:
 	GameObject* tamtam;
 	GameObject* tamdrop;
 	GameObject* tamdrop2;
+	float tamDropVel = 100; 
 	TAMAGUCCISTATES state;
 	TAMABUTTONS choice;
 	FOODCHOICES foodChoice;

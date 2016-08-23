@@ -4,7 +4,7 @@
 TAMAGUCCI::TAMAGUCCI()
 {
 	state = FIRSTMENU;
-	choice = T_NOTHING;
+	choice = T_FOOD;
 	entertainmentChoice = E_NOTHING;
 	foodChoice = FC_KB;
 	tamtam = new GameObject;
@@ -85,10 +85,10 @@ void TAMAGUCCI::UpdateTamagucci(double dt)
 		{
 		case R_ENTERTAINMENTCHOICES:
 		{
-									   if (entertainmentChoice == E_CATCHING)
-									   {
-										   MiniGame(dt);
-									   }
+			if (entertainmentChoice == E_CATCHING)
+			{
+				 MiniGame(dt);
+			}
 		}
 		}
 	}
@@ -219,6 +219,7 @@ void TAMAGUCCI::GetTamagucciInput()
 				if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 				{
 					SharedData::GetInstance()->ENTERkeyPressed = true;
+					entertainmentChoice = E_CATCHING;
 					if (entertainmentChoice == E_CATCHING)
 					{
 						runChoice = R_ENTERTAINMENTCHOICES;
@@ -256,26 +257,37 @@ void TAMAGUCCI::MiniGameUpdatePosition(double dt)
 void TAMAGUCCI::MiniGame(double dt)
 {
 	MiniGameUpdatePosition(dt);
-	tamdrop->position.y -= 100 * dt;
-	tamdrop2->position.y -= 80 * dt;
+	tamdrop->position.y -= tamDropVel * dt;
+	tamdrop2->position.y -= tamDropVel * dt;
 	if (tamtam->CheckCollision(tamdrop))
 	{
 		tamdrop->position.Set(Math::RandFloatMinMax(0, 730), 600, 0);
+		tamDropVel = Math::RandFloatMinMax(100, 130);
 		minigame1Score += 5;
 	}
 	if (tamdrop->position.y <= 0)
+	{
 		tamdrop->position.Set(Math::RandFloatMinMax(0, 730), 600, 0);
+		tamDropVel = Math::RandFloatMinMax(100, 130);
+	}
 
 	if (tamtam->CheckCollision(tamdrop2))
 	{
 		tamdrop2->position.Set(Math::RandFloatMinMax(0, 730), 650, 0);
+		tamDropVel = Math::RandFloatMinMax(100, 130);
 		minigame1Score -= 5;
 	}
 	if (tamdrop2->position.y <= 0)
+	{
 		tamdrop2->position.Set(Math::RandFloatMinMax(0, 730), 650, 0);
+		tamDropVel = Math::RandFloatMinMax(100, 130);
+	}
 
 	if (minigame1Score >= 20)
-		choice = T_NOTHING;
+	{
+		entertainmentChoice = E_NOTHING;
+		choice = T_FOOD;
+	}
 }
 
 GameObject* TAMAGUCCI::GetTamTam()
@@ -296,4 +308,12 @@ GameObject* TAMAGUCCI::GetTamDrop2()
 TAMAGUCCI::CHOICES TAMAGUCCI::GetState()
 {
 	return runChoice;
+}
+TAMAGUCCI::TAMABUTTONS TAMAGUCCI::GetStates()
+{
+	return choice;
+}
+TAMAGUCCI::ENTERTAINMENTCHOICES TAMAGUCCI::GetEntertainChoices()
+{
+	return entertainmentChoice;
 }
