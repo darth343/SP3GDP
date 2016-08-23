@@ -52,6 +52,7 @@ public:
 	void SetHP(float hp);	
 	void SetDMG(float dmg);	
 	void SetDEF(float def);
+	void TakeDMG(float dmg);
 
 	float GetHP();
 	float GetDMG();
@@ -64,20 +65,11 @@ private:
 	Mesh* playerMesh;
 	// For scrolling.
 	Vector3 mapOffset;
-	// Array for inventory
-	Items Inventory[Items::ITEM_TOTAL];
+
 	//For Equipment
 	Equipment Equip;
 
 	float playerHP;
 	float playerDamage;
 	float playerDefense;
-
-
-	bool collideSomething;
-
-	float hp;
-	float damage;
-	bool collideWithEnemy;
-
 };

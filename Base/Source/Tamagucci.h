@@ -7,46 +7,42 @@ using std::vector;
 class TAMAGUCCI
 {
 public:
-	enum TAMAGUCCISTATES
+	enum MENUSTATE
 	{
 		FIRSTMENU,
 		SECONDMENU,
-		RUNCHOICE,
+	};
+	
+	enum GAMEOPTIONS
+	{
+		CATCHING,
+		ROCKPAPERSCISSORS,
+		G_BACK,
 	};
 
-	enum TAMABUTTONS
+	enum FIRSTMENUPOPTIONS
 	{
-		T_NOTHING,
-		T_FOOD,
-		T_SLEEP,
-		T_ENTERTAINMENT,
-		T_CLEAN,
-		T_STATS,
-		TOTAL_TBUTTONS,
+		NOTHING,
+		FOOD,
+		SLEEP,
+		ENTERTAINMENT,
+		CLEAN,
+		STATS,
+		TOTAL_FM,
 	};
 
 	enum FOODCHOICES
 	{
-		FC_NOTHING,
-		FC_KB,
-		FC_MB,
-		FC_GB,
+		FC_SALAD,
+		FC_HAMBURGER,
+		FC_PORK,
 		FC_BACK,
-		TOTAL_FC,
 	};
 
-	enum ENTERTAINMENTCHOICES
+	enum TAMAGOTCHISTATE
 	{
-		E_NOTHING,
-		E_CATCHING,
-		E_RPS,
-		E_TOTAL,
-	};
-
-	enum CHOICES
-	{
-		R_NOTHING,
-		R_ENTERTAINMENTCHOICES,
+		MENU,
+		GAME,
 	};
 
 	TAMAGUCCI();
@@ -55,9 +51,14 @@ public:
 	void GetTamagucciInput();
 	void MiniGame(double dt);
 	void MiniGameUpdatePosition(double dt);
-	friend std::ostream& operator<<(std::ostream& cout, TAMABUTTONS buttons);
-	friend std::ostream& operator<<(std::ostream& cout, FOODCHOICES foodchoice);
-	CHOICES GetState();
+	void ResetTamagotchi();
+	friend std::ostream& operator<<(std::ostream& cout, FIRSTMENUPOPTIONS buttons);
+	//friend std::ostream& operator<<(std::ostream& cout, FOODCHOICES foodchoice);
+	TAMAGOTCHISTATE getTamagotchiState();
+	MENUSTATE getMenuState();
+	GAMEOPTIONS getGameChoice();
+	FIRSTMENUPOPTIONS getFirstMenuOption();
+	FOODCHOICES getFoodChoice();
 	GameObject* GetTamTam();
 	GameObject* GetTamDrop();
 	GameObject* GetTamDrop2();
@@ -66,15 +67,18 @@ private:
 	GameObject* tamtam;
 	GameObject* tamdrop;
 	GameObject* tamdrop2;
-	TAMAGUCCISTATES state;
-	TAMABUTTONS choice;
-	FOODCHOICES foodChoice;
-	CHOICES runChoice;
-	ENTERTAINMENTCHOICES entertainmentChoice;
+	float tamDropVel = 100; 
 	vector<Vector3> pooPositions;
 	int minigame1Score;
 	int hungerLevel;
 	int energyLevel;
 	int happinessLevel;
+
+	//MENU STUFF
+	TAMAGOTCHISTATE tamagotchiState;
+	MENUSTATE menuState;
+	FIRSTMENUPOPTIONS firstMenuOption;
+	FOODCHOICES foodChoice;
+	GAMEOPTIONS gameChoice;
 };
 #endif // !TAMAGUCCI_H

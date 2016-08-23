@@ -60,8 +60,9 @@ void SceneText::Init()
 	chargebar->gauge = Gauge::MOVE;
 	chargebar->type = GameObject::GO_MOVE;
 	chargebar->position.Set(500, 150, 1);
-
-	theEnemy = new Enemy(Vector3(32.f, 32.f, 1));
+	Monster temp;
+	temp.setMonsterName("PLACEHOLDER");
+	theEnemy = new Enemy(temp, Vector3(32.f, 32.f, 1));
 	theEnemy->type = GameObject::GO_ENEMY;
 	theEnemy->position.Set(64, 224, 1);
 	m_goList.push_back(theEnemy);
@@ -98,6 +99,61 @@ void SceneText::Init()
 	//perspective.SetToOrtho(-80, 80, -60, 60, -1000, 1000);
 	projectionStack.LoadMatrix(perspective);
 
+	battleMonsterPos.Set(300, 240, 0);
+	battleMonsterScale.Set(0.3, 0.3, 1);
+
+	monsterScaleUp = true;
+
+}
+
+bool SceneText::GetMonsterScaleUp()
+{
+	return monsterScaleUp;
+}
+
+void SceneText::SetMonsterScaleUp(bool set)
+{
+	this->monsterScaleUp = set;
+}
+
+float SceneText::GetBattleMonsterScaleX()
+{
+	return battleMonsterScale.x;
+}
+
+void SceneText::SetBattleMonsterScaleX(float x)
+{
+	this->battleMonsterScale.x = x;
+}
+
+float SceneText::GetBattleMonsterScaleY()
+{
+	return battleMonsterScale.y;
+}
+
+void SceneText::SetBattleMonsterScaleY(float y)
+{
+	this->battleMonsterScale.y = y;
+}
+
+float SceneText::GetBattleMonsterPosX()
+{
+	return battleMonsterPos.x;
+}
+
+float SceneText::GetBattleMonsterPosY()
+{
+	return battleMonsterPos.y;
+}
+
+void SceneText::SetBattleMonsterPosX(float x)
+{
+	this->battleMonsterPos.x = x;
+}
+
+void SceneText::SetBattleMonsterPosY(float y)
+{
+	this->battleMonsterPos.y = y;
 }
 
 void SceneText::SetGS(string set)
@@ -116,9 +172,20 @@ void SceneText::SetGS(string set)
 		GS = CATCH;
 }
 
+
+//BattleScene Key press 
+static bool DNkeyPressed = false;
+static bool UPkeyPressed = false;
+static bool LEFTkeyPressed = false;
+static bool RIGHTkeyPressed = false;
+static bool ENTERkeyPressed = false;
+static bool IkeyPressed = false;
+static bool BACKkeyPressed = false;
+
+
 void SceneText::CatchUpdate(double dt)
 {
-	enemyCatchPercentage = (enemyMaxHealth - currHealth) / 100 * 20;
+	enemyCatchPercentage = (enemyMaxHealth - EnemyInBattle->GetHealth()) / 100 * 20;
 
 	if (Application::IsKeyPressed('V'))
 	{
@@ -140,7 +207,11 @@ void SceneText::CatchUpdate(double dt)
 		SharedData::GetInstance()->ENTERkeyPressed = true;
 		if (chargebar->CheckCollision(greenbar, m_cMap))
 		{
+			captured = true;
 			cout << "CAPTURED" << endl;
+			Monster temp;
+			SharedData::GetInstance()->inventory.addToInventory(temp);
+			SharedData::GetInstance()->inventory.printInventory();
 			GS = TESTMAP;
 
 			// Despawn monster once captured
@@ -245,24 +316,7 @@ void SceneText::PlayerUpdate(double dt)
 	if (Application::IsKeyPressed('D'))
 		this->theHero->MoveLeftRight(false, m_cMap, dt);
 	theHero->HeroUpdate(m_cMap, dt, meshList);
-	SpriteAnimation *sa = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC]);
-	if (sa)
-	{
-		sa->Update(dt);
-		sa->m_anim->animActive = true;
-	}
-	SpriteAnimation *pic2 = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC2]);
-	if (pic2)
-	{
-		pic2->Update(dt);
-		pic2->m_anim->animActive = true;
-	}
-	SpriteAnimation *pic3 = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC3]);
-	if (pic3)
-	{
-		pic3->Update(dt);
-		pic3->m_anim->animActive = true;
-	}
+	
 	/*SpriteAnimation *arrow = dynamic_cast<SpriteAnimation*>(meshList[GEO_BATTLEARROW]);
 	if (arrow)
 	{
@@ -283,8 +337,28 @@ void SceneText::PlayerUpdate(double dt)
 
 void SceneText::GOupdate(double dt)
 {
+	SpriteAnimation *sa = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC]);
+	if (sa)
+	{
+		sa->Update(dt);
+		sa->m_anim->animActive = true;
+	}
+	SpriteAnimation *pic2 = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC2]);
+	if (pic2)
+	{
+		pic2->Update(dt);
+		pic2->m_anim->animActive = true;
+	}
+	SpriteAnimation *pic3 = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC3]);
+	if (pic3)
+	{
+		pic3->Update(dt);
+		pic3->m_anim->animActive = true;
+	}
 	for (int i = 0; i < m_goList.size(); ++i)
 	{
+		if (m_goList[i]->type == GameObject::GO_ENEMY && MS == IN_DIALOUGE)
+			continue;
 		m_goList[i]->Update(dt, theHero->GetPosition(), theHero->GetMapOffset(), m_cMap);
 		if (m_goList[i]->type == GameObject::GO_NPC)
 		{
@@ -295,6 +369,7 @@ void SceneText::GOupdate(double dt)
 
 			if (temp->collideWhichNPC() != 0 && Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 			{
+				MS = IN_DIALOUGE;
 				SharedData::GetInstance()->ENTERkeyPressed = true;
 				temp->ScrollDialogue(dialogueNum);
 			}
@@ -369,8 +444,28 @@ void SceneText::UpdateInventory(double dt)
 		else
 			SharedData::GetInstance()->DNkeyPressed = true;
 	}
+
+	if (Application::IsKeyPressed(VK_RETURN) && !ENTERkeyPressed)
+	{
+		ENTERkeyPressed = true;
+
+		if (itemCursorPos == 0)
+		{
+			GS = ITEM_SCREEN;
+		}
+		if (itemCursorPos == 1)
+		{
+			GS = EQUIP_SCREEN;
+		}
+		if (itemCursorPos == 2)
+		{
+			//GS = TAMAGOTCHI_SCREEN;
+		}
+	}	
+
 	if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 		SharedData::GetInstance()->ENTERkeyPressed = true;
+
 }
 
 void SceneText::RenderInventory()
@@ -394,9 +489,156 @@ void SceneText::RenderInventory()
 	RenderTextOnScreen(meshList[GEO_TEXT], ss3.str(), Color(1, 0, 0), 60, 300, 330);
 }
 
+void SceneText::RenderItemScreen()
+{
+	std::ostringstream ss;
+	ss.str("");
+	ss.precision(5);
+	ss << "Potion: " << endl;
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 60, 300, 450);
+
+	std::ostringstream ss2;
+	ss2.str("");
+	ss2.precision(5);
+	ss2 << "Traps: " << endl;
+	RenderTextOnScreen(meshList[GEO_TEXT], ss2.str(), Color(1, 0, 0), 60, 300, 390);
+
+}
+
+void SceneText::ItemScreenUpdate(double dt)
+{
+	if (Application::IsKeyPressed('I') && !IkeyPressed)
+	{
+		GS = TESTMAP;
+		IkeyPressed = true;
+	}
+	else if (!Application::IsKeyPressed('I') && IkeyPressed)
+	{
+		IkeyPressed = false;
+	}
+
+	cursorDebounce += (float)dt;
+	if (cursorDebounce > 0.5f)
+	{
+		if (Application::IsKeyPressed(VK_UP) && UPkeyPressed)
+		{
+			cursorDebounce = 0;
+			UPkeyPressed = false;
+
+			if (itemCursorPos != 0)
+				itemCursorPos += 1;
+			else
+				itemCursorPos = 0;
+
+			cout << "UP" << endl;
+			cout << itemCursorPos << endl;
+			UPkeyPressed = false;
+		}
+		else
+			UPkeyPressed = true;
+
+		if (Application::IsKeyPressed(VK_DOWN) && DNkeyPressed)
+		{
+			cursorDebounce = 0;
+			DNkeyPressed = false;
+
+			if (itemCursorPos != 1)
+				itemCursorPos -= 0;
+			else
+				itemCursorPos = 1;
+
+			cout << "DN" << endl;
+			cout << itemCursorPos << endl;
+			DNkeyPressed = false;
+		}
+		else
+			DNkeyPressed = true;
+	}
+	if (Application::IsKeyPressed(VK_RETURN) && !ENTERkeyPressed)	
+		ENTERkeyPressed = true;
+	if (Application::IsKeyPressed(VK_BACK) && !BACKkeyPressed)
+	{
+		BACKkeyPressed = true;
+		GS = INVENTORY_SCREEN;
+	}
+}
+
+void SceneText::RenderEquipScreen()
+{
+	std::ostringstream ss;
+	ss.str("");
+	ss.precision(5);
+	ss << "Equips: " << endl;
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 60, 300, 450);
+
+}
+
+void SceneText::EquipScreenUpdate(double dt)
+{
+	if (Application::IsKeyPressed('I') && !IkeyPressed)
+	{
+		GS = TESTMAP;
+		IkeyPressed = true;
+	}
+	else if (!Application::IsKeyPressed('I') && IkeyPressed)
+	{
+		IkeyPressed = false;
+	}
+
+	cursorDebounce += (float)dt;
+	if (cursorDebounce > 0.5f)
+	{
+		if (Application::IsKeyPressed(VK_UP) && UPkeyPressed)
+		{
+			cursorDebounce = 0;
+			UPkeyPressed = false;
+
+			if (itemCursorPos != 0)
+				itemCursorPos = 1;
+			else
+				itemCursorPos = 0;
+
+			cout << "UP" << endl;
+			cout << itemCursorPos << endl;
+			UPkeyPressed = false;
+		}
+		else
+			UPkeyPressed = true;
+
+		if (Application::IsKeyPressed(VK_DOWN) && DNkeyPressed)
+		{
+			cursorDebounce = 0;
+			DNkeyPressed = false;
+
+			if (itemCursorPos != 1)
+				itemCursorPos = 0;
+			else
+				itemCursorPos = 1;
+
+			cout << "DN" << endl;
+			cout << itemCursorPos << endl;
+			DNkeyPressed = false;
+		}
+		else
+			DNkeyPressed = true;
+	}
+	if (Application::IsKeyPressed(VK_RETURN) && !ENTERkeyPressed)
+		ENTERkeyPressed = true;
+	if (Application::IsKeyPressed(VK_BACK) && !BACKkeyPressed)
+	{
+		BACKkeyPressed = true;
+		GS = INVENTORY_SCREEN;
+	}
+}
+
 void SceneText::MapUpdate(double dt)
 {
+	if (MS == PLAY)
 	PlayerUpdate(dt);
+	GOupdate(dt);
+}
+void SceneText::NPCUpdate(double dt)
+{
 	GOupdate(dt);
 }
 
@@ -415,7 +657,7 @@ void SceneText::Update(double dt)
 		MapUpdate(dt);
 		break;
 	case BATTLE:
-		battleScene.UpdateBattleSystem(SharedData::GetInstance()->UPkeyPressed, SharedData::GetInstance()->DNkeyPressed, SharedData::GetInstance()->LEFTkeyPressed, SharedData::GetInstance()->RIGHTkeyPressed, SharedData::GetInstance()->ENTERkeyPressed);
+		battleScene.UpdateBattleSystem(SharedData::GetInstance()->UPkeyPressed, SharedData::GetInstance()->DNkeyPressed, SharedData::GetInstance()->LEFTkeyPressed, SharedData::GetInstance()->RIGHTkeyPressed, SharedData::GetInstance()->ENTERkeyPressed, theHero, EnemyInBattle);
 		break;
 	case CATCH:
 		CatchUpdate(dt);
@@ -423,8 +665,16 @@ void SceneText::Update(double dt)
 	case INVENTORY_SCREEN:
 		UpdateInventory(dt);
 		break;
+
+	case ITEM_SCREEN:
+		ItemScreenUpdate(dt);
+		break;
+	case EQUIP_SCREEN:
+		EquipScreenUpdate(dt);
+
 	case TAMAGUCCI_SCREEN:
 		tamagucci.UpdateTamagucci(dt);
+
 		break;
 	}
 	fps = (float)(1.f / dt);
@@ -492,6 +742,7 @@ void SceneText::RenderTestMap()
 							currState = 2;
 							dialogueNum = 0;
 							renderNPCstuff = false;
+							MS = PLAY;
 					}
 				}
 			}
@@ -549,14 +800,56 @@ void SceneText::RenderMonster()
 	else if (MonType.getMonsterType() == SCYLLA)
 		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
 	else if (MonType.getMonsterType() == MINOTAUR)*/
-		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false);
+	if (battleScene.GetMonsterHitAnimation())
+	{
+		if (battleMonsterScale.x < 0.5 && battleMonsterScale.y < 0.5 && monsterScaleUp)
+		{
+			battleMonsterScale.x += 0.01;
+			battleMonsterScale.y += 0.01;
+			if (battleMonsterScale.x > 0.5 || battleMonsterScale.y > 0.5)
+				monsterScaleUp = false;
+		}
+		if (battleMonsterScale.x > 0.3  && !monsterScaleUp || battleMonsterScale.y > 0.3 && !monsterScaleUp)
+		{
+			battleMonsterScale.x -= 0.01;
+			battleMonsterScale.y -= 0.01;
+			if (battleMonsterScale.x < 0.3 || battleMonsterScale.y < 0.3)
+			{
+				battleScene.SetMonsterHitAnimation(false);
+				monsterScaleUp = true;
+			}
+		}
+
+	}
+	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
+
 	
 }
 
-void SceneText::RenderTamagucci()
+void SceneText::renderFirstTamagotchiFirstMenu(float yoffset)
+{
+	stringstream ss;
+	ss << "Foods";
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 80, 60 + yoffset);
+	ss.str("");
+	ss << "Sleep";
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 230, 60 + yoffset);
+	ss.str("");
+	ss << "Entertain";
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 360, 60 + yoffset);
+	ss.str("");
+	ss << "Clean";
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 530, 60 + yoffset);
+	ss.str("");
+	ss << "Stats";
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 660, 60 + yoffset);
+}
+
+void SceneText::renderTamagotchiMenu()
 {
 	static float xpos = 0.f;
 	static float ypos = 0.f;
+
 	if (Application::IsKeyPressed('I'))
 	{
 		ypos += 0.5f;
@@ -573,28 +866,221 @@ void SceneText::RenderTamagucci()
 	{
 		xpos += 0.5f;
 	}
-	cout << xpos << " " << ypos << endl;
-	RenderBackground(meshList[GEO_TAMAGUCCIBACKGROUND]);
+
+	Vector3 arrowPos;
+	stringstream ss;
+	switch (tamagucci.getMenuState())
+	{
+	case TAMAGUCCI::FIRSTMENU:
+		//RENDER OPTIONS
+		renderFirstTamagotchiFirstMenu();
+		//RENDER OPTION SEEKER
+		switch (tamagucci.getFirstMenuOption())
+		{
+		case TAMAGUCCI::FOOD:
+			arrowPos.Set(30, 60);
+			break;
+		case TAMAGUCCI::SLEEP:
+			arrowPos.Set(170, 60);
+			break;
+		case TAMAGUCCI::ENTERTAINMENT:
+			arrowPos.Set(310, 60);
+			break;
+		case TAMAGUCCI::CLEAN:
+			arrowPos.Set(480, 60);
+			break;
+		case TAMAGUCCI::STATS:
+			arrowPos.Set(620, 60);
+			break;
+		}
+		Render2DMeshWScale(meshList[GEO_BATTLEARROW], false, 0.05, 0.03, arrowPos.x, arrowPos.y, false);
+		break;
+	case TAMAGUCCI::SECONDMENU:
+		switch (tamagucci.getFirstMenuOption())
+		{
+		case TAMAGUCCI::FOOD:
+			renderFirstTamagotchiFirstMenu(27.5f);
+			//RENDER MENU
+			switch (tamagucci.getFoodChoice())
+			{
+			case TAMAGUCCI::FC_SALAD:
+			case TAMAGUCCI::FC_HAMBURGER:
+			case TAMAGUCCI::FC_PORK:
+				ss << "SALAD";
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 80, 59.5);
+				ss.str("");
+				ss << "HAMBURGER";
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 80, 32.5);
+				ss.str("");
+				ss << "PORK";
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 80, 7.5);
+				break;
+			case TAMAGUCCI::FC_BACK:
+				ss << "HAMBURGER";
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 80, 59.5);
+				ss.str("");
+				ss << "PORK";
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 80, 32.5);
+				ss.str("");
+				ss << "BACK";
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 80, 7.5);
+				break;
+			}
+			//RENDER OPTION SEEKER
+			switch (tamagucci.getFoodChoice())
+			{
+			case TAMAGUCCI::FC_SALAD:
+				arrowPos.Set(36.5, 59.5);
+				break;
+			case TAMAGUCCI::FC_HAMBURGER:
+				arrowPos.Set(36.5, 32.5);
+				break;
+			case TAMAGUCCI::FC_PORK:
+			case TAMAGUCCI::FC_BACK:
+				arrowPos.Set(36.5, 7.5);
+				break;
+			}
+			Render2DMeshWScale(meshList[GEO_BATTLEARROW], false, 0.05, 0.03, arrowPos.x, arrowPos.y, false);
+			break;
+		case TAMAGUCCI::ENTERTAINMENT:
+			//RENDER MENU AND OPTIONS
+			renderFirstTamagotchiFirstMenu(27.5f);
+			ss << "REACH FOR THE STARS";
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 360, 59.5);
+			ss.str("");
+			ss << "ROCK PAPER SCISSORS";
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 360, 32.5);
+			ss.str("");
+			ss << "BACK";
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 360, 7.5);
+
+			//RENDER OPTION SEEKER
+			switch (tamagucci.getGameChoice())
+			{
+			case TAMAGUCCI::CATCHING:
+				arrowPos.Set(314.5, 57.5);
+				break;
+			case TAMAGUCCI::ROCKPAPERSCISSORS:
+				arrowPos.Set(314.5, 30.5);
+				break;
+			case TAMAGUCCI::G_BACK:
+				arrowPos.Set(314.5, 5.5);
+				break;
+			}
+			Render2DMeshWScale(meshList[GEO_BATTLEARROW], false, 0.05, 0.03, arrowPos.x, arrowPos.y, false);
+				break;
+		}
+		break;
+	}
+}
+
+void SceneText::renderTamagotchiGame()
+{
+	switch (tamagucci.getGameChoice())
+	{
+	case TAMAGUCCI::CATCHING:
+				RenderBackground(meshList[GEO_TAMBG1]);
+				Render2DMeshWScale(meshList[GEO_STAR], false, tamagucci.GetTamDrop()->scale.x, tamagucci.GetTamDrop()->scale.y, tamagucci.GetTamDrop()->position.x, tamagucci.GetTamDrop()->position.y, false);
+				Render2DMeshWScale(meshList[GEO_POOP], false, tamagucci.GetTamDrop2()->scale.x, tamagucci.GetTamDrop2()->scale.y, tamagucci.GetTamDrop2()->position.x, tamagucci.GetTamDrop2()->position.y, false);
+		break;
+	}
+}
+
+void SceneText::RenderTamagucci()
+{
+	//RenderBackground(meshList[GEO_TAMAGUCCIBACKGROUND]);
+	RenderBackground(meshList[GEO_TAMLIVINGROOM]);
 	Render2DMeshWScale(meshList[GEO_TAMAGUCCIUIBACKGROUND], false, 1, 1, 400, -291, false);
 	Render2DMeshWScale(meshList[GEO_TAMAGUCCIUIBACKGROUND], false, 1, 1, 400, 892, false);
 	Render2DMeshWScale(meshList[GEO_HUNGERFRAME], false, 60, 60, 549, 516.5, false);
 	Render2DMeshWScale(meshList[GEO_ENERGYFRAME], false, 60, 60, 630, 516.5, false);
 	Render2DMeshWScale(meshList[GEO_HAPPINESSFRAME], false, 60, 60, 717, 516.5, false);
-	switch (tamagucci.GetState())
+	ostringstream ss;
+
+	switch (tamagucci.getTamagotchiState())
 	{
-	case TAMAGUCCI::R_ENTERTAINMENTCHOICES:
-		Render2DMeshWScale(meshList[GEO_STAR], false, tamagucci.GetTamDrop()->scale.x, tamagucci.GetTamDrop()->scale.y, tamagucci.GetTamDrop()->position.x, tamagucci.GetTamDrop()->position.y, false);
-		Render2DMeshWScale(meshList[GEO_POOP], false, tamagucci.GetTamDrop2()->scale.x, tamagucci.GetTamDrop2()->scale.y, tamagucci.GetTamDrop2()->position.x, tamagucci.GetTamDrop2()->position.y, false);
+	case TAMAGUCCI::MENU:
+		renderTamagotchiMenu();
 		break;
-		//if (tamagucci.)
-		//{
-		//	Render2DMeshWScale(meshList[GEO_STAR], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x, m_goList[i]->position.y, false);
-		//}
-		//if (m_goList[i]->active == true && m_goList[i]->type == GameObject::GO_TAMDROP2)
-		//{
-		//	Render2DMeshWScale(meshList[GEO_TAMAGUCCI], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x, m_goList[i]->position.y, false);
-		//}
+	case TAMAGUCCI::GAME:
+		renderTamagotchiGame();
+		break;
 	}
+
+	//Render2DMeshWScale(meshList[GEO_TAMAGUCCIUIBACKGROUND], false, 1, 1, 400, -350, false);
+	//Render2DMeshWScale(meshList[GEO_TAMAGUCCIUIBACKGROUND], false, 1, 1, 400, 950, false);
+
+	//switch (tamagucci.GetRunState())
+	//{
+	//case TAMAGUCCI::R_NOTHING:
+	//	switch (tamagucci.GetMenuState())
+	//	{
+	//	case TAMAGUCCI::FIRSTMENU:
+	//		break;
+	//	case TAMAGUCCI::SECONDMENU:
+	//		switch (tamagucci.GetSecondMenuStates())
+	//		{
+	//		case TAMAGUCCI::T_FOOD:
+	//			break;
+	//		case TAMAGUCCI::T_SLEEP:
+	//			break;
+	//		}
+	//		break;
+	//	//case TAMAGUCCI::T_FOOD:
+	//	//	arrowPos.Set(30, 60);
+	//	//	break;
+	//	//case TAMAGUCCI::T_SLEEP:
+	//	//	arrowPos.Set(170, 60);
+	//	//	break;
+	//	//case TAMAGUCCI::T_ENTERTAINMENT:
+	//	//	arrowPos.Set(310, 60);
+	//	//	break;
+	//	//case TAMAGUCCI::T_CLEAN:
+	//	//	arrowPos.Set(480, 60);
+	//	//	break;
+	//	//case TAMAGUCCI::T_STATS:
+	//	//	arrowPos.Set(620, 60);
+	//	//	break;
+	//	}
+	//	break;
+	//case TAMAGUCCI::R_ENTERTAINMENTCHOICES:
+	//		RenderBackground(meshList[GEO_TAMBG1]);
+	//		Render2DMeshWScale(meshList[GEO_STAR], false, tamagucci.GetTamDrop()->scale.x, tamagucci.GetTamDrop()->scale.y, tamagucci.GetTamDrop()->position.x, tamagucci.GetTamDrop()->position.y, false);
+	//		Render2DMeshWScale(meshList[GEO_POOP], false, tamagucci.GetTamDrop2()->scale.x, tamagucci.GetTamDrop2()->scale.y, tamagucci.GetTamDrop2()->position.x, tamagucci.GetTamDrop2()->position.y, false);
+	//	break;
+	//}
+	//ss << "Foods";
+	//RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 80, 60);
+	//ss.str("");
+	//ss << "Sleep";
+	//RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 230, 60);
+	//ss.str("");
+	//ss << "Entertain";
+	//RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 360, 60);
+	//ss.str("");
+	//ss << "Clean";
+	//RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 530, 60);
+	//ss.str("");
+	//ss << "Stats";
+	//RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 660, 60);
+	//Render2DMeshWScale(meshList[GEO_BATTLEARROW], false, 0.05, 0.03, arrowPos.x, arrowPos.y, false);
+
+	//switch (tamagucci.GetState())
+	//{
+	//case TAMAGUCCI::R_ENTERTAINMENTCHOICES:
+	//	RenderBackground(meshList[GEO_TAMBG1]);
+	//	Render2DMeshWScale(meshList[GEO_STAR], false, tamagucci.GetTamDrop()->scale.x, tamagucci.GetTamDrop()->scale.y, tamagucci.GetTamDrop()->position.x, tamagucci.GetTamDrop()->position.y, false);
+	//	Render2DMeshWScale(meshList[GEO_POOP], false, tamagucci.GetTamDrop2()->scale.x, tamagucci.GetTamDrop2()->scale.y, tamagucci.GetTamDrop2()->position.x, tamagucci.GetTamDrop2()->position.y, false);
+	//	break;
+	//	//if (tamagucci.)
+	//	//{
+	//	//	Render2DMeshWScale(meshList[GEO_STAR], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x, m_goList[i]->position.y, false);
+	//	//}
+	//	//if (m_goList[i]->active == true && m_goList[i]->type == GameObject::GO_TAMDROP2)
+	//	//{
+	//	//	Render2DMeshWScale(meshList[GEO_TAMAGUCCI], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x, m_goList[i]->position.y, false);
+	//	//}
+	//}
 	Render2DMeshWScale(meshList[GEO_TAMAGUCCI], false, tamagucci.GetTamTam()->scale.x, tamagucci.GetTamTam()->scale.y, tamagucci.GetTamTam()->position.x, tamagucci.GetTamTam()->position.y, false);
 }
 void SceneText::RenderCatch()
@@ -701,8 +1187,18 @@ void SceneText::Render()
 		RenderBackground(meshList[GEO_INVENTORYBACKGROUND]);
 		RenderInventory();
 		break;
+
+	case ITEM_SCREEN:
+		RenderBackground(meshList[GEO_INVENTORYBACKGROUND]);
+		RenderItemScreen();
+		break;
+	case EQUIP_SCREEN:
+		RenderBackground(meshList[GEO_INVENTORYBACKGROUND]);
+		RenderEquipScreen();
+
 	case TAMAGUCCI_SCREEN:
 		RenderTamagucci();
+
 		break;
 	}
 }

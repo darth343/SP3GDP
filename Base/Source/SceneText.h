@@ -12,7 +12,11 @@
 #include "EquipmentManager.h"
 #include "CharacterData.h"
 #include "BattleSystem.h"
+
+#include "Inventory.h"
+
 #include "Tamagucci.h"
+
 #include "SharedData.h"
 
 class SceneText : public SceneBase
@@ -22,7 +26,11 @@ class SceneText : public SceneBase
 		START_SCREEN,
 		TESTMAP,
 		INVENTORY_SCREEN,
+
+		ITEM_SCREEN,
+		EQUIP_SCREEN,
 		TAMAGUCCI_SCREEN,
+
 		BATTLE,
 		CATCH,
 		GS_TOTAL,
@@ -53,6 +61,8 @@ public:
 	void RenderBattleScene(); //RenderBattleScene
 	void RenderMonster(); // Render Monsters here
 	void RenderInventory(); // Render Inventory Main Screen here
+	void RenderItemScreen();
+	void RenderEquipScreen();
 
 	//Update Functions
 	void MapUpdate(double dt);
@@ -64,8 +74,31 @@ public:
 	void SetGS(string gs);
 	void RemoveEnemy();
 	void RenderNPCDialogue(double dt);
+
+	void ItemScreenUpdate(double dt);
+	void EquipScreenUpdate(double dt);
+	
+
 	void RenderTamagucci();
 	void TamagucciUpdate(double dt);
+
+
+	float GetBattleMonsterPosX();
+	float GetBattleMonsterPosY();
+	void SetBattleMonsterPosX(float x);
+	void SetBattleMonsterPosY(float y);
+
+	float GetBattleMonsterScaleX();
+	void SetBattleMonsterScaleX(float x);
+	float GetBattleMonsterScaleY();
+	void SetBattleMonsterScaleY(float y);
+
+	bool GetMonsterScaleUp();
+	void SetMonsterScaleUp(bool set);
+	void NPCUpdate(double dt);
+	void renderTamagotchiMenu();
+	void renderFirstTamagotchiFirstMenu(float yOffset = 0);
+	void renderTamagotchiGame();
 private:
 	NPC npc;
 	Gauge* greenbar;
@@ -90,18 +123,30 @@ private:
 	CPlayerInfo* theHero; // Hero's information
 	GAMESTATE_TYPE GS; // Change GameState in SceneText.cpp line 144 for testing purposes
 	MAP_STATE MS;
-	Monster MonType; // Monster Calls
-
-	// Equipment Functions
-	EquipmentManager equipManager;
+	
 	
 	// Battle system
 	BattleSystem battleScene;
+	Vector3 battleMonsterPos;
+	Vector3 battleMonsterScale;
+
+
+	bool UPkeyPressed;
+	bool LEFTkeyPressed;
+	bool RIGHTkeyPressed;
+	bool ENTERkeyPressed;
+	bool IkeyPressed;
+	bool BACKkeyPressed;
+
+	bool monsterScaleUp;
+
 
 	int currState = 1; //The current state of npc dialogue
 
 	int itemCursorPos = 0;
 	float cursorDebounce = 0;
+
+	bool captured;
 };
 
 #endif

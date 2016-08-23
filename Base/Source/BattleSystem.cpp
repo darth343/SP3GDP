@@ -8,8 +8,9 @@ BattleSystem::BattleSystem():
 	 firstChoice(true),
 	 secondChoice(false),
 	 playerTurn(true),
-	 arrowPos(125,92.5,0),
-	 battleSelection(BS_ATTACK)
+	 arrowPos(120, 90, 0),
+	 battleSelection(BS_ATTACK),
+	 monsterHitAnimation(false)
 {
 }
 
@@ -100,7 +101,29 @@ BattleSystem::BATTLE_SELECTION BattleSystem::GetBattleSelection()
 	return battleSelection; 
 }
 
-void BattleSystem::RunBattleChoice()
+void BattleSystem::Reset()
+{
+	battleStart = false;
+	enemyTurn = false;
+	playerTurn = true;
+	arrowPos = Vector3(120, 90, 0);
+	firstChoice = true;
+	secondChoice = false;
+	escapePercentage = 25.0f;
+	battleSelection = BS_ATTACK;
+}
+
+void BattleSystem::SetMonsterHitAnimation(bool set)
+{
+	this->monsterHitAnimation = set;
+}
+
+bool BattleSystem::GetMonsterHitAnimation()
+{
+	return monsterHitAnimation;
+}
+
+void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 {
 	SceneText* mainScene = (SceneText*)Application::GetInstance().GetScene();
 
@@ -147,7 +170,6 @@ void BattleSystem::RunBattleChoice()
 				battleSelection = BS_ATTACK;
 				mainScene->SetGS("TESTMAP");
 				mainScene->RemoveEnemy();
-
 			}
 			else
 			{
@@ -169,18 +191,48 @@ void BattleSystem::RunBattleChoice()
 		case BS_SLASH:
 			//minus enemy hp, then enemy turn = true, player turn = false
 			cout << "Slash enemy " << endl;
+			theHero->SetDMG(10);
+			enemy->TakeDamage(theHero->GetDMG());
+			cout << "Player Slash Enemy for " << theHero->GetDMG() << " Enemy HP left " << enemy->GetHealth() << endl;
 
-			//if enemy not dead
-			enemyTurn = true;
-			playerTurn = false;
+			//if enemy not dead		
+			if (enemy->GetHealth() > 0)
+			{
+				enemyTurn = true;
+				playerTurn = false;
+			}
+			else
+			{
+				//Player win
+				Reset();
+				mainScene->SetGS("TESTMAP");
+				//destory enemy here
+			}
+
 			break;
+
 		case BS_STAB:
 			//minus enemy hp, then enemy turn = true, player turn = false
 			cout << "Stab enemy " << battleSelection << endl;
 
-			//if enemy not dead
-			enemyTurn = true;
-			playerTurn = false;
+			theHero->SetDMG(15);
+			enemy->TakeDamage(theHero->GetDMG());
+			cout << "Player Stab Enemy for " << theHero->GetDMG() << " Enemy HP left " << enemy->GetHealth() << endl;
+
+			//if enemy not dead		
+			if (enemy->GetHealth() > 0)
+			{
+				enemyTurn = true;
+				playerTurn = false;
+			}
+			else
+			{
+				//Player win
+				Reset();
+				mainScene->SetGS("TESTMAP");
+				//destory enemy here
+			}
+
 			break;
 		case BS_SKILL:
 			//minus enemy hp, then enemy turn = true, player turn = false
@@ -275,7 +327,7 @@ void BattleSystem::GetBattleChoiceInput(static bool& UPkeyPressed, static bool& 
 		RIGHTkeyPressed = false;
 	}
 }
-void BattleSystem::UpdateBattleSystem(static bool& UPkeyPressed, static bool& DNkeyPressed, static bool& LEFTkeyPressed, static bool& RIGHTkeyPressed, static bool& ENTERkeyPressed)
+void BattleSystem::UpdateBattleSystem(static bool& UPkeyPressed, static bool& DNkeyPressed, static bool& LEFTkeyPressed, static bool& RIGHTkeyPressed, static bool& ENTERkeyPressed, CPlayerInfo* theHero, Enemy* enemy)
 {
 	if (playerTurn && !enemyTurn)
 	{
@@ -283,12 +335,36 @@ void BattleSystem::UpdateBattleSystem(static bool& UPkeyPressed, static bool& DN
 		if (Application::IsKeyPressed(VK_RETURN) && !ENTERkeyPressed)
 		{
 			ENTERkeyPressed = true;
-			RunBattleChoice();
+			RunBattleChoice(theHero, enemy);
 		}
 		else if (!Application::IsKeyPressed(VK_RETURN) && ENTERkeyPressed)
 		{
 			ENTERkeyPressed = false;
 		}
+
+	}
+	else if (enemyTurn && !playerTurn)
+	{
+		enemy->SetDamage(10);
+		theHero->TakeDMG(enemy->GetDamage());
+		SetMonsterHitAnimation(true);
+
+		if (theHero->GetHP() > 0)
+		{
+			battleSelection = BS_ATTACK;
+			firstChoice = true;
+			secondChoice = false;
+			enemyTurn = false;
+			playerTurn = true;
+		}
+		else
+		{
+			//Render Game over here
+			Reset();
+			cout << "Reset !!" << endl;
+		}
+
+		cout << "Monster hit player for " << enemy->GetDamage() << " player HP left " << theHero->GetHP() << endl;
 
 	}
 }

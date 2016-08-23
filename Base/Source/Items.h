@@ -20,25 +20,11 @@ public:
 	Items(Vector3 scale = Vector3(1, 1, 1));
 	~Items();
 	
-	// Function to increase Item Count
-	void addPotion(int);
-	void addTrap(int);
-
-	//Function to decrease Item Count
-	void removePotion();
-	void removeTrap();
-
-	// Getters for Items
-	int getPotionCount();
-	int getTrapCount();
 	void Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap);
 	ITEM_TYPE itemType;
+	
 private:
 	string itemName; // Name of items
-
-	int numPotions = 0; // Number of Potions player has
-	int numTraps = 0; // Number of Traps player has
-
 };
 
 #endif

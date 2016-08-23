@@ -3,10 +3,7 @@
 
 TAMAGUCCI::TAMAGUCCI()
 {
-	state = FIRSTMENU;
-	choice = T_NOTHING;
-	entertainmentChoice = E_NOTHING;
-	foodChoice = FC_KB;
+	ResetTamagotchi();
 	tamtam = new GameObject;
 	tamtam->position.Set(350, 250, 1);
 	tamtam->scale.Set(64, 64, 1);
@@ -26,87 +23,100 @@ TAMAGUCCI::~TAMAGUCCI()
 {
 }
 
-std::ostream& operator<<(std::ostream& cout, TAMAGUCCI::TAMABUTTONS buttons)
-{
-	switch (buttons)
-	{
-		case TAMAGUCCI::T_NOTHING:
-			cout << "NOTHING";
-			break;
-		case TAMAGUCCI::T_FOOD:
-			cout << "FOOD";
-			break;
-		case TAMAGUCCI::T_SLEEP:
-			cout << "SLEEP";
-			break;
-		case TAMAGUCCI::T_ENTERTAINMENT:
-			cout << "ENTERTAINMENT";
-			break;
-		case TAMAGUCCI::T_CLEAN:
-			cout << "CLEAN";
-			break;
-		case TAMAGUCCI::T_STATS:
-			cout << "STATS";
-			break;
-		case TAMAGUCCI::TOTAL_TBUTTONS:
-			cout << "TOTAL BUTTONS";
-			break;
-	}
-	return cout;
-}
-
-std::ostream& operator<<(std::ostream& cout, TAMAGUCCI::FOODCHOICES foodchoice)
-{
-	switch (foodchoice)
-	{
-	case TAMAGUCCI::FC_KB:
-		cout << "KILOBYTE";
-		break;
-	case TAMAGUCCI::FC_MB:
-		cout << "MEGABYTE";
-		break;
-	case TAMAGUCCI::FC_GB:
-		cout << "GIGABYTE";
-		break;
-	case TAMAGUCCI::FC_BACK:
-		cout << "BACK";
-		break;
-	}
-	return cout;
-}
+//std::ostream& operator<<(std::ostream& cout, TAMAGUCCI::MENUBUTTONS buttons)
+//{
+//	switch (buttons)
+//	{
+//		case TAMAGUCCI::T_NOTHING:
+//			cout << "NOTHING";
+//			break;
+//		case TAMAGUCCI::T_FOOD:
+//			cout << "FOOD";
+//			break;
+//		case TAMAGUCCI::T_SLEEP:
+//			cout << "SLEEP";
+//			break;
+//		case TAMAGUCCI::T_ENTERTAINMENT:
+//			cout << "ENTERTAINMENT";
+//			break;
+//		case TAMAGUCCI::T_CLEAN:
+//			cout << "CLEAN";
+//			break;
+//		case TAMAGUCCI::T_STATS:
+//			cout << "STATS";
+//			break;
+//		case TAMAGUCCI::TOTAL_TBUTTONS:
+//			cout << "TOTAL BUTTONS";
+//			break;
+//	}
+//	return cout;
+//}
+//
+//std::ostream& operator<<(std::ostream& cout, TAMAGUCCI::FOODCHOICES foodchoice)
+//{
+//	switch (foodchoice)
+//	{
+//	case TAMAGUCCI::FC_KB:
+//		cout << "KILOBYTE";
+//		break;
+//	case TAMAGUCCI::FC_MB:
+//		cout << "MEGABYTE";
+//		break;
+//	case TAMAGUCCI::FC_GB:
+//		cout << "GIGABYTE";
+//		break;
+//	case TAMAGUCCI::FC_BACK:
+//		cout << "BACK";
+//		break;
+//	}
+//	return cout;
+//}
 
 void TAMAGUCCI::UpdateTamagucci(double dt)
 {
-	if (state == FIRSTMENU || state == SECONDMENU)
-	GetTamagucciInput();
-	if (state == RUNCHOICE)
+	switch (tamagotchiState)
 	{
-		switch (runChoice)
+	case MENU:
+		GetTamagucciInput();
+		break;
+	case GAME:
+		switch (gameChoice)
 		{
-		case R_ENTERTAINMENTCHOICES:
-		{
-									   if (entertainmentChoice == E_CATCHING)
-									   {
-										   MiniGame(dt);
-									   }
+		case CATCHING:
+			MiniGame(dt);
 		}
-		}
+		break;
 	}
+	//if (state == FIRSTMENU || state == SECONDMENU)
+	//GetTamagucciInput();
+
+	//if (state == RUNCHOICE)
+	//{
+	//	switch (runChoice)
+	//	{
+	//		case R_ENTERTAINMENTCHOICES:
+	//		{
+	//			if (entertainmentChoice == E_CATCHING)
+	//			{
+	//				 MiniGame(dt);
+	//			}
+	//		}
+	//	}
+	//}
 }
 
 void TAMAGUCCI::GetTamagucciInput()
 {
-	switch (state)
+	switch (menuState)
 	{
 	case FIRSTMENU:
 		// RIGHT BUTTON
 		if (Application::IsKeyPressed(VK_RIGHT) && !SharedData::GetInstance()->RIGHTkeyPressed)
 		{
 			SharedData::GetInstance()->RIGHTkeyPressed = true;
-			choice = static_cast<TAMABUTTONS>(1 + choice);
-			if (choice == TOTAL_TBUTTONS)
-				choice = T_FOOD;
-			cout << choice << endl;
+			firstMenuOption = static_cast<FIRSTMENUPOPTIONS>(1 + firstMenuOption);
+			if (firstMenuOption == TOTAL_FM)
+				firstMenuOption = FOOD;
 		}
 		else if (!Application::IsKeyPressed(VK_RIGHT) && SharedData::GetInstance()->RIGHTkeyPressed)
 		{
@@ -117,10 +127,9 @@ void TAMAGUCCI::GetTamagucciInput()
 		if (Application::IsKeyPressed(VK_LEFT) && !SharedData::GetInstance()->LEFTkeyPressed)
 		{
 			SharedData::GetInstance()->LEFTkeyPressed = true;
-			choice = static_cast<TAMABUTTONS>(choice - 1);
-			if (choice == T_NOTHING)
-				choice = T_STATS;
-			cout << choice << endl;
+			firstMenuOption = static_cast<FIRSTMENUPOPTIONS>(firstMenuOption - 1);
+			if (firstMenuOption == 0)
+				firstMenuOption = STATS;
 		}
 		else if (!Application::IsKeyPressed(VK_LEFT) && SharedData::GetInstance()->LEFTkeyPressed)
 		{
@@ -130,7 +139,7 @@ void TAMAGUCCI::GetTamagucciInput()
 		if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 		{
 			SharedData::GetInstance()->ENTERkeyPressed = true; 
-			state = SECONDMENU;
+			menuState = SECONDMENU;
 		}
 		else if (!Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
 		{
@@ -139,36 +148,34 @@ void TAMAGUCCI::GetTamagucciInput()
 		break;
 
 	case SECONDMENU:
-		switch (choice)
+		switch (firstMenuOption)
 		{
-		case T_FOOD:
+		case FOOD:
 		{
 			// RIGHT BUTTON
-			if (Application::IsKeyPressed(VK_RIGHT) && !SharedData::GetInstance()->RIGHTkeyPressed)
+			if (Application::IsKeyPressed(VK_DOWN) && !SharedData::GetInstance()->DNkeyPressed)
 			{
-				SharedData::GetInstance()->RIGHTkeyPressed = true;
+				SharedData::GetInstance()->DNkeyPressed = true;
 				foodChoice = static_cast<FOODCHOICES>(1 + foodChoice);
-				if (foodChoice == TOTAL_FC)
-					foodChoice = FC_KB;
-				cout << foodChoice << endl;
+				if (foodChoice > FC_BACK)
+					foodChoice = FC_SALAD;
 			}
-			else if (!Application::IsKeyPressed(VK_RIGHT) && SharedData::GetInstance()->RIGHTkeyPressed)
+			else if (!Application::IsKeyPressed(VK_DOWN) && SharedData::GetInstance()->DNkeyPressed)
 			{
-				SharedData::GetInstance()->RIGHTkeyPressed = false;
+				SharedData::GetInstance()->DNkeyPressed = false;
 			}
 
 			// LEFT BUTTON
-			if (Application::IsKeyPressed(VK_LEFT) && !SharedData::GetInstance()->LEFTkeyPressed)
+			if (Application::IsKeyPressed(VK_UP) && !SharedData::GetInstance()->UPkeyPressed)
 			{
-				SharedData::GetInstance()->LEFTkeyPressed = true;
+				SharedData::GetInstance()->UPkeyPressed = true;
 				foodChoice = static_cast<FOODCHOICES>(foodChoice - 1);
-				if (foodChoice == FC_NOTHING)
+				if (foodChoice < FC_SALAD)
 					foodChoice = FC_BACK;
-				cout << foodChoice << endl;
 			}
-			else if (!Application::IsKeyPressed(VK_LEFT) && SharedData::GetInstance()->LEFTkeyPressed)
+			else if (!Application::IsKeyPressed(VK_UP) && SharedData::GetInstance()->UPkeyPressed)
 			{
-				SharedData::GetInstance()->LEFTkeyPressed = false;
+				SharedData::GetInstance()->UPkeyPressed = false;
 			}
 
 			// ENTER BUTTON
@@ -176,7 +183,7 @@ void TAMAGUCCI::GetTamagucciInput()
 			{
 				SharedData::GetInstance()->ENTERkeyPressed = true;
 				if (foodChoice == FC_BACK)
-					state = FIRSTMENU;
+					menuState = FIRSTMENU;
 			}
 			else if (!Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
 			{
@@ -185,45 +192,43 @@ void TAMAGUCCI::GetTamagucciInput()
 
 		}
 			break;
-		case T_ENTERTAINMENT:
+		case ENTERTAINMENT:
 		{
 				// RIGHT BUTTON
-				if (Application::IsKeyPressed(VK_RIGHT) && !SharedData::GetInstance()->RIGHTkeyPressed)
+				if (Application::IsKeyPressed(VK_DOWN) && !SharedData::GetInstance()->DNkeyPressed)
 				{
-					SharedData::GetInstance()->RIGHTkeyPressed = true;
-					entertainmentChoice = static_cast<ENTERTAINMENTCHOICES>(1 + entertainmentChoice);
-					if (entertainmentChoice == E_TOTAL)
-						entertainmentChoice = E_CATCHING;
-					cout << entertainmentChoice << endl;
+								  SharedData::GetInstance()->DNkeyPressed = true;
+					gameChoice = static_cast<GAMEOPTIONS>(1 + gameChoice);
+					if (gameChoice > G_BACK)
+						gameChoice = CATCHING;
 				}
-				else if (!Application::IsKeyPressed(VK_RIGHT) && SharedData::GetInstance()->RIGHTkeyPressed)
+				else if (!Application::IsKeyPressed(VK_DOWN) && SharedData::GetInstance()->DNkeyPressed)
 				{
-					SharedData::GetInstance()->RIGHTkeyPressed = false;
+								  SharedData::GetInstance()->DNkeyPressed = false;
 				}
 
 				// LEFT BUTTON
-				if (Application::IsKeyPressed(VK_LEFT) && !SharedData::GetInstance()->LEFTkeyPressed)
+				if (Application::IsKeyPressed(VK_UP) && !SharedData::GetInstance()->UPkeyPressed)
 				{
-					SharedData::GetInstance()->LEFTkeyPressed = true;
-					entertainmentChoice = static_cast<ENTERTAINMENTCHOICES>(entertainmentChoice - 1);
-					if (entertainmentChoice == E_NOTHING)
-						entertainmentChoice = E_RPS;
-					cout << entertainmentChoice << endl;
+					SharedData::GetInstance()->UPkeyPressed = true;
+					gameChoice = static_cast<GAMEOPTIONS>(gameChoice - 1);
+					if (gameChoice < CATCHING)
+						gameChoice = G_BACK;
 				}
-				else if (!Application::IsKeyPressed(VK_LEFT) && SharedData::GetInstance()->LEFTkeyPressed)
+				else if (!Application::IsKeyPressed(VK_UP) && SharedData::GetInstance()->UPkeyPressed)
 				{
-					SharedData::GetInstance()->LEFTkeyPressed = false;
+					SharedData::GetInstance()->UPkeyPressed = false;
 				}
 
 				// ENTER BUTTON
 				if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 				{
 					SharedData::GetInstance()->ENTERkeyPressed = true;
-					if (entertainmentChoice == E_CATCHING)
+					if (gameChoice == G_BACK)
 					{
-						runChoice = R_ENTERTAINMENTCHOICES;
-						state = RUNCHOICE;
-					}
+						menuState = FIRSTMENU;
+					}else
+						tamagotchiState = GAME;
 				}
 				else if (!Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
 				{
@@ -253,29 +258,49 @@ void TAMAGUCCI::MiniGameUpdatePosition(double dt)
 	}
 }
 
+void TAMAGUCCI::ResetTamagotchi()
+{
+	tamagotchiState = MENU;
+	menuState = FIRSTMENU;
+	gameChoice = CATCHING;
+	firstMenuOption = FOOD;
+	foodChoice = FC_SALAD;
+	minigame1Score = 0;
+}
+
 void TAMAGUCCI::MiniGame(double dt)
 {
 	MiniGameUpdatePosition(dt);
-	tamdrop->position.y -= 100 * dt;
-	tamdrop2->position.y -= 80 * dt;
+	tamdrop->position.y -= tamDropVel * dt;
+	tamdrop2->position.y -= tamDropVel * dt;
 	if (tamtam->CheckCollision(tamdrop))
 	{
 		tamdrop->position.Set(Math::RandFloatMinMax(0, 730), 600, 0);
+		tamDropVel = Math::RandFloatMinMax(100, 130);
 		minigame1Score += 5;
 	}
 	if (tamdrop->position.y <= 0)
+	{
 		tamdrop->position.Set(Math::RandFloatMinMax(0, 730), 600, 0);
+		tamDropVel = Math::RandFloatMinMax(100, 130);
+	}
 
 	if (tamtam->CheckCollision(tamdrop2))
 	{
 		tamdrop2->position.Set(Math::RandFloatMinMax(0, 730), 650, 0);
+		tamDropVel = Math::RandFloatMinMax(100, 130);
 		minigame1Score -= 5;
 	}
 	if (tamdrop2->position.y <= 0)
+	{
 		tamdrop2->position.Set(Math::RandFloatMinMax(0, 730), 650, 0);
-
+		tamDropVel = Math::RandFloatMinMax(100, 130);
+	}
+	cout << minigame1Score << endl;
 	if (minigame1Score >= 20)
-		choice = T_NOTHING;
+	{
+		ResetTamagotchi();
+	}
 }
 
 GameObject* TAMAGUCCI::GetTamTam()
@@ -293,7 +318,26 @@ GameObject* TAMAGUCCI::GetTamDrop2()
 	return tamdrop2;
 }
 
-TAMAGUCCI::CHOICES TAMAGUCCI::GetState()
+TAMAGUCCI::TAMAGOTCHISTATE TAMAGUCCI::getTamagotchiState()
 {
-	return runChoice;
+	return tamagotchiState;
+}
+
+TAMAGUCCI::MENUSTATE TAMAGUCCI::getMenuState()
+{
+	return menuState;
+}
+TAMAGUCCI::GAMEOPTIONS TAMAGUCCI::getGameChoice()
+{
+	return gameChoice;
+}
+
+TAMAGUCCI::FIRSTMENUPOPTIONS TAMAGUCCI::getFirstMenuOption()
+{
+	return firstMenuOption;
+}
+
+TAMAGUCCI::FOODCHOICES TAMAGUCCI::getFoodChoice()
+{
+	return foodChoice;
 }
