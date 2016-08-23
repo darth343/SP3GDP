@@ -345,10 +345,8 @@ void BattleSystem::UpdateBattleSystem(static bool& UPkeyPressed, static bool& DN
 	}
 	else if (enemyTurn && !playerTurn)
 	{
-		enemy->SetDamage(10);
-		theHero->TakeDMG(enemy->GetDamage());
+		theHero->TakeDMG(enemy->GetAttackDamage());
 		SetMonsterHitAnimation(true);
-
 		if (theHero->GetHP() > 0)
 		{
 			battleSelection = BS_ATTACK;
@@ -364,7 +362,7 @@ void BattleSystem::UpdateBattleSystem(static bool& UPkeyPressed, static bool& DN
 			cout << "Reset !!" << endl;
 		}
 
-		cout << "Monster hit player for " << enemy->GetDamage() << " player HP left " << theHero->GetHP() << endl;
+		cout << "Monster hit player for " << enemy->GetAttackDamage() << " player HP left " << theHero->GetHP() << endl;
 
 	}
 }

@@ -51,7 +51,7 @@ void SceneText::Init()
 	redbar->gauge = Gauge::GREENBAR;
 	redbar->position.Set(150, 150, 1);
 
-	greenbar= new Gauge(Vector3(50.f, 32.f, 1));
+	greenbar= new Gauge(Vector3(0.f, 32.f, 1));
 	greenbar->gauge = Gauge::GREENBAR;
 	greenbar->type = GameObject::GO_GREENBAR;
 	greenbar->position.Set(400, 150, 1);
@@ -65,8 +65,11 @@ void SceneText::Init()
 	theEnemy = new Enemy(temp, Vector3(32.f, 32.f, 1));
 	theEnemy->type = GameObject::GO_ENEMY;
 	theEnemy->position.Set(64, 224, 1);
+	theEnemy->SetName("Mummy");
+	cout << theEnemy->GetAttackDamage();
 	m_goList.push_back(theEnemy);
-	enemyMaxHealth= currHealth = 100;
+	enemyMaxHealth = 100;
+	currHealth = 100;
 	enemyCatchPercentage = 0;
 	npc.ReadFromFile("Image//Text.txt",m_goList);
 	vector<NPC*>npcvec = npc.GetVec();
@@ -185,23 +188,17 @@ static bool BACKkeyPressed = false;
 
 void SceneText::CatchUpdate(double dt)
 {
-	enemyCatchPercentage = (enemyMaxHealth - EnemyInBattle->GetHealth()) / 100 * 20;
-
-	if (Application::IsKeyPressed('V'))
-	{
-		currHealth -= 10;
-	}
+	enemyCatchPercentage = (theEnemy->GetMaxHealth() - theEnemy->GetHealth());
 
 	float prevScale = greenbar->scale.x;
-	greenbar->scale.x = enemyCatchPercentage * 0.1;
+	greenbar->scale.x = enemyCatchPercentage;
 	if (greenbar->scale.x > prevScale)
 	{
 		greenbar->position.x -= (greenbar->scale.x - prevScale) * 0.5;
 	}
 
 	chargebar->Update(dt, 200.f);
-	greenbar->Update(dt, 400.f);
-
+	greenbar->Update(dt, 800.f);
 	if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 	{
 		SharedData::GetInstance()->ENTERkeyPressed = true;
@@ -209,9 +206,17 @@ void SceneText::CatchUpdate(double dt)
 		{
 			captured = true;
 			cout << "CAPTURED" << endl;
-			Monster temp;
+			/*Monster temp;
+			
 			SharedData::GetInstance()->inventory.addToInventory(temp);
-			SharedData::GetInstance()->inventory.printInventory();
+			SharedData::GetInstance()->inventory.printInventory();*/
+			if (SharedData::GetInstance()->enemyInventory.size() <= 0)
+			{
+				SharedData::GetInstance()->enemyInventory.push_back(theEnemy);
+				RemoveEnemy();
+			}
+			GS = TESTMAP;
+			return;
 			GS = TESTMAP;
 
 			// Despawn monster once captured
