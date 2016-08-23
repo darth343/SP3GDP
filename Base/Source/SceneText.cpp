@@ -65,6 +65,7 @@ void SceneText::Init()
 	theEnemy = new Enemy(temp, Vector3(32.f, 32.f, 1));
 	theEnemy->type = GameObject::GO_ENEMY;
 	theEnemy->position.Set(64, 224, 1);
+	theEnemy->SetName("Mummy");
 	m_goList.push_back(theEnemy);
 	enemyMaxHealth = 100;
 	currHealth = 100;
@@ -186,12 +187,7 @@ static bool BACKkeyPressed = false;
 
 void SceneText::CatchUpdate(double dt)
 {
-	enemyCatchPercentage = (enemyMaxHealth - EnemyInBattle->GetHealth()) * 3;
-
-	if (Application::IsKeyPressed('V'))
-	{
-		currHealth -= 10;
-	}
+	enemyCatchPercentage = (theEnemy->GetMaxHealth() - theEnemy->GetHealth());
 
 	float prevScale = greenbar->scale.x;
 	greenbar->scale.x = enemyCatchPercentage;
@@ -201,8 +197,7 @@ void SceneText::CatchUpdate(double dt)
 	}
 
 	chargebar->Update(dt, 200.f);
-	greenbar->Update(dt, 400.f);
-
+	greenbar->Update(dt, 800.f);
 	if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 	{
 		SharedData::GetInstance()->ENTERkeyPressed = true;
@@ -210,9 +205,17 @@ void SceneText::CatchUpdate(double dt)
 		{
 			captured = true;
 			cout << "CAPTURED" << endl;
-			Monster temp;
+			/*Monster temp;
+			
 			SharedData::GetInstance()->inventory.addToInventory(temp);
-			SharedData::GetInstance()->inventory.printInventory();
+			SharedData::GetInstance()->inventory.printInventory();*/
+			if (SharedData::GetInstance()->enemyInventory.size() <= 0)
+			{
+				SharedData::GetInstance()->enemyInventory.push_back(theEnemy);
+				RemoveEnemy();
+			}
+			GS = TESTMAP;
+			return;
 			GS = TESTMAP;
 
 			// Despawn monster once captured

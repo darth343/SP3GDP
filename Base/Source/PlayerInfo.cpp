@@ -9,7 +9,7 @@ CPlayerInfo::CPlayerInfo(void)
 	, FlipStatus(false)
 	, playerHP(100)
 	, playerDamage(20)
-	, playerDefense(20)
+	, playerDefense(0)
 {
 }
 
@@ -45,7 +45,7 @@ void CPlayerInfo::SetPlayerMesh(Mesh* mesh)
 
 void CPlayerInfo::TakeDMG(float dmg)
 {
-	this->SetHP(this->playerHP - dmg * playerDefense / 100);
+	this->SetHP(this->playerHP - dmg - playerDefense / 100);
 }
 
 

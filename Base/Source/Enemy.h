@@ -20,6 +20,15 @@ enum ENEMY_STATES
 	E_DEAD,
 	E_TOTAL,
 };
+enum ENEMY_TYPE
+{
+	ET_MUMMY,
+	ET_TYPE2,
+	ET_TYPE3,
+	ET_TYPE4,
+	ET_BOSS,
+	ET_TOTAL,
+};
 	void TakeDamage(int);
 	float GetHealth();
 	float GetDamage();
@@ -28,6 +37,13 @@ enum ENEMY_STATES
 	void MoveTo(double dt, Tile nextTile, CMap* m_cMap);
 	void MoveLeftRight(double dt, bool left);
 	void MoveUpDown(double dt, bool up);
+	void SetName(string name);
+	string GetName();
+	void SetAttackDamage(int);
+	void SetDef(int);
+	int GetDef();
+	int GetAttackDamage();
+	int GetMaxHealth();
 	void Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap);
 	friend std::ostream& operator<<(std::ostream& cout, ENEMY_STATES state);
 
@@ -40,9 +56,14 @@ private:
 	Vector3 patrolPos;
 	//Pathfinder thePath;
 	ENEMY_STATES enemyStates;
+	ENEMY_TYPE enemyType;
 	Monster MonID;
 	//Rendering Variables
+	int attackDamage;
+	int enemyDef;
+	int maxEnemyHealth;
 	bool flip;
+	string enemyNames;
 };
 
 #endif // !ENEMY_H
