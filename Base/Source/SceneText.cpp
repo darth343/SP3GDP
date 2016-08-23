@@ -76,9 +76,9 @@ void SceneText::Init()
 		if (npcvec[i]->GetID() == 1)
 			npcvec[i]->position.Set(500, 400, 1);
 		if (npcvec[i]->GetID() == 2)
-			npcvec[i]->position.Set(700, 400, 1);
+			npcvec[i]->position.Set(700, 200, 1);
 		if (npcvec[i]->GetID() == 3)
-			npcvec[i]->position.Set(600, 400, 1);
+			npcvec[i]->position.Set(100, 600, 1);
 		npcvec[i]->currDia = 1;
 
 		m_goList.push_back(dynamic_cast<NPC*>(npcvec[i]));
@@ -337,12 +337,14 @@ void SceneText::PlayerUpdate(double dt)
 
 void SceneText::GOupdate(double dt)
 {
+	
 	SpriteAnimation *sa = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC]);
 	if (sa)
 	{
 		sa->Update(dt);
 		sa->m_anim->animActive = true;
 	}
+
 	SpriteAnimation *pic2 = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC2]);
 	if (pic2)
 	{
@@ -373,12 +375,50 @@ void SceneText::GOupdate(double dt)
 			}
 			else if (!Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
 				SharedData::GetInstance()->ENTERkeyPressed = false;
+
+			if (temp->GetAnimationState() == 2)
+			{
+				if (temp->GetID() == 1)
+				{
+					SpriteAnimation *npc1 = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPC1_LEFT]);
+					if (npc1)
+					{
+						npc1->Update(dt*0.2);
+						npc1->m_anim->animActive = true;
+					}
+				}
+				if (temp->GetID() == 3)
+				{
+					SpriteAnimation *npc2 = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPC2_LEFT]);
+					if (npc2)
+					{
+						npc2->Update(dt*0.2);
+						npc2->m_anim->animActive = true;
+					}
+				}
+				if (temp->GetID() == 2)
+				{
+					SpriteAnimation *npc3 = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPC3_LEFT]);
+					if (npc3)
+					{
+						npc3->Update(dt*0.2);
+						npc3->m_anim->animActive = true;
+					}
+				}
+			}
 		}
 	}
 }
 //For the mini game
 void SceneText::TamagucciUpdate(double dt)
 {
+	
+	SpriteAnimation *tamhappy = dynamic_cast<SpriteAnimation*>(meshList[GEO_TAMHAPPY]);
+	if (tamhappy)
+	{
+		tamhappy->Update(dt);
+		tamhappy->m_anim->animActive = true;
+	}
 	//tamagucci.MiniGame(tamtam->position, dt);
 	//tamdrop->position.y -= 100 * dt;
 	//if (tamdrop->position.y <= 0)
@@ -672,7 +712,7 @@ void SceneText::Update(double dt)
 
 	case TAMAGUCCI_SCREEN:
 		tamagucci.UpdateTamagucci(dt);
-
+		TamagucciUpdate(dt);
 		break;
 	}
 	fps = (float)(1.f / dt);
@@ -716,7 +756,15 @@ void SceneText::RenderTestMap()
 				NPC* temp = (NPC*)m_goList[i];
 				ss.str("");
 				ss.precision(5);
-				Render2DMeshWScale(meshList[GEO_NPC], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false);
+
+				if (temp->GetID() == 1)
+				Render2DMeshWScale(meshList[GEO_NPC1_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight());
+
+				if (temp->GetID() == 2)
+				Render2DMeshWScale(meshList[GEO_NPC3_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight());
+
+				if (temp->GetID() == 3)
+					Render2DMeshWScale(meshList[GEO_NPC2_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight());
 
 				if (temp->GetDialogueState() == temp->currState && temp->GetID() == temp->collideWhichNPC())
 				{
@@ -850,6 +898,7 @@ void SceneText::RenderTamagucci()
 		arrowPos.Set(620, 60);
 		break;
 	}
+	
 	ss << "Foods";
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 80, 60);
 	ss.str("");
@@ -882,7 +931,12 @@ void SceneText::RenderTamagucci()
 		//	Render2DMeshWScale(meshList[GEO_TAMAGUCCI], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x, m_goList[i]->position.y, false);
 		//}
 	}
-	Render2DMeshWScale(meshList[GEO_TAMAGUCCI], false, tamagucci.GetTamTam()->scale.x, tamagucci.GetTamTam()->scale.y, tamagucci.GetTamTam()->position.x, tamagucci.GetTamTam()->position.y, false);
+
+	if (tamagucci.GetScore() < 20)
+		Render2DMeshWScale(meshList[GEO_TAMAGUCCI], false, tamagucci.GetTamTam()->scale.x, tamagucci.GetTamTam()->scale.y, tamagucci.GetTamTam()->position.x, tamagucci.GetTamTam()->position.y, false);
+	else
+		Render2DMeshWScale(meshList[GEO_TAMHAPPY], false, tamagucci.GetTamTam()->scale.x, tamagucci.GetTamTam()->scale.y, tamagucci.GetTamTam()->position.x, tamagucci.GetTamTam()->position.y, false);
+
 }
 void SceneText::RenderCatch()
 {
@@ -999,7 +1053,6 @@ void SceneText::Render()
 
 	case TAMAGUCCI_SCREEN:
 		RenderTamagucci();
-
 		break;
 	}
 }

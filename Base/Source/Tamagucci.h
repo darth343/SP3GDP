@@ -57,6 +57,7 @@ public:
 	void MiniGameUpdatePosition(double dt);
 	friend std::ostream& operator<<(std::ostream& cout, TAMABUTTONS buttons);
 	friend std::ostream& operator<<(std::ostream& cout, FOODCHOICES foodchoice);
+	int GetScore();
 	CHOICES GetState();
 	TAMABUTTONS GetStates();
 	ENTERTAINMENTCHOICES GetEntertainChoices();
@@ -69,6 +70,7 @@ private:
 	GameObject* tamdrop;
 	GameObject* tamdrop2;
 	float tamDropVel = 100; 
+	float coolDown = 3.f;
 	TAMAGUCCISTATES state;
 	TAMABUTTONS choice;
 	FOODCHOICES foodChoice;

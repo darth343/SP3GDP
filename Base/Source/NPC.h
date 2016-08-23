@@ -39,6 +39,8 @@ public:
 	void SetAnimationState(NPC_ANIMATION);
 	void SetDialogueState(NPC_DIALOGUE);
 	void SetID(float);
+	bool GetMoveLeft();
+	bool GetMoveRight();
 	vector<NPC*>GetVec();
 	int GetID();
 	string GetDialogue();
@@ -62,6 +64,10 @@ private:
 	bool npc1;
 	bool npc2;
 	bool npc3;
+	bool moveLeft;
+	bool moveRight;
+	bool moveUp;
+	bool moveDown;
 	bool emptyString = false;
 	string npcDialogue;
 	vector<NPC*>npcs;
