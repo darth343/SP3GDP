@@ -31,12 +31,14 @@ enum ENEMY_STATES
 	void Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap);
 	friend std::ostream& operator<<(std::ostream& cout, ENEMY_STATES state);
 
+	Pathfinder thePath;
+
 private:
 	float health;
 	float damage;
 	Vector3 prevHeroPos;
 	Vector3 patrolPos;
-	Pathfinder thePath;
+	//Pathfinder thePath;
 	ENEMY_STATES enemyStates;
 	Monster MonID;
 	//Rendering Variables

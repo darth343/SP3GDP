@@ -12,7 +12,11 @@
 #include "EquipmentManager.h"
 #include "CharacterData.h"
 #include "BattleSystem.h"
+
 #include "Inventory.h"
+
+#include "Tamagucci.h"
+
 #include "SharedData.h"
 
 class SceneText : public SceneBase
@@ -22,9 +26,11 @@ class SceneText : public SceneBase
 		START_SCREEN,
 		TESTMAP,
 		INVENTORY_SCREEN,
+
 		ITEM_SCREEN,
 		EQUIP_SCREEN,
-		TAMAGOTCHI_SCREEN,
+		TAMAGUCCI_SCREEN,
+
 		BATTLE,
 		CATCH,
 		GS_TOTAL,
@@ -66,11 +72,29 @@ public:
 	void EnterBattleScene(Enemy* enemy); //its like the update for BattleScene
 	void CatchUpdate(double dt);
 	void SetGS(string gs);
+	void RemoveEnemy();
 	void RenderNPCDialogue(double dt);
+
 	void ItemScreenUpdate(double dt);
 	void EquipScreenUpdate(double dt);
 	
 
+	void RenderTamagucci();
+	void TamagucciUpdate(double dt);
+
+
+	float GetBattleMonsterPosX();
+	float GetBattleMonsterPosY();
+	void SetBattleMonsterPosX(float x);
+	void SetBattleMonsterPosY(float y);
+
+	float GetBattleMonsterScaleX();
+	void SetBattleMonsterScaleX(float x);
+	float GetBattleMonsterScaleY();
+	void SetBattleMonsterScaleY(float y);
+
+	bool GetMonsterScaleUp();
+	void SetMonsterScaleUp(bool set);
 private:
 	NPC npc;
 	Gauge* greenbar;
@@ -78,7 +102,10 @@ private:
 	Gauge* chargebar;
 	Enemy* theEnemy;
 	Enemy* EnemyInBattle;
+	TAMAGUCCI* tamtam;
+	TAMAGUCCI* tamdrop;
 	Pathfinder testpathfinder;
+	TAMAGUCCI tamagucci;
 	vector<GameObject *> m_goList;
 	int npcPic = 0; //Which npc picture to show on the dialogue
 	float enemyCatchPercentage;
@@ -96,6 +123,9 @@ private:
 	
 	// Battle system
 	BattleSystem battleScene;
+	Vector3 battleMonsterPos;
+	Vector3 battleMonsterScale;
+
 
 
 	int currState = 1; //The current state of npc dialogue
@@ -107,6 +137,10 @@ private:
 	bool IkeyPressed;
 	bool BACKkeyPressed;
 
+	bool monsterScaleUp;
+
+
+	int currState = 1; //The current state of npc dialogue
 
 	int itemCursorPos = 0;
 	float cursorDebounce = 0;

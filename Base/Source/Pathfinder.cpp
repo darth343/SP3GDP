@@ -4,7 +4,6 @@ Pathfinder::Pathfinder()
 : initializedStartandEnd(false)
 , found(false)
 {
-
 }
 
 Pathfinder::~Pathfinder()

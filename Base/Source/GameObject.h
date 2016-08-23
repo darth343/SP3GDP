@@ -15,6 +15,9 @@ public:
 		GO_ENEMY,
 		GO_NPC,
 		GO_REDBAR,
+		GO_TAMAGUCCI,
+		GO_TAMDROP1,
+		GO_TAMDROP2,
 		GO_GREENBAR,
 		GO_MOVE,
 		GO_TOTAL,
@@ -24,7 +27,7 @@ public:
 	~GameObject() {};
 	virtual void Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap){};
 	bool CheckCollision(Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap);
-	bool CheckCollision(GameObject* go, CMap* m_cMap);
+	bool CheckCollision(GameObject* go, CMap* m_cMap = NULL);
 	void CollisionResponse();
 	bool active;
 	GAMEOBJECT_TYPE type;

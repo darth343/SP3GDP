@@ -138,6 +138,14 @@ void SceneBase::Init()
 	meshList[GEO_GROUNDTOP]->textureID = LoadTGA("Image//groundTop.tga");
 	meshList[GEO_INVENTORYBACKGROUND] = MeshBuilder::Generate2DMesh("GEO_INVENTORYBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
 	meshList[GEO_INVENTORYBACKGROUND]->textureID = LoadTGA("Image//InventoryBackground.tga");
+	meshList[GEO_TAMAGUCCIBACKGROUND] = MeshBuilder::Generate2DMesh("GEO_TAMAGUCCIBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_TAMAGUCCIBACKGROUND]->textureID = LoadTGA("Image//tamagucciBG.tga");
+	meshList[GEO_TAMAGUCCIUIBACKGROUND] = MeshBuilder::GenerateQuad("GEO_TAMAGUCCIUIBACKGROUND", Color(1, 1, 1), 800, 3);
+	meshList[GEO_TAMAGUCCIUIBACKGROUND]->textureID = LoadTGA("Image//tamagucciUIBG.tga");
+	meshList[GEO_TAMAGUCCI] = MeshBuilder::Generate2DMesh("GEO_TAMAGUCCIBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
+	meshList[GEO_TAMAGUCCI]->textureID = LoadTGA("Image//Mimitchi.tga");
+	meshList[GEO_STAR] = MeshBuilder::Generate2DMesh("GEO_TAMAGUCCIBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
+	meshList[GEO_STAR]->textureID = LoadTGA("Image//Star.tga");
 	meshList[GEO_GREENTILE] = MeshBuilder::Generate2DMesh("GEO_GREENTILE", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
 	meshList[GEO_GREENTILE]->textureID = LoadTGA("Image//greenTile.tga");
 	meshList[GEO_NPC] = MeshBuilder::Generate2DMesh("GEO_GREENTILE", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
@@ -150,6 +158,8 @@ void SceneBase::Init()
 	meshList[GEO_NPCPIC3]->textureID = LoadTGA("Image//NPC3_GIF.tga");
 	meshList[GEO_REDTILE] = MeshBuilder::Generate2DMesh("GEO_REDTILE", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
 	meshList[GEO_REDTILE]->textureID = LoadTGA("Image//redTile.tga");
+	meshList[GEO_POOP] = MeshBuilder::Generate2DMesh("GEO_REDTILE", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
+	meshList[GEO_POOP]->textureID = LoadTGA("Image//Poop.tga");
 	meshList[GEO_BLUETILE] = MeshBuilder::Generate2DMesh("GEO_BLUETILE", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
 	meshList[GEO_BLUETILE]->textureID = LoadTGA("Image//blueTile.tga");
 	meshList[GEO_HEROWALK] = MeshBuilder::Generate2DMesh("Player", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);

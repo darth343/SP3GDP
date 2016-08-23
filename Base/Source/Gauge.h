@@ -20,7 +20,7 @@ public:
 	~Gauge();
 	GAUGE_TYPE gauge;
 
-	void Update(double dt = 0, Vector3 playerPos = Vector3(0,0,0), Vector3 mapOffset = Vector3(0, 0, 0), CMap* m_cMap = NULL);
+	void Update(double dt = 0, float speed = 200.f);
 private:
 	string itemName; // Name of items
 	bool moveRight = true;
