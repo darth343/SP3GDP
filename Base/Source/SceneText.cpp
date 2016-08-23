@@ -511,6 +511,7 @@ void SceneText::RenderTestMap()
 	ss << "FPS: " << fps;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 0), 30, 0, 0);
 }
+
 void SceneText::RemoveEnemy()
 {
 	for (int i = 0; i < m_goList.size(); ++i)
@@ -522,6 +523,7 @@ void SceneText::RemoveEnemy()
 		}
 	}
 }
+
 void SceneText::RenderMonster()
 {/*
 	if (MonType.getMonsterType() == BANSHEE)
@@ -550,30 +552,34 @@ void SceneText::RenderMonster()
 		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false);
 	
 }
+
 void SceneText::RenderTamagucci()
 {
 	static float xpos = 0.f;
 	static float ypos = 0.f;
 	if (Application::IsKeyPressed('I'))
 	{
-		ypos += 1.0f;
+		ypos += 0.5f;
 	}
 	if (Application::IsKeyPressed('K'))
 	{
-		ypos -= 1.0f;
+		ypos -= 0.5f;
 	}
 	if (Application::IsKeyPressed('J'))
 	{
-		xpos -= 1.0f;
+		xpos -= 0.5f;
 	}
 	if (Application::IsKeyPressed('L'))
 	{
-		xpos += 1.0f;
+		xpos += 0.5f;
 	}
 	cout << xpos << " " << ypos << endl;
 	RenderBackground(meshList[GEO_TAMAGUCCIBACKGROUND]);
 	Render2DMeshWScale(meshList[GEO_TAMAGUCCIUIBACKGROUND], false, 1, 1, 400, -291, false);
 	Render2DMeshWScale(meshList[GEO_TAMAGUCCIUIBACKGROUND], false, 1, 1, 400, 892, false);
+	Render2DMeshWScale(meshList[GEO_HUNGERFRAME], false, 60, 60, 549, 516.5, false);
+	Render2DMeshWScale(meshList[GEO_ENERGYFRAME], false, 60, 60, 630, 516.5, false);
+	Render2DMeshWScale(meshList[GEO_HAPPINESSFRAME], false, 60, 60, 717, 516.5, false);
 	switch (tamagucci.GetState())
 	{
 	case TAMAGUCCI::R_ENTERTAINMENTCHOICES:

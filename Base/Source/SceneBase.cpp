@@ -144,6 +144,12 @@ void SceneBase::Init()
 	meshList[GEO_TAMAGUCCIUIBACKGROUND]->textureID = LoadTGA("Image//tamagucciUIBG.tga");
 	meshList[GEO_TAMAGUCCI] = MeshBuilder::Generate2DMesh("GEO_TAMAGUCCIBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
 	meshList[GEO_TAMAGUCCI]->textureID = LoadTGA("Image//Mimitchi.tga");
+	meshList[GEO_HUNGERFRAME] = MeshBuilder::Generate2DMesh("GEO_HUNGERFRAME", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
+	meshList[GEO_HUNGERFRAME]->textureID = LoadTGA("Image//hungerframe.tga");
+	meshList[GEO_ENERGYFRAME] = MeshBuilder::Generate2DMesh("GEO_ENERGYFRAME", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
+	meshList[GEO_ENERGYFRAME]->textureID = LoadTGA("Image//energyframe.tga");
+	meshList[GEO_HAPPINESSFRAME] = MeshBuilder::Generate2DMesh("GEO_HAPPINESSFRAME", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
+	meshList[GEO_HAPPINESSFRAME]->textureID = LoadTGA("Image//happinessframe.tga");
 	meshList[GEO_STAR] = MeshBuilder::Generate2DMesh("GEO_TAMAGUCCIBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
 	meshList[GEO_STAR]->textureID = LoadTGA("Image//Star.tga");
 	meshList[GEO_GREENTILE] = MeshBuilder::Generate2DMesh("GEO_GREENTILE", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
