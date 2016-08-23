@@ -95,6 +95,11 @@ public:
 
 	bool GetMonsterScaleUp();
 	void SetMonsterScaleUp(bool set);
+	void NPCUpdate(double dt);
+	void renderTamagotchiMenu();
+	void renderFirstTamagotchiFirstMenu(float yOffset = 0);
+	void renderTamagotchiGame();
+	void renderTamagotchiUI();
 private:
 	NPC npc;
 	Gauge* greenbar;
@@ -126,9 +131,6 @@ private:
 	Vector3 battleMonsterPos;
 	Vector3 battleMonsterScale;
 
-
-
-	int currState = 1; //The current state of npc dialogue
 
 	bool UPkeyPressed;
 	bool LEFTkeyPressed;

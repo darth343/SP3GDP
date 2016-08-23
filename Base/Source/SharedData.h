@@ -4,7 +4,8 @@
 #include "EquipmentManager.h"
 #include "Inventory.h"
 #include "Monster.h"
-
+#include "Enemy.h"
+#include <vector>
 #include "SharedData.h"
 
 class SharedData
@@ -32,7 +33,7 @@ public:
 	EquipmentManager equipManager; // Equipment Functions
 	Monster monType; // Monster Calls
 	Inventory inventory;
-
+	std::vector<Enemy*> enemyInventory;
 	bool UPkeyPressed;
 	bool DNkeyPressed;
 	bool LEFTkeyPressed;

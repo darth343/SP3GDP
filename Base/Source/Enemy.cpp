@@ -68,7 +68,69 @@ void Enemy::MoveUpDown(double dt, bool up)
 		position.y -= dt * MOVEMENTSPEED;
 	}
 }
-
+void Enemy::SetName(string name)
+{
+	this->enemyNames = name;
+	if (name == "Mummy")
+	{
+		enemyType = ET_MUMMY;
+		SetAttackDamage(10);
+		SetDef(5); //For player armor defence
+		maxEnemyHealth = 100;
+	}
+	if (name == "Dragon")
+	{
+		enemyType = ET_TYPE2;
+		SetAttackDamage(15);
+		SetDef(5);
+		maxEnemyHealth = 130;
+	}
+	if (name == "Type3")
+	{
+		enemyType = ET_TYPE3;
+		SetAttackDamage(15);
+		SetDef(5);
+		maxEnemyHealth = 150;
+	}
+	if (name == "Type4")
+	{
+		enemyType = ET_TYPE4;
+		SetAttackDamage(20);
+		SetDef(5);
+		maxEnemyHealth = 100;
+	}
+	if (name == "Boss")
+	{
+		enemyType = ET_BOSS;
+		SetAttackDamage(25);
+		//SetDef(10);
+		maxEnemyHealth = 250;
+	}
+}
+int Enemy::GetMaxHealth()
+{
+	return maxEnemyHealth;
+}
+void Enemy::SetDef(int def)
+{
+	enemyDef = def;
+}
+int Enemy::GetDef()
+{
+	return enemyDef;
+}
+void Enemy::SetAttackDamage(int dmg)
+{
+	attackDamage = dmg;
+}
+int Enemy::GetAttackDamage()
+{
+	return attackDamage;
+}
+string Enemy::GetName()
+{
+	return enemyNames;
+}
 void Enemy::MoveTo(double dt, Tile nextTile, CMap* m_cMap)
 {
 	if (position.x > nextTile.Pos.x * m_cMap->GetTileSize())

@@ -142,20 +142,40 @@ void SceneBase::Init()
 	meshList[GEO_TAMAGUCCIBACKGROUND]->textureID = LoadTGA("Image//tamagucciBG.tga");
 	meshList[GEO_TAMAGUCCIUIBACKGROUND] = MeshBuilder::GenerateQuad("GEO_TAMAGUCCIUIBACKGROUND", Color(1, 1, 1), 800, 3);
 	meshList[GEO_TAMAGUCCIUIBACKGROUND]->textureID = LoadTGA("Image//tamagucciUIBG.tga");
+	meshList[GEO_TAMBG1] = MeshBuilder::Generate2DMesh("GEO_TAMAGUCCIBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_TAMBG1]->textureID = LoadTGA("Image//background1.tga");
+	meshList[GEO_TAMLIVINGROOM] = MeshBuilder::Generate2DMesh("GEO_TAMAGUCCIBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_TAMLIVINGROOM]->textureID = LoadTGA("Image//TamBedRoom.tga");
 	meshList[GEO_TAMAGUCCI] = MeshBuilder::Generate2DMesh("GEO_TAMAGUCCIBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
 	meshList[GEO_TAMAGUCCI]->textureID = LoadTGA("Image//Mimitchi.tga");
+	meshList[GEO_HUNGERFRAME] = MeshBuilder::Generate2DMesh("GEO_HUNGERFRAME", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
+	meshList[GEO_HUNGERFRAME]->textureID = LoadTGA("Image//hungerframe.tga");
+	meshList[GEO_ENERGYFRAME] = MeshBuilder::Generate2DMesh("GEO_ENERGYFRAME", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
+	meshList[GEO_ENERGYFRAME]->textureID = LoadTGA("Image//energyframe.tga");
+	meshList[GEO_HAPPINESSFRAME] = MeshBuilder::Generate2DMesh("GEO_HAPPINESSFRAME", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
+	meshList[GEO_HAPPINESSFRAME]->textureID = LoadTGA("Image//happinessframe.tga");
+	meshList[GEO_TAMHAPPY] = MeshBuilder::GenerateSpriteAnimation("sprite", 1, 2);
+	meshList[GEO_TAMHAPPY]->textureID = LoadTGA("Image//Mimitchi_Happy.tga");
 	meshList[GEO_STAR] = MeshBuilder::Generate2DMesh("GEO_TAMAGUCCIBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
 	meshList[GEO_STAR]->textureID = LoadTGA("Image//Star.tga");
 	meshList[GEO_GREENTILE] = MeshBuilder::Generate2DMesh("GEO_GREENTILE", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
 	meshList[GEO_GREENTILE]->textureID = LoadTGA("Image//greenTile.tga");
+
 	meshList[GEO_NPC] = MeshBuilder::Generate2DMesh("GEO_GREENTILE", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
 	meshList[GEO_NPC]->textureID = LoadTGA("Image//NPC1.tga");
+	meshList[GEO_NPC1_LEFT] = MeshBuilder::GenerateSpriteAnimation("sprite", 1, 3);
+	meshList[GEO_NPC1_LEFT]->textureID = LoadTGA("Image//NPC1_LEFT.tga");
+	meshList[GEO_NPC2_LEFT] = MeshBuilder::GenerateSpriteAnimation("sprite", 1, 3);
+	meshList[GEO_NPC2_LEFT]->textureID = LoadTGA("Image//NPC2_LEFT.tga");
+	meshList[GEO_NPC3_LEFT] = MeshBuilder::GenerateSpriteAnimation("sprite", 1, 3);
+	meshList[GEO_NPC3_LEFT]->textureID = LoadTGA("Image//NPC3_LEFT.tga");
 	meshList[GEO_NPCPIC] = MeshBuilder::GenerateSpriteAnimation("sprite", 1, 6);
 	meshList[GEO_NPCPIC]->textureID = LoadTGA("Image//NPC1_GIF.tga");
 	meshList[GEO_NPCPIC2] = MeshBuilder::GenerateSpriteAnimation("sprite", 1, 6);
 	meshList[GEO_NPCPIC2]->textureID = LoadTGA("Image//NPC2_GIF.tga");
 	meshList[GEO_NPCPIC3] = MeshBuilder::GenerateSpriteAnimation("sprite", 1, 6);
 	meshList[GEO_NPCPIC3]->textureID = LoadTGA("Image//NPC3_GIF.tga");
+
 	meshList[GEO_REDTILE] = MeshBuilder::Generate2DMesh("GEO_REDTILE", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
 	meshList[GEO_REDTILE]->textureID = LoadTGA("Image//redTile.tga");
 	meshList[GEO_POOP] = MeshBuilder::Generate2DMesh("GEO_REDTILE", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
@@ -168,9 +188,13 @@ void SceneBase::Init()
 	meshList[GEO_MONSTER]->textureID = LoadTGA("Image//Monster.tga");
 	meshList[GEO_POTION] = MeshBuilder::Generate2DMesh("Potion", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_POTION]->textureID = LoadTGA("Image//Potion.tga");
+
 	meshList[GEO_TRAP] = MeshBuilder::Generate2DMesh("Trap", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_TRAP]->textureID = LoadTGA("Image//Trap.tga");
 	meshList[GEO_GREEN] = MeshBuilder::Generate2DMesh("Potion", Color(0, 1, 0), 0.0f, 0.0f, 1.0f, 1.0f);
+
+	meshList[GEO_GREEN] = MeshBuilder::Generate2DMesh("GEO_GREEN", Color(0, 1, 0), 0.0f, 0.0f, 1.0f, 1.0f);
+
 	meshList[GEO_BAR] = MeshBuilder::Generate2DMesh("Potion", Color(1, 1, 0), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_RED] = MeshBuilder::Generate2DMesh("Potion", Color(1, 0, 0), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_BATTLESCENE] = MeshBuilder::Generate2DMesh("GEO_BATTLESCENE", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
@@ -189,6 +213,27 @@ void SceneBase::Init()
 		sa->m_anim->Set(0, 5, 0, 1.f, true);
 	}
 
+	SpriteAnimation *npcwalk1 = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPC1_LEFT]);
+	if (npcwalk1)
+	{
+		npcwalk1->m_anim = new Animation();
+		npcwalk1->m_anim->Set(0, 2, 0, 1.f, true);
+	}
+	SpriteAnimation *npcwalk2 = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPC2_LEFT]);
+	if (npcwalk2)
+	{
+		npcwalk2->m_anim = new Animation();
+		npcwalk2->m_anim->Set(0, 2, 0, 1.f, true);
+	}
+
+	SpriteAnimation *npcwalk3 = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPC3_LEFT]);
+	if (npcwalk3)
+	{
+		npcwalk3->m_anim = new Animation();
+		npcwalk3->m_anim->Set(0, 2, 0, 1.f, true);
+	}
+	
+
 	SpriteAnimation *pic2 = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC2]);
 	if (pic2)
 	{
@@ -200,6 +245,12 @@ void SceneBase::Init()
 	{
 		pic3->m_anim = new Animation();
 		pic3->m_anim->Set(0, 5, 0, 1.f, true);
+	}
+	SpriteAnimation *tamhappy = dynamic_cast<SpriteAnimation*>(meshList[GEO_TAMHAPPY]);
+	if (tamhappy)
+	{
+		tamhappy->m_anim = new Animation();
+		tamhappy->m_anim->Set(0, 1, 0, 1.f, true);
 	}
 
 
@@ -274,7 +325,7 @@ void SceneBase::Render2DMeshWScale(Mesh *mesh, const bool enableLight, const flo
 	modelStack.LoadIdentity();
 	if (flip)
 	{
-		modelStack.Translate(x + 32, y, 0);
+		modelStack.Translate(x + 0, y, 0);
 	}
 	else
 	{
