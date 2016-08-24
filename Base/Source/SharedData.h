@@ -47,7 +47,7 @@ private:
 	SharedData()
 	{
 		//Instantiate
-		gameState = GAME_S1;
+		gameState = MENU;
 		UPkeyPressed = false;
 		DNkeyPressed = false;
 		LEFTkeyPressed = false;

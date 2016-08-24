@@ -130,6 +130,23 @@ void SceneBase::Init()
 	meshList[GEO_TEXT] = MeshBuilder::GenerateText("text", 16, 16);
 	meshList[GEO_TEXT]->textureID = LoadTGA("Image//calibri.tga");
 	meshList[GEO_TEXT]->material.kAmbient.Set(1, 0, 0);
+	meshList[GEO_LOGO] = MeshBuilder::GenerateSpriteAnimation("sprite", 4, 5);
+	meshList[GEO_LOGO]->textureID = LoadTGA("Image//RealizeLogo1.tga");
+
+	meshList[GEO_MENUBG] = MeshBuilder::Generate2DMesh("GEO_BACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_MENUBG]->textureID = LoadTGA("Image//Menu.tga");
+	meshList[GEO_MENUPLAY] = MeshBuilder::GenerateSpriteAnimation("sprite", 4, 6);
+	meshList[GEO_MENUPLAY]->textureID = LoadTGA("Image//PlayLogo.tga");
+	meshList[GEO_MENUOPT] = MeshBuilder::GenerateSpriteAnimation("sprite", 4, 6);
+	meshList[GEO_MENUOPT]->textureID = LoadTGA("Image//OptionsLogo.tga");
+	meshList[GEO_MENUQUIT] = MeshBuilder::GenerateSpriteAnimation("sprite", 4, 6);
+	meshList[GEO_MENUQUIT]->textureID = LoadTGA("Image//QuitLogo.tga");
+	meshList[GEO_MENUINST] = MeshBuilder::GenerateSpriteAnimation("sprite", 4, 6);
+	meshList[GEO_MENUINST]->textureID = LoadTGA("Image//InstructLogo.tga");
+	meshList[GEO_MENUSTORY] = MeshBuilder::GenerateSpriteAnimation("sprite", 4, 6);
+	meshList[GEO_MENUSTORY]->textureID = LoadTGA("Image//StoryLogo.tga");
+
+
 	FontData.Init("Image//FontData.csv");
 	// Load the ground mesh and texture
 	meshList[GEO_BACKGROUND] = MeshBuilder::Generate2DMesh("GEO_BACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
@@ -220,6 +237,42 @@ void SceneBase::Init()
 	meshList[GEO_BATTLEARROW] = MeshBuilder::Generate2DMesh("GEO_BATTLEARROW", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
 	meshList[GEO_BATTLEARROW]->textureID = LoadTGA("Image//arrow.tga");
 
+	SpriteAnimation *logo = dynamic_cast<SpriteAnimation*>(meshList[GEO_LOGO]);
+	if (logo)
+	{
+		logo->m_anim = new Animation();
+		logo->m_anim->Set(0, 19, 0, 1.f, true);
+	}
+	SpriteAnimation *plogo = dynamic_cast<SpriteAnimation*>(meshList[GEO_MENUPLAY]);
+	if (plogo)
+	{
+		plogo->m_anim = new Animation();
+		plogo->m_anim->Set(0, 21, 0, 1.f, true);
+	}
+	SpriteAnimation *ilogo = dynamic_cast<SpriteAnimation*>(meshList[GEO_MENUINST]);
+	if (ilogo)
+	{
+		ilogo->m_anim = new Animation();
+		ilogo->m_anim->Set(0, 21, 0, 1.f, true);
+	}
+	SpriteAnimation *slogo = dynamic_cast<SpriteAnimation*>(meshList[GEO_MENUSTORY]);
+	if (slogo)
+	{
+		slogo->m_anim = new Animation();
+		slogo->m_anim->Set(0, 21, 0, 1.f, true);
+	}
+	SpriteAnimation *ologo = dynamic_cast<SpriteAnimation*>(meshList[GEO_MENUOPT]);
+	if (ologo)
+	{
+		ologo->m_anim = new Animation();
+		ologo->m_anim->Set(0, 21, 0, 1.f, true);
+	}
+	SpriteAnimation *qlogo = dynamic_cast<SpriteAnimation*>(meshList[GEO_MENUQUIT]);
+	if (qlogo)
+	{
+		qlogo->m_anim = new Animation();
+		qlogo->m_anim->Set(0, 21, 0, 1.f, true);
+	}
 	SpriteAnimation *sa = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC]);
 	if (sa)
 	{

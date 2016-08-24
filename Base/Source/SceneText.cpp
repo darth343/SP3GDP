@@ -346,7 +346,7 @@ void SceneText::GOupdate(double dt)
 		sa->Update(dt);
 		sa->m_anim->animActive = true;
 	}
-
+	
 	SpriteAnimation *pic2 = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC2]);
 	if (pic2)
 	{
@@ -438,22 +438,17 @@ void SceneText::TamagucciUpdate(double dt)
 	}
 	SpriteAnimation *salad = dynamic_cast<SpriteAnimation*>(meshList[GEO_SALAD]);
 
-	if (tamagucci.GetTouchedFood())
-	{
 		foodAnimOver = false;
-		if (salad && salad->m_currentFrame < salad->m_anim->endFrame)
+		if (salad && tamagucci.GetTouchedFood() && salad->m_anim->animActive)
 		{
 			salad->Update(dt);
+		}
+		else if (!salad->m_anim->animActive)
+		{
+			foodAnimOver = true;
 			salad->m_anim->animActive = true;
 		}
-		else if (salad && salad->m_currentFrame == salad->m_anim->endFrame && !foodAnimOver)
-		{
-			salad->m_currentFrame = 0;
-			foodAnimOver = true;
-			cout << salad->m_currentFrame << " " << salad->m_anim->endFrame << " ";
-		}
 		tamagucci.SetAnimationOver(foodAnimOver);
-	}
 }
 void SceneText::UpdateInventory(double dt)
 {
@@ -776,6 +771,7 @@ void SceneText::RenderTestMap()
 {
 	RenderBackground(meshList[GEO_BACKGROUND]);
 	RenderTileMap(m_cMap);
+
 	if (renderNPCstuff)
 	{
 		if (npcPic == 1)
@@ -811,14 +807,13 @@ void SceneText::RenderTestMap()
 				{
 					temp->SetAnimationState(NPC::NPC_AIDLE);
 				}
-
-				if (temp->GetID() == 1)
+				if (temp->GetID() == 1 && temp->GetNum() == 1)
 				Render2DMeshWScale(meshList[GEO_NPC1_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight());
 
-				if (temp->GetID() == 2)
+				if (temp->GetID() == 2 && temp->GetNum() == 1)
 				Render2DMeshWScale(meshList[GEO_NPC3_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight());
 
-				if (temp->GetID() == 3)
+				if (temp->GetID() == 3 && temp->GetNum() == 1)
 					Render2DMeshWScale(meshList[GEO_NPC2_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight());
 
 				if (temp->GetDialogueState() == temp->currState && temp->GetID() == temp->collideWhichNPC())

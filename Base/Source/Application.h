@@ -3,9 +3,11 @@
 #define APPLICATION_H
 
 #include "timer.h"
+
+#include "SharedData.h"
 #include "SceneText.h"
 #include "Scene1.h"
-
+#include "SceneMenu.h"
 class Application
 {
 public:
