@@ -1239,7 +1239,7 @@ void Scene1::RenderBattleScene()
 		}
 
 		//When it is player's turn
-		if (battleScene.GetPlayerTurn() && !battleScene.GetEnemyTurn())
+		if (SharedData::GetInstance()->playerTurn && !SharedData::GetInstance()->enemyTurn)
 		{
 			Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false);
 
@@ -1277,9 +1277,6 @@ void Scene1::RenderBattleScene()
 			else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice())
 				ss << "Back";
 			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 500, 50);
-		}
-		else if (!battleScene.GetPlayerTurn() && battleScene.GetEnemyTurn())
-		{
 		}
 	}
 }

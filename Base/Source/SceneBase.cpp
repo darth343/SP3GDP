@@ -237,6 +237,12 @@ void SceneBase::Init()
 	meshList[GEO_BATTLEARROW] = MeshBuilder::Generate2DMesh("GEO_BATTLEARROW", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
 	meshList[GEO_BATTLEARROW]->textureID = LoadTGA("Image//arrow.tga");
 
+	meshList[GEO_STABANIMATION] = MeshBuilder::GenerateSpriteAnimation("stab", 1, 8);
+	meshList[GEO_STABANIMATION]->textureID = LoadTGA("Image//stabAnimation.tga");
+
+	meshList[GEO_SLASHANIMATION] = MeshBuilder::GenerateSpriteAnimation("slash", 1, 10);
+	meshList[GEO_SLASHANIMATION]->textureID = LoadTGA("Image//slashAnimation2.tga");
+
 	SpriteAnimation *logo = dynamic_cast<SpriteAnimation*>(meshList[GEO_LOGO]);
 	if (logo)
 	{
@@ -335,6 +341,20 @@ void SceneBase::Init()
 	{
 		salad->m_anim = new Animation();
 		salad->m_anim->Set(0, 2, 0, 1.f, true);
+	}
+
+	SpriteAnimation *slashAnimation = dynamic_cast<SpriteAnimation*>(meshList[GEO_SLASHANIMATION]);
+	if (slashAnimation)
+	{
+		slashAnimation->m_anim = new Animation();
+		slashAnimation->m_anim->Set(0, 9, 0, 1.f, true);
+	}
+
+	SpriteAnimation *stabAnimation = dynamic_cast<SpriteAnimation*>(meshList[GEO_STABANIMATION]);
+	if (stabAnimation)
+	{
+		stabAnimation->m_anim = new Animation();
+		stabAnimation->m_anim->Set(0, 7, 0, 1.f, true);
 	}
 
 

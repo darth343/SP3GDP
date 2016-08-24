@@ -42,6 +42,12 @@ public:
 	bool BACKkeyPressed;
 	bool IkeyPressed;
 
+	bool BS_SlashRender;
+	bool BS_StabRender;
+	bool enemyHitPlayer;
+	bool enemyTurn;
+	bool playerTurn;
+
 
 private:
 	SharedData()
@@ -55,6 +61,12 @@ private:
 		ENTERkeyPressed = false;
 		BACKkeyPressed = false;
 		IkeyPressed = false;
+
+		BS_StabRender = false;
+		BS_SlashRender = false;
+		enemyTurn = false;
+		playerTurn = true;
+		enemyHitPlayer = false;
 	}
 	~SharedData()
 	{

@@ -30,8 +30,6 @@ SceneText::~SceneText()
 void SceneText::Init()
 {
 	SceneBase::Init();
-	//cout << npcvec[1].GetDialogue() << endl;
-	//cout << npcvec[0].GetDialogue() << endl;
 	//Init GameState Here for testing purposes
 	GS = TESTMAP;
 	MS = PLAY;
@@ -739,7 +737,51 @@ void SceneText::Update(double dt)
 		break;
 	case BATTLE:
 		battleScene.UpdateBattleSystem(SharedData::GetInstance()->UPkeyPressed, SharedData::GetInstance()->DNkeyPressed, SharedData::GetInstance()->LEFTkeyPressed, SharedData::GetInstance()->RIGHTkeyPressed, SharedData::GetInstance()->ENTERkeyPressed, theHero, EnemyInBattle);
-		break;
+
+		if (SharedData::GetInstance()->BS_SlashRender)
+		{
+			SpriteAnimation *slashAnimation = dynamic_cast<SpriteAnimation*>(meshList[GEO_SLASHANIMATION]);
+			//cout << "Animation = " << slashAnimation->m_currentFrame << endl;
+			if (slashAnimation)
+			{
+				//It keep increasing the currentFrame because it is in update therefore the if statement is inaccurate
+				//it is not as what i thought it would be only run 0-9 then stop
+				//look at this COUT below to debug why sometime it didnt run after the 1st try
+				slashAnimation->m_anim->animActive = true;
+				slashAnimation->Update(dt);
+
+				if (slashAnimation->m_anim->animActive == false)
+				{
+					SharedData::GetInstance()->enemyTurn = true;
+					SharedData::GetInstance()->enemyHitPlayer = true;
+					SharedData::GetInstance()->playerTurn = false;
+					SharedData::GetInstance()->BS_SlashRender = false;
+					slashAnimation->m_currentFrame = 0;
+				}
+			}
+		}
+		if (SharedData::GetInstance()->BS_StabRender)
+		{
+			SpriteAnimation *stabAnimation = dynamic_cast<SpriteAnimation*>(meshList[GEO_STABANIMATION]);
+			//cout << "Animation = " << slashAnimation->m_currentFrame << endl;
+			if (stabAnimation)
+			{
+				//It keep increasing the currentFrame because it is in update therefore the if statement is inaccurate
+				//it is not as what i thought it would be only run 0-9 then stop
+				//look at this COUT below to debug why sometime it didnt run after the 1st try
+				stabAnimation->m_anim->animActive = true;
+				stabAnimation->Update(dt);
+
+				if (stabAnimation->m_anim->animActive == false)
+				{
+					SharedData::GetInstance()->enemyTurn = true;
+					SharedData::GetInstance()->enemyHitPlayer = true;
+					SharedData::GetInstance()->playerTurn = false;
+					SharedData::GetInstance()->BS_StabRender = false;
+					stabAnimation->m_currentFrame = 0;
+				}
+			}
+		}break;
 	case CATCH:
 		CatchUpdate(dt);
 		break;
@@ -902,6 +944,9 @@ void SceneText::RenderMonster()
 		{
 			battleMonsterScale.x += 0.01;
 			battleMonsterScale.y += 0.01;
+			battleMonsterPos.x -= 4.0f;
+			battleMonsterPos.y -= 3.0f;
+
 			if (battleMonsterScale.x > 0.5 || battleMonsterScale.y > 0.5)
 				monsterScaleUp = false;
 		}
@@ -909,15 +954,30 @@ void SceneText::RenderMonster()
 		{
 			battleMonsterScale.x -= 0.01;
 			battleMonsterScale.y -= 0.01;
+			battleMonsterPos.x += 4.0f;
+			battleMonsterPos.y += 3.0f;
 			if (battleMonsterScale.x < 0.3 || battleMonsterScale.y < 0.3)
 			{
+				//Reset to player's turn after enemy end its turn
+				//There must be something here i forgot to reset so 
+				//The slash animation isn't working properly
+
 				battleScene.SetMonsterHitAnimation(false);
+				battleScene.SetFirstChoice(true);
+				battleScene.SetSecondChoice(false);
+				battleScene.SetBattleSelection(BattleSystem::BS_ATTACK);
+				SharedData::GetInstance()->enemyTurn = false;
+				SharedData::GetInstance()->playerTurn = true;
+				battleMonsterScale.x = 0.3f;
+				battleMonsterScale.y = 0.3f;
 				monsterScaleUp = true;
 			}
 		}
-
+		//cout << "x : " << battleMonsterScale.x << ", y : " << battleMonsterScale.y << endl;
 	}
+
 	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
+
 
 	
 }
@@ -1239,6 +1299,13 @@ void SceneText::RenderBattleScene()
 
 	RenderMonster();
 
+	//battleMonsterPos is just a temp position
+	if (SharedData::GetInstance()->BS_SlashRender)
+		Render2DMeshWScale(meshList[GEO_SLASHANIMATION], false, 100.0f, 100.0f, battleMonsterPos.x, battleMonsterPos.y, false);
+	if (SharedData::GetInstance()->BS_StabRender)
+		Render2DMeshWScale(meshList[GEO_STABANIMATION], false, 100.0f, 100.0f, battleMonsterPos.x, battleMonsterPos.y, false);
+
+
 	if (GS == BATTLE)
 	{
 
@@ -1263,7 +1330,7 @@ void SceneText::RenderBattleScene()
 		}
 
 		//When it is player's turn
-		if (battleScene.GetPlayerTurn() && !battleScene.GetEnemyTurn())
+		if (SharedData::GetInstance()->playerTurn && !SharedData::GetInstance()->enemyTurn)
 		{
 			Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false);
 
@@ -1302,9 +1369,7 @@ void SceneText::RenderBattleScene()
 				ss << "Back";
 			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 500, 50);
 		}
-		else if (!battleScene.GetPlayerTurn() && battleScene.GetEnemyTurn())
-		{
-		}
+
 	}
 }
 

@@ -28,8 +28,6 @@ public:
 	~BattleSystem();
 
 	void SetBattleStart(bool set);
-	void SetEnemyTurn(bool set);
-	void SetPlayerTurn(bool set);
 	void SetArrowPos(float x, float y, float z);
 	void SetFirstChoice(bool set);
 	void SetSecondChoice(bool set);
@@ -40,8 +38,6 @@ public:
 	void Reset();
 
 	bool GetBattleStart();
-	bool GetEnemyTurn();
-	bool GetPlayerTurn();
 	float GetArrowPosX();
 	float GetArrowPosY();
 	bool GetFirstChoice();
@@ -55,8 +51,6 @@ public:
 private:
 
 	bool battleStart;				  //Detect if the battle has started
-
-	bool enemyTurn, playerTurn;		  //Current Turn for battle scene.
 
 	Vector3 arrowPos;				  //Arrow's placing for Battle Scene 
 	
