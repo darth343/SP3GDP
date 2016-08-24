@@ -359,8 +359,6 @@ void SceneText::GOupdate(double dt)
 	}
 	for (int i = 0; i < m_goList.size(); ++i)
 	{
-		if (m_goList[i]->type == GameObject::GO_ENEMY && MS == IN_DIALOUGE)
-			continue;
 
 		m_goList[i]->Update(dt, theHero->GetPosition(), theHero->GetMapOffset(), m_cMap);
 		if (m_goList[i]->type == GameObject::GO_NPC)
@@ -398,10 +396,11 @@ void SceneText::GOupdate(double dt)
 			}
 			if (temp->collideWhichNPC() == npcID)
 				temp->SetState(currState);
-
-			if (temp->collideWhichNPC() != 0 && Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
+			
+			if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 			{
-				MS = IN_DIALOUGE;
+				if (renderNPCstuff)
+					MS = IN_DIALOUGE;			
 				SharedData::GetInstance()->ENTERkeyPressed = true;
 				temp->ScrollDialogue(dialogueNum);
 			}
@@ -724,12 +723,18 @@ void SceneText::NPCUpdate(double dt)
 void SceneText::Update(double dt)
 {
 
-	if (Application::IsKeyPressed('Z'))
+	if (Application::IsKeyPressed('Z') && !SharedData::GetInstance()->UPkeyPressed)
 	{
-		GS = TAMAGUCCI_SCREEN;
-
+		SharedData::GetInstance()->UPkeyPressed = true;
+		if (GS != TAMAGUCCI_SCREEN)
+			GS = TAMAGUCCI_SCREEN;
+		else
+			GS = TESTMAP;
 	}
-
+	else if (!Application::IsKeyPressed('Z') && SharedData::GetInstance()->UPkeyPressed)
+	{
+		SharedData::GetInstance()->UPkeyPressed = false;
+	}
 	switch (GS)
 	{
 	case TESTMAP:
@@ -845,19 +850,13 @@ void SceneText::RenderTestMap()
 				ss.str("");
 				ss.precision(5);
 
-				if (MS == IN_DIALOUGE)
-				{
-					temp->SetAnimationState(NPC::NPC_AIDLE);
-				}
-				if (temp->GetID() == 1 && temp->GetNum() == 1)
-				Render2DMeshWScale(meshList[GEO_NPC1_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight());
-
-				if (temp->GetID() == 2 && temp->GetNum() == 1)
-				Render2DMeshWScale(meshList[GEO_NPC3_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight());
-
-				if (temp->GetID() == 3 && temp->GetNum() == 1)
-					Render2DMeshWScale(meshList[GEO_NPC2_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight());
-
+				if (temp->GetID() == 1 && temp->GetNum() == 0)
+					Render2DMeshWScale(meshList[GEO_NPC1_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, temp->position.x - theHero->GetMapOffset().x, temp->position.y - theHero->GetMapOffset().y, temp->GetMoveRight());
+				if (temp->GetID() == 2 && temp->GetNum() == 0)
+					Render2DMeshWScale(meshList[GEO_NPC3_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, temp->position.x - theHero->GetMapOffset().x, temp->position.y - theHero->GetMapOffset().y, temp->GetMoveRight());
+				if (temp->GetID() == 3 && temp->GetNum() == 0)
+					Render2DMeshWScale(meshList[GEO_NPC2_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, temp->position.x - theHero->GetMapOffset().x, temp->position.y - theHero->GetMapOffset().y, temp->GetMoveRight());
+	
 				if (temp->GetDialogueState() == temp->currState && temp->GetID() == temp->collideWhichNPC())
 				{
 					if (dialogueNum == temp->maxDia)
@@ -872,15 +871,16 @@ void SceneText::RenderTestMap()
 						renderNPCstuff = true;
 						RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 30, 60, 100);
 					}
-
 					else if (dialogueNum >= temp->maxDia)
 					{
 						if (temp->GetID() == temp->collideWhichNPC())
+						{
 							npcID = temp->collideWhichNPC();
 							currState = 2;
 							dialogueNum = 0;
 							renderNPCstuff = false;
 							MS = PLAY;
+						}
 					}
 				}
 			}
@@ -914,30 +914,7 @@ void SceneText::RemoveEnemy()
 }
 
 void SceneText::RenderMonster()
-{/*
-	if (MonType.getMonsterType() == BANSHEE)
-		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	else if (MonType.getMonsterType() == CEREBUS)
-		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	else if (MonType.getMonsterType() == DRAGON)
-		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	else if (MonType.getMonsterType() == GOLEM)
-		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	else if (MonType.getMonsterType() == HYDRA)
-		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	else if (MonType.getMonsterType() == MANTICORE)
-		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	else if (MonType.getMonsterType() == OGRE)
-		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	else if (MonType.getMonsterType() == PEGASUS)
-		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	else if (MonType.getMonsterType() == WRAITH)
-		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	else if (MonType.getMonsterType() == SPHINX)
-		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	else if (MonType.getMonsterType() == SCYLLA)
-		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
-	else if (MonType.getMonsterType() == MINOTAUR)*/
+{
 	if (battleScene.GetMonsterHitAnimation())
 	{
 		if (battleMonsterScale.x < 0.5 && battleMonsterScale.y < 0.5 && monsterScaleUp)
@@ -1203,85 +1180,10 @@ void SceneText::RenderTamagucci()
 		break;
 	}
 
-	//Render2DMeshWScale(meshList[GEO_TAMAGUCCIUIBACKGROUND], false, 1, 1, 400, -350, false);
-	//Render2DMeshWScale(meshList[GEO_TAMAGUCCIUIBACKGROUND], false, 1, 1, 400, 950, false);
-
-	//switch (tamagucci.GetRunState())
-	//{
-	//case TAMAGUCCI::R_NOTHING:
-	//	switch (tamagucci.GetMenuState())
-	//	{
-	//	case TAMAGUCCI::FIRSTMENU:
-	//		break;
-	//	case TAMAGUCCI::SECONDMENU:
-	//		switch (tamagucci.GetSecondMenuStates())
-	//		{
-	//		case TAMAGUCCI::T_FOOD:
-	//			break;
-	//		case TAMAGUCCI::T_SLEEP:
-	//			break;
-	//		}
-	//		break;
-	//	//case TAMAGUCCI::T_FOOD:
-	//	//	arrowPos.Set(30, 60);
-	//	//	break;
-	//	//case TAMAGUCCI::T_SLEEP:
-	//	//	arrowPos.Set(170, 60);
-	//	//	break;
-	//	//case TAMAGUCCI::T_ENTERTAINMENT:
-	//	//	arrowPos.Set(310, 60);
-	//	//	break;
-	//	//case TAMAGUCCI::T_CLEAN:
-	//	//	arrowPos.Set(480, 60);
-	//	//	break;
-	//	//case TAMAGUCCI::T_STATS:
-	//	//	arrowPos.Set(620, 60);
-	//	//	break;
-	//	}
-	//	break;
-	//case TAMAGUCCI::R_ENTERTAINMENTCHOICES:
-	//		RenderBackground(meshList[GEO_TAMBG1]);
-	//		Render2DMeshWScale(meshList[GEO_STAR], false, tamagucci.GetTamDrop()->scale.x, tamagucci.GetTamDrop()->scale.y, tamagucci.GetTamDrop()->position.x, tamagucci.GetTamDrop()->position.y, false);
-	//		Render2DMeshWScale(meshList[GEO_POOP], false, tamagucci.GetTamDrop2()->scale.x, tamagucci.GetTamDrop2()->scale.y, tamagucci.GetTamDrop2()->position.x, tamagucci.GetTamDrop2()->position.y, false);
-	//	break;
-	//}
-	//ss << "Foods";
-	//RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 80, 60);
-	//ss.str("");
-	//ss << "Sleep";
-	//RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 230, 60);
-	//ss.str("");
-	//ss << "Entertain";
-	//RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 360, 60);
-	//ss.str("");
-	//ss << "Clean";
-	//RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 530, 60);
-	//ss.str("");
-	//ss << "Stats";
-	//RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 660, 60);
-	//Render2DMeshWScale(meshList[GEO_BATTLEARROW], false, 0.05, 0.03, arrowPos.x, arrowPos.y, false);
-
-	//switch (tamagucci.GetState())
-	//{
-	//case TAMAGUCCI::R_ENTERTAINMENTCHOICES:
-	//	RenderBackground(meshList[GEO_TAMBG1]);
-	//	Render2DMeshWScale(meshList[GEO_STAR], false, tamagucci.GetTamDrop()->scale.x, tamagucci.GetTamDrop()->scale.y, tamagucci.GetTamDrop()->position.x, tamagucci.GetTamDrop()->position.y, false);
-	//	Render2DMeshWScale(meshList[GEO_POOP], false, tamagucci.GetTamDrop2()->scale.x, tamagucci.GetTamDrop2()->scale.y, tamagucci.GetTamDrop2()->position.x, tamagucci.GetTamDrop2()->position.y, false);
-	//	break;
-	//	//if (tamagucci.)
-	//	//{
-	//	//	Render2DMeshWScale(meshList[GEO_STAR], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x, m_goList[i]->position.y, false);
-	//	//}
-	//	//if (m_goList[i]->active == true && m_goList[i]->type == GameObject::GO_TAMDROP2)
-	//	//{
-	//	//	Render2DMeshWScale(meshList[GEO_TAMAGUCCI], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x, m_goList[i]->position.y, false);
-	//	//}
-	//}
 	if (tamagucci.GetScore() < 20 && !tamagucci.GetShowFood() && !tamagucci.GetSleep())
 		Render2DMeshWScale(meshList[GEO_TAMAGUCCI], false, tamagucci.GetTamTam()->scale.x, tamagucci.GetTamTam()->scale.y, tamagucci.GetTamTam()->position.x, tamagucci.GetTamTam()->position.y, false);
 	if (tamagucci.GetScore()>= 20)
 		Render2DMeshWScale(meshList[GEO_TAMHAPPY], false, tamagucci.GetTamTam()->scale.x, tamagucci.GetTamTam()->scale.y, tamagucci.GetTamTam()->position.x + (tamagucci.GetTamTam()->scale.x * 0.5), tamagucci.GetTamTam()->position.y + (tamagucci.GetTamTam()->scale.y * 0.5), false);
-	//Render2DMeshWScale(meshList[GEO_TAMAGUCCI], false, tamagucci.GetTamTam()->scale.x, tamagucci.GetTamTam()->scale.y, tamagucci.GetTamTam()->position.x, tamagucci.GetTamTam()->position.y, false);
 }
 void SceneText::RenderCatch()
 {

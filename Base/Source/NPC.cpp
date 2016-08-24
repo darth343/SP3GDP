@@ -132,7 +132,7 @@ void NPC::ScrollDialogue(int & dialogue)
 void NPC::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 {
 	//MOVEMENT
-		if (this->GetID() == 1)
+		if (GetID() == 1)
 		{
 			if (this->GetAnimationState() == NPC::NPC_AWANDERING)
 			{
@@ -157,11 +157,11 @@ void NPC::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 			}
 
 			if (this->GetDialogueState() == 1)
-				this->maxDia = 4;
+				this->maxDia = 3;
 			else if (this->GetDialogueState() == 2)
 				this->maxDia = 3;
 		}
-		if (this->GetID() == 2)
+		if (GetID() == 2)
 		{
 			if (this->GetAnimationState() == NPC::NPC_AWANDERING)
 			{
@@ -192,7 +192,7 @@ void NPC::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 			else if (this->GetDialogueState() == 3)
 				this->maxDia = 4;
 		}
-		if (this->GetID() == 3)
+		if (GetID() == 3)
 		{
 			if (this->GetAnimationState() == NPC::NPC_AWANDERING)
 			{
@@ -215,24 +215,19 @@ void NPC::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 					}
 				}
 			}
-
 			if (this->GetDialogueState() == 1)
 				this->maxDia = 2;
 			else if (this->GetDialogueState() == 2)
 				this->maxDia = 2;
 		}
-	if (this->active && CheckCollision(playerPos, mapOffset, m_cMap))
+	if (CheckCollision(playerPos, mapOffset, m_cMap))
 	{
 		if (GetAnimationState() != NPC::NPC_ADYING)
 		{
 			SetAnimationState(NPC::NPC_AIDLE);
 		}
 		collisionDetected = true;
-		if (Application::IsKeyPressed(VK_RETURN))
-		{
-			enterPressed = true;
-			this->collideWithNPC = this->GetID();
-		}
+		this->collideWithNPC = this->GetID();
 	}
 	else 
 	{
