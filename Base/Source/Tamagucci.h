@@ -63,14 +63,27 @@ public:
 	GameObject* GetTamTam();
 	GameObject* GetTamDrop();
 	GameObject* GetTamDrop2();
+	GameObject* GetTamFood();
 	int getHungerlevel();
 	int getEnergylevel();
 	int getHappinesslevel();
 	void moveUpdate(double dt);
+	bool GetShowFood();
+	bool GetTouchedFood();
+	bool GetMoveLeft();
+	void SetAnimationOver(bool&);
+	bool GetSleep();
+	
 private:
+	bool tamagucciFood = false; //Show the food in scene text
+	bool animationFood=false; //For scene text check if food animation is over //BUGGY
+	bool touchedFood = false; //For scene text check if food is touched
+	bool moveLeft = false; //Sprite Animation Flip
+	bool sleep = false;
 	GameObject* tamtam;
 	GameObject* tamdrop;
 	GameObject* tamdrop2;
+	GameObject* tamfood;
 	float tamDropVel = 100; 
 	float coolDown = 3.f;
 	vector<Vector3> pooPositions;

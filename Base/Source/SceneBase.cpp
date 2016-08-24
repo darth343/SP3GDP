@@ -138,6 +138,8 @@ void SceneBase::Init()
 	meshList[GEO_GROUNDTOP]->textureID = LoadTGA("Image//groundTop.tga");
 	meshList[GEO_INVENTORYBACKGROUND] = MeshBuilder::Generate2DMesh("GEO_INVENTORYBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
 	meshList[GEO_INVENTORYBACKGROUND]->textureID = LoadTGA("Image//InventoryBackground.tga");
+	meshList[GEO_BLACK] = MeshBuilder::Generate2DMesh("GEO_INVENTORYBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_BLACK]->textureID = LoadTGA("Image//Black.tga");
 	meshList[GEO_TAMAGUCCIBACKGROUND] = MeshBuilder::Generate2DMesh("GEO_TAMAGUCCIBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
 	meshList[GEO_TAMAGUCCIBACKGROUND]->textureID = LoadTGA("Image//tamagucciBG.tga");
 	meshList[GEO_TAMAGUCCIUIBACKGROUND] = MeshBuilder::GenerateQuad("GEO_TAMAGUCCIUIBACKGROUND", Color(1, 1, 1), 800, 3);
@@ -150,12 +152,24 @@ void SceneBase::Init()
 	meshList[GEO_TAMAGUCCI]->textureID = LoadTGA("Image//Mimitchi.tga");
 	meshList[GEO_HUNGERFRAME] = MeshBuilder::Generate2DMesh("GEO_HUNGERFRAME", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
 	meshList[GEO_HUNGERFRAME]->textureID = LoadTGA("Image//hungerframe.tga");
+	meshList[GEO_TAMSLEEP] = MeshBuilder::GenerateSpriteAnimation("sprite", 1, 3);
+	meshList[GEO_TAMSLEEP]->textureID = LoadTGA("Image//Sleep.tga");
+	meshList[GEO_SALAD] = MeshBuilder::GenerateSpriteAnimation("sprite", 1, 3);
+	meshList[GEO_SALAD]->textureID = LoadTGA("Image//Salad.tga");
+
+	meshList[GEO_HAMGURGER] = MeshBuilder::Generate2DMesh("GEO_FOOD", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
+	meshList[GEO_HAMGURGER]->textureID = LoadTGA("Image//Burger.tga");
+	meshList[GEO_PORK] = MeshBuilder::Generate2DMesh("GEO_FOOD", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
+	meshList[GEO_PORK]->textureID = LoadTGA("Image//Pork.tga");
+
 	meshList[GEO_ENERGYFRAME] = MeshBuilder::Generate2DMesh("GEO_ENERGYFRAME", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
 	meshList[GEO_ENERGYFRAME]->textureID = LoadTGA("Image//energyframe.tga");
 	meshList[GEO_HAPPINESSFRAME] = MeshBuilder::Generate2DMesh("GEO_HAPPINESSFRAME", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
 	meshList[GEO_HAPPINESSFRAME]->textureID = LoadTGA("Image//happinessframe.tga");
 	meshList[GEO_TAMHAPPY] = MeshBuilder::GenerateSpriteAnimation("sprite", 1, 2);
 	meshList[GEO_TAMHAPPY]->textureID = LoadTGA("Image//Mimitchi_Happy.tga");
+	meshList[GEO_TAMFOOD] = MeshBuilder::GenerateSpriteAnimation("sprite", 1, 2);
+	meshList[GEO_TAMFOOD]->textureID = LoadTGA("Image//Mimitchi_Eat.tga");
 	meshList[GEO_STAR] = MeshBuilder::Generate2DMesh("GEO_TAMAGUCCIBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
 	meshList[GEO_STAR]->textureID = LoadTGA("Image//Star.tga");
 	meshList[GEO_GREENTILE] = MeshBuilder::Generate2DMesh("GEO_GREENTILE", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
@@ -232,7 +246,6 @@ void SceneBase::Init()
 		npcwalk3->m_anim = new Animation();
 		npcwalk3->m_anim->Set(0, 2, 0, 1.f, true);
 	}
-	
 
 	SpriteAnimation *pic2 = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC2]);
 	if (pic2)
@@ -251,6 +264,24 @@ void SceneBase::Init()
 	{
 		tamhappy->m_anim = new Animation();
 		tamhappy->m_anim->Set(0, 1, 0, 1.f, true);
+	}
+	SpriteAnimation *tamfood = dynamic_cast<SpriteAnimation*>(meshList[GEO_TAMFOOD]);
+	if (tamfood)
+	{
+		tamfood->m_anim = new Animation();
+		tamfood->m_anim->Set(0, 1, 0, 1.f, true);
+	}
+	SpriteAnimation *tamsleep = dynamic_cast<SpriteAnimation*>(meshList[GEO_TAMSLEEP]);
+	if (tamsleep)
+	{
+		tamsleep->m_anim = new Animation();
+		tamsleep->m_anim->Set(0, 2, 0, 1.f, true);
+	}
+	SpriteAnimation *salad = dynamic_cast<SpriteAnimation*>(meshList[GEO_SALAD]);
+	if (salad)
+	{
+		salad->m_anim = new Animation();
+		salad->m_anim->Set(0, 2, 0, 1.f, true);
 	}
 
 

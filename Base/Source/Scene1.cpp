@@ -1,4 +1,4 @@
-#include "SceneText.h"
+#include "Scene1.h"
 #include "GL\glew.h"
 
 #include "shader.hpp"
@@ -10,7 +10,7 @@
 #include "SpriteAnimation.h"
 #include "Enemy.h"
 #include "Items.h"
-SceneText::SceneText()
+Scene1::Scene1()
 :
 m_cMap(NULL)
 , EnemyInBattle(NULL)
@@ -18,7 +18,7 @@ m_cMap(NULL)
 {
 }
 
-SceneText::~SceneText()
+Scene1::~Scene1()
 {
 	if (m_cMap)
 	{
@@ -27,7 +27,7 @@ SceneText::~SceneText()
 	}
 }
 
-void SceneText::Init()
+void Scene1::Init()
 {
 	SceneBase::Init();
 	//cout << npcvec[1].GetDialogue() << endl;
@@ -70,7 +70,7 @@ void SceneText::Init()
 	enemyMaxHealth = 100;
 	currHealth = 100;
 	enemyCatchPercentage = 0;
-	npc.ReadFromFile("NPC//Text.txt",m_goList);
+	npc.ReadFromFile("NPC//2.txt",m_goList);
 	vector<NPC*>npcvec = npc.GetVec();
 
 	for (int i = 0; i < npc.GetVec().size(); i++)
@@ -107,57 +107,57 @@ void SceneText::Init()
 	monsterScaleUp = true;
 }
 
-bool SceneText::GetMonsterScaleUp()
+bool Scene1::GetMonsterScaleUp()
 {
 	return monsterScaleUp;
 }
 
-void SceneText::SetMonsterScaleUp(bool set)
+void Scene1::SetMonsterScaleUp(bool set)
 {
 	this->monsterScaleUp = set;
 }
 
-float SceneText::GetBattleMonsterScaleX()
+float Scene1::GetBattleMonsterScaleX()
 {
 	return battleMonsterScale.x;
 }
 
-void SceneText::SetBattleMonsterScaleX(float x)
+void Scene1::SetBattleMonsterScaleX(float x)
 {
 	this->battleMonsterScale.x = x;
 }
 
-float SceneText::GetBattleMonsterScaleY()
+float Scene1::GetBattleMonsterScaleY()
 {
 	return battleMonsterScale.y;
 }
 
-void SceneText::SetBattleMonsterScaleY(float y)
+void Scene1::SetBattleMonsterScaleY(float y)
 {
 	this->battleMonsterScale.y = y;
 }
 
-float SceneText::GetBattleMonsterPosX()
+float Scene1::GetBattleMonsterPosX()
 {
 	return battleMonsterPos.x;
 }
 
-float SceneText::GetBattleMonsterPosY()
+float Scene1::GetBattleMonsterPosY()
 {
 	return battleMonsterPos.y;
 }
 
-void SceneText::SetBattleMonsterPosX(float x)
+void Scene1::SetBattleMonsterPosX(float x)
 {
 	this->battleMonsterPos.x = x;
 }
 
-void SceneText::SetBattleMonsterPosY(float y)
+void Scene1::SetBattleMonsterPosY(float y)
 {
 	this->battleMonsterPos.y = y;
 }
 
-void SceneText::SetGS(string set)
+void Scene1::SetGS(string set)
 {
 	if (set == "START_SCREEN")
 		GS = START_SCREEN;
@@ -184,7 +184,7 @@ static bool IkeyPressed = false;
 static bool BACKkeyPressed = false;
 
 
-void SceneText::CatchUpdate(double dt)
+void Scene1::CatchUpdate(double dt)
 {
 	enemyCatchPercentage = (theEnemy->GetMaxHealth() - theEnemy->GetHealth());
 
@@ -300,14 +300,14 @@ void SceneText::CatchUpdate(double dt)
 	//}
 }
 
-void SceneText::EnterBattleScene(Enemy* enemy)
+void Scene1::EnterBattleScene(Enemy* enemy)
 {
 	battleScene.SetBattleStart(true);
 	EnemyInBattle = enemy;
 	GS = BATTLE;
 }
 
-void SceneText::PlayerUpdate(double dt)
+void Scene1::PlayerUpdate(double dt)
 {
 	// Update the hero
 	if (Application::IsKeyPressed('W'))
@@ -338,7 +338,7 @@ void SceneText::PlayerUpdate(double dt)
 	}
 }
 
-void SceneText::GOupdate(double dt)
+void Scene1::GOupdate(double dt)
 {
 	SpriteAnimation *sa = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC]);
 	if (sa)
@@ -413,7 +413,7 @@ void SceneText::GOupdate(double dt)
 	}
 }
 //For the mini game
-void SceneText::TamagucciUpdate(double dt)
+void Scene1::TamagucciUpdate(double dt)
 {
 	SpriteAnimation *tamhappy = dynamic_cast<SpriteAnimation*>(meshList[GEO_TAMHAPPY]);
 	if (tamhappy)
@@ -455,7 +455,7 @@ void SceneText::TamagucciUpdate(double dt)
 		tamagucci.SetAnimationOver(foodAnimOver);
 	}
 }
-void SceneText::UpdateInventory(double dt)
+void Scene1::UpdateInventory(double dt)
 {
 	if (Application::IsKeyPressed('I') && !SharedData::GetInstance()->IkeyPressed)
 	{
@@ -503,39 +503,32 @@ void SceneText::UpdateInventory(double dt)
 		}
 		else
 			SharedData::GetInstance()->DNkeyPressed = true;
+	}
 
+	if (Application::IsKeyPressed(VK_RETURN) && !ENTERkeyPressed)
+	{
+		ENTERkeyPressed = true;
 
-		if (Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed == false)
+		if (itemCursorPos == 0)
 		{
-
-			cursorDebounce = 0;
-			SharedData::GetInstance()->ENTERkeyPressed = true;
-			cout << "ENTER" << endl;
-			if (itemCursorPos == 0)
-			{
-				GS = ITEM_SCREEN;
-			}
-			if (itemCursorPos == 1)
-			{
-				GS = EQUIP_SCREEN;
-			}
-			if (itemCursorPos == 2)
-			{
-				GS = TAMAGUCCI_SCREEN;
-			}
-			SharedData::GetInstance()->ENTERkeyPressed = false;
-
+			GS = ITEM_SCREEN;
+		}
+		if (itemCursorPos == 1)
+		{
 			GS = EQUIP_SCREEN;
 		}
 		if (itemCursorPos == 2)
 		{
 			//GS = TAMAGOTCHI_SCREEN;
-
 		}
-	}
+	}	
+
+	if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
+		SharedData::GetInstance()->ENTERkeyPressed = true;
+
 }
 
-void SceneText::RenderInventory()
+void Scene1::RenderInventory()
 {
 	std::ostringstream ss;
 	ss.str("");
@@ -556,22 +549,22 @@ void SceneText::RenderInventory()
 	RenderTextOnScreen(meshList[GEO_TEXT], ss3.str(), Color(1, 0, 0), 60, 300, 330);
 }
 
-void SceneText::RenderItemScreen()
+void Scene1::RenderItemScreen()
 {
 	std::ostringstream ss;
 	ss.str("");
 	ss.precision(5);
-	ss << "Potion: " << SharedData::GetInstance()->inventory.getPotionInventory() << endl;
+	ss << "Potion: " << endl;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 60, 300, 450);
 
 	std::ostringstream ss2;
 	ss2.str("");
 	ss2.precision(5);
-	ss2 << "Traps: " << SharedData::GetInstance()->inventory.getTrapInventory()  << endl;
+	ss2 << "Traps: " << endl;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss2.str(), Color(1, 0, 0), 60, 300, 390);
 }
 
-void SceneText::ItemScreenUpdate(double dt)
+void Scene1::ItemScreenUpdate(double dt)
 {
 	if (Application::IsKeyPressed('I') && !IkeyPressed)
 	{
@@ -591,7 +584,7 @@ void SceneText::ItemScreenUpdate(double dt)
 			cursorDebounce = 0;
 			UPkeyPressed = false;
 
-			if (itemCursorPos == 0)
+			if (itemCursorPos != 0)
 				itemCursorPos += 1;
 			else
 				itemCursorPos = 0;
@@ -608,10 +601,10 @@ void SceneText::ItemScreenUpdate(double dt)
 			cursorDebounce = 0;
 			DNkeyPressed = false;
 
-			if (itemCursorPos == 0)
-				itemCursorPos += 1;
+			if (itemCursorPos != 1)
+				itemCursorPos -= 0;
 			else
-				itemCursorPos = 0;
+				itemCursorPos = 1;
 
 			cout << "DN" << endl;
 			cout << itemCursorPos << endl;
@@ -619,32 +612,17 @@ void SceneText::ItemScreenUpdate(double dt)
 		}
 		else
 			DNkeyPressed = true;
-
-		if (Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed == false)
-		{
-			cursorDebounce = 0;
-			SharedData::GetInstance()->ENTERkeyPressed = true;
-			if (itemCursorPos == 0)
-			{
-				SharedData::GetInstance()->inventory.removeFromInventory(Items::POTION);
-			}
-			if (itemCursorPos == 1)
-			{
-				SharedData::GetInstance()->inventory.removeFromInventory(Items::TRAP);
-			}
-			SharedData::GetInstance()->ENTERkeyPressed = false;
-		}
-		if (Application::IsKeyPressed(VK_BACK) && SharedData::GetInstance()->BACKkeyPressed == false)
-		{
-			cursorDebounce = 0;
-			cout << "Back" << endl;
-			BACKkeyPressed = true;
-			GS = INVENTORY_SCREEN;
-		}
+	}
+	if (Application::IsKeyPressed(VK_RETURN) && !ENTERkeyPressed)	
+		ENTERkeyPressed = true;
+	if (Application::IsKeyPressed(VK_BACK) && !BACKkeyPressed)
+	{
+		BACKkeyPressed = true;
+		GS = INVENTORY_SCREEN;
 	}
 }
 
-void SceneText::RenderEquipScreen()
+void Scene1::RenderEquipScreen()
 {
 	std::ostringstream ss;
 	ss.str("");
@@ -654,7 +632,7 @@ void SceneText::RenderEquipScreen()
 
 }
 
-void SceneText::EquipScreenUpdate(double dt)
+void Scene1::EquipScreenUpdate(double dt)
 {
 	if (Application::IsKeyPressed('I') && !IkeyPressed)
 	{
@@ -712,23 +690,18 @@ void SceneText::EquipScreenUpdate(double dt)
 	}
 }
 
-void SceneText::MapUpdate(double dt)
+void Scene1::MapUpdate(double dt)
 {
 	if (MS == PLAY)
 	PlayerUpdate(dt);
 	GOupdate(dt);
-	if (Application::IsKeyPressed('R'))
-		{
-			SharedData::GetInstance()->stateCheck = true;
-			SharedData::GetInstance()->gameState = SharedData::GAME_S2;
-		}
 }
-void SceneText::NPCUpdate(double dt)
+void Scene1::NPCUpdate(double dt)
 {
 	GOupdate(dt);
 }
 
-void SceneText::Update(double dt)
+void Scene1::Update(double dt)
 {
 
 	if (Application::IsKeyPressed('Z'))
@@ -766,13 +739,13 @@ void SceneText::Update(double dt)
 	fps = (float)(1.f / dt);
 }
 
-void SceneText::RenderPlayer()
+void Scene1::RenderPlayer()
 {
 	Render2DMesh(theHero->GetPlayerMesh(), false, 32.0f, theHero->GetPosition().x, theHero->GetPosition().y, theHero->GetFlipStatus());
 }
 
 static bool touched = true;
-void SceneText::RenderTestMap()
+void Scene1::RenderTestMap()
 {
 	RenderBackground(meshList[GEO_BACKGROUND]);
 	RenderTileMap(m_cMap);
@@ -798,8 +771,6 @@ void SceneText::RenderTestMap()
 				Items* temp = (Items*)m_goList[i];
 				if (temp->itemType == Items::POTION)
 					Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false);
-				if (temp->itemType == Items::TRAP)
-					Render2DMeshWScale(meshList[GEO_TRAP], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false);
 			}
 			if (m_goList[i]->type == GameObject::GO_NPC)
 			{
@@ -864,7 +835,7 @@ void SceneText::RenderTestMap()
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 0), 30, 0, 0);
 }
 
-void SceneText::RemoveEnemy()
+void Scene1::RemoveEnemy()
 {
 	for (int i = 0; i < m_goList.size(); ++i)
 	{
@@ -876,7 +847,7 @@ void SceneText::RemoveEnemy()
 	}
 }
 
-void SceneText::RenderMonster()
+void Scene1::RenderMonster()
 {/*
 	if (MonType.getMonsterType() == BANSHEE)
 		Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, 0.3, 0.3, 300, 240, false, false);
@@ -927,7 +898,7 @@ void SceneText::RenderMonster()
 	
 }
 
-void SceneText::renderFirstTamagotchiFirstMenu(float yoffset)
+void Scene1::renderFirstTamagotchiFirstMenu(float yoffset)
 {
 	stringstream ss;
 	ss << "Foods";
@@ -946,7 +917,7 @@ void SceneText::renderFirstTamagotchiFirstMenu(float yoffset)
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 660, 60 + yoffset);
 }
 
-void SceneText::renderTamagotchiMenu()
+void Scene1::renderTamagotchiMenu()
 {
 	static float xpos = 0.f;
 	static float ypos = 0.f;
@@ -1106,7 +1077,7 @@ void SceneText::renderTamagotchiMenu()
 	}
 }
 
-void SceneText::renderTamagotchiGame()
+void Scene1::renderTamagotchiGame()
 {
 	switch (tamagucci.getGameChoice())
 	{
@@ -1119,7 +1090,7 @@ void SceneText::renderTamagotchiGame()
 	}
 }
 
-void SceneText::renderTamagotchiUI()
+void Scene1::renderTamagotchiUI()
 {
 	Render2DMeshWScale(meshList[GEO_TAMAGUCCIUIBACKGROUND], false, 1, 1, 400, -291, false);
 	Render2DMeshWScale(meshList[GEO_TAMAGUCCIUIBACKGROUND], false, 1, 1, 400, 892, false);
@@ -1131,7 +1102,7 @@ void SceneText::renderTamagotchiUI()
 	Render2DMeshWScale(meshList[GEO_HAPPINESSFRAME], false, 60, 60, 717, 516.5, false);
 }
 
-void SceneText::RenderTamagucci()
+void Scene1::RenderTamagucci()
 {
 	//RenderBackground(meshList[GEO_TAMAGUCCIBACKGROUND]);
 	RenderBackground(meshList[GEO_TAMLIVINGROOM]);
@@ -1228,7 +1199,7 @@ void SceneText::RenderTamagucci()
 		Render2DMeshWScale(meshList[GEO_TAMHAPPY], false, tamagucci.GetTamTam()->scale.x, tamagucci.GetTamTam()->scale.y, tamagucci.GetTamTam()->position.x + (tamagucci.GetTamTam()->scale.x * 0.5), tamagucci.GetTamTam()->position.y + (tamagucci.GetTamTam()->scale.y * 0.5), false);
 	//Render2DMeshWScale(meshList[GEO_TAMAGUCCI], false, tamagucci.GetTamTam()->scale.x, tamagucci.GetTamTam()->scale.y, tamagucci.GetTamTam()->position.x, tamagucci.GetTamTam()->position.y, false);
 }
-void SceneText::RenderCatch()
+void Scene1::RenderCatch()
 {
 	RenderBackground(meshList[GEO_BATTLESCENE]);
 	RenderMonster();
@@ -1238,7 +1209,7 @@ void SceneText::RenderCatch()
 	Render2DMeshWScale(meshList[GEO_BAR], false, chargebar->scale.x, chargebar->scale.y, chargebar->position.x, chargebar->position.y, false);
 }
 
-void SceneText::RenderBattleScene()
+void Scene1::RenderBattleScene()
 {	
 	RenderBackground(meshList[GEO_BATTLESCENE]);
 
@@ -1313,7 +1284,7 @@ void SceneText::RenderBattleScene()
 	}
 }
 
-void SceneText::Render()
+void Scene1::Render()
 {
 	SceneBase::Render();
 	// Check for which GameState we are in
@@ -1347,7 +1318,7 @@ void SceneText::Render()
 	}
 }
 
-void SceneText::Exit()
+void Scene1::Exit()
 {
 	// Cleanup VBO
 	for(int i = 0; i < NUM_GEOMETRY; ++i)
@@ -1359,7 +1330,7 @@ void SceneText::Exit()
 	glDeleteVertexArrays(1, &m_vertexArrayID);
 }
 
-void SceneText::RenderTileMap(CMap* map, Vector3 speed)
+void Scene1::RenderTileMap(CMap* map, Vector3 speed)
 {
 	for (int y = 0; y < map->theNumOfTiles_Height; ++y)
 	{

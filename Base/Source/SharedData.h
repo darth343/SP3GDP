@@ -28,7 +28,7 @@ public:
 		return &data;
 	}
 	GAMESTATE gameState;
-
+	bool stateCheck = false;
 	
 	EquipmentManager equipManager; // Equipment Functions
 	Monster monType; // Monster Calls
