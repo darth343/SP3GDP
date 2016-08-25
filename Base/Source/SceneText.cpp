@@ -39,7 +39,7 @@ void SceneText::Init()
 	// Initialise and load the tile map
 	m_cMap = new CMap();
 	m_cMap->Init(Application::GetInstance().GetScreenHeight(), Application::GetInstance().GetScreenWidth(), 32);
-	m_cMap->LoadMap("Image//MapDesign.csv");
+	m_cMap->LoadMap("Image//MapData.csv");
 
 	// Init for loading GameObjects
 	Items* thePotion = new Items(Vector3(32.f, 32.f, 1));
@@ -1263,10 +1263,9 @@ void SceneText::RenderTileMap(CMap* map, Vector3 speed)
 	{
 		for (int x = 0; x < map->theNumOfTiles_Width; ++x)
 		{
-			if (map->theMap[y][x].BlockID == 1)
+			if (map->theMap[y][x].BlockID != 0)
 			{
-				//Render2DMesh(meshList[GEO_GROUNDTOP], false, 1.0f, x*map->GetTileSize() - (theHero->GetMapOffset().x * speed.x), y*map->GetTileSize() - (theHero->GetMapOffset().y* speed.y));
-				RenderTile(meshList[GEO_TILESET1], 89, 32,  x*map->GetTileSize() - (theHero->GetMapOffset().x * speed.x), y*map->GetTileSize() - (theHero->GetMapOffset().y* speed.y));
+				RenderTile(meshList[GEO_TILESET1], map->theMap[y][x].BlockID, 32, x*map->GetTileSize() - (theHero->GetMapOffset().x * speed.x), y*map->GetTileSize() - (theHero->GetMapOffset().y* speed.y));
 			}
 		}
 	}

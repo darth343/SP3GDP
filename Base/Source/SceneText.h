@@ -81,7 +81,6 @@ public:
 	void RenderTamagucci();
 	void TamagucciUpdate(double dt);
 
-
 	float GetBattleMonsterPosX();
 	float GetBattleMonsterPosY();
 	void SetBattleMonsterPosX(float x);

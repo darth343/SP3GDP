@@ -1,5 +1,6 @@
 #include "Map.h"
 #include <iostream>
+#include <sstream>
 CMap::CMap(void)
 : theScreen_Height(0)
 , theScreen_Width(0)
@@ -46,21 +47,24 @@ bool CMap::LoadFile(const string mapName)
 		{
 			string tempString;
 			int NumberOfRows = 0;
-			int NumberOfCols = 0;
+			int NumberOfCols = 1;
+			getline(file, tempString);
 			while (getline(file, tempString))
 			{
+				if (tempString[0] == '#')
+					break;
 				NumberOfRows++;
 			}
 			theNumOfTiles_Height = NumberOfRows;
 			file.clear();
 			file.seekg(0);
 			getline(file, tempString);
+			getline(file, tempString);
 			for (int i = 0; i < tempString.size(); ++i)
 			{
 				if (tempString[i] == ',')
-					++NumberOfCols;
+				++NumberOfCols;
 			}
-			++NumberOfCols;
 			theNumOfTiles_Width = NumberOfCols;
 		}
 		//Allocate Memory Dynamically For Map
@@ -75,39 +79,47 @@ bool CMap::LoadFile(const string mapName)
 		}
 		file.clear();
 		file.seekg(0);
-
 		//Populate Map
 		{
 			int x = 0, y = 0;
-			for (y = theNumOfTiles_Height-1; y >= 0; --y)
+			string tempString;
+			getline(file, tempString);
+			for (y = theNumOfTiles_Height - 1; y >= 0; --y)
 			{
-				string tempString;
-				for (x = 0; x < theNumOfTiles_Width-1; ++x)
+				std::stringstream ss;
+				getline(file, tempString);
+				ss << tempString;
+				for (x = 0; x < theNumOfTiles_Width; ++x)
 				{
-					getline(file, tempString, ',');
-					int ID = std::stoi(tempString);
-					if (ID == 0 || ID == 2 || ID == 9 || ID == 10)
-					{
-						Tile tempTile(Vector3(x, y), ID, false);
-						theMap[y][x] = tempTile;
-					}
+					if (x == theNumOfTiles_Width-1)
+						getline(ss, tempString, '\n');
 					else
-					{
-						Tile tempTile(Vector3(x, y), ID, true);
-						theMap[y][x] = tempTile;
-					}
-				}
-				getline(file, tempString, '\n');
-				int ID = std::stoi(tempString);
-				if (ID == 0 || ID == 2 || ID == 9 || ID == 10)
-				{
-					Tile tempTile(Vector3(theNumOfTiles_Width, y), ID, false);
+						getline(ss, tempString, ',');
+					int ID = std::stoi(tempString);
+					Tile tempTile(Vector3(x, y), ID);
 					theMap[y][x] = tempTile;
 				}
-				else
+			}
+		}
+		//Set Collision for Tiles
+		{
+			string tempString;
+			int NumberOfRows = 0;
+			int NumberOfCols = 0;
+			getline(file, tempString);
+			for (int y = theNumOfTiles_Height - 1; y >= 0; --y)
+			{
+				std::stringstream ss;
+				getline(file, tempString);
+				ss << tempString;
+				for (int x = 0; x < theNumOfTiles_Width; ++x)
 				{
-					Tile tempTile(Vector3(theNumOfTiles_Width, y), ID, true);
-					theMap[y][x] = tempTile;
+					if (x == theNumOfTiles_Width-1)
+						getline(ss, tempString, '\n');
+					else
+						getline(ss, tempString, ',');
+					bool Collidable = stoi(tempString);
+					theMap[y][x].SetCollision(Collidable);
 				}
 			}
 		}
