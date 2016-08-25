@@ -93,6 +93,7 @@ void SceneText::Init()
 
 	// Initialise the hero's position
 	theHero = new CPlayerInfo();
+	theHero->Init();
 	theHero->SetPosition(Vector3(530, 64, 0));
 	theHero->SetPlayerMesh(meshList[GEO_HEROWALK]);
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
@@ -105,7 +106,7 @@ void SceneText::Init()
 	battleMonsterScale.Set(0.3, 0.3, 1);
 
 	monsterScaleUp = true;
-
+	SharedData::GetInstance()->soundManager.Init();
 }
 
 bool SceneText::GetMonsterScaleUp()
@@ -320,6 +321,16 @@ void SceneText::PlayerUpdate(double dt)
 	if (Application::IsKeyPressed('D'))
 		this->theHero->MoveLeftRight(false, m_cMap, dt);
 	theHero->HeroUpdate(m_cMap, dt, meshList);
+
+	if (Application::IsKeyPressed('W') || Application::IsKeyPressed('S') || Application::IsKeyPressed('A') || Application::IsKeyPressed('D'))
+	{
+		cout << SharedData::GetInstance()->soundFootstep << endl;
+		SharedData::GetInstance()->soundManager.SoundPlay("Sound/footstepgrass.wav", &SharedData::GetInstance()->soundFootstep);
+	}
+	else
+	{
+		SharedData::GetInstance()->soundManager.SoundPause(&SharedData::GetInstance()->soundFootstep);
+	}
 	
 	/*SpriteAnimation *arrow = dynamic_cast<SpriteAnimation*>(meshList[GEO_BATTLEARROW]);
 	if (arrow)
@@ -700,8 +711,11 @@ void SceneText::EquipScreenUpdate(double dt)
 void SceneText::MapUpdate(double dt)
 {
 	if (MS == PLAY)
-	PlayerUpdate(dt);
-	GOupdate(dt);
+	{
+		PlayerUpdate(dt);
+		GOupdate(dt);
+		SharedData::GetInstance()->soundManager.SoundPlay("Sound/Wind.mp3", &SharedData::GetInstance()->worldBGM);
+	}
 }
 void SceneText::NPCUpdate(double dt)
 {

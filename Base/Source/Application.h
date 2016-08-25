@@ -5,6 +5,7 @@
 #include "timer.h"
 #include "SceneText.h"
 
+
 class Application
 {
 public:
@@ -26,6 +27,8 @@ public:
 	static double mouse_last_x, mouse_last_y, mouse_current_x, mouse_current_y, mouse_diff_x, mouse_diff_y;
 	static double camera_yaw, camera_pitch;
 
+	
+
 private:
 	Application();
 	~Application();
@@ -42,6 +45,9 @@ private:
 
 	// The handler for the scene
 	SceneText *scene;
+
+
+
 };
 
 #endif

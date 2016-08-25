@@ -26,6 +26,7 @@ void CPlayerInfo::Init(void)
 {
 	theHeroPosition.x=0;
 	theHeroPosition.y=0;
+
 }
 
 Mesh* CPlayerInfo::GetPlayerMesh()

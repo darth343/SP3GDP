@@ -1,5 +1,6 @@
 
 #include "Application.h"
+#include "SharedData.h"
 
 //Include GLEW
 #include <GL/glew.h>
@@ -85,6 +86,7 @@ Application::Application()
 
 Application::~Application()
 {
+	
 }
 int Application::GetScreenHeight()
 {
@@ -151,6 +153,7 @@ void Application::Init()
 	m_dElapsedTime = 0.0;
 	m_dAccumulatedTime_ThreadOne = 0.0;
 	m_dAccumulatedTime_ThreadTwo = 0.0;
+
 }
 
 void Application::Run()
