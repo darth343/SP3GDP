@@ -377,12 +377,14 @@ void SceneText::GOupdate(double dt)
 	}
 	for (int i = 0; i < m_goList.size(); ++i)
 	{
+		if (m_goList[i]->type == GameObject::GO_ENEMY && MS == IN_DIALOUGE)
+			continue;
 
 		m_goList[i]->Update(dt, theHero->GetPosition(), theHero->GetMapOffset(), m_cMap);
 		if (m_goList[i]->type == GameObject::GO_NPC)
 		{
 			NPC* temp = (NPC*)m_goList[i];
-			if (temp->GetAnimationState() == NPC::NPC_AWANDERING)
+			if (temp->GetAnimationState() == NPC::NPC_AWANDERING && MS == PLAY)
 			{
 				if (temp->GetID() == 1)
 				{
@@ -789,6 +791,7 @@ void SceneText::Update(double dt)
 		UpdateInventory(dt);
 		break;
 	case TAMAGUCCI_SCREEN:
+		if (SharedData::GetInstance()->inventory.getRightArm() || SharedData::GetInstance()->inventory.getLeftArm() || SharedData::GetInstance()->inventory.getArmour() || SharedData::GetInstance()->inventory.getHead())
 		tamagucci.UpdateTamagucci(dt);
 		TamagucciUpdate(dt);
 		break;
@@ -825,6 +828,9 @@ void SceneText::RenderTestMap()
 			if (m_goList[i]->type == GameObject::GO_NPC)
 			{
 				NPC* temp = (NPC*)m_goList[i];
+				if (MS == IN_DIALOUGE)
+					temp->SetAnimationState(NPC::NPC_AIDLE);
+
 				if (renderNPCstuff)
 				{
 					if (npcPic == 1)
@@ -1115,9 +1121,12 @@ void SceneText::renderTamagotchiUI()
 {
 	Render2DMeshWScale(meshList[GEO_TAMAGUCCIUIBACKGROUND], false, 1, 1, 400, -291, false);
 	Render2DMeshWScale(meshList[GEO_TAMAGUCCIUIBACKGROUND], false, 1, 1, 400, 892, false);
-	Render2DMeshWScale(meshList[GEO_GREEN], false, 60, tamagucci.getHungerlevel() * 12, 549, 516.5, false);
-	Render2DMeshWScale(meshList[GEO_GREEN], false, 60, tamagucci.getEnergylevel() * 12, 630, 516.5, false);
-	Render2DMeshWScale(meshList[GEO_GREEN], false, 60, tamagucci.getHappinesslevel() * 12, 717, 516.5, false);
+	if (SharedData::GetInstance()->inventory.getRightArm())
+	{
+		Render2DMeshWScale(meshList[GEO_GREEN], false, 60, SharedData::GetInstance()->inventory.getRightArm()->GetTamHunger() * 12, 549, 516.5, false);
+		Render2DMeshWScale(meshList[GEO_GREEN], false, 60, SharedData::GetInstance()->inventory.getRightArm()->GetTamEnergy() * 12, 630, 516.5, false);
+		Render2DMeshWScale(meshList[GEO_GREEN], false, 60, SharedData::GetInstance()->inventory.getRightArm()->GetTamHappy() * 12, 717, 516.5, false);
+	}
 	Render2DMeshWScale(meshList[GEO_HUNGERFRAME], false, 60, 60, 549, 516.5, false);
 	Render2DMeshWScale(meshList[GEO_ENERGYFRAME], false, 60, 60, 630, 516.5, false);
 	Render2DMeshWScale(meshList[GEO_HAPPINESSFRAME], false, 60, 60, 717, 516.5, false);
@@ -1139,12 +1148,16 @@ void SceneText::RenderTamagucci()
 		renderTamagotchiGame();
 		break;
 	}
-
-	if (tamagucci.GetScore() < 20 && !tamagucci.GetShowFood() && !tamagucci.GetSleep())
-		Render2DMeshWScale(meshList[GEO_TAMAGUCCI], false, tamagucci.GetTamTam()->scale.x, tamagucci.GetTamTam()->scale.y, tamagucci.GetTamTam()->position.x, tamagucci.GetTamTam()->position.y, false);
-	if (tamagucci.GetScore()>= 20)
-		Render2DMeshWScale(meshList[GEO_TAMHAPPY], false, tamagucci.GetTamTam()->scale.x, tamagucci.GetTamTam()->scale.y, tamagucci.GetTamTam()->position.x + (tamagucci.GetTamTam()->scale.x * 0.5), tamagucci.GetTamTam()->position.y + (tamagucci.GetTamTam()->scale.y * 0.5), false);
+	if (SharedData::GetInstance()->inventory.getRightArm())
+	{
+		RenderTextOnScreen(meshList[GEO_TEXT], SharedData::GetInstance()->inventory.getRightArm()->getName(), Color(1, 1, 1), 30, 100, 500);
+		if (tamagucci.GetScore() < 20 && !tamagucci.GetShowFood() && !tamagucci.GetSleep())
+			Render2DMeshWScale(meshList[GEO_TAMAGUCCI], false, tamagucci.GetTamTam()->scale.x, tamagucci.GetTamTam()->scale.y, tamagucci.GetTamTam()->position.x, tamagucci.GetTamTam()->position.y, false);
+		if (tamagucci.GetScore() >= 20)
+			Render2DMeshWScale(meshList[GEO_TAMHAPPY], false, tamagucci.GetTamTam()->scale.x, tamagucci.GetTamTam()->scale.y, tamagucci.GetTamTam()->position.x + (tamagucci.GetTamTam()->scale.x * 0.5), tamagucci.GetTamTam()->position.y + (tamagucci.GetTamTam()->scale.y * 0.5), false);
+	}
 }
+
 void SceneText::RenderCatch()
 {
 	RenderBackground(meshList[GEO_BATTLESCENE]);

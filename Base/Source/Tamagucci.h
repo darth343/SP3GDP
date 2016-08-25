@@ -98,5 +98,8 @@ private:
 	bool direction;
 	Vector3 randPos;
 	bool randomPosSet;
+	int happyLevel;
+	int hungerLevel;
+	int energyLevel;
 };
 #endif // !TAMAGUCCI_H

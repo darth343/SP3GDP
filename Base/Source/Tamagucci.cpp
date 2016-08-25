@@ -1,5 +1,6 @@
 #include "Tamagucci.h"
 #include "Application.h"
+#include "Equipment.h"
 
 TAMAGUCCI::TAMAGUCCI()
 {
@@ -228,9 +229,9 @@ void TAMAGUCCI::GetTamagucciInput()
 					 {
 						 if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 						 {
-							 SharedData::GetInstance()->hungerLevel++;
+							 hungerLevel++;
 							 SharedData::GetInstance()->ENTERkeyPressed = true;
-							 SharedData::GetInstance()->energyLevel--;
+							 energyLevel--;
 							 if (foodChoice != FC_BACK)
 							 {
 								 tamagucciFood = true;
@@ -284,8 +285,8 @@ void TAMAGUCCI::GetTamagucciInput()
 					  // ENTER BUTTON
 					  if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 					  {
-						  SharedData::GetInstance()->energyLevel++;
-						  SharedData::GetInstance()->hungerLevel--;
+						  energyLevel++;
+						  hungerLevel--;
 						  SharedData::GetInstance()->ENTERkeyPressed = true;
 						  sleep = false;
 						  //ResetTamagotchi();
@@ -361,17 +362,17 @@ int TAMAGUCCI::GetScore()
 
 int TAMAGUCCI::getHungerlevel()
 {
-	return SharedData::GetInstance()->hungerLevel;
+	return hungerLevel;
 }
 
 int TAMAGUCCI::getEnergylevel()
 {
-	return SharedData::GetInstance()->energyLevel;
+	return energyLevel;
 }
 
 int TAMAGUCCI::getHappinesslevel()
 {
-	return SharedData::GetInstance()->happinessLevel;
+	return happyLevel;
 }
 
 void TAMAGUCCI::MiniGameUpdatePosition(double dt)
@@ -443,9 +444,9 @@ void TAMAGUCCI::MiniGame(double dt)
 	}
 	if (coolDown <= 0)
 	{
-		SharedData::GetInstance()->happinessLevel++;
-		SharedData::GetInstance()->hungerLevel--;
-		SharedData::GetInstance()->energyLevel--;
+		happyLevel++;
+		hungerLevel--;
+		energyLevel--;
 		ResetTamagotchi();
 		GoBack = true;
 		minigame1Score = 0;
