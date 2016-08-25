@@ -146,7 +146,7 @@ void SceneBase::Init()
 	meshList[GEO_MENUSTORY]->textureID = LoadTGA("Image//StoryLogo.tga");
 
 
-	FontData.Init("Image//FontData.csv");
+	FontData.Init("Data//FontData.csv");
 	// Load the ground mesh and texture
 	meshList[GEO_BACKGROUND] = MeshBuilder::Generate2DMesh("GEO_BACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
 	meshList[GEO_BACKGROUND]->textureID = LoadTGA("Image//background.tga");
@@ -252,8 +252,8 @@ void SceneBase::Init()
 	meshList[GEO_BATTLEARROW]->textureID = LoadTGA("Image//arrow.tga");
 	meshList[GEO_HPBARDESIGN] = MeshBuilder::Generate2DMesh("GEO_HPBARDESIGN", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
 	meshList[GEO_HPBARDESIGN]->textureID = LoadTGA("Image//hpbg2.tga");
-	meshList[GEO_MPBAR] = MeshBuilder::GenerateCube("MPBAR", Color(0, 1, 0), 20.0f);
-	meshList[GEO_HPBAR] = MeshBuilder::GenerateQuad("HPBAR", Color(0, 1, 0), 20.0f);
+	meshList[GEO_MPBAR] = MeshBuilder::Generate2DMesh("MPBAR", Color(0.2, 0.2, 0.8), 0.0f, 0.0f, 20.0f, 20.0f);
+	meshList[GEO_HPBAR] = MeshBuilder::Generate2DMesh("HPBAR", Color(0, 1, 0), 0.0f, 0.0f, 20.f, 20.f);
 	meshList[GEO_STABANIMATION] = MeshBuilder::GenerateSpriteAnimation("stab", 1, 8);
 	meshList[GEO_STABANIMATION]->textureID = LoadTGA("Image//stabAnimation.tga");
 	meshList[GEO_SLASHANIMATION] = MeshBuilder::GenerateSpriteAnimation("slash", 1, 10);

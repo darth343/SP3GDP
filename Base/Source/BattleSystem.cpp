@@ -208,6 +208,7 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 			break;
 		case BS_SKILL:
 			//minus enemy hp, then enemy turn = true, player turn = false
+			theHero->UseMP(50);
 			cout << " Monster's skills " << battleSelection << endl;
 
 			break;
@@ -330,20 +331,20 @@ void BattleSystem::UpdateBattleSystem(static bool& UPkeyPressed, static bool& DN
 		cout << "Monster hit player for " << enemy->GetDamage() << " player HP left " << theHero->GetHP() << endl;
 
 	}
-	//if enemy not dead		
-	if (enemy->GetHealth() < 0)
-	{
-		SceneText* mainScene = (SceneText*)Application::GetInstance().GetScene();
+	////if enemy not dead		
+	//if (enemy->GetHealth() < 0)
+	//{
+	//	SceneText* mainScene = (SceneText*)Application::GetInstance().GetScene();
 
-		//Player win
-		Reset();
-		mainScene->RemoveEnemy();
-		//destory enemy here
-	}
-	else if (theHero->GetHP() <= 0)
-	{
-		//Player Lose should do auto load to previous save file
-		SharedData::GetInstance()->stateCheck = true;
-		SharedData::GetInstance()->gameState = SharedData::MENU;
-	}
+	//	//Player win
+	//	Reset();
+	//	mainScene->RemoveEnemy();
+	//	//destory enemy here
+	//}
+	//else if (theHero->GetHP() <= 0)
+	//{
+	//	//Player Lose should do auto load to previous save file
+	//	SharedData::GetInstance()->stateCheck = true;
+	//	SharedData::GetInstance()->gameState = SharedData::MENU;
+	//}
 }

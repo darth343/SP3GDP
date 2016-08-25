@@ -39,7 +39,7 @@ void SceneText::Init()
 	// Initialise and load the tile map
 	m_cMap = new CMap();
 	m_cMap->Init(Application::GetInstance().GetScreenHeight(), Application::GetInstance().GetScreenWidth(), 32);
-	m_cMap->LoadMap("Image//MapData.csv");
+	m_cMap->LoadMap("Data//MapData.csv");
 
 	m_cMap2 = new CMap();
 	m_cMap2->Init(Application::GetInstance().GetScreenHeight(), Application::GetInstance().GetScreenWidth(), 32);
@@ -118,11 +118,11 @@ void SceneText::Init()
 	SharedData::GetInstance()->soundManager.Init();
 
 
-	hpScale = 17.4f;
-	hpPos.Set(209, 584, 0);
-
-	mpScale = 17.4f;
-	mpPos.Set(209, 524, 0);
+	//Battle HUD
+	maxHpScale = 17.4f;
+	hpPos.Set(36, 574, 0);
+	mpPos.Set(36, 548.9, 0);
+	maxMpScale = 10.9f;
 
 	for (int j = 0; j < 10; ++j)
 	{
@@ -149,7 +149,9 @@ void SceneText::Init()
 			}
 		}
 	}
-
+	playerBattleDialogue = false;
+	renderedMp = 100;
+	renderedHp = 100;
 }
 
 bool SceneText::GetMonsterScaleUp()
@@ -349,7 +351,7 @@ void SceneText::PlayerUpdate(double dt)
 
 	if (Application::IsKeyPressed('W') || Application::IsKeyPressed('S') || Application::IsKeyPressed('A') || Application::IsKeyPressed('D'))
 	{
-		cout << SharedData::GetInstance()->soundFootstep << endl;
+		//cout << SharedData::GetInstance()->soundFootstep << endl;
 		SharedData::GetInstance()->soundManager.SoundPlay("Sound/footstepgrass.wav", &SharedData::GetInstance()->soundFootstep, 1.0f, false);
 	}
 	else
@@ -754,6 +756,18 @@ void SceneText::Update(double dt)
 	{
 		f6press = false;
 	}
+	//if (Application::IsKeyPressed('Z') && !SharedData::GetInstance()->UPkeyPressed)
+	//{
+	//	SharedData::GetInstance()->UPkeyPressed = true;
+	//	if (GS != TAMAGUCCI_SCREEN)
+	//		GS = TAMAGUCCI_SCREEN;
+	//	else
+	//		GS = TESTMAP;
+	//}
+	//else if (!Application::IsKeyPressed('Z') && SharedData::GetInstance()->UPkeyPressed)
+	//{
+	//	SharedData::GetInstance()->UPkeyPressed = false;
+	//}
 
 	switch (GS)
 	{
@@ -761,27 +775,52 @@ void SceneText::Update(double dt)
 		MapUpdate(dt);
 		break;
 	case BATTLE:
+
+		//Decrease Rendered HP on screen
+		if (theHero->GetHP() < renderedHp)
+		{
+			renderedHp -= dt * 100;
+
+			//if enemy not dead		
+			if (EnemyInBattle->GetHealth() < 0)
+			{
+				SceneText* mainScene = (SceneText*)Application::GetInstance().GetScene();
+
+				//Player win
+				battleScene.Reset();
+				mainScene->RemoveEnemy();
+				//destory enemy here
+			}
+			else if (renderedHp < 0.0f)
+			{
+				//Player Lose should do auto load to previous save file
+				SharedData::GetInstance()->stateCheck = true;
+				SharedData::GetInstance()->gameState = SharedData::MENU;
+			}
+
+		}
+
+		//Decrease RenderedMP on screen
+		if (theHero->GetMP() < renderedMp)
+		{
+			renderedMp -= dt * 100;
+		}
 		battleScene.UpdateBattleSystem(SharedData::GetInstance()->UPkeyPressed, SharedData::GetInstance()->DNkeyPressed, SharedData::GetInstance()->LEFTkeyPressed, SharedData::GetInstance()->RIGHTkeyPressed, SharedData::GetInstance()->ENTERkeyPressed, theHero, EnemyInBattle);
 		//SharedData::GetInstance()->soundManager.SoundPlay("Sound/battleStart.mp3", &SharedData::GetInstance()->battleStart, 0.3f, true);
 		if (SharedData::GetInstance()->BS_SlashRender)
 		{
 			SpriteAnimation *slashAnimation = dynamic_cast<SpriteAnimation*>(meshList[GEO_SLASHANIMATION]);
-			//cout << "Animation = " << slashAnimation->m_currentFrame << endl;
+			
 			if (slashAnimation)
 			{
-				//It keep increasing the currentFrame because it is in update therefore the if statement is inaccurate
-				//it is not as what i thought it would be only run 0-9 then stop
-				//look at this COUT below to debug why sometime it didnt run after the 1st try
 				slashAnimation->m_anim->animActive = true;
 				slashAnimation->Update(dt);
 
 				if (slashAnimation->m_anim->animActive == false)
 				{
-					SharedData::GetInstance()->enemyTurn = true;
-					SharedData::GetInstance()->enemyHitPlayer = true;
-					SharedData::GetInstance()->playerTurn = false;
 					SharedData::GetInstance()->BS_SlashRender = false;
 					slashAnimation->m_currentFrame = 0;
+					playerBattleDialogue = true;
 				}
 			}
 		}
@@ -799,11 +838,9 @@ void SceneText::Update(double dt)
 
 				if (stabAnimation->m_anim->animActive == false)
 				{
-					SharedData::GetInstance()->enemyTurn = true;
-					SharedData::GetInstance()->enemyHitPlayer = true;
-					SharedData::GetInstance()->playerTurn = false;
 					SharedData::GetInstance()->BS_StabRender = false;
 					stabAnimation->m_currentFrame = 0;
+					playerBattleDialogue = true;
 				}
 			}
 		}break;
@@ -1192,86 +1229,133 @@ void SceneText::RenderCatch()
 	Render2DMeshWScale(meshList[GEO_BAR], false, chargebar->scale.x, chargebar->scale.y, chargebar->position.x, chargebar->position.y, false);
 }
 
-void SceneText::RenderBattleScene()
-{	
-	RenderBackground(meshList[GEO_BATTLESCENE]);
-
-	RenderMonster();
-
-	//battleMonsterPos is just a temp position
-	if (SharedData::GetInstance()->BS_SlashRender)
-		Render2DMeshWScale(meshList[GEO_SLASHANIMATION], false, 100.0f, 100.0f, battleMonsterPos.x, battleMonsterPos.y, false);
-	if (SharedData::GetInstance()->BS_StabRender)
-		Render2DMeshWScale(meshList[GEO_STABANIMATION], false, 100.0f, 100.0f, battleMonsterPos.x, battleMonsterPos.y, false);
-	Render2DMeshWScale(meshList[GEO_HPBARDESIGN], false, 0.5f, 0.1f, 0, 540, false);
-	Render2DMeshWScale(meshList[GEO_HPBAR], false, hpScale, 1.0f, hpPos.x, hpPos.y, false);
-
-
-	if (GS == BATTLE)
+void SceneText::RenderBattleDialogue()
+{
+	if (playerBattleDialogue)
 	{
+		Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false);
 
-		switch (battleScene.GetBattleSelection())
+		if (battleScene.GetBattleSelection() == BattleSystem::BS_SLASH)
 		{
-			case BattleSystem::BATTLE_SELECTION::BS_SLASH:
-			case BattleSystem::BATTLE_SELECTION::BS_ATTACK:
-				battleScene.SetArrowPos(110, 98, 0);
-				break;
-			case BattleSystem::BATTLE_SELECTION::BS_SKILL:
-			case BattleSystem::BATTLE_SELECTION::BS_CAPTURE:
-				battleScene.SetArrowPos(113, 48, 0);
-				break;
-			case BattleSystem::BATTLE_SELECTION::BS_STAB:
-			case BattleSystem::BATTLE_SELECTION::BS_ITEM:
-				battleScene.SetArrowPos(405, 98, 0);
-				break;
-			case BattleSystem::BATTLE_SELECTION::BS_BACK:
-			case BattleSystem::BATTLE_SELECTION::BS_RUN:
-				battleScene.SetArrowPos(405, 48, 0);
-				break;
-		}
-
-		//When it is player's turn
-		if (SharedData::GetInstance()->playerTurn && !SharedData::GetInstance()->enemyTurn)
-		{
-			Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false);
-
-			Render2DMeshWScale(meshList[GEO_BATTLEARROW], false, 0.1, 0.05, battleScene.GetArrowPosX(), battleScene.GetArrowPosY(), false,2);
-
 			std::ostringstream ss;
 			ss.str("");
 			ss.precision(5);
-			if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice())
-				ss << "Attack";
-			else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice())
-				ss << "Slash";
+			ss << "You Slash Enemy for " << theHero->GetDMG() << ", Enemy HP left " << EnemyInBattle->GetHealth();
+
 			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 200, 100);
-
-			ss.str("");
-			ss.precision(5);
-			if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice())
-				ss << "Item";
-			else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice())
-				ss << "Stab";
-			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 500, 100);
-
-			ss.str("");
-			ss.precision(5);
-			if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice())
-				ss << "Capture";
-			else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice())
-				ss << "Monster's Skill";
-			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 200, 50);
-
-			ss.str("");
-			ss.precision(5);
-			if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice())
-				ss << "Run";
-			else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice())
-				ss << "Back";
-			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 500, 50);
 		}
+		else if (battleScene.GetBattleSelection() == BattleSystem::BS_SLASH)
+		{
+			std::ostringstream ss;
+			ss.str("");
+			ss.precision(5);
+			ss << "You stab Enemy for " << theHero->GetDMG() << ", Enemy HP left " << EnemyInBattle->GetHealth();
 
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 200, 100);
+		}
+		SharedData::GetInstance()->enemyTurn = true;
+		SharedData::GetInstance()->enemyHitPlayer = true;
+		SharedData::GetInstance()->playerTurn = false;
 	}
+}
+
+void SceneText::RenderBattleAnimation()
+{
+	if (SharedData::GetInstance()->BS_SlashRender)
+		Render2DMeshWScale(meshList[GEO_SLASHANIMATION], false, 200.0f, 200.0f, battleMonsterPos.x + 120.f, battleMonsterPos.y + 80.0f, false);
+	if (SharedData::GetInstance()->BS_StabRender)
+		Render2DMeshWScale(meshList[GEO_STABANIMATION], false, 200.0f, 200.0f, battleMonsterPos.x + 120.0f, battleMonsterPos.y + 80.0f, false);
+}
+
+void SceneText::RenderBattleHUD()
+{
+	//Rendering HP & MP bar and Background
+	Render2DMeshWScale(meshList[GEO_HPBARDESIGN], false, 0.5f, 0.1f, 0, 540, false);
+	Render2DMeshWScale(meshList[GEO_HPBAR], false, maxHpScale * (renderedHp / 100), 1.0f, hpPos.x, hpPos.y, false);
+	Render2DMeshWScale(meshList[GEO_MPBAR], false, maxMpScale * (renderedMp / 100), 1.0f, mpPos.x, mpPos.y, false);
+
+	//Rendering Selection Arrow based on selection
+	if (GS == BATTLE)
+	{
+		switch (battleScene.GetBattleSelection())
+		{
+		case BattleSystem::BATTLE_SELECTION::BS_SLASH:
+		case BattleSystem::BATTLE_SELECTION::BS_ATTACK:
+			battleScene.SetArrowPos(120, 91, 0);
+			break;
+		case BattleSystem::BATTLE_SELECTION::BS_SKILL:
+		case BattleSystem::BATTLE_SELECTION::BS_CAPTURE:
+			battleScene.SetArrowPos(120, 41, 0);
+			break;
+		case BattleSystem::BATTLE_SELECTION::BS_STAB:
+		case BattleSystem::BATTLE_SELECTION::BS_ITEM:
+			battleScene.SetArrowPos(420, 91, 0);
+			break;
+		case BattleSystem::BATTLE_SELECTION::BS_BACK:
+		case BattleSystem::BATTLE_SELECTION::BS_RUN:
+			battleScene.SetArrowPos(420, 41, 0);
+			break;
+		}
+	}
+	//When it is player's turn
+	if (SharedData::GetInstance()->playerTurn &&
+		!SharedData::GetInstance()->enemyTurn &&
+		!SharedData::GetInstance()->BS_SlashRender &&
+		!SharedData::GetInstance()->BS_StabRender &&
+		!playerBattleDialogue)
+	{
+		Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false);
+
+		Render2DMeshWScale(meshList[GEO_BATTLEARROW], false, 0.1, 0.05, battleScene.GetArrowPosX(), battleScene.GetArrowPosY(), false, 2);
+
+		std::ostringstream ss;
+		ss.str("");
+		ss.precision(5);
+		if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice())
+			ss << "Attack";
+		else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice())
+			ss << "Slash";
+		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 200, 100);
+
+		ss.str("");
+		ss.precision(5);
+		if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice())
+			ss << "Item";
+		else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice())
+			ss << "Stab";
+		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 500, 100);
+
+		ss.str("");
+		ss.precision(5);
+		if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice())
+			ss << "Capture";
+		else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice())
+			ss << "Monster's Skill";
+		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 200, 50);
+
+		ss.str("");
+		ss.precision(5);
+		if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice())
+			ss << "Run";
+		else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice())
+			ss << "Back";
+		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 500, 50);
+
+		ss.str("");
+		ss << "Capture Rate : " << enemyCatchPercentage << "%";
+		ss.precision(5);
+		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 580, 180);
+	}
+
+}
+
+void SceneText::RenderBattleScene()
+{
+	RenderBackground(meshList[GEO_BATTLESCENE]);
+	RenderMonster();
+	RenderBattleAnimation();
+	RenderBattleHUD();
+	RenderBattleDialogue();
 }
 
 void SceneText::Render()

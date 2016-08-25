@@ -8,6 +8,7 @@ CPlayerInfo::CPlayerInfo(void)
 	, playerMesh(NULL)
 	, FlipStatus(false)
 	, playerHP(100)
+	, playerMP(100)
 	, playerDamage(20)
 	, playerDefense(0)
 {
@@ -49,6 +50,10 @@ void CPlayerInfo::TakeDMG(float dmg)
 	this->SetHP(this->playerHP - dmg - playerDefense / 100);
 }
 
+void CPlayerInfo::UseMP(float mp)
+{
+	this->SetMP(playerMP - mp);
+}
 
 /********************************************************************************
  Hero Move Up Down
@@ -397,6 +402,11 @@ void CPlayerInfo::SetHP(float hp)
 	playerHP = hp;
 }
 
+void CPlayerInfo::SetMP(float mp)
+{
+	playerMP = mp;
+}
+
 void CPlayerInfo::SetDMG(float dmg)
 {
 	playerDamage = dmg;
@@ -423,3 +433,9 @@ float CPlayerInfo::GetDEF()
 	//playerDefense = Equip.getEQDef();
 	return playerDefense;
 }
+
+float CPlayerInfo::GetMP()
+{
+	return playerMP;
+}
+
