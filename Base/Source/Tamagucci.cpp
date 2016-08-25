@@ -22,6 +22,10 @@ TAMAGUCCI::TAMAGUCCI()
 	happinessLevel = 5;
 	direction = true;
 	randomPosSet = false;
+
+	tamfood = new GameObject;
+	tamfood->position.Set(Math::RandFloatMinMax(0, 730), 150, 0);
+	tamfood->scale.Set(64, 64, 1);
 }
 
 TAMAGUCCI::~TAMAGUCCI()
@@ -79,26 +83,79 @@ TAMAGUCCI::~TAMAGUCCI()
 
 void TAMAGUCCI::moveUpdate(double dt)
 {
-	if (direction)
+	if (!tamagucciFood && !sleep)
 	{
-		tamtam->position.x -= 100.f * dt;
-		if (tamtam->position.x < 0)
+		if (direction)
 		{
-			tamtam->position.x = 0;
-			direction = false;
+			tamtam->position.x -= 100.f * dt;
+			if (tamtam->position.x < 0)
+			{
+				tamtam->position.x = 0;
+				direction = false;
+			}
+		}
+		else
+		{
+			tamtam->position.x += 100.f * dt;
+			if (tamtam->position.x + tamtam->scale.x > 800)
+			{
+				tamtam->position.x = 800 - tamtam->scale.x;
+				direction = true;
+			}
 		}
 	}
-	else
+
+	if (animationFood && tamagucciFood)
 	{
-		tamtam->position.x += 100.f * dt;
-		if (tamtam->position.x + tamtam->scale.x > 800)
-		{
-			tamtam->position.x = 800 - tamtam->scale.x;
-			direction = true;
-		}
+		tamagucciFood = false;
+		touchedFood = false;
+		animationFood = false;
+	}
+
+	if (!touchedFood && tamagucciFood)
+	{
+			if (tamtam->position.x > tamfood->position.x - 30 && !touchedFood)
+			{
+				moveLeft = false;
+				tamtam->position.x -= 100 * dt;
+				if (tamtam->position.x < tamfood->position.x + 30)
+				{
+					tamtam->position.x = tamfood->position.x + 30;
+					touchedFood = true;
+				}
+			}
+			else if (tamtam->position.x < tamfood->position.x + 70 && !touchedFood)
+			{
+				moveLeft = true;
+				tamtam->position.x += 100 * dt;
+				if (tamtam->position.x > tamfood->position.x - 70)
+				{
+					tamtam->position.x = tamfood->position.x - 70;
+					touchedFood = true;
+				}
+			}
 	}
 }
+void TAMAGUCCI::SetAnimationOver(bool &over)
+{
+	if (animationFood != true)
+		animationFood = over;
+	else 	
+		animationFood = over;
 
+}
+bool TAMAGUCCI::GetTouchedFood()
+{
+	return touchedFood;
+}
+bool TAMAGUCCI::GetMoveLeft()
+{
+	return moveLeft;
+}
+GameObject* TAMAGUCCI::GetTamFood()
+{
+	return tamfood;
+}
 void TAMAGUCCI::UpdateTamagucci(double dt)
 {
 	switch (tamagotchiState)
@@ -152,6 +209,8 @@ void TAMAGUCCI::GetTamagucciInput()
 		{
 			SharedData::GetInstance()->ENTERkeyPressed = true; 
 			menuState = SECONDMENU;
+			if (firstMenuOption == SLEEP)
+				sleep = true;
 		}
 		else if (!Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
 		{
@@ -164,44 +223,74 @@ void TAMAGUCCI::GetTamagucciInput()
 		{
 		case FOOD:
 		{
-			// RIGHT BUTTON
-			if (Application::IsKeyPressed(VK_DOWN) && !SharedData::GetInstance()->DNkeyPressed)
-			{
-				SharedData::GetInstance()->DNkeyPressed = true;
-				foodChoice = static_cast<FOODCHOICES>(1 + foodChoice);
-				if (foodChoice > FC_BACK)
-					foodChoice = FC_SALAD;
-			}
-			else if (!Application::IsKeyPressed(VK_DOWN) && SharedData::GetInstance()->DNkeyPressed)
-			{
-				SharedData::GetInstance()->DNkeyPressed = false;
-			}
+					 if (!tamagucciFood)
+					 {
+						 if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
+						 {
+							 SharedData::GetInstance()->ENTERkeyPressed = true;
+							 if (foodChoice != FC_BACK)
+							 {
+								 tamagucciFood = true;
+								 tamfood->position.Set(Math::RandFloatMinMax(0, 730), 150, 0);
+								 animationFood = false;
+							 }
+							 if (foodChoice == FC_BACK)
+							 {
+								 ResetTamagotchi();
+								 menuState = FIRSTMENU;
+							 }
 
-			// LEFT BUTTON
-			if (Application::IsKeyPressed(VK_UP) && !SharedData::GetInstance()->UPkeyPressed)
-			{
-				SharedData::GetInstance()->UPkeyPressed = true;
-				foodChoice = static_cast<FOODCHOICES>(foodChoice - 1);
-				if (foodChoice < FC_SALAD)
-					foodChoice = FC_BACK;
-			}
-			else if (!Application::IsKeyPressed(VK_UP) && SharedData::GetInstance()->UPkeyPressed)
-			{
-				SharedData::GetInstance()->UPkeyPressed = false;
-			}
+						 }
+						 else if (!Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
+						 {
+							 SharedData::GetInstance()->ENTERkeyPressed = false;
+						 }
+						 // RIGHT BUTTON
+						 if (Application::IsKeyPressed(VK_DOWN) && !SharedData::GetInstance()->DNkeyPressed)
+						 {
+							 SharedData::GetInstance()->DNkeyPressed = true;
+							 foodChoice = static_cast<FOODCHOICES>(1 + foodChoice);
+							 if (foodChoice > FC_BACK)
+								 foodChoice = FC_SALAD;
+							 tamagucciFood = false;
+						 }
+						 else if (!Application::IsKeyPressed(VK_DOWN) && SharedData::GetInstance()->DNkeyPressed)
+						 {
+							 SharedData::GetInstance()->DNkeyPressed = false;
+						 }
 
-			// ENTER BUTTON
-			if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
-			{
-				SharedData::GetInstance()->ENTERkeyPressed = true;
-				if (foodChoice == FC_BACK)
-					menuState = FIRSTMENU;
-			}
-			else if (!Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
-			{
-				SharedData::GetInstance()->ENTERkeyPressed = false;
-			}
+						 // LEFT BUTTON
+						 if (Application::IsKeyPressed(VK_UP) && !SharedData::GetInstance()->UPkeyPressed)
+						 {
+							 SharedData::GetInstance()->UPkeyPressed = true;
+							 foodChoice = static_cast<FOODCHOICES>(foodChoice - 1);
+							 if (foodChoice < FC_SALAD)
+								 foodChoice = FC_BACK;
+							 tamagucciFood = false;
+						 }
+						 else if (!Application::IsKeyPressed(VK_UP) && SharedData::GetInstance()->UPkeyPressed)
+						 {
+							 SharedData::GetInstance()->UPkeyPressed = false;
+						 }
+					 }
 
+		}
+			break;
+		case SLEEP:
+		{
+					  // ENTER BUTTON
+					  if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
+					  {
+						  SharedData::GetInstance()->ENTERkeyPressed = true;
+						  sleep = false;
+						  cout << "Sleep";
+						  //ResetTamagotchi();
+							  menuState = FIRSTMENU;
+					  }
+					  else if (!Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
+					  {
+						  SharedData::GetInstance()->ENTERkeyPressed = false;
+					  }
 		}
 			break;
 		case ENTERTAINMENT:
@@ -231,7 +320,6 @@ void TAMAGUCCI::GetTamagucciInput()
 				{
 					SharedData::GetInstance()->UPkeyPressed = false;
 				}
-
 				// ENTER BUTTON
 				if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 				{
@@ -239,18 +327,28 @@ void TAMAGUCCI::GetTamagucciInput()
 					if (gameChoice == G_BACK)
 					{
 						menuState = FIRSTMENU;
-					}else
+					}
+					else
 						tamagotchiState = GAME;
 				}
 				else if (!Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
 				{
 					SharedData::GetInstance()->ENTERkeyPressed = false;
 				}
+				
 		}
 			break;
 		}
 		break;
 	}
+}
+bool TAMAGUCCI::GetSleep()
+{
+	return sleep;
+}
+bool TAMAGUCCI::GetShowFood()
+{
+	return tamagucciFood;
 }
 int TAMAGUCCI::GetScore()
 {

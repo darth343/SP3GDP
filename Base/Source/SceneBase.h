@@ -67,6 +67,20 @@ public:
 		GEO_NPCPIC,
 		GEO_NPCPIC2,
 		GEO_NPCPIC3,
+
+		GEO_LOGO,
+		GEO_MENUBG,
+		GEO_MENUPLAY,
+		GEO_MENUOPT,
+		GEO_MENUQUIT,
+		GEO_MENUSTORY,
+		GEO_MENUINST,
+		GEO_SALAD,
+		GEO_HAMGURGER,
+		GEO_PORK,
+		GEO_TILESET1,
+		GEO_SLASHANIMATION,
+		GEO_STABANIMATION,
 		GEO_BATTLESCENE,
 		GEO_BATTLEARROW,
 		GEO_BATTLEMONSTER,
@@ -78,9 +92,12 @@ public:
 		GEO_ENERGYFRAME,
 		GEO_HAPPINESSFRAME,
 		GEO_TAMHAPPY,
+		GEO_TAMFOOD,
+		GEO_TAMSLEEP,
 		GEO_TAMBG1,
 		GEO_TAMBG2,
 		GEO_TAMLIVINGROOM,
+		GEO_BLACK,
 		GEO_STAR,
 		GEO_POOP,
 		GEO_INVENTORYBACKGROUND,
@@ -92,6 +109,7 @@ public:
 		GEO_CHESTPLATE,
 		GEO_BAR,
 		GEO_POTION,
+		GEO_TRAP,
 		GEO_GREENTILE,
 		GEO_REDTILE,
 		GEO_BLUETILE,
@@ -107,6 +125,7 @@ public:
 	virtual void Exit();
 
 	void RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y);
+	void RenderTile(Mesh* mesh, unsigned tileID, float size, float x, float y);
 	void RenderBackground(Mesh* mesh);
 	void Render2DMesh(Mesh *mesh, const bool enableLight, const float size = 1.0f, const float x = 0.0f, const float y = 0.0f, const bool flip = false);
 	void Render2DMeshWScale(Mesh *mesh, const bool enableLight, const float sizeX, const float sizeY, const float x = 0.0f, const float y = 0.0f, const bool flip = false);

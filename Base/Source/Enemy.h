@@ -35,7 +35,6 @@ enum ENEMY_STATES
 	void SetAttackDamage(int);
 	void SetDef(int);
 	int GetDef();
-	int GetAttackDamage();
 	float GetMaxHealth();
 	void Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap);
 	friend std::ostream& operator<<(std::ostream& cout, ENEMY_STATES state);

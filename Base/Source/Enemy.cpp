@@ -1,7 +1,7 @@
 #include "Enemy.h"
 #include "Application.h"
 
-const float MOVEMENTSPEED = 200.f;
+const float MOVEMENTSPEED = 0.f;
 const float IDLE_TIMER = 1.0;
 const int TILES_BEFORECHASING = 7;
 const int TILES_BEFOREPATROLLING = 12;
@@ -100,6 +100,11 @@ void Enemy::MoveUpDown(double dt, bool up)
 //	attackDamage = dmg;
 //}
 
+float Enemy::GetDamage()
+{
+	return monster.getDamage();
+}
+
 void Enemy::TakeDamage(int damage)
 {
 	monster.takeDamage(damage);
@@ -110,10 +115,8 @@ bool Enemy::GetFlipStatus()
 	return flip;
 }
 
-
-int Enemy::GetAttackDamage()
+void Enemy::SetDamage(float dmg)
 {
-	return monster.getDamage();
 }
 
 float Enemy::GetHealth()

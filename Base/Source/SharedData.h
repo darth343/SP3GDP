@@ -1,7 +1,6 @@
 #ifndef SHARED_DATA_H
 #define SHARED_DATA_H
 
-#include "EquipmentManager.h"
 #include "Inventory.h"
 #include "Monster.h"
 #include "Enemy.h"
@@ -28,7 +27,7 @@ public:
 		return &data;
 	}
 	GAMESTATE gameState;
-
+	bool stateCheck = false;
 	
 	Monster monType; // Monster Calls
 	Inventory inventory;
@@ -38,20 +37,34 @@ public:
 	bool LEFTkeyPressed;
 	bool RIGHTkeyPressed;
 	bool ENTERkeyPressed;
+	bool BACKkeyPressed;
 	bool IkeyPressed;
+
+	bool BS_SlashRender;
+	bool BS_StabRender;
+	bool enemyHitPlayer;
+	bool enemyTurn;
+	bool playerTurn;
 
 
 private:
 	SharedData()
 	{
 		//Instantiate
-		gameState = GAME_S1;
+		gameState = MENU;
 		UPkeyPressed = false;
 		DNkeyPressed = false;
 		LEFTkeyPressed = false;
 		RIGHTkeyPressed = false;
 		ENTERkeyPressed = false;
+		BACKkeyPressed = false;
 		IkeyPressed = false;
+
+		BS_StabRender = false;
+		BS_SlashRender = false;
+		enemyTurn = false;
+		playerTurn = true;
+		enemyHitPlayer = false;
 	}
 	~SharedData()
 	{
