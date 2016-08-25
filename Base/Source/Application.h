@@ -3,8 +3,11 @@
 #define APPLICATION_H
 
 #include "timer.h"
-#include "SceneText.h"
 
+#include "SharedData.h"
+#include "SceneText.h"
+#include "Scene1.h"
+#include "SceneMenu.h"
 
 class Application
 {
@@ -44,9 +47,10 @@ private:
 	double m_dAccumulatedTime_ThreadTwo;
 
 	// The handler for the scene
+
 	SceneText *scene;
 
-
+	Scene *scene;
 
 };
 

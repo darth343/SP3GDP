@@ -56,19 +56,12 @@ public:
 	NPC_ANIMATION GetAnimationState();
 	NPC_DIALOGUE GetDialogueState();
 	int maxState = 1;
-
 private:
 	float npcID;
 	int collideWithNPC;
 	int num;
-	bool npc1;
-	bool npc2;
-	bool npc3;
 	bool moveLeft;
 	bool moveRight;
-	bool moveUp;
-	bool moveDown;
-	bool emptyString = false;
 	string npcDialogue;
 	vector<NPC*>npcs;
 	NPC_ANIMATION npcAnimationState;

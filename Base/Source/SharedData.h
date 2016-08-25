@@ -30,7 +30,7 @@ public:
 		return &data;
 	}
 	GAMESTATE gameState;
-
+	bool stateCheck = false;
 	
 	EquipmentManager equipManager; // Equipment Functions
 	Monster monType; // Monster Calls
@@ -48,12 +48,18 @@ public:
 	bool BACKkeyPressed;
 	bool IkeyPressed;
 
+	bool BS_SlashRender;
+	bool BS_StabRender;
+	bool enemyHitPlayer;
+	bool enemyTurn;
+	bool playerTurn;
+
 
 private:
 	SharedData()
 	{
 		//Instantiate
-		gameState = GAME_S1;
+		gameState = MENU;
 		UPkeyPressed = false;
 		DNkeyPressed = false;
 		LEFTkeyPressed = false;
@@ -61,9 +67,16 @@ private:
 		ENTERkeyPressed = false;
 		BACKkeyPressed = false;
 		IkeyPressed = false;
+
 		soundFootstep = nullptr;
 		worldBGM = nullptr;
-	
+
+		BS_StabRender = false;
+		BS_SlashRender = false;
+		enemyTurn = false;
+		playerTurn = true;
+		enemyHitPlayer = false;
+
 	}
 	~SharedData()
 	{

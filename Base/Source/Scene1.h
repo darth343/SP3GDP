@@ -1,5 +1,5 @@
-#ifndef SCENE_TEXT_H
-#define SCENE_TEXT_H
+#ifndef SCENE_1_H
+#define SCENE_1_H
 #include "SceneBase.h"
 
 #include "Camera3.h"
@@ -19,7 +19,7 @@
 
 #include "SharedData.h"
 
-class SceneText : public SceneBase
+class Scene1 : public SceneBase
 {
 	enum GAMESTATE_TYPE
 	{
@@ -44,8 +44,8 @@ class SceneText : public SceneBase
 	};
 
 public:
-	SceneText();
-	~SceneText();
+	Scene1();
+	~Scene1();
 
 	virtual void Init();
 	virtual void Update(double dt);
@@ -78,10 +78,9 @@ public:
 	void ItemScreenUpdate(double dt);
 	void EquipScreenUpdate(double dt);
 	
-	int currState = 1;
+
 	void RenderTamagucci();
 	void TamagucciUpdate(double dt);
-
 
 	float GetBattleMonsterPosX();
 	float GetBattleMonsterPosY();
@@ -134,7 +133,8 @@ private:
 
 	bool monsterScaleUp;
 
-	int currState = 1;
+
+	int currState = 1; //The current state of npc dialogue
 
 	int itemCursorPos = 0;
 	float cursorDebounce = 0;
