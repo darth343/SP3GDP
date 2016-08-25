@@ -40,6 +40,7 @@ public:
 	ISound* title;
 
 	std::vector<Enemy*> enemyInventory;
+	bool ZKeyPressed;
 	bool UPkeyPressed;
 	bool DNkeyPressed;
 	bool LEFTkeyPressed;
@@ -63,6 +64,7 @@ private:
 	{
 		//Instantiate
 		gameState = MENU;
+		ZKeyPressed = false;
 		UPkeyPressed = false;
 		DNkeyPressed = false;
 		LEFTkeyPressed = false;

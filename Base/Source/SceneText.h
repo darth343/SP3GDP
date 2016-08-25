@@ -113,6 +113,7 @@ private:
 	TAMAGUCCI* tamdrop;
 	Pathfinder testpathfinder;
 	TAMAGUCCI tamagucci;
+	GameObject* touch;
 	vector<GameObject *> m_goList;
 	int npcPic = 0; //Which npc picture to show on the dialogue
 	float enemyCatchPercentage;
@@ -141,6 +142,7 @@ private:
 	float maxHpScale;
 	Vector3 hpPos;
 	float renderedHp;
+	bool capturedMonster;
 
 	float maxMpScale;
 	Vector3 mpPos;
