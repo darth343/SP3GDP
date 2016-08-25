@@ -46,6 +46,9 @@ public:
 	bool enemyTurn;
 	bool playerTurn;
 
+	int hungerLevel;
+	int energyLevel;
+	int happinessLevel;
 
 private:
 	SharedData()
@@ -65,6 +68,7 @@ private:
 		enemyTurn = false;
 		playerTurn = true;
 		enemyHitPlayer = false;
+		
 	}
 	~SharedData()
 	{

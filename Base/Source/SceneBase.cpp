@@ -20,8 +20,7 @@ void SceneBase::Init()
 	// Blue background
 	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
 	// Enable depth test
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -244,13 +243,15 @@ void SceneBase::Init()
 	meshList[GEO_BATTLEMONSTER] = MeshBuilder::Generate2DMesh("GEO_BATTLESCENE", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
 	meshList[GEO_BATTLEMONSTER]->textureID = LoadTGA("Image//battleMonster.tga");
 	meshList[GEO_BATTLEDIALOUGEBACKGROUND] = MeshBuilder::Generate2DMesh("GEO_BATTLEDIALOUGEBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
-	meshList[GEO_BATTLEDIALOUGEBACKGROUND]->textureID = LoadTGA("Image//dialougeBG.tga");
+	meshList[GEO_BATTLEDIALOUGEBACKGROUND]->textureID = LoadTGA("Image//dialogueBox.tga");
 	meshList[GEO_BATTLEARROW] = MeshBuilder::Generate2DMesh("GEO_BATTLEARROW", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
 	meshList[GEO_BATTLEARROW]->textureID = LoadTGA("Image//arrow.tga");
-
+	meshList[GEO_HPBARDESIGN] = MeshBuilder::Generate2DMesh("GEO_HPBARDESIGN", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_HPBARDESIGN]->textureID = LoadTGA("Image//hpbg2.tga");
+	meshList[GEO_MPBAR] = MeshBuilder::GenerateCube("MPBAR", Color(0, 1, 0), 20.0f);
+	meshList[GEO_HPBAR] = MeshBuilder::GenerateQuad("HPBAR", Color(0, 1, 0), 20.0f);
 	meshList[GEO_STABANIMATION] = MeshBuilder::GenerateSpriteAnimation("stab", 1, 8);
 	meshList[GEO_STABANIMATION]->textureID = LoadTGA("Image//stabAnimation.tga");
-
 	meshList[GEO_SLASHANIMATION] = MeshBuilder::GenerateSpriteAnimation("slash", 1, 10);
 	meshList[GEO_SLASHANIMATION]->textureID = LoadTGA("Image//slashAnimation2.tga");
 
@@ -413,7 +414,7 @@ void SceneBase::RenderTextOnScreen(Mesh* mesh, std::string text, Color color, fl
 	if (!mesh || mesh->textureID <= 0)
 		return;
 	Mtx44 ortho;
-	ortho.SetToOrtho(0, 800, 0, 600, -10, 10);
+	ortho.SetToOrtho(0, 800, 0, 600, -10, 100);
 	projectionStack.PushMatrix();
 	projectionStack.LoadMatrix(ortho);
 	viewStack.PushMatrix();
@@ -455,7 +456,7 @@ void SceneBase::RenderTextOnScreen(Mesh* mesh, std::string text, Color color, fl
 	projectionStack.PopMatrix();
 }
 
-void SceneBase::Render2DMeshWScale(Mesh *mesh, const bool enableLight, const float sizeX, const float sizeY, const float x, const float y, const bool flip)
+void SceneBase::Render2DMeshWScale(Mesh *mesh, const bool enableLight, const float sizeX, const float sizeY, const float x, const float y, const bool flip, const float offset)
 {
 	glDisable(GL_CULL_FACE);
 	Mtx44 ortho;
@@ -468,7 +469,7 @@ void SceneBase::Render2DMeshWScale(Mesh *mesh, const bool enableLight, const flo
 	modelStack.LoadIdentity();
 	if (flip)
 	{
-		modelStack.Translate(x + 0, y, 0);
+		modelStack.Translate(x + offset, y, 0);
 	}
 	else
 	{
@@ -505,7 +506,6 @@ void SceneBase::Render2DMeshWScale(Mesh *mesh, const bool enableLight, const flo
 	projectionStack.PopMatrix();
 	glEnable(GL_CULL_FACE);
 }
-
 void SceneBase::Render2DMesh(Mesh *mesh, bool enableLight, float size, float x, float y, bool flip)
 {
 	Mtx44 ortho;
@@ -549,12 +549,12 @@ void SceneBase::Render2DMesh(Mesh *mesh, bool enableLight, float size, float x, 
 
 void SceneBase::RenderBackground(Mesh* mesh)
 {
-	Render2DMesh(mesh, false, 1.0f); // World Overlay Background
+	Render2DMesh(mesh, false, 1.0f,0,0,false); // World Overlay Background
 }
 
 void SceneBase::Render()
 {
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 	Mtx44 perspective;
 	perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
 	//perspective.SetToOrtho(-80, 80, -60, 60, -1000, 1000);

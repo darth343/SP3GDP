@@ -33,7 +33,17 @@ public:
 	float getDamage();
 	float getDefense();
 	friend std::ostream& operator<<(std::ostream& cout, EQUIPMENT_TYPE type);
+	int GetTamHappy();
+	int GetTamEnergy();
+	int GetTamHunger();
+	void SetTamHappy(int&);
+	void SetTamHunger(int&);
+	void SetTamEnergy(int&);
+
 private:
+	int TamHappy;
+	int TamHunger;
+	int TamEnergy;
 	string name;
 	Monster monster;
 	EQUIPMENT_TYPE type;

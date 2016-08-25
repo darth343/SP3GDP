@@ -11,10 +11,25 @@ Equipment::Equipment()
 , defense(-1)
 , type(SWORD)
 {
+	TamHappy = 5;
+	TamHunger = 5;
+	TamEnergy = 5;
 }
 
 Equipment::~Equipment()
 {
+}
+int Equipment::GetTamEnergy()
+{
+	return TamEnergy;
+}
+int Equipment::GetTamHappy()
+{
+	return TamHappy;
+}
+int Equipment::GetTamHunger()
+{
+	return TamHunger;
 }
 
 void Equipment::reset()
