@@ -109,6 +109,12 @@ void SceneText::Init()
 	battleMonsterScale.Set(0.3, 0.3, 1);
 	monsterScaleUp = true;
 
+	hpScale = 17.4f;
+	hpPos.Set(209, 584, 0);
+
+	mpScale = 17.4f;
+	mpPos.Set(209, 524, 0);
+
 	for (int j = 0; j < 10; ++j)
 	{
 		Equipment* temp = new Equipment();
@@ -699,18 +705,31 @@ void SceneText::NPCUpdate(double dt)
 void SceneText::Update(double dt)
 {
 	SceneBase::Update(dt);
-	if (Application::IsKeyPressed('Z') && !SharedData::GetInstance()->UPkeyPressed)
+
+	//For Testing Purpose
+	if (Application::IsKeyPressed('Y'))
 	{
-		SharedData::GetInstance()->UPkeyPressed = true;
-		if (GS != TAMAGUCCI_SCREEN)
-			GS = TAMAGUCCI_SCREEN;
-		else
-			GS = TESTMAP;
+		hpScale += 0.1;
+		hpPos.x += 1;
 	}
-	else if (!Application::IsKeyPressed('Z') && SharedData::GetInstance()->UPkeyPressed)
+	if (Application::IsKeyPressed('U'))
 	{
-		SharedData::GetInstance()->UPkeyPressed = false;
+		hpScale -= 0.1;
+		hpPos.x -= 1;
 	}
+
+	//if (Application::IsKeyPressed('Z') && !SharedData::GetInstance()->UPkeyPressed)
+	//{
+	//	SharedData::GetInstance()->UPkeyPressed = true;
+	//	if (GS != TAMAGUCCI_SCREEN)
+	//		GS = TAMAGUCCI_SCREEN;
+	//	else
+	//		GS = TESTMAP;
+	//}
+	//else if (!Application::IsKeyPressed('Z') && SharedData::GetInstance()->UPkeyPressed)
+	//{
+	//	SharedData::GetInstance()->UPkeyPressed = false;
+	//}
 	switch (GS)
 	{
 	case TESTMAP:
@@ -1147,6 +1166,8 @@ void SceneText::RenderBattleScene()
 		Render2DMeshWScale(meshList[GEO_SLASHANIMATION], false, 100.0f, 100.0f, battleMonsterPos.x, battleMonsterPos.y, false);
 	if (SharedData::GetInstance()->BS_StabRender)
 		Render2DMeshWScale(meshList[GEO_STABANIMATION], false, 100.0f, 100.0f, battleMonsterPos.x, battleMonsterPos.y, false);
+	Render2DMeshWScale(meshList[GEO_HPBARDESIGN], false, 0.5f, 0.1f, 0, 540, false);
+	Render2DMeshWScale(meshList[GEO_HPBAR], false, hpScale, 1.0f, hpPos.x, hpPos.y, false);
 
 
 	if (GS == BATTLE)

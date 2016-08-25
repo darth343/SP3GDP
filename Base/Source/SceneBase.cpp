@@ -244,10 +244,12 @@ void SceneBase::Init()
 	meshList[GEO_BATTLEDIALOUGEBACKGROUND]->textureID = LoadTGA("Image//dialogueBox.tga");
 	meshList[GEO_BATTLEARROW] = MeshBuilder::Generate2DMesh("GEO_BATTLEARROW", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
 	meshList[GEO_BATTLEARROW]->textureID = LoadTGA("Image//arrow.tga");
-
+	meshList[GEO_HPBARDESIGN] = MeshBuilder::Generate2DMesh("GEO_HPBARDESIGN", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_HPBARDESIGN]->textureID = LoadTGA("Image//hpbg2.tga");
+	meshList[GEO_MPBAR] = MeshBuilder::GenerateCube("MPBAR", Color(0, 1, 0), 20.0f);
+	meshList[GEO_HPBAR] = MeshBuilder::GenerateQuad("HPBAR", Color(0, 1, 0), 20.0f);
 	meshList[GEO_STABANIMATION] = MeshBuilder::GenerateSpriteAnimation("stab", 1, 8);
 	meshList[GEO_STABANIMATION]->textureID = LoadTGA("Image//stabAnimation.tga");
-
 	meshList[GEO_SLASHANIMATION] = MeshBuilder::GenerateSpriteAnimation("slash", 1, 10);
 	meshList[GEO_SLASHANIMATION]->textureID = LoadTGA("Image//slashAnimation2.tga");
 

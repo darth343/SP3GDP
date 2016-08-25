@@ -133,6 +133,11 @@ private:
 	Vector3 battleMonsterScale;
 	bool monsterScaleUp;
 
+	float hpScale;
+	Vector3 hpPos;
+	float mpScale;
+	Vector3 mpPos;
+
 	int itemCursorPos = 0;
 	float cursorDebounce = 0;
 
