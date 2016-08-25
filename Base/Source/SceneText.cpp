@@ -84,11 +84,11 @@ void SceneText::Init()
 	for (int i = 0; i < npcvec.size(); i++)
 	{
 		if (npcvec[i]->GetID() == 1)
-			npcvec[i]->position.Set(500, 400, 1);
+			npcvec[i]->position.Set(500, 100, 1);
 		if (npcvec[i]->GetID() == 2)
 			npcvec[i]->position.Set(700, 200, 1);
 		if (npcvec[i]->GetID() == 3)
-			npcvec[i]->position.Set(100, 600, 1);
+			npcvec[i]->position.Set(100, 180, 1);
 		npcvec[i]->currDia = 1;
 
 		m_goList.push_back(dynamic_cast<NPC*>(npcvec[i]));
@@ -750,7 +750,7 @@ void SceneText::Update(double dt)
 	if (Application::IsKeyPressed(VK_F6) && !f6press)
 	{
 		f6press = true;
-		m_cMap->LoadMap("Image//MapData.csv");
+		m_cMap->LoadMap("Data//MapData.csv");
 	}
 	else if (!Application::IsKeyPressed(VK_F6) && f6press)
 	{
@@ -1256,6 +1256,7 @@ void SceneText::RenderBattleDialogue()
 		SharedData::GetInstance()->enemyTurn = true;
 		SharedData::GetInstance()->enemyHitPlayer = true;
 		SharedData::GetInstance()->playerTurn = false;
+		playerBattleDialogue = false;
 	}
 }
 

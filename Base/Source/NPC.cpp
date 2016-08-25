@@ -167,8 +167,8 @@ void NPC::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 			{
 				if (moveLeft)
 				{
-					this->position.x -= 40 * dt;
-					if (this->position.x < 80)
+					this->position.x -= 20 * dt;
+					if (this->position.x < 685)
 					{
 						moveLeft = false;
 						moveRight = true;
@@ -176,8 +176,8 @@ void NPC::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 				}
 				if (this->moveRight)
 				{
-					this->position.x += 40 * dt;
-					if (this->position.x > 200)
+					this->position.x += 20 * dt;
+					if (this->position.x > 820)
 					{
 						moveLeft = true;
 						moveRight = false;
@@ -198,7 +198,7 @@ void NPC::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 			{
 				if (moveLeft)
 				{
-					this->position.x -= 40 * dt;
+					this->position.x -= 10 * dt;
 					if (this->position.x < 80)
 					{
 						moveLeft = false;
@@ -207,7 +207,7 @@ void NPC::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 				}
 				if (this->moveRight)
 				{
-					this->position.x += 40 * dt;
+					this->position.x += 10 * dt;
 					if (this->position.x > 200)
 					{
 						moveLeft = true;
