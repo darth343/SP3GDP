@@ -134,12 +134,12 @@ void SceneMenu::Render()
 	RenderBackground(meshList[GEO_MENUBG]);
 	int x = 380;
 
-	Render2DMeshWScale(meshList[GEO_LOGO], false, 350, 100, 200, 500, false);
-	Render2DMeshWScale(meshList[GEO_MENUPLAY], false, 150, 60, 600, x, false);
-	Render2DMeshWScale(meshList[GEO_MENUSTORY], false, 170, 60, 600, x-70, false);
-	Render2DMeshWScale(meshList[GEO_MENUINST], false, 270, 60, 600, x - 140, false);
-	Render2DMeshWScale(meshList[GEO_MENUOPT], false, 200, 60, 600, x-210, false);
-	Render2DMeshWScale(meshList[GEO_MENUQUIT], false, 150, 60, 600, x-280, false);
+	Render2DMeshWScale(meshList[GEO_LOGO], false, 350, 100, 200, 500, false,2);
+	Render2DMeshWScale(meshList[GEO_MENUPLAY], false, 150, 60, 600, x, false,2);
+	Render2DMeshWScale(meshList[GEO_MENUSTORY], false, 170, 60, 600, x-70, false,2);
+	Render2DMeshWScale(meshList[GEO_MENUINST], false, 270, 60, 600, x - 140, false,2);
+	Render2DMeshWScale(meshList[GEO_MENUOPT], false, 200, 60, 600, x-210, false,2);
+	Render2DMeshWScale(meshList[GEO_MENUQUIT], false, 150, 60, 600, x-280, false,2);
 
 	// Check for which GameState we are in
 }

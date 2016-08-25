@@ -409,15 +409,48 @@ void SceneText::GOupdate(double dt)
 			if (temp->collideWhichNPC() == npcID)
 				temp->SetState(currState);
 			
-			if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
+			if (temp->collisionDetected && Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 			{
-				if (renderNPCstuff)
 					MS = IN_DIALOUGE;			
 				SharedData::GetInstance()->ENTERkeyPressed = true;
 				temp->ScrollDialogue(dialogueNum);
 			}
 			else if (!Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
 				SharedData::GetInstance()->ENTERkeyPressed = false;
+
+			if (temp->GetDialogueState() == temp->currState && temp->GetID() == temp->collideWhichNPC())
+			{
+				if (dialogueNum == temp->maxDia)
+				{
+					npctalk.str("");
+					npctalk << "Enter to Exit";
+				}
+				npcPic = temp->collideWhichNPC();
+
+				if (temp->GetNum() == dialogueNum)
+				{
+					npctalk.str("");
+					npctalk << temp->GetDialogue();
+					cout << npctalk.str() << endl;
+				}
+
+				if (dialogueNum >= 1 && dialogueNum <= temp->maxDia)
+				{
+					renderNPCstuff = true;
+				}
+				else if (dialogueNum >= temp->maxDia)
+				{
+					npctalk.str("");
+					if (temp->GetID() == temp->collideWhichNPC())
+					{
+						npcID = temp->collideWhichNPC();
+						currState = 2;
+						dialogueNum = 0;
+						renderNPCstuff = false;
+						MS = PLAY;
+					}
+				}
+			}
 		}
 	}
 }
@@ -757,6 +790,7 @@ void SceneText::RenderTestMap()
 
 	std::ostringstream ss;
 
+	RenderPlayer();
 	for (int i = 0; i < m_goList.size(); i++)
 	{
 		if (m_goList[i]->active == true)
@@ -771,6 +805,7 @@ void SceneText::RenderTestMap()
 			}
 			if (m_goList[i]->type == GameObject::GO_NPC)
 			{
+				NPC* temp = (NPC*)m_goList[i];
 				if (renderNPCstuff)
 				{
 					if (npcPic == 1)
@@ -779,56 +814,23 @@ void SceneText::RenderTestMap()
 						Render2DMeshWScale(meshList[GEO_NPCPIC2], false, 350, 350, 650, 220, false);
 					if (npcPic == 3)
 						Render2DMeshWScale(meshList[GEO_NPCPIC3], false, 350, 350, 650, 220, false);
-					Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false);
+					Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 0.9, 0.2, 30, 50, false);
 				}
-
-				NPC* temp = (NPC*)m_goList[i];
-				ss.str("");
-				ss.precision(5);
-
 				if (temp->GetID() == 1 && temp->GetNum() == 0)
-					Render2DMeshWScale(meshList[GEO_NPC1_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, temp->position.x - theHero->GetMapOffset().x, temp->position.y - theHero->GetMapOffset().y, temp->GetMoveRight());
+					Render2DMeshWScale(meshList[GEO_NPC1_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight());
 				if (temp->GetID() == 2 && temp->GetNum() == 0)
-					Render2DMeshWScale(meshList[GEO_NPC3_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, temp->position.x - theHero->GetMapOffset().x, temp->position.y - theHero->GetMapOffset().y, temp->GetMoveRight());
+					Render2DMeshWScale(meshList[GEO_NPC3_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight());
 				if (temp->GetID() == 3 && temp->GetNum() == 0)
-					Render2DMeshWScale(meshList[GEO_NPC2_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, temp->position.x - theHero->GetMapOffset().x, temp->position.y - theHero->GetMapOffset().y, temp->GetMoveRight());
-	
-				if (temp->GetDialogueState() == temp->currState && temp->GetID() == temp->collideWhichNPC())
-				{
-					if (dialogueNum == temp->maxDia)
-						ss << "Enter to Exit";
-					npcPic = temp->collideWhichNPC();
-
-					if (temp->GetNum() == dialogueNum)
-						ss << "Dialogue: " << temp->GetDialogue();
-
-					if (dialogueNum >= 1 && dialogueNum <= temp->maxDia)
-					{
-						renderNPCstuff = true;
-						RenderTextOnScreen(meshList[GEO_TEXT], "HELLO WORLD", Color(1, 0, 0), 30, 60, 100);
-					}
-					else if (dialogueNum >= temp->maxDia)
-					{
-						if (temp->GetID() == temp->collideWhichNPC())
-						{
-							npcID = temp->collideWhichNPC();
-							currState = 2;
-							dialogueNum = 0;
-							renderNPCstuff = false;
-							MS = PLAY;
-						}
-					}
+					Render2DMeshWScale(meshList[GEO_NPC2_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight());
 				}
+				RenderTextOnScreen(meshList[GEO_TEXT], npctalk.str(), Color(1, 0, 0), 30, 60, 100);
 			}
 			if (m_goList[i]->type == GameObject::GO_ENEMY)
 			{
 				Enemy* temp = (Enemy*)m_goList[i];
-				Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[0]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetFlipStatus());
+				Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[0]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetFlipStatus(),32);
 			}
 		}
-	}
-
-	RenderPlayer();
 
 	//On screen text
 	ss.str("");
@@ -1076,6 +1078,7 @@ void SceneText::renderTamagotchiMenu()
 
 void SceneText::renderTamagotchiGame()
 {
+	ostringstream ss;
 	switch (tamagucci.getGameChoice())
 	{
 	case TAMAGUCCI::CATCHING:
@@ -1083,6 +1086,8 @@ void SceneText::renderTamagotchiGame()
 		Render2DMeshWScale(meshList[GEO_STAR], false, tamagucci.GetTamDrop()->scale.x, tamagucci.GetTamDrop()->scale.y, tamagucci.GetTamDrop()->position.x, tamagucci.GetTamDrop()->position.y, false);
 		Render2DMeshWScale(meshList[GEO_POOP], false, tamagucci.GetTamDrop2()->scale.x, tamagucci.GetTamDrop2()->scale.y, tamagucci.GetTamDrop2()->position.x, tamagucci.GetTamDrop2()->position.y, false);
 		renderTamagotchiUI();
+		ss << "Score: " << tamagucci.GetScore() << "/ 20";
+		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 30, 50, 520);
 		break;
 	}
 }
@@ -1172,7 +1177,7 @@ void SceneText::RenderBattleScene()
 		{
 			Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false);
 
-			Render2DMeshWScale(meshList[GEO_BATTLEARROW], false, 0.1, 0.05, battleScene.GetArrowPosX(), battleScene.GetArrowPosY(), false);
+			Render2DMeshWScale(meshList[GEO_BATTLEARROW], false, 0.1, 0.05, battleScene.GetArrowPosX(), battleScene.GetArrowPosY(), false,2);
 
 			std::ostringstream ss;
 			ss.str("");

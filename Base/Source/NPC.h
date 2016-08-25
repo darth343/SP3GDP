@@ -48,16 +48,17 @@ public:
 	void ScrollDialogue(int&);
 	int collideWhichNPC();
 	void SetState(int&);
-	bool collisionDetected;
+	bool collisionDetected = false;
 	
 	bool enterPressed;
 	int currState = 1;
 	int dialogueNumber;
 	NPC_ANIMATION GetAnimationState();
 	NPC_DIALOGUE GetDialogueState();
-	int maxState = 1;
 private:
 	float npcID;
+	int maxState = 1;
+
 	int collideWithNPC;
 	int num;
 	bool moveLeft;

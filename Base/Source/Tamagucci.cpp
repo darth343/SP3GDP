@@ -17,15 +17,16 @@ TAMAGUCCI::TAMAGUCCI()
 	tamdrop2->position.Set(Math::RandFloatMinMax(0, 730), 650, 1);
 	tamdrop2->type = GameObject::GO_TAMDROP2;
 	tamdrop2->scale.Set(64, 64, 1);
-	hungerLevel = 5;
-	energyLevel = 5;
-	happinessLevel = 5;
 	direction = true;
 	randomPosSet = false;
 
 	tamfood = new GameObject;
 	tamfood->position.Set(Math::RandFloatMinMax(0, 730), 150, 0);
 	tamfood->scale.Set(64, 64, 1);
+
+	SharedData::GetInstance()->hungerLevel = 3;
+	SharedData::GetInstance()->energyLevel = 3;
+	SharedData::GetInstance()->happinessLevel = 3;
 }
 
 TAMAGUCCI::~TAMAGUCCI()
@@ -227,7 +228,9 @@ void TAMAGUCCI::GetTamagucciInput()
 					 {
 						 if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 						 {
+							 SharedData::GetInstance()->hungerLevel++;
 							 SharedData::GetInstance()->ENTERkeyPressed = true;
+							 SharedData::GetInstance()->energyLevel--;
 							 if (foodChoice != FC_BACK)
 							 {
 								 tamagucciFood = true;
@@ -281,9 +284,10 @@ void TAMAGUCCI::GetTamagucciInput()
 					  // ENTER BUTTON
 					  if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 					  {
+						  SharedData::GetInstance()->energyLevel++;
+						  SharedData::GetInstance()->hungerLevel--;
 						  SharedData::GetInstance()->ENTERkeyPressed = true;
 						  sleep = false;
-						  cout << "Sleep";
 						  //ResetTamagotchi();
 							  menuState = FIRSTMENU;
 					  }
@@ -298,7 +302,7 @@ void TAMAGUCCI::GetTamagucciInput()
 				// RIGHT BUTTON
 				if (Application::IsKeyPressed(VK_DOWN) && !SharedData::GetInstance()->DNkeyPressed)
 				{
-								  SharedData::GetInstance()->DNkeyPressed = true;
+					SharedData::GetInstance()->DNkeyPressed = true;
 					gameChoice = static_cast<GAMEOPTIONS>(1 + gameChoice);
 					if (gameChoice > G_BACK)
 						gameChoice = CATCHING;
@@ -357,17 +361,17 @@ int TAMAGUCCI::GetScore()
 
 int TAMAGUCCI::getHungerlevel()
 {
-	return hungerLevel;
+	return SharedData::GetInstance()->hungerLevel;
 }
 
 int TAMAGUCCI::getEnergylevel()
 {
-	return energyLevel;
+	return SharedData::GetInstance()->energyLevel;
 }
 
 int TAMAGUCCI::getHappinesslevel()
 {
-	return happinessLevel;
+	return SharedData::GetInstance()->happinessLevel;
 }
 
 void TAMAGUCCI::MiniGameUpdatePosition(double dt)
@@ -439,6 +443,9 @@ void TAMAGUCCI::MiniGame(double dt)
 	}
 	if (coolDown <= 0)
 	{
+		SharedData::GetInstance()->happinessLevel++;
+		SharedData::GetInstance()->hungerLevel--;
+		SharedData::GetInstance()->energyLevel--;
 		ResetTamagotchi();
 		GoBack = true;
 		minigame1Score = 0;

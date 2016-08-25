@@ -134,6 +134,9 @@ private:
 	bool monsterScaleUp;
 
 	int itemCursorPos = 0;
+	float cursorDebounce = 0;
+
+	ostringstream npctalk;
 	bool captured;
 };
 
