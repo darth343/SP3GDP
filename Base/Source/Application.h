@@ -48,8 +48,6 @@ private:
 
 	// The handler for the scene
 
-	SceneText *scene;
-
 	Scene *scene;
 
 };

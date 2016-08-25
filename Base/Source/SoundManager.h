@@ -11,8 +11,12 @@ public:
 	~SoundManager();
 
 	void Init();
-	void SoundPlay(const char * fileName, ISound ** soundType);
+	void SoundPlay(const char * fileName, ISound ** soundType, float volume, bool loop);
 	void SoundPause(ISound ** soundType);
+	void StopSingleSound(const char* fileName);
+	void StopAllSound();
+
+
 
 private:
 

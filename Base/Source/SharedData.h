@@ -38,6 +38,8 @@ public:
 	SoundManager soundManager;
 	ISound* soundFootstep;
 	ISound* worldBGM;
+	ISound* battleStart;
+	ISound* title;
 
 	std::vector<Enemy*> enemyInventory;
 	bool UPkeyPressed;
@@ -68,8 +70,10 @@ private:
 		BACKkeyPressed = false;
 		IkeyPressed = false;
 
-		soundFootstep = nullptr;
-		worldBGM = nullptr;
+		soundFootstep = NULL;
+		worldBGM = NULL;
+		battleStart = NULL;
+		title = NULL;
 
 		BS_StabRender = false;
 		BS_SlashRender = false;

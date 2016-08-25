@@ -25,15 +25,18 @@ void SoundManager::Init()
 		return;
 }
 
-void SoundManager::SoundPlay(const char*  fileName, ISound ** soundType)
+void SoundManager::SoundPlay(const char*  fileName, ISound ** soundType, float volume, bool loop)
 {
 	//Sounds
 	if ((*soundType) == NULL)
-		(*soundType) = soundEngine->play2D(fileName, false, true);
+		(*soundType) = soundEngine->play2D(fileName, loop, true);
 	if ((*soundType)->getIsPaused() == true)
 		(*soundType)->setIsPaused(false);
 	else if ((*soundType)->isFinished() == true)
 		(*soundType) = NULL;
+	if ((*soundType))
+		(*soundType)->setVolume(volume);
+
 }
 
 void SoundManager::SoundPause(ISound ** soundType)
@@ -41,6 +44,16 @@ void SoundManager::SoundPause(ISound ** soundType)
 	if ((*soundType) != NULL && (*soundType)->getIsPaused() == false)
 		(*soundType)->setIsPaused(true);
 	(*soundType) = NULL;
+}
+
+void SoundManager::StopAllSound()
+{
+	soundEngine->removeAllSoundSources();
+}
+
+void SoundManager::StopSingleSound(const char* fileName)
+{
+	soundEngine->removeSoundSource(fileName);
 }
 
 #endif

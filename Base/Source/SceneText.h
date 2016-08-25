@@ -134,8 +134,6 @@ private:
 
 	bool monsterScaleUp;
 
-	int currState = 1;
-
 	int itemCursorPos = 0;
 	float cursorDebounce = 0;
 

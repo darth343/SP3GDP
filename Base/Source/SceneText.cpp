@@ -305,6 +305,8 @@ void SceneText::CatchUpdate(double dt)
 void SceneText::EnterBattleScene(Enemy* enemy)
 {
 	battleScene.SetBattleStart(true);
+	SharedData::GetInstance()->soundManager.StopAllSound();
+	SharedData::GetInstance()->soundManager.SoundPlay("Sound/battleStart.mp3", &SharedData::GetInstance()->battleStart, 0.3f, true);
 	EnemyInBattle = enemy;
 	GS = BATTLE;
 }
@@ -325,7 +327,7 @@ void SceneText::PlayerUpdate(double dt)
 	if (Application::IsKeyPressed('W') || Application::IsKeyPressed('S') || Application::IsKeyPressed('A') || Application::IsKeyPressed('D'))
 	{
 		cout << SharedData::GetInstance()->soundFootstep << endl;
-		SharedData::GetInstance()->soundManager.SoundPlay("Sound/footstepgrass.wav", &SharedData::GetInstance()->soundFootstep);
+		SharedData::GetInstance()->soundManager.SoundPlay("Sound/footstepgrass.wav", &SharedData::GetInstance()->soundFootstep, 1.0f, false);
 	}
 	else
 	{
@@ -724,7 +726,7 @@ void SceneText::MapUpdate(double dt)
 	{
 		PlayerUpdate(dt);
 		GOupdate(dt);
-		SharedData::GetInstance()->soundManager.SoundPlay("Sound/Wind.mp3", &SharedData::GetInstance()->worldBGM);
+		SharedData::GetInstance()->soundManager.SoundPlay("Sound/route1.mp3", &SharedData::GetInstance()->worldBGM, 0.3f, false);
 	}
 
 	PlayerUpdate(dt);
@@ -744,7 +746,7 @@ void SceneText::NPCUpdate(double dt)
 void SceneText::Update(double dt)
 {
 
-	if (Application::IsKeyPressed('Z') && !SharedData::GetInstance()->UPkeyPressed)
+	/*if (Application::IsKeyPressed('Z') && !SharedData::GetInstance()->UPkeyPressed)
 	{
 		SharedData::GetInstance()->UPkeyPressed = true;
 		if (GS != TAMAGUCCI_SCREEN)
@@ -755,7 +757,7 @@ void SceneText::Update(double dt)
 	else if (!Application::IsKeyPressed('Z') && SharedData::GetInstance()->UPkeyPressed)
 	{
 		SharedData::GetInstance()->UPkeyPressed = false;
-	}
+	}*/
 	switch (GS)
 	{
 	case TESTMAP:
@@ -763,7 +765,7 @@ void SceneText::Update(double dt)
 		break;
 	case BATTLE:
 		battleScene.UpdateBattleSystem(SharedData::GetInstance()->UPkeyPressed, SharedData::GetInstance()->DNkeyPressed, SharedData::GetInstance()->LEFTkeyPressed, SharedData::GetInstance()->RIGHTkeyPressed, SharedData::GetInstance()->ENTERkeyPressed, theHero, EnemyInBattle);
-
+		//SharedData::GetInstance()->soundManager.SoundPlay("Sound/battleStart.mp3", &SharedData::GetInstance()->battleStart, 0.3f, true);
 		if (SharedData::GetInstance()->BS_SlashRender)
 		{
 			SpriteAnimation *slashAnimation = dynamic_cast<SpriteAnimation*>(meshList[GEO_SLASHANIMATION]);
