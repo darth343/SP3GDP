@@ -118,8 +118,8 @@ void SceneText::Init()
 	for (int j = 0; j < 10; ++j)
 	{
 		Equipment* temp = new Equipment();
-		Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::ARMOUR);
-		//Equipment::EQUIPMENT_TYPE randType = Equipment::ARMOUR;
+		Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::TOTAL_ETYPE -1);
+		//Equipment::EQUIPMENT_TYPE randType = Equipment::LEG;
 		stringstream ss;
 		ss << Monster::getMonster(Monster::CEREBUS).getName() << " " << randType;
 		temp->SetName(ss.str());
@@ -559,6 +559,9 @@ void SceneText::renderInventoryItems()
 		case Equipment::HELMET:
 			Render2DMeshWScale(meshList[GEO_HELMET], false, 44.5, 44.5, 426.5 + pos.x * 46, 254 + -pos.y * 46, false);
 			break;
+		case Equipment::LEG:
+			Render2DMeshWScale(meshList[GEO_LEG], false, 44.5, 44.5, 426.5 + pos.x * 46, 254 + -pos.y * 46, false);
+			break;
 		}
 	}
 
@@ -594,6 +597,11 @@ void SceneText::renderInventoryItems()
 	if (SharedData::GetInstance()->inventory.getHead())
 	{
 		Render2DMeshWScale(meshList[GEO_HELMET], false, 44.5, 44.5, 426.5 + 47, 254 + 151, false);
+	}
+
+	if (SharedData::GetInstance()->inventory.getLeg())
+	{
+		Render2DMeshWScale(meshList[GEO_LEG], false, 44.5, 44.5, 426.5 + 45.5, 254 + 59, false);
 	}
 
 	stringstream ss;
@@ -707,7 +715,7 @@ void SceneText::NPCUpdate(double dt)
 void SceneText::Update(double dt)
 {
 	SceneBase::Update(dt);
-
+	m_cMap->LoadMap("Image//MapData.csv");
 	//For Testing Purpose
 	if (Application::IsKeyPressed('Y'))
 	{
@@ -1304,7 +1312,7 @@ void SceneText::RenderTileMap(CMap* map, Vector3 speed)
 		{
 			if (map->theMap[y][x].BlockID != 0)
 			{
-				RenderTile(meshList[GEO_TILESET1], map->theMap[y][x].BlockID, 32, x*map->GetTileSize() - (theHero->GetMapOffset().x * speed.x), y*map->GetTileSize() - (theHero->GetMapOffset().y* speed.y));
+				RenderTile(meshList[GEO_TILESET3], map->theMap[y][x].BlockID, 32, x*map->GetTileSize() - (theHero->GetMapOffset().x * speed.x), y*map->GetTileSize() - (theHero->GetMapOffset().y* speed.y));
 			}
 		}
 	}

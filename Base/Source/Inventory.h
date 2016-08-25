@@ -49,6 +49,7 @@ public:
 	Equipment* getLeftArm();
 	Equipment* getRightArm();
 	Equipment* getArmour();
+	Equipment* getLeg();
 	vector<Equipment*> EQinventory;
 	vector<string> options;
 private:

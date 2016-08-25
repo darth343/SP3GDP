@@ -14,6 +14,7 @@ Inventory::Inventory(Vector3 scale)
 	leftArm = NULL;
 	rightArm = NULL;
 	armour = NULL;
+	leggings = NULL;
 }
 
 Inventory::~Inventory()
@@ -158,6 +159,7 @@ void Inventory::UpdateInput()
 					break;
 				case Equipment::HELMET:
 				case Equipment::ARMOUR:
+				case Equipment::LEG:
 					options.push_back("EQUIP");
 					options.push_back("DISCARD");
 					options.push_back("BACK");
@@ -266,6 +268,11 @@ Equipment* Inventory::getLeftArm()
 	return leftArm;
 }
 
+Equipment* Inventory::getLeg()
+{
+	return leggings;
+}
+
 int Inventory::GetTotalATK()
 {
 	int attack = 0;
@@ -368,6 +375,23 @@ void Inventory::EquipItem(string itemType)
 				*armour = *equipment;
 				removeFromInventory(equipment);
 
+			}
+		}
+
+		if (equipment->getType() == Equipment::LEG)
+		{
+			Equipment* temp;
+			if (leggings)
+			{
+				temp = leggings;
+				leggings = equipment;
+				setEquipmentLookAt(temp);
+			}
+			else if (!leggings)
+			{
+				leggings = new Equipment();
+				*leggings = *equipment;
+				removeFromInventory(equipment);
 			}
 		}
 
