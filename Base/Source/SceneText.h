@@ -100,12 +100,13 @@ public:
 	void renderFirstTamagotchiFirstMenu(float yOffset = 0);
 	void renderTamagotchiGame();
 	void renderTamagotchiUI();
+	void renderInventoryItems();
+	void renderInventoryMenus();
 private:
 	NPC npc;
 	Gauge* greenbar;
 	Gauge* redbar;
 	Gauge* chargebar;
-	Enemy* theEnemy;
 	Enemy* EnemyInBattle;
 	TAMAGUCCI* tamtam;
 	TAMAGUCCI* tamdrop;
@@ -130,23 +131,12 @@ private:
 	BattleSystem battleScene;
 	Vector3 battleMonsterPos;
 	Vector3 battleMonsterScale;
-
-
-	bool UPkeyPressed;
-	bool LEFTkeyPressed;
-	bool RIGHTkeyPressed;
-	bool ENTERkeyPressed;
-	bool IkeyPressed;
-	bool BACKkeyPressed;
-
 	bool monsterScaleUp;
 
 
 	int currState = 1; //The current state of npc dialogue
 
 	int itemCursorPos = 0;
-	float cursorDebounce = 0;
-
 	bool captured;
 };
 

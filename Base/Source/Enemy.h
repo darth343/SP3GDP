@@ -8,7 +8,7 @@
 class Enemy : public GameObject
 {
 public:
-	Enemy(Monster, Vector3 scale = Vector3(1, 1, 1));
+	Enemy(Monster monster, Vector3 scale = Vector3(1, 1, 1));
 	~Enemy();
 
 enum ENEMY_STATES
@@ -20,15 +20,7 @@ enum ENEMY_STATES
 	E_DEAD,
 	E_TOTAL,
 };
-enum ENEMY_TYPE
-{
-	ET_MUMMY,
-	ET_TYPE2,
-	ET_TYPE3,
-	ET_TYPE4,
-	ET_BOSS,
-	ET_TOTAL,
-};
+
 	void TakeDamage(int);
 	float GetHealth();
 	float GetDamage();
@@ -39,31 +31,25 @@ enum ENEMY_TYPE
 	void MoveUpDown(double dt, bool up);
 	void SetName(string name);
 	string GetName();
+	Monster GetMonster();
 	void SetAttackDamage(int);
 	void SetDef(int);
 	int GetDef();
 	int GetAttackDamage();
-	int GetMaxHealth();
+	float GetMaxHealth();
 	void Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap);
 	friend std::ostream& operator<<(std::ostream& cout, ENEMY_STATES state);
 
-	Pathfinder thePath;
-
 private:
-	float health;
-	float damage;
+	string enemyName;
 	Vector3 prevHeroPos;
 	Vector3 patrolPos;
 	//Pathfinder thePath;
+	Pathfinder thePath;
 	ENEMY_STATES enemyStates;
-	ENEMY_TYPE enemyType;
-	Monster MonID;
+	Monster monster;
 	//Rendering Variables
-	int attackDamage;
-	int enemyDef;
-	int maxEnemyHealth;
 	bool flip;
-	string enemyNames;
 };
 
 #endif // !ENEMY_H

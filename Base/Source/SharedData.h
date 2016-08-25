@@ -30,7 +30,6 @@ public:
 	GAMESTATE gameState;
 
 	
-	EquipmentManager equipManager; // Equipment Functions
 	Monster monType; // Monster Calls
 	Inventory inventory;
 	std::vector<Enemy*> enemyInventory;

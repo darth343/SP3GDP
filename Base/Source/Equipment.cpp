@@ -1,10 +1,15 @@
 #include "Equipment.h"
+#include <fstream>
+#include <sstream>
+using std::stringstream;
+using std::ifstream;
+vector<Equipment*> Equipment::equipmentDatabase[Equipment::TOTAL_ETYPE];
 
 Equipment::Equipment() 
-	: EQAtk(10)
-	, EQDef(10)
-	, EQHP(10)
-	, EQType(SWORD)
+: name("UNDEFINED")
+, damage(-1)
+, defense(-1)
+, type(SWORD)
 {
 }
 
@@ -12,101 +17,206 @@ Equipment::~Equipment()
 {
 }
 
-void Equipment::setEQType(EQUIPMENT_TYPE equipType)
+void Equipment::reset()
 {
-	this->EQType = equipType;
+	SetName("UNDEFINED");
+	setDamage(-1);
+	setDefense(-1);
+	setType(SWORD);
 }
 
-void Equipment::setEQName(string name)
+vector<Equipment*>* Equipment::getDatabase()
 {
-	this->EQName = name;
+	return equipmentDatabase;
 }
 
-void Equipment::setEQAtk(int atk)
+void Equipment::SetName(string name)
 {
-	atk = MonMon.getMonsterAtk();
-	EQAtk = atk;
+	this->name = name;
 }
 
-void Equipment::setEQDef(int def)
+void Equipment::SetMonster(Monster monster)
 {
-	def = MonMon.getMonsterDef();
-	EQDef = def;
+	this->monster = monster;
 }
 
-void Equipment::setEQHP(int hP)
+void Equipment::setType(EQUIPMENT_TYPE type)
 {
-	hP = MonMon.getMonsterHP();
-	EQHP = hP;
+	this->type = type;
+}
+void Equipment::setDamage(float damage)
+{
+	this->damage = damage;
 }
 
-void Equipment::setEQSkillSlotOne(int eqslot1)
+void Equipment::setDefense(float defense)
 {
-	eqslot1 = MonMon.getSkillSlotOne();
-	EQSkillSlot1 = eqslot1;
+	this->defense = defense;
 }
 
-void Equipment::setEQSkillSlotTwo(int eqslot2)
+string Equipment::getName()
 {
-	eqslot2 = MonMon.getSkillSlotTwo();
-	EQSkillSlot2 = eqslot2;
+	return name;
 }
 
-void Equipment::setEQSkillSlotThree(int eqslot3)
+Monster Equipment::getMonster()
 {
-	eqslot3 = MonMon.getSkillSlotThree();
-	EQSkillSlot3 = eqslot3;
+	return monster;
 }
 
-void Equipment::setEQSkillSlotFour(int eqslot4)
+Equipment::EQUIPMENT_TYPE Equipment::getType()
 {
-	eqslot4 = MonMon.getSkillSlotFour();
-	EQSkillSlot4 = eqslot4;
+	return type;
 }
 
-int Equipment::getEQType()
+float Equipment::getDamage()
 {
-	return EQType;
+	return damage;
 }
 
-string Equipment::getEQName()
+float Equipment::getDefense()
 {
-	return EQName;
+	return defense;
 }
 
-int Equipment::getEQAtk()
+std::ostream& operator<<(std::ostream& cout, Equipment::EQUIPMENT_TYPE type)
 {
-	return EQAtk;
+	switch (type)
+	{
+	case Equipment::SWORD:
+		cout << "SWORD";
+		break;
+	case Equipment::SHIELD:
+		cout << "SHIELD";
+		break;
+	case Equipment::HELMET:
+		cout << "HELMET";
+		break;
+	case Equipment::ARMOUR:
+		cout << "ARMOUR";
+		break;
+	case Equipment::LEG:
+		cout << "LEG";
+		break;
+	}
+	return cout;
 }
 
-int Equipment::getEQDef()
+void Equipment::InitDatabase()
 {
-	return EQDef;
+	ifstream file("Data\\swordData.csv");
+	string line;
+	if (file.is_open())
+	{
+		getline(file, line); // Remove first line
+		while (getline(file, line))
+		{
+			if (line == "")
+				continue;
+			stringstream ss;
+			ss << line;
+			Equipment* temp = new Equipment;
+			getline(ss, line, ','); //Name
+			temp->name = line;
+			getline(ss, line, ','); //Type
+			temp->type = (EQUIPMENT_TYPE)stoi(line);
+			getline(ss, line, ','); //Damage
+			temp->damage = stoi(line);
+			getline(ss, line, '\n'); //Defense
+			temp->defense = stof(line);
+			equipmentDatabase[temp->type].push_back(temp);
+		}
+	}
+	file.close();
+	file.open("Data\\shieldData.csv");
+	if (file.is_open())
+	{
+		getline(file, line); // Remove first line
+		while (getline(file, line))
+		{
+			if (line == "")
+				continue;
+			stringstream ss;
+			ss << line;
+			Equipment* temp = new Equipment;
+			getline(ss, line, ','); //Name
+			temp->name = line;
+			getline(ss, line, ','); //Type
+			temp->type = (EQUIPMENT_TYPE)stoi(line);
+			getline(ss, line, ','); //Damage
+			temp->damage = stoi(line);
+			getline(ss, line, '\n'); //Defense
+			temp->defense = stof(line);
+			equipmentDatabase[temp->type].push_back(temp);
+		}
+	}
+	file.close();
+	file.open("Data\\helmetData.csv");
+	if (file.is_open())
+	{
+		getline(file, line); // Remove first line
+		while (getline(file, line))
+		{
+			if (line == "")
+				continue;
+			stringstream ss;
+			ss << line;
+			Equipment* temp = new Equipment;
+			getline(ss, line, ','); //Name
+			temp->name = line;
+			getline(ss, line, ','); //Type
+			temp->type = (EQUIPMENT_TYPE)stoi(line);
+			getline(ss, line, ','); //Damage
+			temp->damage = stoi(line);
+			getline(ss, line, '\n'); //Defense
+			temp->defense = stof(line);
+			equipmentDatabase[temp->type].push_back(temp);
+		}
+	}
+	file.close();
+	file.open("Data\\armourData.csv");
+	if (file.is_open())
+	{
+		getline(file, line); // Remove first line
+		while (getline(file, line))
+		{
+			if (line == "")
+				continue;
+			stringstream ss;
+			ss << line;
+			Equipment* temp = new Equipment;
+			getline(ss, line, ','); //Name
+			temp->name = line;
+			getline(ss, line, ','); //Type
+			temp->type = (EQUIPMENT_TYPE)stoi(line);
+			getline(ss, line, ','); //Damage
+			temp->damage = stoi(line);
+			getline(ss, line, '\n'); //Defense
+			temp->defense = stof(line);
+			equipmentDatabase[temp->type].push_back(temp);
+		}
+	}
+	file.close();
+	file.open("Data\\legData.csv");
+	if (file.is_open())
+	{
+		getline(file, line); // Remove first line
+		while (getline(file, line))
+		{
+			if (line == "")
+				continue;
+			stringstream ss;
+			ss << line;
+			Equipment* temp = new Equipment;
+			getline(ss, line, ','); //Name
+			temp->name = line;
+			getline(ss, line, ','); //Type
+			temp->type = (EQUIPMENT_TYPE)stoi(line);
+			getline(ss, line, ','); //Damage
+			temp->damage = stoi(line);
+			getline(ss, line, '\n'); //Defense
+			temp->defense = stof(line);
+			equipmentDatabase[temp->type].push_back(temp);
+		}
+	}
 }
-
-int Equipment::getEQHP()
-{
-	return EQHP;
-}
-
-int Equipment::getEQSkillSlotOne()
-{
-	return EQSkillSlot1;
-}
-
-int Equipment::getEQSkillSlotTwo()
-{
-	return EQSkillSlot2;
-}
-
-int Equipment::getEQSkillSlotThree()
-{
-	return EQSkillSlot3;
-}
-
-int Equipment::getEQSkillSlotFour()
-{
-	return EQSkillSlot4;
-}
-
-

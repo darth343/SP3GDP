@@ -10,6 +10,7 @@
 #include "SpriteAnimation.h"
 #include "Enemy.h"
 #include "Items.h"
+
 SceneText::SceneText()
 :
 m_cMap(NULL)
@@ -30,6 +31,8 @@ SceneText::~SceneText()
 void SceneText::Init()
 {
 	SceneBase::Init();
+	Monster::InitDatabase();
+	Equipment::InitDatabase();
 	//cout << npcvec[1].GetDialogue() << endl;
 	//cout << npcvec[0].GetDialogue() << endl;
 	//Init GameState Here for testing purposes
@@ -60,13 +63,16 @@ void SceneText::Init()
 	chargebar->gauge = Gauge::MOVE;
 	chargebar->type = GameObject::GO_MOVE;
 	chargebar->position.Set(500, 150, 1);
-	Monster temp;
-	temp.setMonsterName("PLACEHOLDER");
-	theEnemy = new Enemy(temp, Vector3(32.f, 32.f, 1));
-	theEnemy->type = GameObject::GO_ENEMY;
-	theEnemy->position.Set(64, 224, 1);
-	theEnemy->SetName("Mummy");
-	m_goList.push_back(theEnemy);
+
+	for (int i = 0; i < 4; ++i)
+	{
+		Enemy* theEnemy;
+		theEnemy = new Enemy(Monster::getMonster(Monster::BANSHEE), Vector3(32.f, 32.f, 1));
+		theEnemy->type = GameObject::GO_ENEMY;
+		theEnemy->position.Set(64, 224, 1);
+		m_goList.push_back(theEnemy);
+	}
+
 	enemyMaxHealth = 100;
 	currHealth = 100;
 	enemyCatchPercentage = 0;
@@ -103,8 +109,34 @@ void SceneText::Init()
 
 	battleMonsterPos.Set(300, 240, 0);
 	battleMonsterScale.Set(0.3, 0.3, 1);
-
 	monsterScaleUp = true;
+
+
+	//for (int j = 0; j < 20; ++j)
+	//{
+	//	Equipment* temp = new Equipment();
+	//	Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::ARMOUR);
+	//	//Equipment::EQUIPMENT_TYPE randType = Equipment::ARMOUR;
+	//	stringstream ss;
+	//	ss << "TEST " << " " << randType;
+	//	temp->SetName(ss.str());
+	//	temp->SetMonster(Monster());
+	//	temp->setType(randType);
+	//	temp->setDamage(Equipment::getDatabase()[randType][0]->getDamage() + Math::RandIntMinMax(-10, 10));
+	//	temp->setDefense(Equipment::getDatabase()[randType][0]->getDefense() + Math::RandIntMinMax(-10, 10));
+	//	if (temp->getDamage() < 0)
+	//		temp->setDamage(0);
+	//	if (temp->getDefense() < 0)
+	//		temp->setDefense(0);
+	//	for (int i = 0; i < SharedData::GetInstance()->inventory.EQinventory.size(); ++i)
+	//	{
+	//		if (SharedData::GetInstance()->inventory.EQinventory[i]->getName() == "UNDEFINED")
+	//		{
+	//			SharedData::GetInstance()->inventory.EQinventory[i] = temp;
+	//			break;
+	//		}
+	//	}
+	//}
 
 }
 
@@ -174,20 +206,9 @@ void SceneText::SetGS(string set)
 		GS = CATCH;
 }
 
-
-//BattleScene Key press 
-static bool DNkeyPressed = false;
-static bool UPkeyPressed = false;
-static bool LEFTkeyPressed = false;
-static bool RIGHTkeyPressed = false;
-static bool ENTERkeyPressed = false;
-static bool IkeyPressed = false;
-static bool BACKkeyPressed = false;
-
-
 void SceneText::CatchUpdate(double dt)
 {
-	enemyCatchPercentage = (theEnemy->GetMaxHealth() - theEnemy->GetHealth());
+	enemyCatchPercentage = (EnemyInBattle->GetMaxHealth() - EnemyInBattle->GetHealth()) / EnemyInBattle->GetMaxHealth() * redbar->scale.x;
 
 	float prevScale = greenbar->scale.x;
 	greenbar->scale.x = enemyCatchPercentage;
@@ -209,24 +230,15 @@ void SceneText::CatchUpdate(double dt)
 			
 			SharedData::GetInstance()->inventory.addToInventory(temp);
 			SharedData::GetInstance()->inventory.printInventory();*/
-			if (SharedData::GetInstance()->enemyInventory.size() <= 0)
-			{
-				SharedData::GetInstance()->enemyInventory.push_back(theEnemy);
-				RemoveEnemy();
-			}
+			SharedData::GetInstance()->inventory.addToInventory(EnemyInBattle);
+			RemoveEnemy();
+			//if (SharedData::GetInstance()->enemyInventory.size() <= 0)
+			//{
+			//	SharedData::GetInstance()->enemyInventory.push_back(theEnemy);
+			//	RemoveEnemy();
+			//}
 			GS = TESTMAP;
 			return;
-			GS = TESTMAP;
-
-			// Despawn monster once captured
-			for (int i = 0; i < m_goList.size(); ++i)
-			{
-				if (m_goList[i] == EnemyInBattle)
-				{
-					delete EnemyInBattle;
-					m_goList.erase(m_goList.begin() + i);
-				}
-			}
 		}
 		else if (!chargebar->CheckCollision(greenbar, m_cMap))
 		{
@@ -331,6 +343,7 @@ void SceneText::PlayerUpdate(double dt)
 	if (Application::IsKeyPressed('I') && !SharedData::GetInstance()->IkeyPressed && GS)
 	{
 		GS = INVENTORY_SCREEN;
+		SharedData::GetInstance()->inventory.ResetInventory();
 		SharedData::GetInstance()->IkeyPressed = true;
 	}
 	else if (!Application::IsKeyPressed('I') && SharedData::GetInstance()->IkeyPressed)
@@ -439,6 +452,7 @@ void SceneText::TamagucciUpdate(double dt)
 	//	cout << "AHAJHJAHSJ";
 	//}
 }
+
 void SceneText::UpdateInventory(double dt)
 {
 	if (Application::IsKeyPressed('I') && !SharedData::GetInstance()->IkeyPressed)
@@ -451,86 +465,139 @@ void SceneText::UpdateInventory(double dt)
 		SharedData::GetInstance()->IkeyPressed = false;
 	}
 
-	cursorDebounce += (float)dt;
-	if (cursorDebounce > 0.5f)
+	SharedData::GetInstance()->inventory.Update(dt);
+}
+
+void SceneText::renderInventoryItems()
+{
+	static float xpos = 0.f;
+	static float ypos = 0.f;
+
+	if (Application::IsKeyPressed('U'))
 	{
-		if (Application::IsKeyPressed(VK_UP) && SharedData::GetInstance()->UPkeyPressed)
-		{
-			cursorDebounce = 0;
-			SharedData::GetInstance()->UPkeyPressed = false;
-
-			if (itemCursorPos != 0)
-				itemCursorPos -= 1;
-			else
-				itemCursorPos = 2;
-
-			cout << "UP" << endl;
-			cout << itemCursorPos << endl;
-			SharedData::GetInstance()->UPkeyPressed = false;
-		}
-		else
-			SharedData::GetInstance()->UPkeyPressed = true;
-
-		if (Application::IsKeyPressed(VK_DOWN) && SharedData::GetInstance()->DNkeyPressed)
-		{
-			cursorDebounce = 0;
-			SharedData::GetInstance()->DNkeyPressed = false;
-
-			if (itemCursorPos != 2)
-				itemCursorPos += 1;
-			else
-				itemCursorPos = 0;
-
-			cout << "DN" << endl;
-			cout << itemCursorPos << endl;
-			SharedData::GetInstance()->DNkeyPressed = false;
-		}
-		else
-			SharedData::GetInstance()->DNkeyPressed = true;
+		ypos += 0.5f;
+	}
+	if (Application::IsKeyPressed('J'))
+	{
+		ypos -= 0.5f;
+	}
+	if (Application::IsKeyPressed('H'))
+	{
+		xpos -= 0.5f;
+	}
+	if (Application::IsKeyPressed('K'))
+	{
+		xpos += 0.5f;
 	}
 
-	if (Application::IsKeyPressed(VK_RETURN) && !ENTERkeyPressed)
+	for (int i = 0; i < SharedData::GetInstance()->inventory.EQinventory.size(); ++i)
 	{
-		ENTERkeyPressed = true;
-
-		if (itemCursorPos == 0)
+		if (SharedData::GetInstance()->inventory.EQinventory[i]->getName() == "UNDEFINED")
+			continue;
+		Vector3 pos;
+		pos.y = i / 8;
+		pos.x = i % 8;
+		switch (SharedData::GetInstance()->inventory.EQinventory[i]->getType())
 		{
-			GS = ITEM_SCREEN;
+		case Equipment::SWORD:
+			Render2DMeshWScale(meshList[GEO_SWORD], false, 43, 44, 426.5 + pos.x * 46, 254 + -pos.y * 46, false);
+			break;
+		case Equipment::SHIELD:
+			Render2DMeshWScale(meshList[GEO_SHIELD], false, 45, 45.5, 426.5 + pos.x * 46, 254 + -pos.y * 46, false);
+			break;
+		case Equipment::ARMOUR:
+			Render2DMeshWScale(meshList[GEO_CHESTPLATE], false, 44.5, 44.5, 426.5 + pos.x * 46, 254 + -pos.y * 46, false);
+			break;
+		case Equipment::HELMET:
+			Render2DMeshWScale(meshList[GEO_HELMET], false, 44.5, 44.5, 426.5 + pos.x * 46, 254 + -pos.y * 46, false);
+			break;
 		}
-		if (itemCursorPos == 1)
-		{
-			GS = EQUIP_SCREEN;
-		}
-		if (itemCursorPos == 2)
-		{
-			//GS = TAMAGOTCHI_SCREEN;
-		}
-	}	
+	}
 
-	if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
-		SharedData::GetInstance()->ENTERkeyPressed = true;
+	if (SharedData::GetInstance()->inventory.getArmour())
+	{
+		Render2DMeshWScale(meshList[GEO_CHESTPLATE], false, 44.5, 44.5, 426.5 + 47.5, 254 + 107.5, false);
+	}
 
+	if (SharedData::GetInstance()->inventory.getRightArm())
+	{
+		if (SharedData::GetInstance()->inventory.getRightArm()->getType() == Equipment::SWORD)
+		{
+			Render2DMeshWScale(meshList[GEO_SWORD], false, 44.5, 44.5, 426.5 + 93.5, 254 + 105.5, false);
+		}
+		else if (SharedData::GetInstance()->inventory.getRightArm()->getType() == Equipment::SHIELD)
+		{
+			Render2DMeshWScale(meshList[GEO_SHIELD], false, 44.5, 44.5, 426.5 + 93.5, 254 + 105.5, false);
+		}
+	}
+
+	if (SharedData::GetInstance()->inventory.getLeftArm())
+	{
+		if (SharedData::GetInstance()->inventory.getLeftArm()->getType() == Equipment::SWORD)
+		{
+			Render2DMeshWScale(meshList[GEO_SWORD], false, 44.5, 44.5, 426.5, 254 + 105.5, false);
+		}
+		else if (SharedData::GetInstance()->inventory.getLeftArm()->getType() == Equipment::SHIELD)
+		{
+			Render2DMeshWScale(meshList[GEO_SHIELD], false, 44.5, 44.5, 426.5, 254 + 105.5, false);
+		}
+	}
+
+	if (SharedData::GetInstance()->inventory.getHead())
+	{
+		Render2DMeshWScale(meshList[GEO_HELMET], false, 44.5, 44.5, 426.5 + 47, 254 + 151, false);
+	}
+
+	stringstream ss;
+	ss.str("");
+	ss << "ATTACK :         " << SharedData::GetInstance()->inventory.GetTotalATK();
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 30, 43, 371);
+	ss.str("");
+	ss << "DEFENSE:         " << SharedData::GetInstance()->inventory.GetTotalDEF();
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 30, 43, 371 - 33);
+	cout << xpos << " " << ypos << endl;
+}
+
+void SceneText::renderInventoryMenus()
+{
+	if (SharedData::GetInstance()->inventory.getEquipmentLookAt()->getName() != "UNDEFINED")
+	{
+		std::ostringstream ss;
+		ss.str("");
+		ss << "Name: " << SharedData::GetInstance()->inventory.getEquipmentLookAt()->getName() << endl;
+		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392);
+		ss.str("");
+		ss << "Damage: " << SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDamage() << endl;
+		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392 - 20);
+		ss.str("");
+		ss << "Defense: " << SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDefense() << endl;
+		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392 - 40);
+	}
+
+	if (SharedData::GetInstance()->inventory.getInputState() == Inventory::INVENTORY)
+		Render2DMesh(meshList[GEO_INVENTORYSEEKER], false, 1, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46);
+	if (SharedData::GetInstance()->inventory.getInputState() == Inventory::EQUIP_OPTIONS)
+	{
+		Render2DMeshWScale(meshList[GEO_INVENTORYSECONDBACKGROUND], false, 122, -44 - (float)(SharedData::GetInstance()->inventory.getOptions().size() * 18), 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 36, 290 + SharedData::GetInstance()->inventory.getSeeker().y * 46);
+		for (int i = 0; i < SharedData::GetInstance()->inventory.getOptions().size(); ++i)
+		{
+			std::ostringstream ss;
+			ss.str("");
+			ss << SharedData::GetInstance()->inventory.getOptions()[i];
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 46, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46 - (i * 20));
+		}
+		std::ostringstream ss;
+		ss.str("");
+		ss << SharedData::GetInstance()->inventory.getOptions()[SharedData::GetInstance()->inventory.getSecondSeeker()];
+		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 46, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46 - (SharedData::GetInstance()->inventory.getSecondSeeker() * 20));
+	}
 }
 
 void SceneText::RenderInventory()
 {
-	std::ostringstream ss;
-	ss.str("");
-	ss.precision(5);
-	ss << "Items: " << endl;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 60, 300, 450);
-
-	std::ostringstream ss2;
-	ss2.str("");
-	ss2.precision(5);
-	ss2 << "Equips: " << endl;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss2.str(), Color(1, 0, 0), 60, 300, 390);
-
-	std::ostringstream ss3;
-	ss3.str("");
-	ss3.precision(5);
-	ss3 << "Tamagotchi: " << endl;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss3.str(), Color(1, 0, 0), 60, 300, 330);
+	RenderBackground(meshList[GEO_INVENTORYBACKGROUND]);
+	renderInventoryItems();
+	renderInventoryMenus();
 }
 
 void SceneText::RenderItemScreen()
@@ -551,60 +618,17 @@ void SceneText::RenderItemScreen()
 
 void SceneText::ItemScreenUpdate(double dt)
 {
-	if (Application::IsKeyPressed('I') && !IkeyPressed)
+	if (Application::IsKeyPressed('I') && !SharedData::GetInstance()->IkeyPressed)
 	{
 		GS = TESTMAP;
-		IkeyPressed = true;
+		SharedData::GetInstance()->IkeyPressed = true;
 	}
-	else if (!Application::IsKeyPressed('I') && IkeyPressed)
+	else if (!Application::IsKeyPressed('I') && SharedData::GetInstance()->IkeyPressed)
 	{
-		IkeyPressed = false;
+		SharedData::GetInstance()->IkeyPressed = false;
 	}
 
-	cursorDebounce += (float)dt;
-	if (cursorDebounce > 0.5f)
-	{
-		if (Application::IsKeyPressed(VK_UP) && UPkeyPressed)
-		{
-			cursorDebounce = 0;
-			UPkeyPressed = false;
-
-			if (itemCursorPos != 0)
-				itemCursorPos += 1;
-			else
-				itemCursorPos = 0;
-
-			cout << "UP" << endl;
-			cout << itemCursorPos << endl;
-			UPkeyPressed = false;
-		}
-		else
-			UPkeyPressed = true;
-
-		if (Application::IsKeyPressed(VK_DOWN) && DNkeyPressed)
-		{
-			cursorDebounce = 0;
-			DNkeyPressed = false;
-
-			if (itemCursorPos != 1)
-				itemCursorPos -= 0;
-			else
-				itemCursorPos = 1;
-
-			cout << "DN" << endl;
-			cout << itemCursorPos << endl;
-			DNkeyPressed = false;
-		}
-		else
-			DNkeyPressed = true;
-	}
-	if (Application::IsKeyPressed(VK_RETURN) && !ENTERkeyPressed)	
-		ENTERkeyPressed = true;
-	if (Application::IsKeyPressed(VK_BACK) && !BACKkeyPressed)
-	{
-		BACKkeyPressed = true;
-		GS = INVENTORY_SCREEN;
-	}
+	SharedData::GetInstance()->inventory.Update(dt);
 }
 
 void SceneText::RenderEquipScreen()
@@ -615,64 +639,6 @@ void SceneText::RenderEquipScreen()
 	ss << "Equips: " << endl;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 60, 300, 450);
 
-}
-
-void SceneText::EquipScreenUpdate(double dt)
-{
-	if (Application::IsKeyPressed('I') && !IkeyPressed)
-	{
-		GS = TESTMAP;
-		IkeyPressed = true;
-	}
-	else if (!Application::IsKeyPressed('I') && IkeyPressed)
-	{
-		IkeyPressed = false;
-	}
-
-	cursorDebounce += (float)dt;
-	if (cursorDebounce > 0.5f)
-	{
-		if (Application::IsKeyPressed(VK_UP) && UPkeyPressed)
-		{
-			cursorDebounce = 0;
-			UPkeyPressed = false;
-
-			if (itemCursorPos != 0)
-				itemCursorPos = 1;
-			else
-				itemCursorPos = 0;
-
-			cout << "UP" << endl;
-			cout << itemCursorPos << endl;
-			UPkeyPressed = false;
-		}
-		else
-			UPkeyPressed = true;
-
-		if (Application::IsKeyPressed(VK_DOWN) && DNkeyPressed)
-		{
-			cursorDebounce = 0;
-			DNkeyPressed = false;
-
-			if (itemCursorPos != 1)
-				itemCursorPos = 0;
-			else
-				itemCursorPos = 1;
-
-			cout << "DN" << endl;
-			cout << itemCursorPos << endl;
-			DNkeyPressed = false;
-		}
-		else
-			DNkeyPressed = true;
-	}
-	if (Application::IsKeyPressed(VK_RETURN) && !ENTERkeyPressed)
-		ENTERkeyPressed = true;
-	if (Application::IsKeyPressed(VK_BACK) && !BACKkeyPressed)
-	{
-		BACKkeyPressed = true;
-		GS = INVENTORY_SCREEN;
-	}
 }
 
 void SceneText::MapUpdate(double dt)
@@ -688,13 +654,11 @@ void SceneText::NPCUpdate(double dt)
 
 void SceneText::Update(double dt)
 {
-
 	if (Application::IsKeyPressed('Z'))
 	{
 		GS = TAMAGUCCI_SCREEN;
 
 	}
-
 	switch (GS)
 	{
 	case TESTMAP:
@@ -709,13 +673,6 @@ void SceneText::Update(double dt)
 	case INVENTORY_SCREEN:
 		UpdateInventory(dt);
 		break;
-
-	case ITEM_SCREEN:
-		ItemScreenUpdate(dt);
-		break;
-	case EQUIP_SCREEN:
-		EquipScreenUpdate(dt);
-
 	case TAMAGUCCI_SCREEN:
 		tamagucci.UpdateTamagucci(dt);
 		TamagucciUpdate(dt);
@@ -1249,7 +1206,7 @@ void SceneText::Render()
 		RenderCatch();
 		break;
 	case INVENTORY_SCREEN:
-		RenderBackground(meshList[GEO_INVENTORYBACKGROUND]);
+		RenderTestMap();
 		RenderInventory();
 		break;
 

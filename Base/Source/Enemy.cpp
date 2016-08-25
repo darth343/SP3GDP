@@ -6,41 +6,16 @@ const float IDLE_TIMER = 1.0;
 const int TILES_BEFORECHASING = 7;
 const int TILES_BEFOREPATROLLING = 12;
 
-Enemy::Enemy(Monster ID, Vector3 scale)
+Enemy::Enemy(Monster monster, Vector3 scale)
 : GameObject(scale)
-, MonID(ID)
+, monster(monster)
 , flip(false)
 {
 	enemyStates = E_IDLE;
-	health = 100.0f;
-	damage = 5.0f;
-
 }
 
 Enemy::~Enemy()
 {
-}
-
-void Enemy::TakeDamage(int damage)
-{
-	health -= damage;
-}
-float Enemy::GetDamage()
-{
-	return damage;
-}
-void Enemy::SetDamage(float dmg)
-{
-	this->damage = dmg;
-}
-float Enemy::GetHealth()
-{
-	return health;
-}
-
-bool Enemy::GetFlipStatus()
-{
-	return flip;
 }
 
 void Enemy::MoveLeftRight(double dt, bool left)
@@ -68,69 +43,100 @@ void Enemy::MoveUpDown(double dt, bool up)
 		position.y -= dt * MOVEMENTSPEED;
 	}
 }
-void Enemy::SetName(string name)
+//void Enemy::SetName(string name)
+//{
+//	this->enemyNames = name;
+//	if (name == "Mummy")
+//	{
+//		enemyType = ET_MUMMY;
+//		SetAttackDamage(10);
+//		SetDef(5); //For player armor defence
+//		maxEnemyHealth = 100;
+//	}
+//	if (name == "Dragon")
+//	{
+//		enemyType = ET_TYPE2;
+//		SetAttackDamage(15);
+//		SetDef(5);
+//		maxEnemyHealth = 130;
+//	}
+//	if (name == "Type3")
+//	{
+//		enemyType = ET_TYPE3;
+//		SetAttackDamage(15);
+//		SetDef(5);
+//		maxEnemyHealth = 150;
+//	}
+//	if (name == "Type4")
+//	{
+//		enemyType = ET_TYPE4;
+//		SetAttackDamage(20);
+//		SetDef(5);
+//		maxEnemyHealth = 100;
+//	}
+//	if (name == "Boss")
+//	{
+//		enemyType = ET_BOSS;
+//		SetAttackDamage(25);
+//		//SetDef(10);
+//		maxEnemyHealth = 250;
+//	}
+//}
+//
+//int Enemy::GetMaxHealth()
+//{
+//	return maxEnemyHealth;
+//}
+//void Enemy::SetDef(int def)
+//{
+//	enemyDef = def;
+//}
+//int Enemy::GetDef()
+//{
+//	return enemyDef;
+//}
+//void Enemy::SetAttackDamage(int dmg)
+//{
+//	attackDamage = dmg;
+//}
+
+void Enemy::TakeDamage(int damage)
 {
-	this->enemyNames = name;
-	if (name == "Mummy")
-	{
-		enemyType = ET_MUMMY;
-		SetAttackDamage(10);
-		SetDef(5); //For player armor defence
-		maxEnemyHealth = 100;
-	}
-	if (name == "Dragon")
-	{
-		enemyType = ET_TYPE2;
-		SetAttackDamage(15);
-		SetDef(5);
-		maxEnemyHealth = 130;
-	}
-	if (name == "Type3")
-	{
-		enemyType = ET_TYPE3;
-		SetAttackDamage(15);
-		SetDef(5);
-		maxEnemyHealth = 150;
-	}
-	if (name == "Type4")
-	{
-		enemyType = ET_TYPE4;
-		SetAttackDamage(20);
-		SetDef(5);
-		maxEnemyHealth = 100;
-	}
-	if (name == "Boss")
-	{
-		enemyType = ET_BOSS;
-		SetAttackDamage(25);
-		//SetDef(10);
-		maxEnemyHealth = 250;
-	}
+	monster.takeDamage(damage);
 }
-int Enemy::GetMaxHealth()
+
+bool Enemy::GetFlipStatus()
 {
-	return maxEnemyHealth;
+	return flip;
 }
-void Enemy::SetDef(int def)
-{
-	enemyDef = def;
-}
-int Enemy::GetDef()
-{
-	return enemyDef;
-}
-void Enemy::SetAttackDamage(int dmg)
-{
-	attackDamage = dmg;
-}
+
+
 int Enemy::GetAttackDamage()
 {
-	return attackDamage;
+	return monster.getDamage();
 }
+
+float Enemy::GetHealth()
+{
+	return monster.getHealth();
+}
+
+float Enemy::GetMaxHealth()
+{
+	return monster.getMaxHealth();
+}
+
 string Enemy::GetName()
 {
-	return enemyNames;
+	return monster.getName();
 }
+
+Monster Enemy::GetMonster()
+{
+	return monster;
+}
+
+
 void Enemy::MoveTo(double dt, Tile nextTile, CMap* m_cMap)
 {
 	if (position.x > nextTile.Pos.x * m_cMap->GetTileSize())

@@ -136,8 +136,12 @@ void SceneBase::Init()
 	meshList[GEO_BACKGROUND]->textureID = LoadTGA("Image//background.tga");
 	meshList[GEO_GROUNDTOP] = MeshBuilder::Generate2DMesh("GEO_GROUNDTOP", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
 	meshList[GEO_GROUNDTOP]->textureID = LoadTGA("Image//groundTop.tga");
+	meshList[GEO_INVENTORYSEEKER] = MeshBuilder::Generate2DMesh("GEO_INVENTORYSEEKER", Color(1, 1, 1), 0.0f, 0.0f, 46.f, 46.f);
+	meshList[GEO_INVENTORYSEEKER]->textureID = LoadTGA("Image//inventorySeeker.tga");
 	meshList[GEO_INVENTORYBACKGROUND] = MeshBuilder::Generate2DMesh("GEO_INVENTORYBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
 	meshList[GEO_INVENTORYBACKGROUND]->textureID = LoadTGA("Image//InventoryBackground.tga");
+	meshList[GEO_INVENTORYSECONDBACKGROUND] = MeshBuilder::Generate2DMesh("GEO_INVENTORYSECONDBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.f);
+	meshList[GEO_INVENTORYSECONDBACKGROUND]->textureID = LoadTGA("Image//InventorySecondBackground.tga");
 	meshList[GEO_TAMAGUCCIBACKGROUND] = MeshBuilder::Generate2DMesh("GEO_TAMAGUCCIBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
 	meshList[GEO_TAMAGUCCIBACKGROUND]->textureID = LoadTGA("Image//tamagucciBG.tga");
 	meshList[GEO_TAMAGUCCIUIBACKGROUND] = MeshBuilder::GenerateQuad("GEO_TAMAGUCCIUIBACKGROUND", Color(1, 1, 1), 800, 3);
@@ -188,6 +192,14 @@ void SceneBase::Init()
 	meshList[GEO_MONSTER]->textureID = LoadTGA("Image//Monster.tga");
 	meshList[GEO_POTION] = MeshBuilder::Generate2DMesh("Potion", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_POTION]->textureID = LoadTGA("Image//Potion.tga");
+	meshList[GEO_SWORD] = MeshBuilder::Generate2DMesh("GEO_SWORD", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
+	meshList[GEO_SWORD]->textureID = LoadTGA("Image//sword.tga");
+	meshList[GEO_SHIELD] = MeshBuilder::Generate2DMesh("GEO_SHIELD", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
+	meshList[GEO_SHIELD]->textureID = LoadTGA("Image//shield.tga");
+	meshList[GEO_CHESTPLATE] = MeshBuilder::Generate2DMesh("GEO_CHESTPLATE", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
+	meshList[GEO_CHESTPLATE]->textureID = LoadTGA("Image//chestplate.tga");
+	meshList[GEO_HELMET] = MeshBuilder::Generate2DMesh("GEO_HELMET", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
+	meshList[GEO_HELMET]->textureID = LoadTGA("Image//helmet.tga");
 	meshList[GEO_GREEN] = MeshBuilder::Generate2DMesh("GEO_GREEN", Color(0, 1, 0), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_BAR] = MeshBuilder::Generate2DMesh("Potion", Color(1, 1, 0), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_RED] = MeshBuilder::Generate2DMesh("Potion", Color(1, 0, 0), 0.0f, 0.0f, 1.0f, 1.0f);
