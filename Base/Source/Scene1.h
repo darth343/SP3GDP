@@ -50,7 +50,7 @@ public:
 	virtual void Update(double dt);
 	virtual void Render();
 	virtual void Exit();
-	void RenderTileMap(CMap* m_cMap, Vector3 speed = Vector3(1, 1, 1));
+	void RenderTileMap(Mesh* mesh, CMap* m_cMap, Vector3 speed = Vector3(1, 1, 1));
 
 	//Render Functions
 	void BasicRender(); // Basic Render Codes, do not touch unless needed 
@@ -62,6 +62,9 @@ public:
 	void RenderInventory(); // Render Inventory Main Screen here
 	void RenderItemScreen();
 	void RenderEquipScreen();
+	void RenderBattleAnimation();
+	void RenderBattleHUD();
+	void RenderBattleDialogue();
 
 	//Update Functions
 	void MapUpdate(double dt);
@@ -76,8 +79,8 @@ public:
 
 	void ItemScreenUpdate(double dt);
 	void EquipScreenUpdate(double dt);
-	
 
+	int currState = 1;
 	void RenderTamagucci();
 	void TamagucciUpdate(double dt);
 
@@ -98,6 +101,8 @@ public:
 	void renderFirstTamagotchiFirstMenu(float yOffset = 0);
 	void renderTamagotchiGame();
 	void renderTamagotchiUI();
+	void renderInventoryItems();
+	void renderInventoryMenus();
 private:
 	NPC npc;
 	Gauge* greenbar;
@@ -108,6 +113,7 @@ private:
 	TAMAGUCCI* tamdrop;
 	Pathfinder testpathfinder;
 	TAMAGUCCI tamagucci;
+	GameObject* touch;
 	vector<GameObject *> m_goList;
 	int npcPic = 0; //Which npc picture to show on the dialogue
 	float enemyCatchPercentage;
@@ -120,23 +126,31 @@ private:
 	bool foodAnimOver = false;
 
 	CMap* m_cMap;	// Handle to the tilemaps
+	CMap* m_cMap2;	// Handle to the tilemaps
 	CPlayerInfo* theHero; // Hero's information
 	GAMESTATE_TYPE GS; // Change GameState in SceneText.cpp line 144 for testing purposes
 	MAP_STATE MS;
-	
+
 	// Battle system
 	BattleSystem battleScene;
 	Vector3 battleMonsterPos;
 	Vector3 battleMonsterScale;
-
 	bool monsterScaleUp;
+	bool playerBattleDialogue;
 
+	//Battle System HP bar 
+	float maxHpScale;
+	Vector3 hpPos;
+	float renderedHp;
 
-	int currState = 1; //The current state of npc dialogue
+	float maxMpScale;
+	Vector3 mpPos;
+	float renderedMp;
 
 	int itemCursorPos = 0;
 	float cursorDebounce = 0;
 
+	ostringstream npctalk;
 	bool captured;
 };
 

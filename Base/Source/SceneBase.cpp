@@ -130,7 +130,11 @@ void SceneBase::Init()
 	meshList[GEO_TEXT]->textureID = LoadTGA("Image//calibri.tga");
 	meshList[GEO_TEXT]->material.kAmbient.Set(1, 0, 0);
 	meshList[GEO_LOGO] = MeshBuilder::GenerateSpriteAnimation("sprite", 4, 5);
-	meshList[GEO_LOGO]->textureID = LoadTGA("Image//RealizeLogo1.tga");
+	meshList[GEO_LOGO]->textureID = LoadTGA("Image//RealizeLogo.tga");
+	meshList[GEO_ICONINV] = MeshBuilder::Generate2DMesh("GEO_BACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 64.0f, 64.0f);
+	meshList[GEO_ICONINV]->textureID = LoadTGA("Image//Icon_Inventory.tga");
+	meshList[GEO_ICONTAM] = MeshBuilder::Generate2DMesh("GEO_BACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 64.0f, 64.0f);
+	meshList[GEO_ICONTAM]->textureID = LoadTGA("Image//Icon_Tamagucci.tga");
 
 	meshList[GEO_MENUBG] = MeshBuilder::Generate2DMesh("GEO_BACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
 	meshList[GEO_MENUBG]->textureID = LoadTGA("Image//Menu.tga");
@@ -179,6 +183,8 @@ void SceneBase::Init()
 
 	meshList[GEO_HAMGURGER] = MeshBuilder::Generate2DMesh("GEO_FOOD", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
 	meshList[GEO_HAMGURGER]->textureID = LoadTGA("Image//Burger.tga");
+	meshList[GEO_POPUP] = MeshBuilder::Generate2DMesh("GEO_POPUP", Color(1, 1, 1), 0.0f, 0.0f, 500.f, 150.0f);
+	meshList[GEO_POPUP]->textureID = LoadTGA("Image//popUP.tga");
 	meshList[GEO_PORK] = MeshBuilder::Generate2DMesh("GEO_FOOD", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
 	meshList[GEO_PORK]->textureID = LoadTGA("Image//Pork.tga");
 
@@ -246,7 +252,7 @@ void SceneBase::Init()
 	meshList[GEO_BATTLESCENE]->textureID = LoadTGA("Image//battleScene.tga");
 	meshList[GEO_BATTLEMONSTER] = MeshBuilder::Generate2DMesh("GEO_BATTLESCENE", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
 	meshList[GEO_BATTLEMONSTER]->textureID = LoadTGA("Image//battleMonster.tga");
-	meshList[GEO_BATTLEDIALOUGEBACKGROUND] = MeshBuilder::Generate2DMesh("GEO_BATTLEDIALOUGEBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_BATTLEDIALOUGEBACKGROUND] = MeshBuilder::Generate2DMesh("GEO_BATTLEDIALOUGEBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 780.0f, 600.0f);
 	meshList[GEO_BATTLEDIALOUGEBACKGROUND]->textureID = LoadTGA("Image//dialogueBox.tga");
 	meshList[GEO_BATTLEARROW] = MeshBuilder::Generate2DMesh("GEO_BATTLEARROW", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
 	meshList[GEO_BATTLEARROW]->textureID = LoadTGA("Image//arrow.tga");

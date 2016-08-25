@@ -20,6 +20,7 @@ public:
 		GO_TAMDROP2,
 		GO_GREENBAR,
 		GO_MOVE,
+		GO_NEXT,
 		GO_TOTAL,
 	};
 
