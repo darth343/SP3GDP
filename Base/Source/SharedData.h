@@ -5,7 +5,9 @@
 #include "Monster.h"
 #include "Enemy.h"
 #include <vector>
-#include "SharedData.h"
+#include "SoundManager.h"
+
+
 
 class SharedData
 {
@@ -31,6 +33,12 @@ public:
 	
 	Monster monType; // Monster Calls
 	Inventory inventory;
+	SoundManager soundManager;
+	ISound* soundFootstep;
+	ISound* worldBGM;
+	ISound* battleStart;
+	ISound* title;
+
 	std::vector<Enemy*> enemyInventory;
 	bool UPkeyPressed;
 	bool DNkeyPressed;
@@ -63,12 +71,17 @@ private:
 		BACKkeyPressed = false;
 		IkeyPressed = false;
 
+		soundFootstep = NULL;
+		worldBGM = NULL;
+		battleStart = NULL;
+		title = NULL;
+
 		BS_StabRender = false;
 		BS_SlashRender = false;
 		enemyTurn = false;
 		playerTurn = true;
 		enemyHitPlayer = false;
-		
+
 	}
 	~SharedData()
 	{

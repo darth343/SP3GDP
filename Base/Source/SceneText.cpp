@@ -41,6 +41,10 @@ void SceneText::Init()
 	m_cMap->Init(Application::GetInstance().GetScreenHeight(), Application::GetInstance().GetScreenWidth(), 32);
 	m_cMap->LoadMap("Image//MapData.csv");
 
+	m_cMap2 = new CMap();
+	m_cMap2->Init(Application::GetInstance().GetScreenHeight(), Application::GetInstance().GetScreenWidth(), 32);
+	m_cMap2->LoadMap("Image//MapData2.csv");
+
 	// Init for loading GameObjects
 	Items* thePotion = new Items(Vector3(32.f, 32.f, 1));
 	thePotion->type = GameObject::GO_ITEM;
@@ -97,6 +101,7 @@ void SceneText::Init()
 
 	// Initialise the hero's position
 	theHero = new CPlayerInfo();
+	theHero->Init();
 	theHero->SetPosition(Vector3(530, 64, 0));
 	theHero->SetPlayerMesh(meshList[GEO_HEROWALK]);
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
@@ -108,6 +113,10 @@ void SceneText::Init()
 	battleMonsterPos.Set(300, 240, 0);
 	battleMonsterScale.Set(0.3, 0.3, 1);
 	monsterScaleUp = true;
+
+
+	SharedData::GetInstance()->soundManager.Init();
+
 
 	hpScale = 17.4f;
 	hpPos.Set(209, 584, 0);
@@ -140,6 +149,7 @@ void SceneText::Init()
 			}
 		}
 	}
+
 }
 
 bool SceneText::GetMonsterScaleUp()
@@ -318,6 +328,8 @@ void SceneText::CatchUpdate(double dt)
 void SceneText::EnterBattleScene(Enemy* enemy)
 {
 	battleScene.SetBattleStart(true);
+	SharedData::GetInstance()->soundManager.StopAllSound();
+	SharedData::GetInstance()->soundManager.SoundPlay("Sound/battleStart.mp3", &SharedData::GetInstance()->battleStart, 0.3f, true);
 	EnemyInBattle = enemy;
 	GS = BATTLE;
 }
@@ -334,6 +346,16 @@ void SceneText::PlayerUpdate(double dt)
 	if (Application::IsKeyPressed('D'))
 		this->theHero->MoveLeftRight(false, m_cMap, dt);
 	theHero->HeroUpdate(m_cMap, dt, meshList);
+
+	if (Application::IsKeyPressed('W') || Application::IsKeyPressed('S') || Application::IsKeyPressed('A') || Application::IsKeyPressed('D'))
+	{
+		cout << SharedData::GetInstance()->soundFootstep << endl;
+		SharedData::GetInstance()->soundManager.SoundPlay("Sound/footstepgrass.wav", &SharedData::GetInstance()->soundFootstep, 1.0f, false);
+	}
+	else
+	{
+		SharedData::GetInstance()->soundManager.SoundPause(&SharedData::GetInstance()->soundFootstep);
+	}
 	
 	/*SpriteAnimation *arrow = dynamic_cast<SpriteAnimation*>(meshList[GEO_BATTLEARROW]);
 	if (arrow)
@@ -699,6 +721,12 @@ void SceneText::RenderEquipScreen()
 void SceneText::MapUpdate(double dt)
 {
 	if (MS == PLAY)
+	{
+		PlayerUpdate(dt);
+		GOupdate(dt);
+		SharedData::GetInstance()->soundManager.SoundPlay("Sound/route1.mp3", &SharedData::GetInstance()->worldBGM, 0.3f, false);
+	}
+
 	PlayerUpdate(dt);
 	GOupdate(dt);
 	if (Application::IsKeyPressed('R'))
@@ -706,6 +734,7 @@ void SceneText::MapUpdate(double dt)
 			SharedData::GetInstance()->stateCheck = true;
 			SharedData::GetInstance()->gameState = SharedData::GAME_S2;
 		}
+
 }
 void SceneText::NPCUpdate(double dt)
 {
@@ -715,31 +744,17 @@ void SceneText::NPCUpdate(double dt)
 void SceneText::Update(double dt)
 {
 	SceneBase::Update(dt);
-	m_cMap->LoadMap("Image//MapData.csv");
-	//For Testing Purpose
-	if (Application::IsKeyPressed('Y'))
+	static bool f6press = false;
+	if (Application::IsKeyPressed(VK_F6) && !f6press)
 	{
-		hpScale += 0.1;
-		hpPos.x += 1;
+		f6press = true;
+		m_cMap->LoadMap("Image//MapData.csv");
 	}
-	if (Application::IsKeyPressed('U'))
+	else if (!Application::IsKeyPressed(VK_F6) && f6press)
 	{
-		hpScale -= 0.1;
-		hpPos.x -= 1;
+		f6press = false;
 	}
 
-	//if (Application::IsKeyPressed('Z') && !SharedData::GetInstance()->UPkeyPressed)
-	//{
-	//	SharedData::GetInstance()->UPkeyPressed = true;
-	//	if (GS != TAMAGUCCI_SCREEN)
-	//		GS = TAMAGUCCI_SCREEN;
-	//	else
-	//		GS = TESTMAP;
-	//}
-	//else if (!Application::IsKeyPressed('Z') && SharedData::GetInstance()->UPkeyPressed)
-	//{
-	//	SharedData::GetInstance()->UPkeyPressed = false;
-	//}
 	switch (GS)
 	{
 	case TESTMAP:
@@ -747,7 +762,7 @@ void SceneText::Update(double dt)
 		break;
 	case BATTLE:
 		battleScene.UpdateBattleSystem(SharedData::GetInstance()->UPkeyPressed, SharedData::GetInstance()->DNkeyPressed, SharedData::GetInstance()->LEFTkeyPressed, SharedData::GetInstance()->RIGHTkeyPressed, SharedData::GetInstance()->ENTERkeyPressed, theHero, EnemyInBattle);
-
+		//SharedData::GetInstance()->soundManager.SoundPlay("Sound/battleStart.mp3", &SharedData::GetInstance()->battleStart, 0.3f, true);
 		if (SharedData::GetInstance()->BS_SlashRender)
 		{
 			SpriteAnimation *slashAnimation = dynamic_cast<SpriteAnimation*>(meshList[GEO_SLASHANIMATION]);
@@ -816,7 +831,8 @@ static bool touched = true;
 void SceneText::RenderTestMap()
 {
 	RenderBackground(meshList[GEO_BACKGROUND]);
-	RenderTileMap(m_cMap);
+	RenderTileMap(meshList[GEO_TILESET3], m_cMap);
+	//RenderTileMap(meshList[GEO_TILESET1], m_cMap2);
 
 	std::ostringstream ss;
 
@@ -1304,15 +1320,15 @@ void SceneText::Exit()
 	glDeleteVertexArrays(1, &m_vertexArrayID);
 }
 
-void SceneText::RenderTileMap(CMap* map, Vector3 speed)
+void SceneText::RenderTileMap(Mesh* mesh, CMap* map, Vector3 speed)
 {
 	for (int y = 0; y < map->theNumOfTiles_Height; ++y)
 	{
 		for (int x = 0; x < map->theNumOfTiles_Width; ++x)
 		{
-			if (map->theMap[y][x].BlockID != 0)
+			//if (map->theMap[y][x].BlockID != 0)
 			{
-				RenderTile(meshList[GEO_TILESET3], map->theMap[y][x].BlockID, 32, x*map->GetTileSize() - (theHero->GetMapOffset().x * speed.x), y*map->GetTileSize() - (theHero->GetMapOffset().y* speed.y));
+				RenderTile(mesh, map->theMap[y][x].BlockID, 32, x*map->GetTileSize() - (theHero->GetMapOffset().x * speed.x), y*map->GetTileSize() - (theHero->GetMapOffset().y* speed.y));
 			}
 		}
 	}

@@ -213,7 +213,7 @@ void SceneBase::Init()
 	meshList[GEO_TILESET1]->textureID = LoadTGA("Image//tileSet1.tga");
 	meshList[GEO_TILESET2] = MeshBuilder::GenerateTileSet("GEO_TILESET2", 32, 32);
 	meshList[GEO_TILESET2]->textureID = LoadTGA("Image//tileSet2.tga");
-	meshList[GEO_TILESET3] = MeshBuilder::GenerateTileSet("GEO_TILESET3", 30, 32);
+	meshList[GEO_TILESET3] = MeshBuilder::GenerateTileSet("GEO_TILESET3", 32, 32);
 	meshList[GEO_TILESET3]->textureID = LoadTGA("Image//tileSet3.tga");
 	meshList[GEO_REDTILE] = MeshBuilder::Generate2DMesh("GEO_REDTILE", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
 	meshList[GEO_REDTILE]->textureID = LoadTGA("Image//redTile.tga");

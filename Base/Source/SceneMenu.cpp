@@ -32,6 +32,9 @@ void SceneMenu::Init()
 
 void SceneMenu::Update(double dt)
 {
+
+	//SharedData::GetInstance()->soundManager.SoundPlay("Sound/title.mp3", &SharedData::GetInstance()->title, 0.3f, false);
+
 	SpriteAnimation *logo = dynamic_cast<SpriteAnimation*>(meshList[GEO_LOGO]);
 	if (logo)
 	{
@@ -126,6 +129,7 @@ void SceneMenu::Update(double dt)
 	cout << m_gs << endl;
 
 	fps = (float)(1.f / dt);
+
 }
 
 void SceneMenu::Render()

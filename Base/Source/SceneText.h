@@ -50,7 +50,7 @@ public:
 	virtual void Update(double dt);
 	virtual void Render();
 	virtual void Exit();
-	void RenderTileMap(CMap* m_cMap, Vector3 speed = Vector3(1, 1, 1));
+	void RenderTileMap(Mesh* mesh, CMap* m_cMap, Vector3 speed = Vector3(1, 1, 1));
 
 	//Render Functions
 	void BasicRender(); // Basic Render Codes, do not touch unless needed 
@@ -122,6 +122,7 @@ private:
 	bool foodAnimOver = false;
 
 	CMap* m_cMap;	// Handle to the tilemaps
+	CMap* m_cMap2;	// Handle to the tilemaps
 	CPlayerInfo* theHero; // Hero's information
 	GAMESTATE_TYPE GS; // Change GameState in SceneText.cpp line 144 for testing purposes
 	MAP_STATE MS;

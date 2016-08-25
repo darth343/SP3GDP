@@ -5,6 +5,8 @@
 #include "Mesh.h"
 #include "Items.h"
 #include "Equipment.h"
+#include "SharedData.h"
+
 
 class CPlayerInfo
 {
@@ -72,4 +74,6 @@ private:
 	float playerHP;
 	float playerDamage;
 	float playerDefense;
+
+
 };
