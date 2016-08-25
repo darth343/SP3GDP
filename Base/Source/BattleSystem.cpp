@@ -208,6 +208,7 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 			break;
 		case BS_SKILL:
 			//minus enemy hp, then enemy turn = true, player turn = false
+			theHero->UseMP(50);
 			cout << " Monster's skills " << battleSelection << endl;
 
 			break;

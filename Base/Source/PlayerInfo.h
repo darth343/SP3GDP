@@ -52,11 +52,14 @@ public:
 					   double dt, CMap* m_cMap, bool constrainX, bool constrainY);
 
 	void SetHP(float hp);	
+	void SetMP(float mp);
 	void SetDMG(float dmg);	
 	void SetDEF(float def);
 	void TakeDMG(float dmg);
+	void UseMP(float mp);
 
 	float GetHP();
+	float GetMP();
 	float GetDMG();
 	float GetDEF();
 
@@ -72,6 +75,7 @@ private:
 	Equipment Equip;
 
 	float playerHP;
+	float playerMP;
 	float playerDamage;
 	float playerDefense;
 

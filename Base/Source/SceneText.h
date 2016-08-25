@@ -62,6 +62,9 @@ public:
 	void RenderInventory(); // Render Inventory Main Screen here
 	void RenderItemScreen();
 	void RenderEquipScreen();
+	void RenderBattleAnimation();
+	void RenderBattleHUD();
+	void RenderBattleDialogue();
 
 	//Update Functions
 	void MapUpdate(double dt);
@@ -131,11 +134,16 @@ private:
 	Vector3 battleMonsterPos;
 	Vector3 battleMonsterScale;
 	bool monsterScaleUp;
+	bool playerBattleDialogue;
 
-	float hpScale;
+	//Battle System HP bar 
+	float maxHpScale;
 	Vector3 hpPos;
-	float mpScale;
+	float renderedHp;
+
+	float maxMpScale;
 	Vector3 mpPos;
+	float renderedMp;
 
 	int itemCursorPos = 0;
 	float cursorDebounce = 0;
