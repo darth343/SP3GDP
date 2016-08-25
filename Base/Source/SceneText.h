@@ -9,7 +9,6 @@
 #include "GameObject.h"
 #include "NPC.h"
 #include "Enemy.h"
-#include "EquipmentManager.h"
 #include "CharacterData.h"
 #include "BattleSystem.h"
 
@@ -82,7 +81,6 @@ public:
 	void RenderTamagucci();
 	void TamagucciUpdate(double dt);
 
-
 	float GetBattleMonsterPosX();
 	float GetBattleMonsterPosY();
 	void SetBattleMonsterPosX(float x);
@@ -100,12 +98,13 @@ public:
 	void renderFirstTamagotchiFirstMenu(float yOffset = 0);
 	void renderTamagotchiGame();
 	void renderTamagotchiUI();
+	void renderInventoryItems();
+	void renderInventoryMenus();
 private:
 	NPC npc;
 	Gauge* greenbar;
 	Gauge* redbar;
 	Gauge* chargebar;
-	Enemy* theEnemy;
 	Enemy* EnemyInBattle;
 	TAMAGUCCI* tamtam;
 	TAMAGUCCI* tamdrop;
@@ -131,12 +130,17 @@ private:
 	BattleSystem battleScene;
 	Vector3 battleMonsterPos;
 	Vector3 battleMonsterScale;
-
 	bool monsterScaleUp;
+
+	float hpScale;
+	Vector3 hpPos;
+	float mpScale;
+	Vector3 mpPos;
 
 	int itemCursorPos = 0;
 	float cursorDebounce = 0;
 
+	ostringstream npctalk;
 	bool captured;
 };
 

@@ -231,6 +231,7 @@ void NPC::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 	}
 	else 
 	{
+		collisionDetected = false;
 		enterPressed = false;
 		collideWithNPC = 0;
 		SetAnimationState(NPC::NPC_AWANDERING);

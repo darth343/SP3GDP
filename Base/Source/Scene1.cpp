@@ -30,6 +30,8 @@ Scene1::~Scene1()
 void Scene1::Init()
 {
 	SceneBase::Init();
+	Monster::InitDatabase();
+	Equipment::InitDatabase();
 	//cout << npcvec[1].GetDialogue() << endl;
 	//cout << npcvec[0].GetDialogue() << endl;
 	//Init GameState Here for testing purposes
@@ -60,13 +62,15 @@ void Scene1::Init()
 	chargebar->gauge = Gauge::MOVE;
 	chargebar->type = GameObject::GO_MOVE;
 	chargebar->position.Set(500, 150, 1);
-	Monster temp;
-	temp.setMonsterName("PLACEHOLDER");
-	theEnemy = new Enemy(temp, Vector3(32.f, 32.f, 1));
-	theEnemy->type = GameObject::GO_ENEMY;
-	theEnemy->position.Set(64, 224, 1);
-	theEnemy->SetName("Mummy");
-	m_goList.push_back(theEnemy);
+
+	for (int i = 0; i < 4; ++i)
+	{
+		Enemy* theEnemy;
+		theEnemy = new Enemy(Monster::getMonster(Monster::BANSHEE), Vector3(32.f, 32.f, 1));
+		theEnemy->type = GameObject::GO_ENEMY;
+		theEnemy->position.Set(64, 224, 1);
+		m_goList.push_back(theEnemy);
+	}
 	enemyMaxHealth = 100;
 	currHealth = 100;
 	enemyCatchPercentage = 0;
@@ -186,7 +190,7 @@ static bool BACKkeyPressed = false;
 
 void Scene1::CatchUpdate(double dt)
 {
-	enemyCatchPercentage = (theEnemy->GetMaxHealth() - theEnemy->GetHealth());
+	enemyCatchPercentage = (EnemyInBattle->GetMaxHealth() - EnemyInBattle->GetHealth());
 
 	float prevScale = greenbar->scale.x;
 	greenbar->scale.x = enemyCatchPercentage;
@@ -210,7 +214,7 @@ void Scene1::CatchUpdate(double dt)
 			SharedData::GetInstance()->inventory.printInventory();*/
 			if (SharedData::GetInstance()->enemyInventory.size() <= 0)
 			{
-				SharedData::GetInstance()->enemyInventory.push_back(theEnemy);
+				SharedData::GetInstance()->enemyInventory.push_back(EnemyInBattle);
 				RemoveEnemy();
 			}
 			GS = TESTMAP;

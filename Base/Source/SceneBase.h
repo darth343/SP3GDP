@@ -78,7 +78,11 @@ public:
 		GEO_SALAD,
 		GEO_HAMGURGER,
 		GEO_PORK,
-
+		GEO_TILESET1,
+		GEO_TILESET2,
+		GEO_HPBARDESIGN,
+		GEO_HPBAR,
+		GEO_MPBAR,
 		GEO_SLASHANIMATION,
 		GEO_STABANIMATION,
 		GEO_BATTLESCENE,
@@ -101,6 +105,12 @@ public:
 		GEO_STAR,
 		GEO_POOP,
 		GEO_INVENTORYBACKGROUND,
+		GEO_INVENTORYSECONDBACKGROUND,
+		GEO_INVENTORYSEEKER,
+		GEO_SWORD,
+		GEO_SHIELD,
+		GEO_HELMET,
+		GEO_CHESTPLATE,
 		GEO_BAR,
 		GEO_POTION,
 		GEO_TRAP,
@@ -119,9 +129,10 @@ public:
 	virtual void Exit();
 
 	void RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y);
+	void RenderTile(Mesh* mesh, unsigned tileID, float size, float x, float y);
 	void RenderBackground(Mesh* mesh);
 	void Render2DMesh(Mesh *mesh, const bool enableLight, const float size = 1.0f, const float x = 0.0f, const float y = 0.0f, const bool flip = false);
-	void Render2DMeshWScale(Mesh *mesh, const bool enableLight, const float sizeX, const float sizeY, const float x = 0.0f, const float y = 0.0f, const bool flip = false);
+	void Render2DMeshWScale(Mesh *mesh, const bool enableLight, const float sizeX, const float sizeY, const float x = 0.0f, const float y = 0.0f, const bool flip = false, const float offset = 0);
 
 protected:
 	CharacterData FontData;

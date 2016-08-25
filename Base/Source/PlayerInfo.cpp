@@ -414,12 +414,12 @@ float CPlayerInfo::GetHP()
 
 float CPlayerInfo::GetDMG()
 {
-	playerDamage = Equip.getEQAtk();
+	//playerDamage = Equip.getEQAtk();
 	return playerDamage;
 }
 
 float CPlayerInfo::GetDEF()
 {
-	playerDefense = Equip.getEQDef();
+	//playerDefense = Equip.getEQDef();
 	return playerDefense;
 }

@@ -316,7 +316,6 @@ void BattleSystem::UpdateBattleSystem(static bool& UPkeyPressed, static bool& DN
 	{
 		if (SharedData::GetInstance()->enemyHitPlayer)
 		{
-			enemy->SetDamage(10);
 			theHero->TakeDMG(enemy->GetDamage());
 			SetMonsterHitAnimation(true);
 
@@ -330,5 +329,21 @@ void BattleSystem::UpdateBattleSystem(static bool& UPkeyPressed, static bool& DN
 		}
 		cout << "Monster hit player for " << enemy->GetDamage() << " player HP left " << theHero->GetHP() << endl;
 
+	}
+	//if enemy not dead		
+	if (enemy->GetHealth() < 0)
+	{
+		SceneText* mainScene = (SceneText*)Application::GetInstance().GetScene();
+
+		//Player win
+		Reset();
+		mainScene->RemoveEnemy();
+		//destory enemy here
+	}
+	else if (theHero->GetHP() <= 0)
+	{
+		//Player Lose should do auto load to previous save file
+		SharedData::GetInstance()->stateCheck = true;
+		SharedData::GetInstance()->gameState = SharedData::MENU;
 	}
 }

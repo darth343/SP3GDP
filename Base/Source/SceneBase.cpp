@@ -20,8 +20,7 @@ void SceneBase::Init()
 	// Blue background
 	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
 	// Enable depth test
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -153,8 +152,12 @@ void SceneBase::Init()
 	meshList[GEO_BACKGROUND]->textureID = LoadTGA("Image//background.tga");
 	meshList[GEO_GROUNDTOP] = MeshBuilder::Generate2DMesh("GEO_GROUNDTOP", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
 	meshList[GEO_GROUNDTOP]->textureID = LoadTGA("Image//groundTop.tga");
+	meshList[GEO_INVENTORYSEEKER] = MeshBuilder::Generate2DMesh("GEO_INVENTORYSEEKER", Color(1, 1, 1), 0.0f, 0.0f, 46.f, 46.f);
+	meshList[GEO_INVENTORYSEEKER]->textureID = LoadTGA("Image//inventorySeeker.tga");
 	meshList[GEO_INVENTORYBACKGROUND] = MeshBuilder::Generate2DMesh("GEO_INVENTORYBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
 	meshList[GEO_INVENTORYBACKGROUND]->textureID = LoadTGA("Image//InventoryBackground.tga");
+	meshList[GEO_INVENTORYSECONDBACKGROUND] = MeshBuilder::Generate2DMesh("GEO_INVENTORYSECONDBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.f);
+	meshList[GEO_INVENTORYSECONDBACKGROUND]->textureID = LoadTGA("Image//InventorySecondBackground.tga");
 	meshList[GEO_BLACK] = MeshBuilder::Generate2DMesh("GEO_INVENTORYBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
 	meshList[GEO_BLACK]->textureID = LoadTGA("Image//Black.tga");
 	meshList[GEO_TAMAGUCCIBACKGROUND] = MeshBuilder::Generate2DMesh("GEO_TAMAGUCCIBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
@@ -206,7 +209,10 @@ void SceneBase::Init()
 	meshList[GEO_NPCPIC2]->textureID = LoadTGA("Image//NPC2_GIF.tga");
 	meshList[GEO_NPCPIC3] = MeshBuilder::GenerateSpriteAnimation("sprite", 1, 6);
 	meshList[GEO_NPCPIC3]->textureID = LoadTGA("Image//NPC3_GIF.tga");
-
+	meshList[GEO_TILESET1] = MeshBuilder::GenerateTileSet("GEO_TILESET1", 32, 32);
+	meshList[GEO_TILESET1]->textureID = LoadTGA("Image//tileSet1.tga");
+	meshList[GEO_TILESET2] = MeshBuilder::GenerateTileSet("GEO_TILESET2", 32, 32);
+	meshList[GEO_TILESET2]->textureID = LoadTGA("Image//tileSet2.tga");
 	meshList[GEO_REDTILE] = MeshBuilder::Generate2DMesh("GEO_REDTILE", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
 	meshList[GEO_REDTILE]->textureID = LoadTGA("Image//redTile.tga");
 	meshList[GEO_POOP] = MeshBuilder::Generate2DMesh("GEO_REDTILE", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
@@ -219,13 +225,17 @@ void SceneBase::Init()
 	meshList[GEO_MONSTER]->textureID = LoadTGA("Image//Monster.tga");
 	meshList[GEO_POTION] = MeshBuilder::Generate2DMesh("Potion", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_POTION]->textureID = LoadTGA("Image//Potion.tga");
-
+	meshList[GEO_SWORD] = MeshBuilder::Generate2DMesh("GEO_SWORD", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
+	meshList[GEO_SWORD]->textureID = LoadTGA("Image//sword.tga");
+	meshList[GEO_SHIELD] = MeshBuilder::Generate2DMesh("GEO_SHIELD", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
+	meshList[GEO_SHIELD]->textureID = LoadTGA("Image//shield.tga");
+	meshList[GEO_CHESTPLATE] = MeshBuilder::Generate2DMesh("GEO_CHESTPLATE", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
+	meshList[GEO_CHESTPLATE]->textureID = LoadTGA("Image//chestplate.tga");
+	meshList[GEO_HELMET] = MeshBuilder::Generate2DMesh("GEO_HELMET", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
+	meshList[GEO_HELMET]->textureID = LoadTGA("Image//helmet.tga");
 	meshList[GEO_TRAP] = MeshBuilder::Generate2DMesh("Trap", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_TRAP]->textureID = LoadTGA("Image//Trap.tga");
 	meshList[GEO_GREEN] = MeshBuilder::Generate2DMesh("Potion", Color(0, 1, 0), 0.0f, 0.0f, 1.0f, 1.0f);
-
-	meshList[GEO_GREEN] = MeshBuilder::Generate2DMesh("GEO_GREEN", Color(0, 1, 0), 0.0f, 0.0f, 1.0f, 1.0f);
-
 	meshList[GEO_BAR] = MeshBuilder::Generate2DMesh("Potion", Color(1, 1, 0), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_RED] = MeshBuilder::Generate2DMesh("Potion", Color(1, 0, 0), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_BATTLESCENE] = MeshBuilder::Generate2DMesh("GEO_BATTLESCENE", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
@@ -233,13 +243,15 @@ void SceneBase::Init()
 	meshList[GEO_BATTLEMONSTER] = MeshBuilder::Generate2DMesh("GEO_BATTLESCENE", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
 	meshList[GEO_BATTLEMONSTER]->textureID = LoadTGA("Image//battleMonster.tga");
 	meshList[GEO_BATTLEDIALOUGEBACKGROUND] = MeshBuilder::Generate2DMesh("GEO_BATTLEDIALOUGEBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
-	meshList[GEO_BATTLEDIALOUGEBACKGROUND]->textureID = LoadTGA("Image//dialougeBG.tga");
+	meshList[GEO_BATTLEDIALOUGEBACKGROUND]->textureID = LoadTGA("Image//dialogueBox.tga");
 	meshList[GEO_BATTLEARROW] = MeshBuilder::Generate2DMesh("GEO_BATTLEARROW", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
 	meshList[GEO_BATTLEARROW]->textureID = LoadTGA("Image//arrow.tga");
-
+	meshList[GEO_HPBARDESIGN] = MeshBuilder::Generate2DMesh("GEO_HPBARDESIGN", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_HPBARDESIGN]->textureID = LoadTGA("Image//hpbg2.tga");
+	meshList[GEO_MPBAR] = MeshBuilder::GenerateCube("MPBAR", Color(0, 1, 0), 20.0f);
+	meshList[GEO_HPBAR] = MeshBuilder::GenerateQuad("HPBAR", Color(0, 1, 0), 20.0f);
 	meshList[GEO_STABANIMATION] = MeshBuilder::GenerateSpriteAnimation("stab", 1, 8);
 	meshList[GEO_STABANIMATION]->textureID = LoadTGA("Image//stabAnimation.tga");
-
 	meshList[GEO_SLASHANIMATION] = MeshBuilder::GenerateSpriteAnimation("slash", 1, 10);
 	meshList[GEO_SLASHANIMATION]->textureID = LoadTGA("Image//slashAnimation2.tga");
 
@@ -368,7 +380,7 @@ void SceneBase::Init()
 	projectionStack.LoadMatrix(perspective);
 }
 
-void SceneBase::RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y)
+void SceneBase::RenderTile(Mesh* mesh, unsigned tileID, float size, float x, float y)
 {
 	if (!mesh || mesh->textureID <= 0)
 		return;
@@ -381,7 +393,36 @@ void SceneBase::RenderTextOnScreen(Mesh* mesh, std::string text, Color color, fl
 	modelStack.PushMatrix();
 	modelStack.LoadIdentity();
 	modelStack.Translate(x, y, 0);
-	modelStack.Scale(size, size, size);
+	modelStack.Scale(size, size, 1);
+	glUniform1i(m_parameters[U_LIGHTENABLED], 0);
+	glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 1);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, mesh->textureID);
+	glUniform1i(m_parameters[U_COLOR_TEXTURE], 0);
+	Mtx44 MVP = projectionStack.Top() * viewStack.Top() * modelStack.Top();
+	glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, &MVP.a[0]);
+	mesh->Render(tileID * 6, 6);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glUniform1i(m_parameters[U_TEXT_ENABLED], 0);
+	modelStack.PopMatrix();
+	viewStack.PopMatrix();
+	projectionStack.PopMatrix();
+}
+
+void SceneBase::RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y)
+{
+	if (!mesh || mesh->textureID <= 0)
+		return;
+	Mtx44 ortho;
+	ortho.SetToOrtho(0, 800, 0, 600, -10, 100);
+	projectionStack.PushMatrix();
+	projectionStack.LoadMatrix(ortho);
+	viewStack.PushMatrix();
+	viewStack.LoadIdentity();
+	modelStack.PushMatrix();
+	modelStack.LoadIdentity();
+	modelStack.Translate(x, y, 0);
+	modelStack.Scale(size, size, 1);
 	glUniform1i(m_parameters[U_TEXT_ENABLED], 1);
 	glUniform3fv(m_parameters[U_TEXT_COLOR], 1, &color.r);
 	glUniform1i(m_parameters[U_LIGHTENABLED], 0);
@@ -413,10 +454,9 @@ void SceneBase::RenderTextOnScreen(Mesh* mesh, std::string text, Color color, fl
 	modelStack.PopMatrix();
 	viewStack.PopMatrix();
 	projectionStack.PopMatrix();
-
 }
 
-void SceneBase::Render2DMeshWScale(Mesh *mesh, const bool enableLight, const float sizeX, const float sizeY, const float x, const float y, const bool flip)
+void SceneBase::Render2DMeshWScale(Mesh *mesh, const bool enableLight, const float sizeX, const float sizeY, const float x, const float y, const bool flip, const float offset)
 {
 	glDisable(GL_CULL_FACE);
 	Mtx44 ortho;
@@ -429,7 +469,7 @@ void SceneBase::Render2DMeshWScale(Mesh *mesh, const bool enableLight, const flo
 	modelStack.LoadIdentity();
 	if (flip)
 	{
-		modelStack.Translate(x + 0, y, 0);
+		modelStack.Translate(x + offset, y, 0);
 	}
 	else
 	{
@@ -466,7 +506,6 @@ void SceneBase::Render2DMeshWScale(Mesh *mesh, const bool enableLight, const flo
 	projectionStack.PopMatrix();
 	glEnable(GL_CULL_FACE);
 }
-
 void SceneBase::Render2DMesh(Mesh *mesh, bool enableLight, float size, float x, float y, bool flip)
 {
 	Mtx44 ortho;
@@ -510,12 +549,12 @@ void SceneBase::Render2DMesh(Mesh *mesh, bool enableLight, float size, float x, 
 
 void SceneBase::RenderBackground(Mesh* mesh)
 {
-	Render2DMesh(mesh, false, 1.0f); // World Overlay Background
+	Render2DMesh(mesh, false, 1.0f,0,0,false); // World Overlay Background
 }
 
 void SceneBase::Render()
 {
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 	Mtx44 perspective;
 	perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
 	//perspective.SetToOrtho(-80, 80, -60, 60, -1000, 1000);

@@ -9,7 +9,6 @@
 #include "GameObject.h"
 #include "NPC.h"
 #include "Enemy.h"
-#include "EquipmentManager.h"
 #include "CharacterData.h"
 #include "BattleSystem.h"
 
@@ -104,7 +103,6 @@ private:
 	Gauge* greenbar;
 	Gauge* redbar;
 	Gauge* chargebar;
-	Enemy* theEnemy;
 	Enemy* EnemyInBattle;
 	TAMAGUCCI* tamtam;
 	TAMAGUCCI* tamdrop;

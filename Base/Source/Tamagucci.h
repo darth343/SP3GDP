@@ -88,9 +88,6 @@ private:
 	float coolDown = 3.f;
 	vector<Vector3> pooPositions;
 	int minigame1Score;
-	int hungerLevel;
-	int energyLevel;
-	int happinessLevel;
 	//MENU STUFF
 	TAMAGOTCHISTATE tamagotchiState;
 	MENUSTATE menuState;
@@ -101,5 +98,8 @@ private:
 	bool direction;
 	Vector3 randPos;
 	bool randomPosSet;
+	int happyLevel;
+	int hungerLevel;
+	int energyLevel;
 };
 #endif // !TAMAGUCCI_H

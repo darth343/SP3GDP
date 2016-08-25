@@ -1,7 +1,6 @@
 #ifndef SHARED_DATA_H
 #define SHARED_DATA_H
 
-#include "EquipmentManager.h"
 #include "Inventory.h"
 #include "Monster.h"
 #include "Enemy.h"
@@ -32,7 +31,6 @@ public:
 	GAMESTATE gameState;
 	bool stateCheck = false;
 	
-	EquipmentManager equipManager; // Equipment Functions
 	Monster monType; // Monster Calls
 	Inventory inventory;
 	SoundManager soundManager;
@@ -56,6 +54,9 @@ public:
 	bool enemyTurn;
 	bool playerTurn;
 
+	int hungerLevel;
+	int energyLevel;
+	int happinessLevel;
 
 private:
 	SharedData()

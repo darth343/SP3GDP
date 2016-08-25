@@ -13,7 +13,7 @@ public:
 	{
 		POTION,
 		TRAP,
-
+		ENCRYPTED_MEMORY,
 		ITEM_TOTAL,
 	};
 
