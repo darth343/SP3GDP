@@ -32,9 +32,7 @@ void SceneMenu::Init()
 
 void SceneMenu::Update(double dt)
 {
-
 	//SharedData::GetInstance()->soundManager.SoundPlay("Sound/title.mp3", &SharedData::GetInstance()->title, 0.3f, false);
-
 	SpriteAnimation *logo = dynamic_cast<SpriteAnimation*>(meshList[GEO_LOGO]);
 	if (logo)
 	{
@@ -112,21 +110,42 @@ void SceneMenu::Update(double dt)
 		}
 		if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 		{
-			SharedData::GetInstance()->ENTERkeyPressed = true;
 			switch (m_gs)
 			{
 			case GS_GAME:
-				SharedData::GetInstance()->stateCheck = true;
-				SharedData::GetInstance()->gameState = SharedData::GAME_S1;
+				move = true;
 				break;
-			//Other cases here
+			case GS_INSTRUCTIONS:
+				move = true;
+				break;
 			}
 		}
 		else if (Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
 		{
 			SharedData::GetInstance()->ENTERkeyPressed = false;
 		}
-	cout << m_gs << endl;
+		if (move)
+		{
+			othericonx += 200 * dt;
+			realizeiconx -= 200 * dt;
+		}
+		if (movein && realizeiconx < 20)
+		{
+			othericonx -= 200 * dt;
+			realizeiconx += 200 * dt;
+		}
+		if (realizeiconx <= -350)
+		{
+			move = false;
+			switch (m_gs)
+			{
+			case GS_GAME:
+				SharedData::GetInstance()->stateCheck = true;
+				SharedData::GetInstance()->gameState = SharedData::STORY;
+				break;
+				//Other cases here
+			}
+		}
 
 	fps = (float)(1.f / dt);
 
@@ -135,17 +154,15 @@ void SceneMenu::Update(double dt)
 void SceneMenu::Render()
 {
 	SceneBase::Render();
-	RenderBackground(meshList[GEO_MENUBG]);
-	int x = 380;
+	RenderBackground(meshList[GEO_STORYBACKGROUND]);
+	int y = 380;
 
-	Render2DMeshWScale(meshList[GEO_LOGO], false, 350, 100, 200, 500, false,2);
-	Render2DMeshWScale(meshList[GEO_MENUPLAY], false, 150, 60, 600, x, false,2);
-	Render2DMeshWScale(meshList[GEO_MENUSTORY], false, 170, 60, 600, x-70, false,2);
-	Render2DMeshWScale(meshList[GEO_MENUINST], false, 270, 60, 600, x - 140, false,2);
-	Render2DMeshWScale(meshList[GEO_MENUOPT], false, 200, 60, 600, x-210, false,2);
-	Render2DMeshWScale(meshList[GEO_MENUQUIT], false, 150, 60, 600, x-280, false,2);
-
-	// Check for which GameState we are in
+	Render2DMeshWScale(meshList[GEO_LOGO], false, 350, 100, realizeiconx, 500, false,2);
+	Render2DMeshWScale(meshList[GEO_MENUPLAY], false, 150, 60, othericonx, y, false, 2);
+	Render2DMeshWScale(meshList[GEO_MENUSTORY], false, 170, 60, othericonx, y - 70, false, 2);
+	Render2DMeshWScale(meshList[GEO_MENUINST], false, 270, 60, othericonx, y - 140, false, 2);
+	Render2DMeshWScale(meshList[GEO_MENUOPT], false, 200, 60, othericonx, y - 210, false, 2);
+	Render2DMeshWScale(meshList[GEO_MENUQUIT], false, 150, 60, othericonx, y - 280, false, 2);
 }
 
 void SceneMenu::Exit()

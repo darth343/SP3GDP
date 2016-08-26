@@ -138,6 +138,12 @@ void SceneBase::Init()
 
 	meshList[GEO_MENUBG] = MeshBuilder::Generate2DMesh("GEO_BACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
 	meshList[GEO_MENUBG]->textureID = LoadTGA("Image//Menu.tga");
+
+	meshList[GEO_STORYBACKGROUND] = MeshBuilder::Generate2DMesh("GEO_BACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_STORYBACKGROUND]->textureID = LoadTGA("Image//Story1.tga");
+	meshList[GEO_EXCLAIM] = MeshBuilder::Generate2DMesh("GEO_BACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
+	meshList[GEO_EXCLAIM]->textureID = LoadTGA("Image//Exclaim.tga");
+
 	meshList[GEO_MENUPLAY] = MeshBuilder::GenerateSpriteAnimation("sprite", 4, 6);
 	meshList[GEO_MENUPLAY]->textureID = LoadTGA("Image//PlayLogo.tga");
 	meshList[GEO_MENUOPT] = MeshBuilder::GenerateSpriteAnimation("sprite", 4, 6);
@@ -149,6 +155,12 @@ void SceneBase::Init()
 	meshList[GEO_MENUSTORY] = MeshBuilder::GenerateSpriteAnimation("sprite", 4, 6);
 	meshList[GEO_MENUSTORY]->textureID = LoadTGA("Image//StoryLogo.tga");
 
+	meshList[GEO_HEROUP] = MeshBuilder::GenerateSpriteAnimation("sprite", 1, 3);
+	meshList[GEO_HEROUP]->textureID = LoadTGA("Image//Hero_UP.tga");
+	meshList[GEO_HEROD] = MeshBuilder::GenerateSpriteAnimation("sprite", 1, 3);
+	meshList[GEO_HEROD]->textureID = LoadTGA("Image//Hero_DOWN.tga");
+	meshList[GEO_HEROLR] = MeshBuilder::GenerateSpriteAnimation("sprite", 1, 3);
+	meshList[GEO_HEROLR]->textureID = LoadTGA("Image//Hero_LR.tga");
 
 	FontData.Init("Data//FontData.csv");
 	// Load the ground mesh and texture
@@ -264,7 +276,24 @@ void SceneBase::Init()
 	meshList[GEO_STABANIMATION]->textureID = LoadTGA("Image//stabAnimation.tga");
 	meshList[GEO_SLASHANIMATION] = MeshBuilder::GenerateSpriteAnimation("slash", 1, 10);
 	meshList[GEO_SLASHANIMATION]->textureID = LoadTGA("Image//slashAnimation2.tga");
-
+	SpriteAnimation *playerLR = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROLR]);
+	if (playerLR)
+	{
+		playerLR->m_anim = new Animation();
+		playerLR->m_anim->Set(0, 2, 0, 1.f, true);
+	}
+	SpriteAnimation *playerUP = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROUP]);
+	if (playerUP)
+	{
+		playerUP->m_anim = new Animation();
+		playerUP->m_anim->Set(0, 2, 0, 1.f, true);
+	}
+	SpriteAnimation *playerDOWN = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROD]);
+	if (playerDOWN)
+	{
+		playerDOWN->m_anim = new Animation();
+		playerDOWN->m_anim->Set(0, 2, 0, 1.f, true);
+	}
 	SpriteAnimation *logo = dynamic_cast<SpriteAnimation*>(meshList[GEO_LOGO]);
 	if (logo)
 	{
@@ -526,6 +555,9 @@ void SceneBase::Render2DMesh(Mesh *mesh, bool enableLight, float size, float x, 
 	viewStack.LoadIdentity();
 	modelStack.PushMatrix();
 	modelStack.LoadIdentity();
+	if (flip)
+		modelStack.Translate(x + 32, y, 0);
+	else
 	modelStack.Translate(x, y, 0);
 	modelStack.Scale(size, size, size);
 	if (flip)

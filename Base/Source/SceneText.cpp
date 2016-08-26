@@ -41,6 +41,9 @@ void SceneText::Init()
 	m_cMap->Init(Application::GetInstance().GetScreenHeight(), Application::GetInstance().GetScreenWidth(), 32);
 	m_cMap->LoadMap("Data//MapData_WM.csv");
 
+	m_cMap2 = new CMap();
+	m_cMap2->Init(Application::GetInstance().GetScreenHeight(), Application::GetInstance().GetScreenWidth(), 32);
+	m_cMap2->LoadMap("Data//MapData_WM2.csv");
 
 	// Init for loading GameObjects
 	Items* thePotion = new Items(Vector3(32.f, 32.f, 1));
@@ -80,7 +83,7 @@ void SceneText::Init()
 			if (m_cMap->theMap[RandPos.y][RandPos.x].shouldCollide)
 				RandPos.SetZero();
 		}
-		theEnemy->position.Set(RandPos.x * 32, RandPos.y * 32, 1);
+		theEnemy->position.Set(RandPos.x * 32, 600, 1);
 		m_goList.push_back(theEnemy);
 	}
 
@@ -281,13 +284,56 @@ void SceneText::PlayerUpdate(double dt)
 	if (MS == PLAY)
 	{
 		if (Application::IsKeyPressed('W'))
+		{
+			theHero->SetPlayerMesh(meshList[GEO_HEROUP]);
+
+			SpriteAnimation *playerUP = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROUP]);
+			if (playerUP)
+			{
+				playerUP->Update(dt);
+				playerUP->m_anim->animActive = true;
+			}
 			this->theHero->MoveUpDown(false, m_cMap, dt);
+
+		}
 		if (Application::IsKeyPressed('S'))
+		{
+			theHero->SetPlayerMesh(meshList[GEO_HEROD]);
+
+			SpriteAnimation *playerDOWN = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROD]);
+			if (playerDOWN)
+			{
+				playerDOWN->Update(dt);
+				playerDOWN->m_anim->animActive = true;
+			}
 			this->theHero->MoveUpDown(true, m_cMap, dt);
+		}
 		if (Application::IsKeyPressed('A'))
+		{
+			theHero->SetPlayerMesh(meshList[GEO_HEROLR]);
+			theHero->SetFlipStatus(false);
+			SpriteAnimation *playerLEFT = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROLR]);
+			if (playerLEFT)
+			{
+				playerLEFT->Update(dt);
+				playerLEFT->m_anim->animActive = true;
+			}
 			this->theHero->MoveLeftRight(true, m_cMap, dt);
+		}
 		if (Application::IsKeyPressed('D'))
+		{
+			theHero->SetPlayerMesh(meshList[GEO_HEROLR]);
+			theHero->SetFlipStatus(true);
+			SpriteAnimation *playerRIGHT = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROLR]);
+			if (playerRIGHT)
+			{
+				playerRIGHT->Update(dt);
+
+				playerRIGHT->m_anim->animActive = true;
+			}
 			this->theHero->MoveLeftRight(false, m_cMap, dt);
+		}
+
 	}
 	theHero->HeroUpdate(m_cMap, dt, meshList);
 
@@ -868,6 +914,7 @@ static bool touched = true;
 void SceneText::RenderTestMap()
 {
 	RenderBackground(meshList[GEO_BACKGROUND]);
+	RenderTileMap(meshList[GEO_TILESET3], m_cMap2);
 	RenderTileMap(meshList[GEO_TILESET3], m_cMap);
 	std::ostringstream ss;
 
@@ -896,19 +943,19 @@ void SceneText::RenderTestMap()
 				if (renderNPCstuff)
 				{
 					if (npcPic == 1)
-						Render2DMeshWScale(meshList[GEO_NPCPIC], false, 350, 350, 650, 220, false);
+						Render2DMeshWScale(meshList[GEO_NPCPIC], false, 350, 350, 450, 60, false);
 					if (npcPic == 2)
-						Render2DMeshWScale(meshList[GEO_NPCPIC2], false, 350, 350, 650, 220, false);
+						Render2DMeshWScale(meshList[GEO_NPCPIC2], false, 350, 350, 450, 60, false);
 					if (npcPic == 3)
-						Render2DMeshWScale(meshList[GEO_NPCPIC3], false, 350, 350, 650, 220, false);
+						Render2DMeshWScale(meshList[GEO_NPCPIC3], false, 350, 350, 450, 60, false);
 					Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.25, 10, 20, false);
 				}
 				if (temp->GetID() == 1 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
-					Render2DMeshWScale(meshList[GEO_NPC1_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight());
+					Render2DMeshWScale(meshList[GEO_NPC1_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight(),32);
 				if (temp->GetID() == 2 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
-					Render2DMeshWScale(meshList[GEO_NPC3_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight());
+					Render2DMeshWScale(meshList[GEO_NPC3_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight(),32);
 				if (temp->GetID() == 3 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
-					Render2DMeshWScale(meshList[GEO_NPC2_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight());
+					Render2DMeshWScale(meshList[GEO_NPC2_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight(),32);
 				}
 			}
 			if (m_goList[i]->type == GameObject::GO_ENEMY)
