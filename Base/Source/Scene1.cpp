@@ -84,7 +84,7 @@ void Scene1::Init()
 	enemyMaxHealth = 100;
 	currHealth = 100;
 	enemyCatchPercentage = 0;
-	npc.ReadFromFile("NPC//Text.txt", m_goList);
+	npc.ReadFromFile("NPC//2.txt", m_goList);
 	vector<NPC*>npcvec = npc.GetVec();
 
 	for (int i = 0; i < npcvec.size(); i++)
@@ -94,9 +94,8 @@ void Scene1::Init()
 		if (npcvec[i]->GetID() == 2)
 			npcvec[i]->position.Set(700, 200, 1);
 		if (npcvec[i]->GetID() == 3)
-			npcvec[i]->position.Set(100, 180, 1);
+			npcvec[i]->position.Set(100, 400, 1);
 		npcvec[i]->currDia = 1;
-
 		m_goList.push_back(dynamic_cast<NPC*>(npcvec[i]));
 	}
 

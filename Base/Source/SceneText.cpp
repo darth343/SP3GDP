@@ -65,7 +65,7 @@ void SceneText::Init()
 	chargebar->position.Set(500, 150, 1);
 
 	touch = new GameObject(Vector3(50.f, 50.f, 1));
-	touch->position.Set(820, 150, 1);
+	touch->position.Set(0, 760, 1);
 	touch->type = GameObject::GO_NEXT;
 	m_goList.push_back(touch);
 
@@ -818,9 +818,6 @@ void SceneText::RenderTestMap()
 	{
 		if (m_goList[i]->active == true)
 		{
-			if (m_goList[i]->type == GameObject::GO_NEXT)
-				Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false);
-			
 			if (m_goList[i]->type == GameObject::GO_ITEM)
 			{
 				Items* temp = (Items*)m_goList[i];
@@ -862,15 +859,12 @@ void SceneText::RenderTestMap()
 			{
 				if (m_goList[i]->CheckCollision(theHero->GetPosition(), theHero->GetMapOffset(), m_cMap))
 				{
-					if (capturedMonster)
-					{
-						Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
-						if (Application::IsKeyPressed('Y'))
+					Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
+						if (Application::IsKeyPressed(VK_RETURN))
 						{
 							SharedData::GetInstance()->stateCheck = true;
 							SharedData::GetInstance()->gameState = SharedData::GAME_S2;
 						}
-					}
 				}
 			}
 		}
