@@ -1,18 +1,19 @@
-1`0`1`   `0
-1`0`1`Hi my name is may, nice to meet you. This is the first time i've seen you here`1
-1`0`1`This place is scary. Please be safe.`2
-1`0`1,Hehe`3
-2`0`2`   `100
-2`0`2`c`1
-2`0`2`d`2
+1`0`1`Hello, I'm May. It has been a long time since we've got visitors. Nice to meet you!`1
+1`0`1`The town was peaceful until monsters appeared out of nowhere. Most of the villagers left... The rest just stay in their houses..`2
+1`0`1`Are you here to help us? Please stay safe!`3
+2`0`2`Remember, "I" for inventory, "Z" to take care equipped monsters after capturing!~`1
+2`0`2`Hi`2
 2`0`2`aaaa`3
-1`0`2`asd`1
-1`0`2`asd2`2
+1`0`2`If you need help, you can approach my sister on the right side`1
+1`0`2`Good luck!`2
 3`2`2`....`1
-3`2`1`   `0
-3`2`1`Hi`1
-2`0`1`   `0
-2`0`1`Bye`1
-2`0`1`Oh`2
-2`0`1`Hi`3
-2`0`1`A`4
+3`2`1`Hello....`1
+2`0`1`Let me give you some guidance...`1
+2`0`1`Use "I" to open up your inventory.`2
+2`0`1`The "Z" key is to take care of the monsters you have captured and equipped, if they are not happy, they won't help you!`3
+2`0`1`After you capture a monster, you are able to ride your monster to your next destination, thus you can go on your journey!`4
+2`0`1`Now you're ready to capture the monsters up top! Good luck!`5
+2`0`3`I see you've captured a monster, well done!`1
+1`0`3`Thank you for helping us!`1
+1`0`3`Well, now you can choose to go through the portal or stay and grind for more weapons or armours!`2
+3`0`3`Thank you very much...`1

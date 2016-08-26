@@ -77,7 +77,7 @@ void SceneText::Init()
 		Enemy* theEnemy;
 		theEnemy = new Enemy(Monster::getMonster(Monster::BANSHEE), Vector3(32.f, 32.f, 1));
 		theEnemy->type = GameObject::GO_ENEMY;
-		theEnemy->position.Set(64, 224, 1);
+		theEnemy->position.Set(200, 700, 1);
 		m_goList.push_back(theEnemy);
 	}
 
@@ -244,20 +244,11 @@ void SceneText::CatchUpdate(double dt)
 		SharedData::GetInstance()->ENTERkeyPressed = true;
 		if (chargebar->CheckCollision(greenbar, m_cMap))
 		{
-			captured = true;
 			cout << "CAPTURED" << endl;
 			capturedMonster = true;
-			/*Monster temp;
-			
-			SharedData::GetInstance()->inventory.addToInventory(temp);
-			SharedData::GetInstance()->inventory.printInventory();*/
+			currState = 3;
 			SharedData::GetInstance()->inventory.addToInventory(EnemyInBattle);
 			RemoveEnemy();
-			//if (SharedData::GetInstance()->enemyInventory.size() <= 0)
-			//{
-			//	SharedData::GetInstance()->enemyInventory.push_back(theEnemy);
-			//	RemoveEnemy();
-			//}
 			GS = TESTMAP;
 			return;
 		}
@@ -270,68 +261,6 @@ void SceneText::CatchUpdate(double dt)
 	{
 		SharedData::GetInstance()->ENTERkeyPressed = false;
 	}
-
-	//if (chargebar->CheckCollision(greenbar, m_cMap))
-	//{
-	//	cout << "COLLIDED" << endl;
-	//	// DO COLLISION RESPONSE BETWEEN TWO GAMEOBJECTS
-	//	if (Application::IsKeyPressed(VK_RETURN) && !ENTERkeyPressed)
-	//	{
-	//		ENTERkeyPressed = true;
-	//		cout << "CORRECT" << endl;
-	//		GS = TESTMAP;
-
-	//		// Despawn monster once captured
-	//		for (int i = 0; i < m_goList.size(); ++i)
-	//		{
-	//			if (m_goList[i] == EnemyInBattle)
-	//			{
-	//				delete EnemyInBattle;
-	//				m_goList.erase(m_goList.begin() + i);
-	//			}
-	//		}
-	//	}
-	//	else if (!Application::IsKeyPressed(VK_RETURN) && ENTERkeyPressed)
-	//	{
-	//		ENTERkeyPressed = false;
-	//	}
-	//}
-	//else
-	//{
-	//	cout << ENTERkeyPressed << endl;
-	//	if (Application::IsKeyPressed(VK_RETURN) && !ENTERkeyPressed)
-	//	{
-	//		cout << "NOT COLLIDED" << endl;
-	//		GS = BATTLE;
-	//	}
-	//	else if (!Application::IsKeyPressed(VK_RETURN) && ENTERkeyPressed)
-	//	{
-	//		ENTERkeyPressed = false;
-	//	}
-	//}
-
-	//if (m_goList[i]->type == GameObject::GO_GREENBAR && m_goList[j]->type == GameObject::GO_MOVE && m_goList[i]->active)
-	//if (m_goList[i]->CheckCollision(m_goList[j], m_cMap))
-	//{
-	//	cout << "COLLIDED" << endl;
-	//	// DO COLLISION RESPONSE BETWEEN TWO GAMEOBJECTS
-	//	if (Application::IsKeyPressed(VK_SPACE))
-	//	{
-	//		cout << "CORRECT!";
-	//		//get monster into the inventory of monsters
-	//		GS = TESTMAP;
-	//	}
-	//	m_goList[i]->active = false;
-	//}
-	//else
-	//{
-	//	//	cout << "NOT COLLIDED" << endl;
-	//	if (Application::IsKeyPressed(VK_SPACE))
-	//	{
-	//		GS = BATTLE;
-	//	}
-	//	m_goList[i]->active = false;
-	//}
 }
 
 void SceneText::EnterBattleScene(Enemy* enemy)
@@ -345,7 +274,6 @@ void SceneText::EnterBattleScene(Enemy* enemy)
 
 void SceneText::PlayerUpdate(double dt)
 {
-	// Update the hero
 	if (MS == PLAY)
 	{
 		if (Application::IsKeyPressed('W'))
@@ -454,7 +382,8 @@ void SceneText::GOupdate(double dt)
 			
 			if (temp->collisionDetected && Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 			{
-					MS = IN_DIALOUGE;			
+				npctalk.str("");
+				MS = IN_DIALOUGE;			
 				SharedData::GetInstance()->ENTERkeyPressed = true;
 				temp->ScrollDialogue(dialogueNum);
 			}
@@ -486,7 +415,9 @@ void SceneText::GOupdate(double dt)
 					if (temp->GetID() == temp->collideWhichNPC())
 					{
 						npcID = temp->collideWhichNPC();
+
 						currState = 2;
+
 						dialogueNum = 0;
 						renderNPCstuff = false;
 						MS = PLAY;
@@ -917,14 +848,13 @@ void SceneText::RenderTestMap()
 						Render2DMeshWScale(meshList[GEO_NPCPIC3], false, 350, 350, 650, 220, false);
 					Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.25, 10, 20, false);
 				}
-				if (temp->GetID() == 1 && temp->GetNum() == 0)
+				if (temp->GetID() == 1 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
 					Render2DMeshWScale(meshList[GEO_NPC1_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight());
-				if (temp->GetID() == 2 && temp->GetNum() == 0)
+				if (temp->GetID() == 2 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
 					Render2DMeshWScale(meshList[GEO_NPC3_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight());
-				if (temp->GetID() == 3 && temp->GetNum() == 0)
+				if (temp->GetID() == 3 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
 					Render2DMeshWScale(meshList[GEO_NPC2_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight());
 				}
-				RenderTextOnScreen(meshList[GEO_TEXT], npctalk.str(), Color(1, 1, 0), 30, 60, 100);
 			}
 			if (m_goList[i]->type == GameObject::GO_ENEMY)
 			{
@@ -947,6 +877,7 @@ void SceneText::RenderTestMap()
 				}
 			}
 		}
+	RenderTextOnScreen(meshList[GEO_TEXT], npctalk.str(), Color(1, 1, 0), 30, 60, 100);
 
 	//On screen text
 	ss.str("");

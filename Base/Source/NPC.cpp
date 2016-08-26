@@ -157,8 +157,10 @@ void NPC::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 			}
 
 			if (this->GetDialogueState() == 1)
-				this->maxDia = 3;
+				this->maxDia = 4;
 			else if (this->GetDialogueState() == 2)
+				this->maxDia = 3;
+			else if (this->GetDialogueState() == 3)
 				this->maxDia = 3;
 		}
 		if (GetID() == 2)
@@ -186,11 +188,11 @@ void NPC::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 			}
 
 			if (this->GetDialogueState() == 1)
-				this->maxDia = 5;
+				this->maxDia = 6;
 			else if (this->GetDialogueState() == 2)
 				this->maxDia = 4;
 			else if (this->GetDialogueState() == 3)
-				this->maxDia = 4;
+				this->maxDia = 2;
 		}
 		if (GetID() == 3)
 		{
@@ -218,6 +220,8 @@ void NPC::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 			if (this->GetDialogueState() == 1)
 				this->maxDia = 2;
 			else if (this->GetDialogueState() == 2)
+				this->maxDia = 2;
+			else if (this->GetDialogueState() == 3)
 				this->maxDia = 2;
 		}
 	if (CheckCollision(playerPos, mapOffset, m_cMap))
