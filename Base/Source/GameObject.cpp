@@ -13,16 +13,16 @@ bool GameObject::CheckCollision(Vector3 playerPos, Vector3 mapOffset, CMap* m_cM
 			//Check X axis
 			(
 				//Check if Player Minimum X is within the mesh
-				(playerPos.x < GameObjectCoordOnScreen.x + (this->scale.x * 0.5) && playerPos.x > GameObjectCoordOnScreen.x - (this->scale.x * 0.5)) ||
+				(playerPos.x < GameObjectCoordOnScreen.x + this->scale.x && playerPos.x > GameObjectCoordOnScreen.x) ||
 				//Check if Player Maximum X is within the mesh
-				(playerPos.x + 32.f < GameObjectCoordOnScreen.x + (this->scale.x * 0.5) && playerPos.x + 32.f  > GameObjectCoordOnScreen.x - (this->scale.x * 0.5))
+				(playerPos.x + 32.f < GameObjectCoordOnScreen.x + this->scale.x && playerPos.x + 32.f  > GameObjectCoordOnScreen.x)
 			) &&
 			//Check Y axis
 			(
 				//Check if Player Minimum y is within the mesh
-				(playerPos.y < GameObjectCoordOnScreen.y + (this->scale.y * 0.5) && playerPos.y > GameObjectCoordOnScreen.y - (this->scale.y * 0.5)) ||
+				(playerPos.y < GameObjectCoordOnScreen.y + this->scale.y && playerPos.y > GameObjectCoordOnScreen.y) ||
 				//Check if Player Maximum y is within the mesh
-				(playerPos.y + 32.f < GameObjectCoordOnScreen.y + (this->scale.y * 0.5) && playerPos.y + 32.f  > GameObjectCoordOnScreen.y - (this->scale.y * 0.5))
+				(playerPos.y + 32.f < GameObjectCoordOnScreen.y + this->scale.y && playerPos.y + 32.f  > GameObjectCoordOnScreen.y)
 			)
 
 		)

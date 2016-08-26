@@ -37,7 +37,7 @@ public:
 	void ResetInventory();
 	void SortInventory();
 	void SortByType(vector<Equipment*>);
-	void SortByStats(vector<Equipment*> list, int index);
+	void SortByStats(vector<Equipment*> list, int index5);
 	void EquipItem(string itemType);
 	int GetPotionCount();
 	int GetTotalATK();

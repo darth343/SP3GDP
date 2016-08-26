@@ -809,19 +809,19 @@ SpriteAnimation* MeshBuilder::GenerateSpriteAnimation(const std::string &meshNam
 		{
 			float u1 = j * width;
 			float v1 = 1.f - height - i * height;
-			v.pos.Set(-0.5f, -0.5f, 0);
+			v.pos.Set(0.f, 0.f, 0);
 			v.texCoord.Set(u1, v1);
 			vertex_buffer_data.push_back(v);
 
-			v.pos.Set(0.5f, -0.5f, 0);
+			v.pos.Set(1.f, 0.f, 0);
 			v.texCoord.Set(u1 + width, v1);
 			vertex_buffer_data.push_back(v);
 
-			v.pos.Set(0.5f, 0.5f, 0);
+			v.pos.Set(1.f, 1.f, 0);
 			v.texCoord.Set(u1 + width, v1 + height);
 			vertex_buffer_data.push_back(v);
 
-			v.pos.Set(-0.5f, 0.5f, 0);
+			v.pos.Set(0.f, 1.f, 0);
 			v.texCoord.Set(u1, v1 + height);
 			vertex_buffer_data.push_back(v);
 

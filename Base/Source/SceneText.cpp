@@ -486,26 +486,6 @@ void SceneText::UpdateInventory(double dt)
 
 void SceneText::renderInventoryItems()
 {
-	static float xpos = 0.f;
-	static float ypos = 0.f;
-
-	if (Application::IsKeyPressed('U'))
-	{
-		ypos += 0.5f;
-	}
-	if (Application::IsKeyPressed('J'))
-	{
-		ypos -= 0.5f;
-	}
-	if (Application::IsKeyPressed('H'))
-	{
-		xpos -= 0.5f;
-	}
-	if (Application::IsKeyPressed('K'))
-	{
-		xpos += 0.5f;
-	}
-
 	for (int i = 0; i < SharedData::GetInstance()->inventory.EQinventory.size(); ++i)
 	{
 		if (SharedData::GetInstance()->inventory.EQinventory[i]->getName() == "UNDEFINED")
@@ -535,18 +515,18 @@ void SceneText::renderInventoryItems()
 
 	if (SharedData::GetInstance()->inventory.getArmour())
 	{
-		Render2DMeshWScale(meshList[GEO_CHESTPLATE], false, 44.5, 44.5, 426.5 + 47.5, 254 + 107.5, false);
+		Render2DMeshWScale(meshList[GEO_CHESTPLATE], false, 44.5, 44.5, 474, 361.5, false);
 	}
 
 	if (SharedData::GetInstance()->inventory.getRightArm())
 	{
 		if (SharedData::GetInstance()->inventory.getRightArm()->getType() == Equipment::SWORD)
 		{
-			Render2DMeshWScale(meshList[GEO_SWORD], false, 44.5, 44.5, 426.5 + 93.5, 254 + 105.5, false);
+			Render2DMeshWScale(meshList[GEO_SWORD], false, 44.5, 44.5, 520,359.5, false);
 		}
 		else if (SharedData::GetInstance()->inventory.getRightArm()->getType() == Equipment::SHIELD)
 		{
-			Render2DMeshWScale(meshList[GEO_SHIELD], false, 44.5, 44.5, 426.5 + 93.5, 254 + 105.5, false);
+			Render2DMeshWScale(meshList[GEO_SHIELD], false, 44.5, 44.5, 520, 359.5, false);
 		}
 	}
 
@@ -589,8 +569,6 @@ void SceneText::renderInventoryItems()
 	ss.str("");
 	ss << "Encrypted Memory: " << SharedData::GetInstance()->inventory.GetPotionCount();
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 43.5, 180 - 45 + 22);
-	cout << ypos << endl;
-
 }
 
 void SceneText::renderInventoryMenus()
@@ -638,20 +616,39 @@ void SceneText::renderInventoryMenus()
 		if (SharedData::GetInstance()->inventory.getInputState() == Inventory::INVENTORY)
 			Render2DMesh(meshList[GEO_INVENTORYSEEKER], false, 1, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46);
 		if (SharedData::GetInstance()->inventory.getInputState() == Inventory::EQUIP_OPTIONS)
-		{
-			Render2DMeshWScale(meshList[GEO_INVENTORYSECONDBACKGROUND], false, 122, -44 - (float)(SharedData::GetInstance()->inventory.getOptions().size() * 18), 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 36, 290 + SharedData::GetInstance()->inventory.getSeeker().y * 46);
-			for (int i = 0; i < SharedData::GetInstance()->inventory.getOptions().size(); ++i)
+		{ 
+			if (SharedData::GetInstance()->inventory.getSeeker().x < 5)
 			{
+				Render2DMeshWScale(meshList[GEO_INVENTORYSECONDBACKGROUND], false, 122, -44 - (float)(SharedData::GetInstance()->inventory.getOptions().size() * 18), 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 36, 290 + SharedData::GetInstance()->inventory.getSeeker().y * 46);
+				for (int i = 0; i < SharedData::GetInstance()->inventory.getOptions().size(); ++i)
+				{
+					std::ostringstream ss;
+					ss.str("");
+					ss << SharedData::GetInstance()->inventory.getOptions()[i];
+					RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 46, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46 - (i * 20));
+				}
 				std::ostringstream ss;
 				ss.str("");
-				ss << SharedData::GetInstance()->inventory.getOptions()[i];
-				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 46, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46 - (i * 20));
+				ss << SharedData::GetInstance()->inventory.getOptions()[SharedData::GetInstance()->inventory.getSecondSeeker()];
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 46, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46 - (SharedData::GetInstance()->inventory.getSecondSeeker() * 20));
 			}
-			std::ostringstream ss;
-			ss.str("");
-			ss << SharedData::GetInstance()->inventory.getOptions()[SharedData::GetInstance()->inventory.getSecondSeeker()];
-			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 46, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46 - (SharedData::GetInstance()->inventory.getSecondSeeker() * 20));
+			else if(SharedData::GetInstance()->inventory.getSeeker().x >= 5)
+			{
+				Render2DMeshWScale(meshList[GEO_INVENTORYSECONDBACKGROUND], false, 122, -44 - (float)(SharedData::GetInstance()->inventory.getOptions().size() * 18), 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 36 - 159, 290 + SharedData::GetInstance()->inventory.getSeeker().y * 46);
+				for (int i = 0; i < SharedData::GetInstance()->inventory.getOptions().size(); ++i)
+				{
+					std::ostringstream ss;
+					ss.str("");
+					ss << SharedData::GetInstance()->inventory.getOptions()[i];
+					RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 46 - 159, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46 - (i * 20));
+				}
+				std::ostringstream ss;
+				ss.str("");
+				ss << SharedData::GetInstance()->inventory.getOptions()[SharedData::GetInstance()->inventory.getSecondSeeker()];
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 46 - 159, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46 - (SharedData::GetInstance()->inventory.getSecondSeeker() * 20));
+			}
 		}
+		cout << xpos << endl;
 		break;
 	case Inventory::TAB2:
 		std::ostringstream ss;
