@@ -35,7 +35,11 @@ public:
 	void UpdateInput();
 	void Update(double dt);
 	void ResetInventory();
+	void SortInventory();
+	void SortByType(vector<Equipment*>);
+	void SortByStats(vector<Equipment*> list, int index);
 	void EquipItem(string itemType);
+	int GetPotionCount();
 	int GetTotalATK();
 	int GetTotalDEF();
 	INVENTORY_STATE getState();

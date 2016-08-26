@@ -9,18 +9,30 @@ GameObject::GameObject(Vector3 scale)
 
 bool GameObject::CheckCollision(Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 {
+	Vector3 GameObjectCoordOnScreen = this->position - mapOffset;
 	if (
-		((playerPos.x < this->position.x + this->Max.x - mapOffset.x && playerPos.x > this->position.x + this->Min.x - mapOffset.x) || (playerPos.x + m_cMap->GetTileSize() < this->position.x + this->Max.x - mapOffset.x && playerPos.x + m_cMap->GetTileSize() > this->position.x + this->Min.x - mapOffset.x))
-		&&
-		((playerPos.y < this->position.y + this->Max.y - mapOffset.y && playerPos.y > this->position.y + this->Min.y - mapOffset.y) || (playerPos.y + m_cMap->GetTileSize()< this->position.y + this->Max.y - mapOffset.y && playerPos.y + m_cMap->GetTileSize()> this->position.y + this->Min.y - mapOffset.y))
+		(playerPos.x < GameObjectCoordOnScreen.x + this->scale.x && playerPos.x > GameObjectCoordOnScreen.x) // X AXIS COLLISION CHECK
+	&& (playerPos.y < GameObjectCoordOnScreen.y + this->scale.y && playerPos.y > GameObjectCoordOnScreen.y) // Y AXIS COLLISION CHECK
 		)
 	{
 		return true;
 	}
-	else
+	if (
+		(playerPos.x < GameObjectCoordOnScreen.x + this->scale.x && playerPos.x > GameObjectCoordOnScreen.x) // X AXIS COLLISION CHECK
+		&& playerPos.y == GameObjectCoordOnScreen.y // Y AXIS COLLISION CHECK
+		)
 	{
-		return false;
+		return true;
 	}
+
+	if (
+		playerPos.x == GameObjectCoordOnScreen.x // X AXIS COLLISION CHECK
+		&& (playerPos.y < GameObjectCoordOnScreen.y + this->scale.y && playerPos.y > GameObjectCoordOnScreen.y) // Y AXIS COLLISION CHECK
+		)
+	{
+		return true;
+	}
+	return false;
 }
 
 bool GameObject::CheckCollision(GameObject* go, CMap* m_cMap)

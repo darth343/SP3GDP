@@ -14,7 +14,7 @@ CPlayerInfo::CPlayerInfo(void)
 {
 }
 
-const float MOVEMENT_SPEED = 225.f;
+const float MOVEMENT_SPEED = 125.f;
 const float xOffset = 8.f;
 const float yOffset = 2.f;
 

@@ -9,7 +9,7 @@ Equipment::Equipment()
 : name("UNDEFINED")
 , damage(-1)
 , defense(-1)
-, type(SWORD)
+, type(NO_TYPE)
 {
 	TamHappy = 5;
 	TamHunger = 5;

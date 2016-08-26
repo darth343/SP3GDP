@@ -9,6 +9,7 @@ Inventory::Inventory(Vector3 scale)
 	{
 		EQinventory[i] = new Equipment;
 	}
+	state = TAB1;
 	inputeState = INVENTORY;
 	head = NULL;
 	leftArm = NULL;
@@ -29,6 +30,45 @@ void Inventory::addToInventory(Items::ITEM_TYPE type)
 void Inventory::removeFromInventory(Items::ITEM_TYPE type)
 {
 	ItemInventory[type]--;
+}
+
+void swap(vector<Equipment *> list, int first, int second)
+{
+	Equipment temp;
+	temp = *list[first];
+	*list[first] = *list[second];
+	*list[second] = temp;
+}
+
+void Inventory::SortByType(vector<Equipment*> theInventory)
+{
+	for (int iter = 1; iter < theInventory.size(); ++iter)
+	{
+		for (int index = 0; index < theInventory.size() - iter; ++index)
+		{
+			if (theInventory[index]->getType() < theInventory[index + 1]->getType())
+			{
+				swap(theInventory, index, index + 1);
+			}
+			else if (theInventory[index]->getType() == theInventory[index + 1]->getType())
+			{
+				SortByStats(theInventory, index);
+			}
+		}
+	}
+}
+
+void Inventory::SortByStats(vector<Equipment*> theInventory, int index)
+{
+	if ((theInventory[index]->getDamage() + theInventory[index]->getDefense()) * 0.5 < (theInventory[index+1]->getDamage() + theInventory[index+1]->getDefense()) * 0.5)
+	{
+		swap(theInventory, index, index + 1);
+	}
+}
+
+void Inventory::SortInventory()
+{
+	SortByType(EQinventory);
 }
 
 void Inventory::addToInventory(Enemy* enemy)
@@ -72,6 +112,11 @@ vector<string> Inventory::getOptions()
 	return options;
 }
 
+int Inventory::GetPotionCount()
+{
+	return ItemInventory[Items::POTION];
+}
+
 void Inventory::printInventory()
 {
 	for (int i = 0; i < Items::ITEM_TOTAL; i++)
@@ -85,140 +130,204 @@ void Inventory::ResetInventory()
 {
 	state = TAB1;
 	inputeState = INVENTORY;
+	seeker.SetZero();
 	secondSeeker = 0;
 }
 
 void Inventory::UpdateInput()
 {
-	switch (inputeState)
+	switch (state)
 	{
-	case INVENTORY:
-		if (Application::IsKeyPressed(VK_RIGHT) && !SharedData::GetInstance()->RIGHTkeyPressed)
+	case TAB1:
+		switch (inputeState)
 		{
-			seeker.x++;
-			if (seeker.x > 7)
-				seeker.x = 0;
-			SharedData::GetInstance()->RIGHTkeyPressed = true;
-		}
-		else if (!Application::IsKeyPressed(VK_RIGHT) && SharedData::GetInstance()->RIGHTkeyPressed)
-		{
-			SharedData::GetInstance()->RIGHTkeyPressed = false;
-		}
-
-		if (Application::IsKeyPressed(VK_LEFT) && !SharedData::GetInstance()->LEFTkeyPressed)
-		{
-			seeker.x--;
-			if (seeker.x < 0)
-				seeker.x = 7;
-			SharedData::GetInstance()->LEFTkeyPressed = true;
-		}
-		else if (!Application::IsKeyPressed(VK_LEFT) && SharedData::GetInstance()->LEFTkeyPressed)
-		{
-			SharedData::GetInstance()->LEFTkeyPressed = false;
-		}
-
-		if (Application::IsKeyPressed(VK_UP) && !SharedData::GetInstance()->UPkeyPressed)
-		{
-			seeker.y++;
-			if (seeker.y > 0)
-				seeker.y = -2;
-			SharedData::GetInstance()->UPkeyPressed = true;
-		}
-		else if (!Application::IsKeyPressed(VK_UP) && SharedData::GetInstance()->UPkeyPressed)
-		{
-			SharedData::GetInstance()->UPkeyPressed = false;
-		}
-
-		if (Application::IsKeyPressed(VK_DOWN) && !SharedData::GetInstance()->DNkeyPressed)
-		{
-			seeker.y--;
-			if (seeker.y < -2)
-				seeker.y = 0;
-			SharedData::GetInstance()->DNkeyPressed = true;
-		}
-		else if (!Application::IsKeyPressed(VK_DOWN) && SharedData::GetInstance()->DNkeyPressed)
-		{
-			SharedData::GetInstance()->DNkeyPressed = false;
-		}
-
-		if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
-		{
-			SharedData::GetInstance()->ENTERkeyPressed = true;
-			if (getEquipmentLookAt()->getName() != "UNDEFINED")
+		case INVENTORY:
+			if (Application::IsKeyPressed(VK_RIGHT) && !SharedData::GetInstance()->RIGHTkeyPressed)
 			{
-				inputeState = EQUIP_OPTIONS;
-				options.clear();
-				switch (getEquipmentLookAt()->getType())
+				seeker.x++;
+				if (seeker.x > 7)
+					seeker.x = 7;
+				SharedData::GetInstance()->RIGHTkeyPressed = true;
+			}
+			else if (!Application::IsKeyPressed(VK_RIGHT) && SharedData::GetInstance()->RIGHTkeyPressed)
+			{
+				SharedData::GetInstance()->RIGHTkeyPressed = false;
+			}
+
+			if (Application::IsKeyPressed(VK_LEFT) && !SharedData::GetInstance()->LEFTkeyPressed)
+			{
+				seeker.x--;
+				if (seeker.x < 0)
 				{
-				case Equipment::SWORD:
-				case Equipment::SHIELD:
-					options.push_back("RIGHT HAND");
-					options.push_back("LEFT HAND");
-					options.push_back("DISCARD");
-					options.push_back("BACK");
-					break;
-				case Equipment::HELMET:
-				case Equipment::ARMOUR:
-				case Equipment::LEG:
-					options.push_back("EQUIP");
-					options.push_back("DISCARD");
-					options.push_back("BACK");
-					break;
+					ResetInventory();
+					state = TAB2;
+				}
+				SharedData::GetInstance()->LEFTkeyPressed = true;
+			}
+			else if (!Application::IsKeyPressed(VK_LEFT) && SharedData::GetInstance()->LEFTkeyPressed)
+			{
+				SharedData::GetInstance()->LEFTkeyPressed = false;
+			}
+
+			if (Application::IsKeyPressed(VK_UP) && !SharedData::GetInstance()->UPkeyPressed)
+			{
+				seeker.y++;
+				if (seeker.y > 0)
+					seeker.y = -2;
+				SharedData::GetInstance()->UPkeyPressed = true;
+			}
+			else if (!Application::IsKeyPressed(VK_UP) && SharedData::GetInstance()->UPkeyPressed)
+			{
+				SharedData::GetInstance()->UPkeyPressed = false;
+			}
+
+			if (Application::IsKeyPressed(VK_DOWN) && !SharedData::GetInstance()->DNkeyPressed)
+			{
+				seeker.y--;
+				if (seeker.y < -2)
+					seeker.y = 0;
+				SharedData::GetInstance()->DNkeyPressed = true;
+			}
+			else if (!Application::IsKeyPressed(VK_DOWN) && SharedData::GetInstance()->DNkeyPressed)
+			{
+				SharedData::GetInstance()->DNkeyPressed = false;
+			}
+
+			if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
+			{
+				SharedData::GetInstance()->ENTERkeyPressed = true;
+				if (getEquipmentLookAt()->getName() != "UNDEFINED")
+				{
+					inputeState = EQUIP_OPTIONS;
+					options.clear();
+					switch (getEquipmentLookAt()->getType())
+					{
+					case Equipment::SWORD:
+					case Equipment::SHIELD:
+						options.push_back("RIGHT HAND");
+						options.push_back("LEFT HAND");
+						options.push_back("DISCARD");
+						options.push_back("BACK");
+						break;
+					case Equipment::HELMET:
+					case Equipment::ARMOUR:
+					case Equipment::LEG:
+						options.push_back("EQUIP");
+						options.push_back("DISCARD");
+						options.push_back("BACK");
+						break;
+					}
 				}
 			}
-		}
-		else if (!Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
-		{
+			else if (!Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
+			{
 
-			SharedData::GetInstance()->ENTERkeyPressed = false;
-		}
+				SharedData::GetInstance()->ENTERkeyPressed = false;
+			}
 
-		break;
-	case EQUIP_OPTIONS:
-		if (Application::IsKeyPressed(VK_DOWN) && !SharedData::GetInstance()->DNkeyPressed)
-		{
-			secondSeeker++;
-			if (secondSeeker > options.size() - 1)
+			break;
+		case EQUIP_OPTIONS:
+			if (Application::IsKeyPressed(VK_DOWN) && !SharedData::GetInstance()->DNkeyPressed)
+			{
+				secondSeeker++;
+				if (secondSeeker > options.size() - 1)
+					secondSeeker = 0;
+				SharedData::GetInstance()->DNkeyPressed = true;
+			}
+			else if (!Application::IsKeyPressed(VK_DOWN) && SharedData::GetInstance()->DNkeyPressed)
+			{
+				SharedData::GetInstance()->DNkeyPressed = false;
+			}
+
+			if (Application::IsKeyPressed(VK_UP) && !SharedData::GetInstance()->UPkeyPressed)
+			{
+				secondSeeker--;
+				if (secondSeeker < 0)
+					secondSeeker = options.size() - 1;
+				SharedData::GetInstance()->UPkeyPressed = true;
+			}
+
+			else if (!Application::IsKeyPressed(VK_UP) && SharedData::GetInstance()->UPkeyPressed)
+			{
+				SharedData::GetInstance()->UPkeyPressed = false;
+			}
+
+			if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
+			{
+				SharedData::GetInstance()->ENTERkeyPressed = true;
+				if (options[secondSeeker] == "DISCARD")
+				{
+					removeFromInventory(getEquipmentLookAt());
+					SortInventory();
+				}
+				if (options[secondSeeker] == "RIGHT HAND" || options[secondSeeker] == "LEFT HAND" || options[secondSeeker] == "EQUIP")
+				{
+					EquipItem(options[secondSeeker]);
+				}
 				secondSeeker = 0;
-			SharedData::GetInstance()->DNkeyPressed = true;
-		}
-		else if (!Application::IsKeyPressed(VK_DOWN) && SharedData::GetInstance()->DNkeyPressed)
-		{
-			SharedData::GetInstance()->DNkeyPressed = false;
-		}
-
-		if (Application::IsKeyPressed(VK_UP) && !SharedData::GetInstance()->UPkeyPressed)
-		{
-			secondSeeker--;
-			if (secondSeeker < 0)
-				secondSeeker = options.size() -1;
-			SharedData::GetInstance()->UPkeyPressed = true;
-		}
-
-		else if (!Application::IsKeyPressed(VK_UP) && SharedData::GetInstance()->UPkeyPressed)
-		{
-			SharedData::GetInstance()->UPkeyPressed = false;
-		}
-
-		if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
-		{
-			SharedData::GetInstance()->ENTERkeyPressed = true;
-			if (options[secondSeeker] == "DISCARD")
-			{
-				removeFromInventory(getEquipmentLookAt());
+				inputeState = INVENTORY;
 			}
-			if (options[secondSeeker] == "RIGHT HAND" || options[secondSeeker] == "LEFT HAND" || options[secondSeeker] == "EQUIP")
+			else if (!Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
 			{
-				EquipItem(options[secondSeeker]);
+				SharedData::GetInstance()->ENTERkeyPressed = false;
 			}
-			secondSeeker = 0;
-			inputeState = INVENTORY;
-		}
-		else if (!Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
-		{
-			SharedData::GetInstance()->ENTERkeyPressed = false;
+			break;
 		}
 		break;
+		case TAB2:
+			switch (inputeState)
+			{
+			case INVENTORY:
+				if (Application::IsKeyPressed(VK_RIGHT) && !SharedData::GetInstance()->RIGHTkeyPressed)
+				{
+					seeker.x++;
+					if (seeker.x > 0)
+					{
+						ResetInventory();
+					}
+					SharedData::GetInstance()->RIGHTkeyPressed = true;
+				}
+				else if (!Application::IsKeyPressed(VK_RIGHT) && SharedData::GetInstance()->RIGHTkeyPressed)
+				{
+					SharedData::GetInstance()->RIGHTkeyPressed = false;
+				}
+				if (Application::IsKeyPressed(VK_DOWN) && !SharedData::GetInstance()->DNkeyPressed)
+				{
+					seeker.y++;
+					if (seeker.y > Items::ITEM_TOTAL - 1)
+						seeker.y = 0;
+					SharedData::GetInstance()->DNkeyPressed = true;
+				}
+				else if (!Application::IsKeyPressed(VK_DOWN) && SharedData::GetInstance()->DNkeyPressed)
+				{
+					SharedData::GetInstance()->DNkeyPressed = false;
+				}
+				if (Application::IsKeyPressed(VK_UP) && !SharedData::GetInstance()->UPkeyPressed)
+				{
+					seeker.y--;
+					if (seeker.y < 0)
+						seeker.y = Items::ITEM_TOTAL - 1;
+					SharedData::GetInstance()->UPkeyPressed = true;
+				}
+				else if (!Application::IsKeyPressed(VK_UP) && SharedData::GetInstance()->UPkeyPressed)
+				{
+					SharedData::GetInstance()->UPkeyPressed = false;
+				}
+				if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
+				{
+					SharedData::GetInstance()->ENTERkeyPressed = true;
+					inputeState = EQUIP_OPTIONS;
+					options.clear();
+					options.push_back("USE");
+					options.push_back("BACK");
+				}
+				else if (!Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
+				{
+					SharedData::GetInstance()->ENTERkeyPressed = false;
+				}
+				break;
+			}
+			break;
 	}
 }
 

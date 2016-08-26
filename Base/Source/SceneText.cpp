@@ -15,7 +15,6 @@ SceneText::SceneText()
 :
 m_cMap(NULL)
 , EnemyInBattle(NULL)
-//, NPCInConvo(NULL)
 {
 }
 
@@ -44,7 +43,7 @@ void SceneText::Init()
 
 	m_cMap2 = new CMap();
 	m_cMap2->Init(Application::GetInstance().GetScreenHeight(), Application::GetInstance().GetScreenWidth(), 32);
-	m_cMap2->LoadMap("Image//ArunMapData2.csv");
+	m_cMap2->LoadMap("Data//ArunMapData2.csv");
 
 	// Init for loading GameObjects
 	Items* thePotion = new Items(Vector3(32.f, 32.f, 1));
@@ -77,7 +76,14 @@ void SceneText::Init()
 		Enemy* theEnemy;
 		theEnemy = new Enemy(Monster::getMonster(Monster::BANSHEE), Vector3(32.f, 32.f, 1));
 		theEnemy->type = GameObject::GO_ENEMY;
-		theEnemy->position.Set(64, 224, 1);
+		Vector3 RandPos;
+		while (RandPos.IsZero())
+		{
+			RandPos.Set(Math::RandIntMinMax(0, m_cMap->GetNumOfTiles_Width() - 1), Math::RandIntMinMax(0, m_cMap->GetNumOfTiles_Height() - 1), 0);
+			if (m_cMap->theMap[RandPos.y][RandPos.x].shouldCollide)
+				RandPos.SetZero();
+		}
+		theEnemy->position.Set(RandPos.x * 32, RandPos.y * 32, 1);
 		m_goList.push_back(theEnemy);
 	}
 
@@ -645,41 +651,100 @@ void SceneText::renderInventoryItems()
 	ss.str("");
 	ss << "DEFENSE:         " << SharedData::GetInstance()->inventory.GetTotalDEF();
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 30, 43, 371 - 33);
+
+	ss.str("");
+	ss << "Potions:          " << SharedData::GetInstance()->inventory.GetPotionCount();
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 43.5, 180 + 22);
+	ss.str("");
+	ss << "Traps:            " << SharedData::GetInstance()->inventory.GetPotionCount();
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 43.5, 180 - 22.5 + 22);
+	ss.str("");
+	ss << "Encrypted Memory: " << SharedData::GetInstance()->inventory.GetPotionCount();
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 43.5, 180 - 45 + 22);
+	cout << ypos << endl;
+
 }
 
 void SceneText::renderInventoryMenus()
 {
-	if (SharedData::GetInstance()->inventory.getEquipmentLookAt()->getName() != "UNDEFINED")
+	static float xpos = 0.f;
+	static float ypos = 0.f;
+
+	if (Application::IsKeyPressed('U'))
 	{
-		std::ostringstream ss;
-		ss.str("");
-		ss << "Name: " << SharedData::GetInstance()->inventory.getEquipmentLookAt()->getName() << endl;
-		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392);
-		ss.str("");
-		ss << "Damage: " << SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDamage() << endl;
-		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392 - 20);
-		ss.str("");
-		ss << "Defense: " << SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDefense() << endl;
-		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392 - 40);
+		ypos += 0.5f;
+	}
+	if (Application::IsKeyPressed('J'))
+	{
+		ypos -= 0.5f;
+	}
+	if (Application::IsKeyPressed('H'))
+	{
+		xpos -= 0.5f;
+	}
+	if (Application::IsKeyPressed('K'))
+	{
+		xpos += 0.5f;
 	}
 
-	if (SharedData::GetInstance()->inventory.getInputState() == Inventory::INVENTORY)
-		Render2DMesh(meshList[GEO_INVENTORYSEEKER], false, 1, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46);
-	if (SharedData::GetInstance()->inventory.getInputState() == Inventory::EQUIP_OPTIONS)
+	switch (SharedData::GetInstance()->inventory.getState())
 	{
-		Render2DMeshWScale(meshList[GEO_INVENTORYSECONDBACKGROUND], false, 122, -44 - (float)(SharedData::GetInstance()->inventory.getOptions().size() * 18), 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 36, 290 + SharedData::GetInstance()->inventory.getSeeker().y * 46);
-		for (int i = 0; i < SharedData::GetInstance()->inventory.getOptions().size(); ++i)
+	case Inventory::TAB1:
+		if (SharedData::GetInstance()->inventory.getEquipmentLookAt()->getName() != "UNDEFINED")
 		{
 			std::ostringstream ss;
 			ss.str("");
-			ss << SharedData::GetInstance()->inventory.getOptions()[i];
-			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 46, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46 - (i * 20));
+			ss << "Name: " << SharedData::GetInstance()->inventory.getEquipmentLookAt()->getName() << endl;
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392);
+			ss.str("");
+			ss << "Damage: " << SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDamage() << endl;
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392 - 20);
+			ss.str("");
+			ss << "Defense: " << SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDefense() << endl;
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392 - 40);
+			ss.str("");
+			ss << "AVG: " << (SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDefense() + SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDamage()) * 0.5 << endl;
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392 - 60);
 		}
+
+		if (SharedData::GetInstance()->inventory.getInputState() == Inventory::INVENTORY)
+			Render2DMesh(meshList[GEO_INVENTORYSEEKER], false, 1, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46);
+		if (SharedData::GetInstance()->inventory.getInputState() == Inventory::EQUIP_OPTIONS)
+		{
+			Render2DMeshWScale(meshList[GEO_INVENTORYSECONDBACKGROUND], false, 122, -44 - (float)(SharedData::GetInstance()->inventory.getOptions().size() * 18), 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 36, 290 + SharedData::GetInstance()->inventory.getSeeker().y * 46);
+			for (int i = 0; i < SharedData::GetInstance()->inventory.getOptions().size(); ++i)
+			{
+				std::ostringstream ss;
+				ss.str("");
+				ss << SharedData::GetInstance()->inventory.getOptions()[i];
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 46, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46 - (i * 20));
+			}
+			std::ostringstream ss;
+			ss.str("");
+			ss << SharedData::GetInstance()->inventory.getOptions()[SharedData::GetInstance()->inventory.getSecondSeeker()];
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 46, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46 - (SharedData::GetInstance()->inventory.getSecondSeeker() * 20));
+		}
+		break;
+	case Inventory::TAB2:
 		std::ostringstream ss;
-		ss.str("");
-		ss << SharedData::GetInstance()->inventory.getOptions()[SharedData::GetInstance()->inventory.getSecondSeeker()];
-		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 46, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46 - (SharedData::GetInstance()->inventory.getSecondSeeker() * 20));
+		if (SharedData::GetInstance()->inventory.getSeeker().y == Items::POTION)
+		{
+			ss << "Potions:          " << SharedData::GetInstance()->inventory.GetPotionCount();
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 43.5, 180 + 22);
+		}
+		if (SharedData::GetInstance()->inventory.getSeeker().y == Items::TRAP)
+		{
+			ss << "Traps:            " << SharedData::GetInstance()->inventory.GetPotionCount();
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 43.5, 180 - 22.5 + 22);
+		}
+		if (SharedData::GetInstance()->inventory.getSeeker().y == Items::ENCRYPTED_MEMORY)
+		{
+			ss << "Encrypted Memory: " << SharedData::GetInstance()->inventory.GetPotionCount();
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 43.5, 180 - 45+ 22);
+		}
+		break;
 	}
+//	cout << xpos << " " << ypos << endl;
 }
 
 void SceneText::RenderInventory()
@@ -758,7 +823,7 @@ void SceneText::Update(double dt)
 	if (Application::IsKeyPressed(VK_F6) && !f6press)
 	{
 		f6press = true;
-		m_cMap->LoadMap("Data//MapData.csv");
+		SharedData::GetInstance()->inventory.SortInventory();
 	}
 	else if (!Application::IsKeyPressed(VK_F6) && f6press)
 	{
@@ -878,7 +943,7 @@ void SceneText::RenderTestMap()
 {
 	RenderBackground(meshList[GEO_BACKGROUND]);
 	RenderTileMap(meshList[GEO_TILESET1], m_cMap);
-	//RenderTileMap(meshList[GEO_TILESET1], m_cMap2);
+	RenderTileMap(meshList[GEO_TILESET1], m_cMap2);
 
 	std::ostringstream ss;
 

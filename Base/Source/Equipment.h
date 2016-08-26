@@ -10,6 +10,7 @@ class Equipment
 public:
 	enum EQUIPMENT_TYPE
 	{
+		NO_TYPE = -1,
 		SWORD,
 		SHIELD,
 		HELMET,
