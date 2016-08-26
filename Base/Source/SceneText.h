@@ -136,14 +136,14 @@ private:
 	Vector3 battleMonsterPos;
 	Vector3 battleMonsterScale;
 	bool monsterScaleUp;
-	bool playerBattleDialogue;
 
 	//Battle System HP bar 
 	float maxHpScale;
 	Vector3 hpPos;
 	float renderedHp;
 	bool capturedMonster;
-
+	bool flashEffect;
+	float flashTimer;
 	float maxMpScale;
 	Vector3 mpPos;
 	float renderedMp;

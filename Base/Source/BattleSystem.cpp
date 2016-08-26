@@ -2,13 +2,13 @@
 #include "Enemy.h"
 #include "Application.h"
 #include "SceneText.h"
-BattleSystem::BattleSystem():
-	 battleStart(false),
-	 firstChoice(true),
-	 secondChoice(false),
-	 arrowPos(120, 90, 0),
-	 battleSelection(BS_ATTACK),
-	 monsterHitAnimation(false)
+BattleSystem::BattleSystem() :
+battleStart(false),
+firstChoice(true),
+secondChoice(false),
+arrowPos(120, 90, 0),
+battleSelection(BS_ATTACK),
+monsterHitAnimation(false)
 {
 }
 
@@ -76,9 +76,25 @@ bool BattleSystem::GetSecondChoice()
 
 BattleSystem::BATTLE_SELECTION BattleSystem::GetBattleSelection()
 {
-	return battleSelection; 
+	return battleSelection;
 }
 
+//new
+void BattleSystem::EndPlayerTurn()
+{
+	SharedData::GetInstance()->enemyTurn = true;
+	SharedData::GetInstance()->enemyHitPlayer = true;
+	SharedData::GetInstance()->playerTurn = false;
+}
+
+void BattleSystem::EndEnemyTurn()
+{
+	SharedData::GetInstance()->enemyTurn = false;
+	SharedData::GetInstance()->enemyHitPlayer = false;
+	SharedData::GetInstance()->playerTurn = true;
+}
+
+//new
 void BattleSystem::Reset()
 {
 	battleStart = false;
@@ -89,7 +105,7 @@ void BattleSystem::Reset()
 	secondChoice = false;
 	escapePercentage = 25.0f;
 	battleSelection = BS_ATTACK;
-	SharedData::GetInstance()->soundManager.StopAllSound();
+	SetMonsterHitAnimation(false);
 }
 
 void BattleSystem::SetMonsterHitAnimation(bool set)
@@ -116,8 +132,6 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 			firstChoice = false;
 			secondChoice = true;
 			cout << "ATTACK! " << endl;
-			secondChoice = true;
-			firstChoice = false;
 			break;
 
 		case BS_ITEM:
@@ -126,8 +140,6 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 			firstChoice = false;
 			secondChoice = true;
 			cout << "Item Bag" << battleSelection << endl;
-			secondChoice = true;
-			firstChoice = false;
 			break;
 
 		case BS_CAPTURE:
@@ -153,11 +165,12 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 			}
 			else
 			{
-				/*enemyTurn = true;
-				playerTurn = false;*/
+
 				escapePercentage = 25.0f;
 				cout << "WHY YOU NO ESCAPE!!!!" << endl;
-				battleSelection = BS_ATTACK;
+
+				// new
+				SharedData::GetInstance()->playerBattleDialogue = true;
 			}
 			break;
 		}
@@ -170,9 +183,15 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 		{
 		case BS_SLASH:
 			//minus enemy hp, then enemy turn = true, player turn = false
+
 			cout << "Slash enemy " << endl;
-			theHero->SetDMG(10);
-			enemy->TakeDamage(theHero->GetDMG());
+			if (SharedData::GetInstance()->inventory.GetTotalATK() <= 0)
+				theHero->SetDMG(10);
+			else
+				theHero->SetDMG(SharedData::GetInstance()->inventory.GetTotalATK()* 0.5);
+
+			// * by 0.5 because it might 1 hit the enemy 
+			enemy->TakeDamage(theHero->GetDMG()* 0.5);
 
 			SharedData::GetInstance()->BS_SlashRender = true;
 
@@ -187,14 +206,17 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 				//destory enemy here
 			}
 
+
 			break;
 
 		case BS_STAB:
 			//minus enemy hp, then enemy turn = true, player turn = false
 			cout << "Stab enemy " << battleSelection << endl;
-
-			theHero->SetDMG(15);
-			enemy->TakeDamage(theHero->GetDMG());
+			if (SharedData::GetInstance()->inventory.GetTotalATK() <= 0)
+				theHero->SetDMG(15);
+			else
+				theHero->SetDMG(SharedData::GetInstance()->inventory.GetTotalATK() * 0.5);
+			enemy->TakeDamage(theHero->GetDMG()* 0.5);
 			SharedData::GetInstance()->BS_StabRender = true;
 
 			cout << "Player Stab Enemy for " << theHero->GetDMG() << " Enemy HP left " << enemy->GetHealth() << endl;
@@ -211,6 +233,7 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 		case BS_SKILL:
 			//minus enemy hp, then enemy turn = true, player turn = false
 			theHero->UseMP(50);
+			battleSelection = BS_ATTACK;
 			cout << " Monster's skills " << battleSelection << endl;
 
 			break;
@@ -319,34 +342,18 @@ void BattleSystem::UpdateBattleSystem(static bool& UPkeyPressed, static bool& DN
 	{
 		if (SharedData::GetInstance()->enemyHitPlayer)
 		{
-			theHero->TakeDMG(enemy->GetDamage());
+			if (SharedData::GetInstance()->inventory.GetTotalDEF() <= 0)
+				theHero->SetDEF(10);
+			else
+				theHero->SetDEF(SharedData::GetInstance()->inventory.GetTotalDEF()* 0.5);
+
+			int damageToPlayer = enemy->GetDamage() - theHero->GetDEF();
+			if (damageToPlayer < 0)
+				damageToPlayer = 0;
+			theHero->TakeDMG(damageToPlayer);
 			SetMonsterHitAnimation(true);
 
-			if (theHero->GetHP() < 0)
-			{
-				//Render Game over here
-				Reset();
-				cout << "Reset !!" << endl;
-			}
 			SharedData::GetInstance()->enemyHitPlayer = false;
 		}
-		cout << "Monster hit player for " << enemy->GetDamage() << " player HP left " << theHero->GetHP() << endl;
-
 	}
-	////if enemy not dead		
-	//if (enemy->GetHealth() < 0)
-	//{
-	//	SceneText* mainScene = (SceneText*)Application::GetInstance().GetScene();
-
-	//	//Player win
-	//	Reset();
-	//	mainScene->RemoveEnemy();
-	//	//destory enemy here
-	//}
-	//else if (theHero->GetHP() <= 0)
-	//{
-	//	//Player Lose should do auto load to previous save file
-	//	SharedData::GetInstance()->stateCheck = true;
-	//	SharedData::GetInstance()->gameState = SharedData::MENU;
-	//}
 }

@@ -136,6 +136,12 @@ void SceneText::Init()
 	mpPos.Set(36, 548.9, 0);
 	maxMpScale = 10.9f;
 
+	//new
+	flashEffect = false;
+	flashTimer = 0.0f;
+	renderedMp = 100;
+	renderedHp = 100;
+
 	for (int j = 0; j < 10; ++j)
 	{
 		Equipment* temp = new Equipment();
@@ -161,9 +167,6 @@ void SceneText::Init()
 			}
 		}
 	}
-	playerBattleDialogue = false;
-	renderedMp = 100;
-	renderedHp = 100;
 }
 
 bool SceneText::GetMonsterScaleUp()
@@ -234,10 +237,10 @@ void SceneText::SetGS(string set)
 
 void SceneText::CatchUpdate(double dt)
 {
-	enemyCatchPercentage = (EnemyInBattle->GetMaxHealth() - EnemyInBattle->GetHealth()) / EnemyInBattle->GetMaxHealth() * redbar->scale.x;
+	enemyCatchPercentage = (EnemyInBattle->GetMaxHealth() - EnemyInBattle->GetHealth()) / EnemyInBattle->GetMaxHealth() * 100;
 
 	float prevScale = greenbar->scale.x;
-	greenbar->scale.x = enemyCatchPercentage;
+	greenbar->scale.x = enemyCatchPercentage * 0.01 * redbar->scale.x; // * 0.01 is the same as divide by 100
 	if (greenbar->scale.x > prevScale)
 	{
 		greenbar->position.x -= (greenbar->scale.x - prevScale) * 0.5;
@@ -261,6 +264,7 @@ void SceneText::CatchUpdate(double dt)
 		}
 		else if (!chargebar->CheckCollision(greenbar, m_cMap))
 		{
+			SharedData::GetInstance()->playerBattleDialogue = true;
 			GS = BATTLE;
 		}
 	}
@@ -814,12 +818,48 @@ void SceneText::Update(double dt)
 		SharedData::GetInstance()->ZKeyPressed = false;
 	}
 
+	//For battle scene Dialogue
+	if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed && SharedData::GetInstance()->playerBattleDialogue)
+	{
+		SharedData::GetInstance()->ENTERkeyPressed = true;
+		battleScene.EndPlayerTurn();
+		battleScene.SetBattleSelection(BattleSystem::BS_ATTACK);
+		SharedData::GetInstance()->playerBattleDialogue = false;
+	}
+	else if (!Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
+	{
+		SharedData::GetInstance()->ENTERkeyPressed = false;
+	}
+
 	switch (GS)
 	{
 	case TESTMAP:
 		MapUpdate(dt);
 		break;
 	case BATTLE:
+
+		//Updating of catch percentage
+		enemyCatchPercentage = (EnemyInBattle->GetMaxHealth() - EnemyInBattle->GetHealth()) / EnemyInBattle->GetMaxHealth() * 100;
+
+		//Flashing effect of dialogue
+		if (flashEffect)
+		{
+			flashTimer += 1.5 * dt;
+			if (flashTimer > 1.0f)
+			{
+				flashTimer = 0;
+				flashEffect = false;
+			}
+		}
+		else
+		{
+			flashTimer -= 1.5 * dt;
+			if (flashTimer < -1.0f)
+			{
+				flashTimer = 0.0f;
+				flashEffect = true;
+			}
+		}
 
 		//Decrease Rendered HP on screen
 		if (theHero->GetHP() < renderedHp)
@@ -865,7 +905,7 @@ void SceneText::Update(double dt)
 				{
 					SharedData::GetInstance()->BS_SlashRender = false;
 					slashAnimation->m_currentFrame = 0;
-					playerBattleDialogue = true;
+					SharedData::GetInstance()->playerBattleDialogue = true;
 				}
 			}
 		}
@@ -885,7 +925,7 @@ void SceneText::Update(double dt)
 				{
 					SharedData::GetInstance()->BS_StabRender = false;
 					stabAnimation->m_currentFrame = 0;
-					playerBattleDialogue = true;
+					SharedData::GetInstance()->playerBattleDialogue = true;
 				}
 			}
 		}
@@ -1019,10 +1059,6 @@ void SceneText::RenderMonster()
 			battleMonsterPos.y += 3.0f;
 			if (battleMonsterScale.x < 0.3 || battleMonsterScale.y < 0.3)
 			{
-				//Reset to player's turn after enemy end its turn
-				//There must be something here i forgot to reset so 
-				//The slash animation isn't working properly
-
 				battleScene.SetMonsterHitAnimation(false);
 				battleScene.SetFirstChoice(true);
 				battleScene.SetSecondChoice(false);
@@ -1034,7 +1070,6 @@ void SceneText::RenderMonster()
 				monsterScaleUp = true;
 			}
 		}
-		//cout << "x : " << battleMonsterScale.x << ", y : " << battleMonsterScale.y << endl;
 	}
 
 	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
@@ -1291,9 +1326,11 @@ void SceneText::RenderCatch()
 
 void SceneText::RenderBattleDialogue()
 {
-	if (playerBattleDialogue)
+	//Player Attack Enemy Dialogue
+	if (SharedData::GetInstance()->playerBattleDialogue && battleScene.GetBattleSelection() == BattleSystem::BS_SLASH ||
+		SharedData::GetInstance()->playerBattleDialogue && battleScene.GetBattleSelection() == BattleSystem::BS_STAB)
 	{
-		Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1.5, 0.3, -50, 0, false);
+		Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false);
 
 		if (battleScene.GetBattleSelection() == BattleSystem::BS_SLASH)
 		{
@@ -1302,30 +1339,91 @@ void SceneText::RenderBattleDialogue()
 			ss.precision(5);
 			ss << "You Slash Enemy for " << theHero->GetDMG() << ", Enemy HP left " << EnemyInBattle->GetHealth();
 
-			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 200, 100);
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 200, 100);
+
+			if (flashEffect)
+			{
+				ss.str("");
+				ss.precision(5);
+				ss << "Press enter to continue ";
+
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 15, 300, 50);
+			}
 		}
-		else if (battleScene.GetBattleSelection() == BattleSystem::BS_SLASH)
+
+		if (battleScene.GetBattleSelection() == BattleSystem::BS_STAB)
 		{
 			std::ostringstream ss;
 			ss.str("");
 			ss.precision(5);
 			ss << "You stab Enemy for " << theHero->GetDMG() << ", Enemy HP left " << EnemyInBattle->GetHealth();
 
-			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 200, 100);
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 200, 100);
+
+			if (flashEffect)
+			{
+				ss.str("");
+				ss.precision(5);
+				ss << "Press enter to continue ";
+
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 15, 300, 50);
+			}
+
 		}
-		SharedData::GetInstance()->enemyTurn = true;
-		SharedData::GetInstance()->enemyHitPlayer = true;
-		SharedData::GetInstance()->playerTurn = false;
-		playerBattleDialogue = false;
 	}
+	else if (SharedData::GetInstance()->playerBattleDialogue && battleScene.GetBattleSelection() == BattleSystem::BS_CAPTURE ||
+		SharedData::GetInstance()->playerBattleDialogue && battleScene.GetBattleSelection() == BattleSystem::BS_RUN)
+	{
+		Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false);
+
+		if (battleScene.GetBattleSelection() == BattleSystem::BS_CAPTURE)
+		{
+			std::ostringstream ss;
+			ss.str("");
+			ss.precision(5);
+			ss << "You failed to capture the enemy!";
+
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 200, 100);
+
+			if (flashEffect)
+			{
+				ss.str("");
+				ss.precision(5);
+				ss << "Press enter to continue ";
+
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 15, 300, 50);
+			}
+		}
+
+		if (battleScene.GetBattleSelection() == BattleSystem::BS_RUN)
+		{
+			std::ostringstream ss;
+			ss.str("");
+			ss.precision(5);
+			ss << "You failed to escape!";
+
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 200, 100);
+
+			if (flashEffect)
+			{
+				ss.str("");
+				ss.precision(5);
+				ss << "Press enter to continue ";
+
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 15, 300, 50);
+			}
+
+		}
+	}
+
 }
 
 void SceneText::RenderBattleAnimation()
 {
 	if (SharedData::GetInstance()->BS_SlashRender)
-		Render2DMeshWScale(meshList[GEO_SLASHANIMATION], false, 200.0f, 200.0f, battleMonsterPos.x + 120.f, battleMonsterPos.y + 80.0f, false);
+		Render2DMeshWScale(meshList[GEO_SLASHANIMATION], false, 200.0f, 200.0f, battleMonsterPos.x, battleMonsterPos.y, false);
 	if (SharedData::GetInstance()->BS_StabRender)
-		Render2DMeshWScale(meshList[GEO_STABANIMATION], false, 200.0f, 200.0f, battleMonsterPos.x + 120.0f, battleMonsterPos.y + 80.0f, false);
+		Render2DMeshWScale(meshList[GEO_STABANIMATION], false, 200.0f, 200.0f, battleMonsterPos.x, battleMonsterPos.y, false);
 }
 
 void SceneText::RenderBattleHUD()
@@ -1363,7 +1461,7 @@ void SceneText::RenderBattleHUD()
 		!SharedData::GetInstance()->enemyTurn &&
 		!SharedData::GetInstance()->BS_SlashRender &&
 		!SharedData::GetInstance()->BS_StabRender &&
-		!playerBattleDialogue)
+		!SharedData::GetInstance()->playerBattleDialogue)
 	{
 		Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1.5, 0.3, -50, 0, false);
 
