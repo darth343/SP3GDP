@@ -252,6 +252,7 @@ void SceneText::CatchUpdate(double dt)
 			currState = 3;
 			SharedData::GetInstance()->inventory.addToInventory(EnemyInBattle);
 			RemoveEnemy();
+			SharedData::GetInstance()->soundManager.StopAllSound();
 			GS = TESTMAP;
 			return;
 		}
