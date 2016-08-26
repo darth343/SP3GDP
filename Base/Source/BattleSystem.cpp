@@ -89,6 +89,7 @@ void BattleSystem::Reset()
 	secondChoice = false;
 	escapePercentage = 25.0f;
 	battleSelection = BS_ATTACK;
+	SharedData::GetInstance()->soundManager.StopAllSound();
 }
 
 void BattleSystem::SetMonsterHitAnimation(bool set)
@@ -148,6 +149,7 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 				battleSelection = BS_ATTACK;
 				mainScene->SetGS("TESTMAP");
 				mainScene->RemoveEnemy();
+				Reset();
 			}
 			else
 			{
