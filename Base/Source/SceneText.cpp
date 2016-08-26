@@ -40,11 +40,8 @@ void SceneText::Init()
 	// Initialise and load the tile map
 	m_cMap = new CMap();
 	m_cMap->Init(Application::GetInstance().GetScreenHeight(), Application::GetInstance().GetScreenWidth(), 32);
-	m_cMap->LoadMap("Data//ArunMapData.csv");
+	m_cMap->LoadMap("Data//MapData_WM.csv");
 
-	m_cMap2 = new CMap();
-	m_cMap2->Init(Application::GetInstance().GetScreenHeight(), Application::GetInstance().GetScreenWidth(), 32);
-	m_cMap2->LoadMap("Image//ArunMapData2.csv");
 
 	// Init for loading GameObjects
 	Items* thePotion = new Items(Vector3(32.f, 32.f, 1));
@@ -808,7 +805,7 @@ static bool touched = true;
 void SceneText::RenderTestMap()
 {
 	RenderBackground(meshList[GEO_BACKGROUND]);
-	RenderTileMap(meshList[GEO_TILESET1], m_cMap);
+	RenderTileMap(meshList[GEO_TILESET3], m_cMap);
 	//RenderTileMap(meshList[GEO_TILESET1], m_cMap2);
 
 	std::ostringstream ss;

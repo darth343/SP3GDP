@@ -128,7 +128,7 @@ private:
 	CMap* m_cMap;	// Handle to the tilemaps
 	CMap* m_cMap2;	// Handle to the tilemaps
 	CPlayerInfo* theHero; // Hero's information
-	GAMESTATE_TYPE GS; // Change GameState in SceneText.cpp line 144 for testing purposes
+	GAMESTATE_TYPE GS; // Change GameState in Scene1.cpp line 144 for testing purposes
 	MAP_STATE MS;
 
 	// Battle system
@@ -142,6 +142,7 @@ private:
 	float maxHpScale;
 	Vector3 hpPos;
 	float renderedHp;
+	bool capturedMonster;
 
 	float maxMpScale;
 	Vector3 mpPos;
