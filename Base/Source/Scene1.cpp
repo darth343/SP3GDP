@@ -75,7 +75,7 @@ void Scene1::Init()
 	for (int i = 0; i < 4; ++i)
 	{
 		Enemy* theEnemy;
-		theEnemy = new Enemy(Monster::getMonster(Monster::BANSHEE), Vector3(32.f, 32.f, 1));
+		theEnemy = new Enemy(Monster::getMonster(Monster::DRAGON), Vector3(32.f, 32.f, 1));
 		theEnemy->type = GameObject::GO_ENEMY;
 		theEnemy->position.Set(200, 700, 1);
 		m_goList.push_back(theEnemy);
