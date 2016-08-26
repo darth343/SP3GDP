@@ -15,6 +15,7 @@ public:
 	enum GAMESTATE
 	{
 		MENU,
+		STORY,
 		GAME_S1,
 		GAME_S2,
 		GAME_S3,

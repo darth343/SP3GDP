@@ -1,12 +1,12 @@
-#ifndef SCENE_MENU_H
-#define SCENE_MENU_H
+#ifndef SCENE_STORY_H
+#define SCENE_STORY_H
 #include "SceneBase.h"
 
 #include "Camera3.h"
 
 #include "SharedData.h"
 
-class SceneMenu : public SceneBase
+class SceneStory : public SceneBase
 {
 	enum GAMESTATE_TYPE
 	{
@@ -19,20 +19,24 @@ class SceneMenu : public SceneBase
 	};
 
 public:
-	SceneMenu();
-	~SceneMenu();
+	SceneStory();
+	~SceneStory();
 
 	virtual void Init();
 	virtual void Update(double dt);
 	virtual void Render();
 	virtual void Exit();
+	void RenderText();
 	GAMESTATE_TYPE m_gs;
 
 private:
-	float realizeiconx = 20;
-	float othericonx = 500;
-	bool move = false;
-	bool movein = false;
+	bool flip = false;
+	int i = 0;
+	float herox = -15;
+	ostringstream ss;
+	float cooldown = 1.f;
+	bool showFirst = false;
+	bool showSecond = false;
 };
 
 #endif

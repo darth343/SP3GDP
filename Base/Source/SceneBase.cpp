@@ -138,6 +138,12 @@ void SceneBase::Init()
 
 	meshList[GEO_MENUBG] = MeshBuilder::Generate2DMesh("GEO_BACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
 	meshList[GEO_MENUBG]->textureID = LoadTGA("Image//Menu.tga");
+
+	meshList[GEO_STORYBACKGROUND] = MeshBuilder::Generate2DMesh("GEO_BACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_STORYBACKGROUND]->textureID = LoadTGA("Image//Story1.tga");
+	meshList[GEO_EXCLAIM] = MeshBuilder::Generate2DMesh("GEO_BACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
+	meshList[GEO_EXCLAIM]->textureID = LoadTGA("Image//Exclaim.tga");
+
 	meshList[GEO_MENUPLAY] = MeshBuilder::GenerateSpriteAnimation("sprite", 4, 6);
 	meshList[GEO_MENUPLAY]->textureID = LoadTGA("Image//PlayLogo.tga");
 	meshList[GEO_MENUOPT] = MeshBuilder::GenerateSpriteAnimation("sprite", 4, 6);

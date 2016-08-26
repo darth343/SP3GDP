@@ -8,6 +8,7 @@
 #include "SceneText.h"
 #include "Scene1.h"
 #include "SceneMenu.h"
+#include "SceneStory.h"
 
 class Application
 {

@@ -197,6 +197,9 @@ void Application::Run()
 			case SharedData::MENU:
 				scene = new SceneMenu();
 				break;
+			case SharedData::STORY:
+				scene = new SceneStory();
+				break;
 			case SharedData::GAME_S1:
 				scene = new SceneText();
 				break;
