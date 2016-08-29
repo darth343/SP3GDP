@@ -1454,7 +1454,7 @@ void SceneBoss::RenderBattleDialogue()
 			ss.str("");
 			ss.precision(5);
 
-			switch (SharedData::GetInstance()->inventory.getArmour()->getType())
+			switch (SharedData::GetInstance()->inventory.getArmour()->getMonster().GetType())
 			{
 			case 0:
 			case 1:
@@ -1608,7 +1608,7 @@ void SceneBoss::RenderBattleHUD()
 		{
 			if (SharedData::GetInstance()->inventory.getArmour() != NULL)
 			{
-				switch (SharedData::GetInstance()->inventory.getArmour()->getType())
+				switch (SharedData::GetInstance()->inventory.getArmour()->getMonster().GetType())
 				{
 				case 0:
 					ss << "Banshee Scream";

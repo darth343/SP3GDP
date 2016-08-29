@@ -276,10 +276,10 @@ void SceneBase::Init()
 	meshList[GEO_STABANIMATION]->textureID = LoadTGA("Image//stabAnimation.tga");
 	meshList[GEO_SLASHANIMATION] = MeshBuilder::GenerateSpriteAnimation("slash", 1, 10);
 	meshList[GEO_SLASHANIMATION]->textureID = LoadTGA("Image//slashAnimation2.tga");
-	meshList[GEO_BITEANIMATION] = MeshBuilder::GenerateSpriteAnimation("stab", 1, 8);
-	meshList[GEO_BITEANIMATION]->textureID = LoadTGA("Image//stabAnimation.tga");
-	meshList[GEO_SKINANIMATION] = MeshBuilder::GenerateSpriteAnimation("SCREAM", 1, 8);
-	meshList[GEO_SKINANIMATION]->textureID = LoadTGA("Image//screamAnimation.tga");
+	meshList[GEO_BITEANIMATION] = MeshBuilder::GenerateSpriteAnimation("bite", 1, 8);
+	meshList[GEO_BITEANIMATION]->textureID = LoadTGA("Image//biteAnimation.tga");
+	meshList[GEO_SKINANIMATION] = MeshBuilder::GenerateSpriteAnimation("skin", 1, 8);
+	meshList[GEO_SKINANIMATION]->textureID = LoadTGA("Image//skinAnimation.tga");
 	meshList[GEO_SCREAMANIMATION] = MeshBuilder::GenerateSpriteAnimation("scream", 1, 8);
 	meshList[GEO_SCREAMANIMATION]->textureID = LoadTGA("Image//screamAnimation.tga");
 	meshList[GEO_ROARANIMATION] = MeshBuilder::GenerateSpriteAnimation("roar", 1, 8);
