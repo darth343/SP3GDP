@@ -106,6 +106,7 @@ void BattleSystem::Reset()
 	escapePercentage = 25.0f;
 	battleSelection = BS_ATTACK;
 	SetMonsterHitAnimation(false);
+	SharedData::GetInstance()->soundManager.StopAllSound();
 }
 
 void BattleSystem::SetMonsterHitAnimation(bool set)
@@ -185,6 +186,7 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 			//minus enemy hp, then enemy turn = true, player turn = false
 
 			cout << "Slash enemy " << endl;
+			SharedData::GetInstance()->soundManager.SoundPlay("Sound/slash.mp3", &SharedData::GetInstance()->slash, 1.0f, false);
 			if (SharedData::GetInstance()->inventory.GetTotalATK() <= 0)
 				theHero->SetDMG(10);
 			else
@@ -212,6 +214,7 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 		case BS_STAB:
 			//minus enemy hp, then enemy turn = true, player turn = false
 			cout << "Stab enemy " << battleSelection << endl;
+			SharedData::GetInstance()->soundManager.SoundPlay("Sound/stab.mp3", &SharedData::GetInstance()->stab, 1.0f, false);
 			if (SharedData::GetInstance()->inventory.GetTotalATK() <= 0)
 				theHero->SetDMG(15);
 			else
@@ -235,6 +238,7 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 			theHero->UseMP(50);
 			battleSelection = BS_ATTACK;
 			cout << " Monster's skills " << battleSelection << endl;
+			SharedData::GetInstance()->soundManager.SoundPlay("Sound/skill.mp3", &SharedData::GetInstance()->skill, 1.0f, false);
 
 			break;
 		case BS_BACK:
@@ -256,6 +260,7 @@ void BattleSystem::GetBattleChoiceInput(static bool& UPkeyPressed, static bool& 
 {
 	if (Application::IsKeyPressed(VK_UP) && !UPkeyPressed)
 	{
+		SharedData::GetInstance()->soundManager.SoundPlay("Sound/click.mp3", &SharedData::GetInstance()->click, 1.0f, false);
 		UPkeyPressed = true;
 		battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 2);
 
@@ -268,11 +273,13 @@ void BattleSystem::GetBattleChoiceInput(static bool& UPkeyPressed, static bool& 
 	}
 	else if (!Application::IsKeyPressed(VK_UP) && UPkeyPressed)
 	{
+		SharedData::GetInstance()->soundManager.SoundPlay("Sound/click.mp3", &SharedData::GetInstance()->click, 1.0f, false);
 		UPkeyPressed = false;
 	}
 
 	if (Application::IsKeyPressed(VK_DOWN) && !DNkeyPressed)
 	{
+		SharedData::GetInstance()->soundManager.SoundPlay("Sound/click.mp3", &SharedData::GetInstance()->click, 1.0f, false);
 		DNkeyPressed = true;
 		battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 2);
 
@@ -285,11 +292,13 @@ void BattleSystem::GetBattleChoiceInput(static bool& UPkeyPressed, static bool& 
 	}
 	else if (!Application::IsKeyPressed(VK_DOWN) && DNkeyPressed)
 	{
+		SharedData::GetInstance()->soundManager.SoundPlay("Sound/click.mp3", &SharedData::GetInstance()->click, 1.0f, false);
 		DNkeyPressed = false;
 	}
 
 	if (Application::IsKeyPressed(VK_LEFT) && !LEFTkeyPressed)
 	{
+		SharedData::GetInstance()->soundManager.SoundPlay("Sound/click.mp3", &SharedData::GetInstance()->click, 1.0f, false);
 		LEFTkeyPressed = true;
 		battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 1);
 
@@ -302,11 +311,13 @@ void BattleSystem::GetBattleChoiceInput(static bool& UPkeyPressed, static bool& 
 	}
 	else if (!Application::IsKeyPressed(VK_LEFT) && LEFTkeyPressed)
 	{
+		SharedData::GetInstance()->soundManager.SoundPlay("Sound/click.mp3", &SharedData::GetInstance()->click, 1.0f, false);
 		LEFTkeyPressed = false;
 	}
 
 	if (Application::IsKeyPressed(VK_RIGHT) && !RIGHTkeyPressed)
 	{
+		SharedData::GetInstance()->soundManager.SoundPlay("Sound/click.mp3", &SharedData::GetInstance()->click, 1.0f, false);
 		RIGHTkeyPressed = true;
 		battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 1);
 
@@ -319,6 +330,7 @@ void BattleSystem::GetBattleChoiceInput(static bool& UPkeyPressed, static bool& 
 	}
 	else if (!Application::IsKeyPressed(VK_RIGHT) && RIGHTkeyPressed)
 	{
+		SharedData::GetInstance()->soundManager.SoundPlay("Sound/click.mp3", &SharedData::GetInstance()->click, 1.0f, false);
 		RIGHTkeyPressed = false;
 	}
 }

@@ -39,6 +39,10 @@ public:
 	ISound* worldBGM;
 	ISound* battleStart;
 	ISound* title;
+	ISound* slash;
+	ISound* stab;
+	ISound* skill;
+	ISound* click;
 
 	std::vector<Enemy*> enemyInventory;
 	bool ZKeyPressed;
@@ -79,6 +83,10 @@ private:
 		worldBGM = NULL;
 		battleStart = NULL;
 		title = NULL;
+		slash = NULL;
+		stab = NULL;
+		skill = NULL;
+		click = NULL;
 
 		BS_StabRender = false;
 		BS_SlashRender = false;
