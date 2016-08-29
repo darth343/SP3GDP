@@ -12,6 +12,7 @@ public:
 		CEREBUS,
 		DRAGON,
 		GOLEM,
+		BOSS,
 		MONSTER_TOTAL,
 	};
 	Monster();

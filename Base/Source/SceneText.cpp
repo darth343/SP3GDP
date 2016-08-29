@@ -87,6 +87,11 @@ void SceneText::Init()
 	touch->type = GameObject::GO_NEXT;
 	m_goList.push_back(touch);
 
+	GameObject* boss = new GameObject(Vector3(50.f, 50.f, 1));
+	boss->position.Set(470, 1030, 1);
+	boss->type = GameObject::GO_BOSS;
+	m_goList.push_back(boss);
+
 	enemyMaxHealth = 100;
 	currHealth = 100;
 	enemyCatchPercentage = 0;
@@ -115,7 +120,7 @@ void SceneText::Init()
 	theHero = new CPlayerInfo();
 	theHero->Init();
 	theHero->SetPosition(Vector3(530, 64, 0));
-	theHero->SetPlayerMesh(meshList[GEO_HEROWALK]);
+	theHero->SetPlayerMesh(meshList[GEO_HEROUP]);
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
 	Mtx44 perspective;
 	perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
@@ -385,6 +390,14 @@ void SceneText::GOupdate(double dt)
 		sa->m_anim->animActive = true;
 	}
 	
+	SpriteAnimation *lives = dynamic_cast<SpriteAnimation*>(meshList[GEO_LIVES]);
+	if (lives)
+	{
+		//lives->Update(dt);
+		lives->m_currentFrame = SharedData::GetInstance()->playerLives;
+		lives->m_anim->animActive = true;
+	}
+
 	SpriteAnimation *pic2 = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC2]);
 	if (pic2)
 	{
@@ -884,16 +897,23 @@ void SceneText::Update(double dt)
 			}
 			else if (renderedHp < 0.0f)
 			{
+				if (SharedData::GetInstance()->playerLives > 0)
+				{
+					SharedData::GetInstance()->playerLives--;
+					SharedData::GetInstance()->stateCheck = true;
+					SharedData::GetInstance()->gameState = SharedData::GAME_S1;
+				}
+				else
+					//Player Lose should do auto load to previous save file
+					GS = LOSE;
+
 				//Player Lose should do auto load to previous save file
-				SharedData::GetInstance()->stateCheck = true;
-				SharedData::GetInstance()->gameState = SharedData::MENU;
+
 				SharedData::GetInstance()->playerTurn = true;
 				SharedData::GetInstance()->enemyTurn = false;
 				battleScene.SetFirstChoice(true);
 				battleScene.SetSecondChoice(false);
 				battleScene.SetBattleSelection(BattleSystem::BS_ATTACK);
-
-
 			}
 
 		}
@@ -1035,10 +1055,6 @@ void SceneText::RenderTestMap()
 	RenderTileMap(meshList[GEO_TILESET3], m_cMap);
 	std::ostringstream ss;
 
-	RenderPlayer();
-	Render2DMeshWScale(meshList[GEO_ICONTAM], false, 1, 1, 700, 10, false);
-	Render2DMeshWScale(meshList[GEO_ICONINV], false, 1, 1, 630, 10, false);
-
 	for (int i = 0; i < m_goList.size(); i++)
 	{
 		if (m_goList[i]->active == true)
@@ -1092,8 +1108,24 @@ void SceneText::RenderTestMap()
 						}
 				}
 			}
+			if (m_goList[i]->type == GameObject::GO_BOSS)
+			{
+				if (m_goList[i]->CheckCollision(theHero->GetPosition(), theHero->GetMapOffset(), m_cMap))
+				{
+					Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
+					if (Application::IsKeyPressed(VK_RETURN))
+					{
+						SharedData::GetInstance()->stateCheck = true;
+						SharedData::GetInstance()->gameState = SharedData::GAME_BOSS;
+					}
+				}
+			}
 		}
 	RenderTextOnScreen(meshList[GEO_TEXT], npctalk.str(), Color(1, 1, 0), 30, 60, 100);
+	RenderPlayer();
+	Render2DMeshWScale(meshList[GEO_ICONTAM], false, 1, 1, 700, 10, false);
+	Render2DMeshWScale(meshList[GEO_ICONINV], false, 1, 1, 630, 10, false);
+	Render2DMeshWScale(meshList[GEO_LIVES], false, 120, 50, 0, 550, false);
 
 	//On screen text
 	ss.str("");
@@ -1546,7 +1578,6 @@ void SceneText::RenderBattleAnimation()
 
 void SceneText::RenderBattleHUD()
 {
-	cout << "Armour Type = "<<SharedData::GetInstance()->inventory.getArmour()->getType() << endl;
 	//Rendering HP & MP bar and Background
 	Render2DMeshWScale(meshList[GEO_HPBARDESIGN], false, 0.5f, 0.1f, 0, 540, false);
 	Render2DMeshWScale(meshList[GEO_HPBAR], false, maxHpScale * (renderedHp / 100), 1.0f, hpPos.x, hpPos.y, false);
@@ -1689,6 +1720,9 @@ void SceneText::Render()
 
 	case TAMAGUCCI_SCREEN:
 		RenderTamagucci();
+		break;
+	case LOSE:
+		RenderBackground(meshList[GEO_LOSE]);
 		break;
 	}
 }

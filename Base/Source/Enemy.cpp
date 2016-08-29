@@ -20,27 +20,33 @@ Enemy::~Enemy()
 
 void Enemy::MoveLeftRight(double dt, bool left)
 {
-	if (left)
+	if (monster.GetType() != Monster::BOSS)
 	{
-		position.x -= dt * MOVEMENTSPEED;
-		flip = false;
-	}
-	else
-	{
-		position.x += dt * MOVEMENTSPEED;
-		flip = true;
+		if (left)
+		{
+			position.x -= dt * MOVEMENTSPEED;
+			flip = false;
+		}
+		else
+		{
+			position.x += dt * MOVEMENTSPEED;
+			flip = true;
+		}
 	}
 }
 
 void Enemy::MoveUpDown(double dt, bool up)
 {
-	if (up)
+	if (monster.GetType() != Monster::BOSS)
 	{
-		position.y += dt * MOVEMENTSPEED;
-	}
-	else
-	{
-		position.y -= dt * MOVEMENTSPEED;
+		if (up)
+		{
+			position.y += dt * MOVEMENTSPEED;
+		}
+		else
+		{
+			position.y -= dt * MOVEMENTSPEED;
+		}
 	}
 }
 //void Enemy::SetName(string name)

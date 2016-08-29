@@ -21,6 +21,9 @@ public:
 		GO_GREENBAR,
 		GO_MOVE,
 		GO_NEXT,
+		GO_BOSS,
+		GO_S3,
+		GO_S4,
 		GO_TOTAL,
 	};
 

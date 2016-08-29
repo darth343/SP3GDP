@@ -69,6 +69,8 @@ public:
 	int energyLevel;
 	int happinessLevel;
 
+	int playerLives;
+
 private:
 	SharedData()
 	{
@@ -103,7 +105,7 @@ private:
 		BS_SkinRender = false;
 
 		playerBattleDialogue = false;
-
+		playerLives = 3;
 	}
 	~SharedData()
 	{

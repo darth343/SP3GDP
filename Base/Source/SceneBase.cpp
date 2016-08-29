@@ -285,6 +285,27 @@ void SceneBase::Init()
 	meshList[GEO_ROARANIMATION] = MeshBuilder::GenerateSpriteAnimation("slash", 1, 10);
 	meshList[GEO_ROARANIMATION]->textureID = LoadTGA("Image//slashAnimation2.tga");
 
+	meshList[GEO_BOSS] = MeshBuilder::GenerateSpriteAnimation("slash", 1, 2);
+	meshList[GEO_BOSS]->textureID = LoadTGA("Image//boss.tga");
+	meshList[GEO_WIN] = MeshBuilder::Generate2DMesh("GEO_BATTLESCENE", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_WIN]->textureID = LoadTGA("Image//SciFi_Win.tga");
+	meshList[GEO_LOSE] = MeshBuilder::Generate2DMesh("GEO_BATTLESCENE", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_LOSE]->textureID = LoadTGA("Image//SciFi_Lose.tga");
+	meshList[GEO_LIVES] = MeshBuilder::GenerateSpriteAnimation("slash", 1, 4);
+	meshList[GEO_LIVES]->textureID = LoadTGA("Image//Lives.tga");
+
+	SpriteAnimation *boss = dynamic_cast<SpriteAnimation*>(meshList[GEO_BOSS]);
+	if (boss)
+	{
+		boss->m_anim = new Animation();
+		boss->m_anim->Set(0, 1, 0, 1.f, true);
+	}
+	SpriteAnimation *lives = dynamic_cast<SpriteAnimation*>(meshList[GEO_LIVES]);
+	if (lives)
+	{
+		lives->m_anim = new Animation();
+		lives->m_anim->Set(0, 3, 0, 1.f, true);
+	}
 	SpriteAnimation *playerLR = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROLR]);
 	if (playerLR)
 	{

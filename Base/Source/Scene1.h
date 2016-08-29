@@ -32,6 +32,7 @@ class Scene1 : public SceneBase
 
 		BATTLE,
 		CATCH,
+		LOSE,
 		GS_TOTAL,
 	};
 

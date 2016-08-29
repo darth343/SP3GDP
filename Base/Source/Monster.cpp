@@ -17,7 +17,6 @@ Monster::Monster()
 Monster::~Monster()
 {
 }
-
 string Monster::getName()
 {
 	return name;

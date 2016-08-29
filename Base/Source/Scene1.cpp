@@ -90,7 +90,7 @@ void Scene1::Init()
 	enemyMaxHealth = 100;
 	currHealth = 100;
 	enemyCatchPercentage = 0;
-	npc.ReadFromFile("NPC//Text.txt", m_goList);
+	npc.ReadFromFile("NPC//2.txt", m_goList);
 	vector<NPC*>npcvec = npc.GetVec();
 
 	for (int i = 0; i < npcvec.size(); i++)
@@ -114,8 +114,8 @@ void Scene1::Init()
 	// Initialise the hero's position
 	theHero = new CPlayerInfo();
 	theHero->Init();
-	theHero->SetPosition(Vector3(530, 64, 0));
-	theHero->SetPlayerMesh(meshList[GEO_HEROWALK]);
+	theHero->SetPosition(Vector3(1300, 60, 0));
+	theHero->SetPlayerMesh(meshList[GEO_HEROLR]);
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
 	Mtx44 perspective;
 	perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
@@ -883,9 +883,21 @@ void Scene1::Update(double dt)
 			}
 			else if (renderedHp < 0.0f)
 			{
-				//Player Lose should do auto load to previous save file
-				SharedData::GetInstance()->stateCheck = true;
-				SharedData::GetInstance()->gameState = SharedData::MENU;
+				if (SharedData::GetInstance()->playerLives > 0)
+				{
+					SharedData::GetInstance()->playerLives--;
+					SharedData::GetInstance()->stateCheck = true;
+					SharedData::GetInstance()->gameState = SharedData::GAME_S1;
+				}
+				else
+					//Player Lose should do auto load to previous save file
+					GS = LOSE;
+
+				SharedData::GetInstance()->playerTurn = true;
+				SharedData::GetInstance()->enemyTurn = false;
+				battleScene.SetFirstChoice(true);
+				battleScene.SetSecondChoice(false);
+				battleScene.SetBattleSelection(BattleSystem::BS_ATTACK);
 			}
 
 		}
