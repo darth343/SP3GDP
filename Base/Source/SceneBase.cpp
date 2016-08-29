@@ -233,6 +233,8 @@ void SceneBase::Init()
 	meshList[GEO_TILESET2]->textureID = LoadTGA("Image//tileSet2.tga");
 	meshList[GEO_TILESET3] = MeshBuilder::GenerateTileSet("GEO_TILESET3", 30, 30);
 	meshList[GEO_TILESET3]->textureID = LoadTGA("Image//tileSet3.tga");
+	meshList[GEO_TILESET4] = MeshBuilder::GenerateTileSet("GEO_TILESET4", 8, 8);
+	meshList[GEO_TILESET4]->textureID = LoadTGA("Image//tileSet4.tga");
 	meshList[GEO_REDTILE] = MeshBuilder::Generate2DMesh("GEO_REDTILE", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
 	meshList[GEO_REDTILE]->textureID = LoadTGA("Image//redTile.tga");
 	meshList[GEO_POOP] = MeshBuilder::Generate2DMesh("GEO_REDTILE", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
@@ -284,6 +286,9 @@ void SceneBase::Init()
 	meshList[GEO_SCREAMANIMATION]->textureID = LoadTGA("Image//screamAnimation.tga");
 	meshList[GEO_ROARANIMATION] = MeshBuilder::GenerateSpriteAnimation("roar", 1, 8);
 	meshList[GEO_ROARANIMATION]->textureID = LoadTGA("Image//roarAnimation2.tga");
+
+	meshList[GEO_INSTRUCTIONBG] = MeshBuilder::Generate2DMesh("GEO_INSTRUCTIONBG", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_INSTRUCTIONBG]->textureID = LoadTGA("Image//instructionbg.tga");
 
 	meshList[GEO_BOSS] = MeshBuilder::GenerateSpriteAnimation("slash", 1, 2);
 	meshList[GEO_BOSS]->textureID = LoadTGA("Image//boss.tga");

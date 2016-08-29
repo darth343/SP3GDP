@@ -10,6 +10,7 @@
 #include "SceneMenu.h"
 #include "SceneStory.h"
 #include "SceneBoss.h"
+#include "Scene4.h"
 
 class Application
 {

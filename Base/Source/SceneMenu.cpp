@@ -24,6 +24,7 @@ SceneMenu::~SceneMenu()
 void SceneMenu::Init()
 {
 	SceneBase::Init();
+	renderInstructionNow = false;
 	//cout << npcvec[1].GetDialogue() << endl;
 	//cout << npcvec[0].GetDialogue() << endl;
 	//Init GameState Here for testing purposes
@@ -116,6 +117,7 @@ void SceneMenu::Update(double dt)
 				move = true;
 				break;
 			case GS_INSTRUCTIONS:
+				renderInstructionNow = true;
 				move = true;
 				break;
 			}
@@ -163,6 +165,14 @@ void SceneMenu::Render()
 	Render2DMeshWScale(meshList[GEO_MENUINST], false, 270, 60, othericonx, y - 140, false, 2);
 	Render2DMeshWScale(meshList[GEO_MENUOPT], false, 200, 60, othericonx, y - 210, false, 2);
 	Render2DMeshWScale(meshList[GEO_MENUQUIT], false, 150, 60, othericonx, y - 280, false, 2);
+
+	if (renderInstructionNow)
+		RenderInstruction();
+}
+
+void SceneMenu::RenderInstruction()
+{
+	RenderBackground(meshList[GEO_INSTRUCTIONBG]);
 }
 
 void SceneMenu::Exit()

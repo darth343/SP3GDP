@@ -28,9 +28,12 @@ public:
 	virtual void Exit();
 	GAMESTATE_TYPE m_gs;
 
+	void RenderInstruction();
+
 private:
 	float realizeiconx = 20;
 	float othericonx = 500;
+	bool renderInstructionNow;
 	bool move = false;
 	bool movein = false;
 };
