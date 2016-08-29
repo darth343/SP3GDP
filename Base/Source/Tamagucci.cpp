@@ -1,6 +1,7 @@
 #include "Tamagucci.h"
 #include "Application.h"
 #include "Equipment.h"
+#include "SharedData.h"
 
 TAMAGUCCI::TAMAGUCCI()
 {
@@ -18,9 +19,6 @@ TAMAGUCCI::TAMAGUCCI()
 	tamdrop2->position.Set(Math::RandFloatMinMax(0, 730), 650, 1);
 	tamdrop2->type = GameObject::GO_TAMDROP2;
 	tamdrop2->scale.Set(64, 64, 1);
-	direction = true;
-	randomPosSet = false;
-
 	tamfood = new GameObject;
 	tamfood->position.Set(Math::RandFloatMinMax(0, 730), 150, 0);
 	tamfood->scale.Set(64, 64, 1);
@@ -82,31 +80,66 @@ TAMAGUCCI::~TAMAGUCCI()
 //	}
 //	return cout;
 //}
+void TAMAGUCCI::TamagucciBackgroundUpdate(double dt)
+{
+	moveUpdate(dt);
+	for (int i = 0; i <= Inventory::LEGS; ++i)
+	{
+		if (SharedData::GetInstance()->inventory.getEquippedItems()[i])
+		{
+			if (SharedData::GetInstance()->inventory.getEquippedItems()[i]->GetTamHunger() > 0)
+			SharedData::GetInstance()->inventory.getEquippedItems()[i]->hungerLosstimer += dt * 3;
+			if (SharedData::GetInstance()->inventory.getEquippedItems()[i]->GetTamEnergy() > 0)
+			SharedData::GetInstance()->inventory.getEquippedItems()[i]->energyLosstimer += dt * 3;
+			if (SharedData::GetInstance()->inventory.getEquippedItems()[i]->GetTamHappy() > 0)
+			SharedData::GetInstance()->inventory.getEquippedItems()[i]->happinessLosstimer += dt * 3;
 
+			if (SharedData::GetInstance()->inventory.getEquippedItems()[i]->energyLosstimer > ENERGYLOSSTIME)
+			{
+				SharedData::GetInstance()->inventory.getEquippedItems()[i]->energyLosstimer -= ENERGYLOSSTIME;
+				SharedData::GetInstance()->inventory.getEquippedItems()[i]->DecrementTamEnergy();
+			}
+			if (SharedData::GetInstance()->inventory.getEquippedItems()[i]->hungerLosstimer > HUNGERLOSSTIME)
+			{
+				SharedData::GetInstance()->inventory.getEquippedItems()[i]->hungerLosstimer -= HUNGERLOSSTIME;
+				SharedData::GetInstance()->inventory.getEquippedItems()[i]->DecrementTamHunger();
+				SharedData::GetInstance()->inventory.getEquippedItems()[i]->pooPositions.push_back(SharedData::GetInstance()->inventory.getEquippedItems()[i]->position);
+			}
+			if (SharedData::GetInstance()->inventory.getEquippedItems()[i]->happinessLosstimer > HAPPYLOSSTIME)
+			{
+				SharedData::GetInstance()->inventory.getEquippedItems()[i]->happinessLosstimer -= HAPPYLOSSTIME;
+				SharedData::GetInstance()->inventory.getEquippedItems()[i]->DecrementTamHappy();
+			}
+			cout << SharedData::GetInstance()->inventory.getEquippedItems()[i]->happinessLosstimer << endl;
+		}
+	}
+}
 void TAMAGUCCI::moveUpdate(double dt)
 {
-	if (!tamagucciFood && !sleep)
+	for (int i = 0; i <= Inventory::LEGS; ++i)
 	{
-		if (direction)
+		if (!tamagucciFood && !sleep && SharedData::GetInstance()->inventory.getEquippedItems()[i])
 		{
-			tamtam->position.x -= 100.f * dt;
-			if (tamtam->position.x < 0)
+			if (SharedData::GetInstance()->inventory.getEquippedItems()[i]->direction)
 			{
-				tamtam->position.x = 0;
-				direction = false;
+				SharedData::GetInstance()->inventory.getEquippedItems()[i]->position.x -= 100.f * dt;
+				if (SharedData::GetInstance()->inventory.getEquippedItems()[i]->position.x < 0)
+				{
+					SharedData::GetInstance()->inventory.getEquippedItems()[i]->position.x = 0;
+					SharedData::GetInstance()->inventory.getEquippedItems()[i]->direction = false;
+				}
 			}
-		}
-		else
-		{
-			tamtam->position.x += 100.f * dt;
-			if (tamtam->position.x + tamtam->scale.x > 800)
+			else
 			{
-				tamtam->position.x = 800 - tamtam->scale.x;
-				direction = true;
+				SharedData::GetInstance()->inventory.getEquippedItems()[i]->position.x += 100.f * dt;
+				if (SharedData::GetInstance()->inventory.getEquippedItems()[i]->position.x + tamtam->scale.x > 800)
+				{
+					SharedData::GetInstance()->inventory.getEquippedItems()[i]->position.x = 800 - tamtam->scale.x;
+					SharedData::GetInstance()->inventory.getEquippedItems()[i]->direction = true;
+				}
 			}
 		}
 	}
-
 	if (animationFood && tamagucciFood)
 	{
 		tamagucciFood = false;
@@ -116,23 +149,23 @@ void TAMAGUCCI::moveUpdate(double dt)
 
 	if (!touchedFood && tamagucciFood)
 	{
-			if (tamtam->position.x > tamfood->position.x - 30 && !touchedFood)
+			if (SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->position.x > tamfood->position.x - 30 && !touchedFood)
 			{
 				moveLeft = false;
-				tamtam->position.x -= 100 * dt;
-				if (tamtam->position.x < tamfood->position.x + 30)
+				SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->position.x -= 100 * dt;
+				if (SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->position.x < tamfood->position.x + 30)
 				{
-					tamtam->position.x = tamfood->position.x + 30;
+					SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->position.x = tamfood->position.x + 30;
 					touchedFood = true;
 				}
 			}
-			else if (tamtam->position.x < tamfood->position.x + 70 && !touchedFood)
+			else if (SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->position.x < tamfood->position.x + 70 && !touchedFood)
 			{
 				moveLeft = true;
-				tamtam->position.x += 100 * dt;
-				if (tamtam->position.x > tamfood->position.x - 70)
+				SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->position.x += 100 * dt;
+				if (SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->position.x > tamfood->position.x - 70)
 				{
-					tamtam->position.x = tamfood->position.x - 70;
+					SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->position.x = tamfood->position.x - 70;
 					touchedFood = true;
 				}
 			}
@@ -160,10 +193,15 @@ GameObject* TAMAGUCCI::GetTamFood()
 }
 void TAMAGUCCI::UpdateTamagucci(double dt)
 {
+	for (int i = 0; i < Inventory::EI_TOTAL; ++i)
+	{
+
+	}
+
 	switch (tamagotchiState)
 	{
 	case MENU:
-		moveUpdate(dt);
+		TamagucciBackgroundUpdate(dt);
 		GetTamagucciInput();
 		break;
 	case GAME:
@@ -175,12 +213,65 @@ void TAMAGUCCI::UpdateTamagucci(double dt)
 		break;
 	}
 }
-
 void TAMAGUCCI::GetTamagucciInput()
 {
 	switch (menuState)
 	{
 	case FIRSTMENU:
+		// UP BUTTON
+		if (Application::IsKeyPressed(VK_UP) && !SharedData::GetInstance()->UPkeyPressed)
+		{
+			SharedData::GetInstance()->UPkeyPressed = true;
+			if (EquippedItemIndex < Inventory::LEGS && SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex + 1])
+			{
+				EquippedItemIndex++;
+			}
+			else
+			{
+				for (int i = 0; i < Inventory::LEGS+1; ++i)
+				{
+					if (i == EquippedItemIndex)
+						continue;
+					if (SharedData::GetInstance()->inventory.getEquippedItems()[i])
+					{
+						EquippedItemIndex = i;
+						break;
+					}
+				}
+			}
+		}
+		else if (!Application::IsKeyPressed(VK_UP) && SharedData::GetInstance()->UPkeyPressed)
+		{
+			SharedData::GetInstance()->UPkeyPressed = false;
+		}
+
+		// DOWN BUTTON
+		if (Application::IsKeyPressed(VK_DOWN) && !SharedData::GetInstance()->DNkeyPressed)
+		{
+			SharedData::GetInstance()->DNkeyPressed = true;
+			if (EquippedItemIndex > 0 && SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex - 1])
+			{
+				EquippedItemIndex--;
+			}
+			else
+			{
+				for (int i = Inventory::LEGS; i > 0; --i)
+				{
+					if (i == EquippedItemIndex)
+						continue;
+					if (SharedData::GetInstance()->inventory.getEquippedItems()[i])
+					{
+						EquippedItemIndex = i;
+						break;
+					}
+				}
+			}
+		}
+		else if (!Application::IsKeyPressed(VK_DOWN) && SharedData::GetInstance()->DNkeyPressed)
+		{
+			SharedData::GetInstance()->DNkeyPressed = false;
+		}
+
 		// RIGHT BUTTON
 		if (Application::IsKeyPressed(VK_RIGHT) && !SharedData::GetInstance()->RIGHTkeyPressed)
 		{
@@ -229,9 +320,15 @@ void TAMAGUCCI::GetTamagucciInput()
 					 {
 						 if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 						 {
-							 hungerLevel++;
+							 if (foodChoice == FC_SALAD)
+							 SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->IncrementTamHunger();
+							 if (foodChoice == FC_HAMBURGER)
+								 SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->IncrementTamHunger(2);
+							 if (foodChoice == FC_PORK)
+								 SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->IncrementTamHunger(3);
+
 							 SharedData::GetInstance()->ENTERkeyPressed = true;
-							 energyLevel--;
+							 //SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->DecrementTamEnergy();
 							 if (foodChoice != FC_BACK)
 							 {
 								 tamagucciFood = true;
@@ -285,10 +382,10 @@ void TAMAGUCCI::GetTamagucciInput()
 					  // ENTER BUTTON
 					  if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 					  {
-						  energyLevel++;
-						  hungerLevel--;
+						  SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->DecrementTamHunger();
+						  SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->IncrementTamEnergy();
 						  SharedData::GetInstance()->ENTERkeyPressed = true;
-						  sleep = false;
+						  sleep = true;
 						  //ResetTamagotchi();
 							  menuState = FIRSTMENU;
 					  }
@@ -342,6 +439,11 @@ void TAMAGUCCI::GetTamagucciInput()
 				}
 				
 		}
+		case CLEAN:
+		{
+					  getCurrentTama()->pooPositions.clear();
+					  menuState = FIRSTMENU;
+		}
 			break;
 		}
 		break;
@@ -359,41 +461,44 @@ int TAMAGUCCI::GetScore()
 {
 	return minigame1Score;
 }
-
 int TAMAGUCCI::getHungerlevel()
 {
-	return hungerLevel;
+	return SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->GetTamHunger();
 }
-
 int TAMAGUCCI::getEnergylevel()
 {
-	return energyLevel;
+	return SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->GetTamEnergy();
 }
-
 int TAMAGUCCI::getHappinesslevel()
 {
-	return happyLevel;
+	return SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->GetTamHappy();
 }
-
+void TAMAGUCCI::SetIndex(int index)
+{
+	this->EquippedItemIndex = index;
+}
+Equipment* TAMAGUCCI::getCurrentTama()
+{
+	return SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex];
+}
 void TAMAGUCCI::MiniGameUpdatePosition(double dt)
 {
 	if (minigame1Score < 20)
 	{
-		if (tamtam->position.x < 730)
+		if (SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->position.x < 730)
 		{
 			if (Application::IsKeyPressed(VK_RIGHT) || Application::IsKeyPressed('D'))
 			{
-				tamtam->position.x += 300 * dt;
+				SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->position.x += 300 * dt;
 			}
 		}
-		if (tamtam->position.x > 0)
+		if (SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->position.x > 0)
 		{
 			if (Application::IsKeyPressed(VK_LEFT) || Application::IsKeyPressed('A'))
-				tamtam->position.x -= 300 * dt;
+				SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->position.x -= 300 * dt;
 		}
 	}
 }
-
 void TAMAGUCCI::ResetTamagotchi()
 {
 	tamagotchiState = MENU;
@@ -403,11 +508,11 @@ void TAMAGUCCI::ResetTamagotchi()
 	foodChoice = FC_SALAD;
 	minigame1Score = 0;
 }
-
 void TAMAGUCCI::MiniGame(double dt)
 {
 	bool GoBack = false;
 	MiniGameUpdatePosition(dt);
+	tamtam->position = SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->position;
 	if (tamtam->CheckCollision(tamdrop))
 	{
 		tamdrop->position.Set(Math::RandFloatMinMax(0, 730), 600, 0);
@@ -431,8 +536,6 @@ void TAMAGUCCI::MiniGame(double dt)
 		tamdrop2->position.Set(Math::RandFloatMinMax(0, 730), 650, 0);
 		tamDropVel = Math::RandFloatMinMax(100, 130);
 	}
-	cout << minigame1Score << endl;
-	cout << coolDown << endl;
 	if (minigame1Score >= 20 && !GoBack)
 	{
 		coolDown -= dt;
@@ -442,18 +545,18 @@ void TAMAGUCCI::MiniGame(double dt)
 		tamdrop->position.y -= tamDropVel * dt;
 		tamdrop2->position.y -= tamDropVel * dt;
 	}
+
 	if (coolDown <= 0)
 	{
-		happyLevel++;
-		hungerLevel--;
-		energyLevel--;
+		SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->IncrementTamHappy();
+		SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->DecrementTamEnergy();
+		SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->DecrementTamHunger();
 		ResetTamagotchi();
 		GoBack = true;
 		minigame1Score = 0;
 		coolDown = 3.f;
 	}
 }
-
 GameObject* TAMAGUCCI::GetTamTam()
 {
 	return tamtam;
@@ -466,27 +569,22 @@ GameObject* TAMAGUCCI::GetTamDrop2()
 {
 	return tamdrop2;
 }
-
 TAMAGUCCI::TAMAGOTCHISTATE TAMAGUCCI::getTamagotchiState()
 {
 	return tamagotchiState;
 }
-
 TAMAGUCCI::MENUSTATE TAMAGUCCI::getMenuState()
 {
 	return menuState;
 }
-
 TAMAGUCCI::GAMEOPTIONS TAMAGUCCI::getGameChoice()
 {
 	return gameChoice;
 }
-
 TAMAGUCCI::FIRSTMENUPOPTIONS TAMAGUCCI::getFirstMenuOption()
 {
 	return firstMenuOption;
 }
-
 TAMAGUCCI::FOODCHOICES TAMAGUCCI::getFoodChoice()
 {
 	return foodChoice;

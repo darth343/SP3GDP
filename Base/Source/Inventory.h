@@ -23,6 +23,15 @@ public:
 		EQUIP_OPTIONS
 	};
 
+	enum EQUIPED_ITEMS
+	{
+		HEAD,
+		RHAND,
+		LHAND,
+		CHEST,
+		LEGS,
+		EI_TOTAL,
+	};
 	Inventory(Vector3 scale = Vector3(1, 1, 1));
 	~Inventory();
 
@@ -49,6 +58,7 @@ public:
 	Equipment* getEquipmentLookAt();
 	vector<string> getOptions();
 	void setEquipmentLookAt(Equipment* equipment);
+	Equipment** getEquippedItems();
 	Equipment* getHead();
 	Equipment* getLeftArm();
 	Equipment* getRightArm();
@@ -57,11 +67,7 @@ public:
 	vector<Equipment*> EQinventory;
 	vector<string> options;
 private:
-	Equipment* head;
-	Equipment* leftArm;
-	Equipment* rightArm;
-	Equipment* armour;
-	Equipment* leggings;
+	Equipment* EquippedItems[EI_TOTAL];
 	Vector3 seeker;
 	int secondSeeker;
 	INVENTORY_STATE state;

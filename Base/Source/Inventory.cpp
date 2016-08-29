@@ -11,11 +11,10 @@ Inventory::Inventory(Vector3 scale)
 	}
 	state = TAB1;
 	inputeState = INVENTORY;
-	head = NULL;
-	leftArm = NULL;
-	rightArm = NULL;
-	armour = NULL;
-	leggings = NULL;
+	for (int i = 0; i < EI_TOTAL; ++i)
+	{
+		EquippedItems[i] = NULL;
+	}
 }
 
 Inventory::~Inventory()
@@ -333,7 +332,7 @@ void Inventory::UpdateInput()
 
 Equipment* Inventory::getHead()
 {
-	return head;
+	return EquippedItems[HEAD];
 }
 
 void Inventory::Update(double dt)
@@ -364,46 +363,51 @@ int Inventory::getSecondSeeker()
 
 Equipment* Inventory::getArmour()
 {
-	return armour;
+	return EquippedItems[CHEST];
 }
 
 Equipment* Inventory::getRightArm()
 {
-	return rightArm;
+	return EquippedItems[RHAND];
 }
 
 Equipment* Inventory::getLeftArm()
 {
-	return leftArm;
+	return EquippedItems[LHAND];
 }
 
 Equipment* Inventory::getLeg()
 {
-	return leggings;
+	return EquippedItems[LEGS];
+}
+
+Equipment** Inventory::getEquippedItems()
+{
+	return EquippedItems;
 }
 
 int Inventory::GetTotalATK()
 {
 	int attack = 0;
-	if (head)
+	if (EquippedItems[HEAD])
 	{
-		attack += head->getDamage();
+		attack += EquippedItems[HEAD]->getDamage();
 	}
-	if (leftArm)
+	if (EquippedItems[LHAND])
 	{
-		attack += leftArm->getDamage();
+		attack += EquippedItems[LHAND]->getDamage();
 	}
-	if (rightArm)
+	if (EquippedItems[RHAND])
 	{
-		attack += rightArm->getDamage();
+		attack += EquippedItems[RHAND]->getDamage();
 	}
-	if (armour)
+	if (EquippedItems[CHEST])
 	{
-		attack += armour->getDamage();
+		attack += EquippedItems[CHEST]->getDamage();
 	}
-	if (leggings)
+	if (EquippedItems[LEGS])
 	{
-		attack += leggings->getDamage();
+		attack += EquippedItems[LEGS]->getDamage();
 	}
 	return attack;
 }
@@ -411,25 +415,25 @@ int Inventory::GetTotalATK()
 int Inventory::GetTotalDEF()
 {
 	int defense = 0;
-	if (head)
+	if (EquippedItems[HEAD])
 	{
-		defense += head->getDefense();
+		defense += EquippedItems[HEAD]->getDefense();
 	}
-	if (leftArm)
+	if (EquippedItems[LHAND])
 	{
-		defense += leftArm->getDefense();
+		defense += EquippedItems[LHAND]->getDefense();
 	}
-	if (rightArm)
+	if (EquippedItems[RHAND])
 	{
-		defense += rightArm->getDefense();
+		defense += EquippedItems[RHAND]->getDefense();
 	}
-	if (armour)
+	if (EquippedItems[CHEST])
 	{
-		defense += armour->getDefense();
+		defense += EquippedItems[CHEST]->getDefense();
 	}
-	if (leggings)
+	if (EquippedItems[LEGS])
 	{
-		defense += leggings->getDefense();
+		defense += EquippedItems[LEGS]->getDefense();
 	}
 	return defense;
 }
@@ -455,52 +459,58 @@ void Inventory::EquipItem(string itemType)
 		if (equipment->getType() == Equipment::HELMET)
 		{
 			Equipment* temp;
-			if (head)
+			if (EquippedItems[HEAD])
 			{
-				temp = head;
-				head = equipment;
+				temp = EquippedItems[HEAD];
+				EquippedItems[HEAD] = equipment;
 				setEquipmentLookAt(temp);
+				SharedData::GetInstance()->tamagucci.SetIndex(HEAD);
 			}
-			else if (!head)
+			else if (!EquippedItems[HEAD])
 			{
-				head = new Equipment();
-				*head = *equipment;
+				EquippedItems[HEAD] = new Equipment();
+				*EquippedItems[HEAD] = *equipment;
 				removeFromInventory(equipment);
+				SharedData::GetInstance()->tamagucci.SetIndex(HEAD);
 			}
 		}
 
 		if (equipment->getType() == Equipment::ARMOUR)
 		{
 			Equipment* temp;
-			if (armour)
+			if (EquippedItems[CHEST])
 			{
-				temp = armour;
-				armour = equipment;
+				temp = EquippedItems[CHEST];
+				EquippedItems[CHEST] = equipment;
 				setEquipmentLookAt(temp);
+				SharedData::GetInstance()->tamagucci.SetIndex(CHEST);
 			}
-			else if (!armour)
+			else if (!EquippedItems[CHEST])
 			{
-				armour = new Equipment();
-				*armour = *equipment;
+				EquippedItems[CHEST] = new Equipment();
+				*EquippedItems[CHEST] = *equipment;
 				removeFromInventory(equipment);
-
+				SharedData::GetInstance()->tamagucci.SetIndex(CHEST);
 			}
 		}
 
 		if (equipment->getType() == Equipment::LEG)
 		{
 			Equipment* temp;
-			if (leggings)
+			if (EquippedItems[LEGS])
 			{
-				temp = leggings;
-				leggings = equipment;
+				temp = EquippedItems[LEGS];
+				EquippedItems[LEGS] = equipment;
 				setEquipmentLookAt(temp);
+				SharedData::GetInstance()->tamagucci.SetIndex(LEGS);
 			}
-			else if (!leggings)
+			else if (!EquippedItems[LEGS])
 			{
-				leggings = new Equipment();
-				*leggings = *equipment;
+				EquippedItems[LEGS] = new Equipment();
+				*EquippedItems[LEGS] = *equipment;
 				removeFromInventory(equipment);
+				SharedData::GetInstance()->tamagucci.SetIndex(LEGS);
+
 			}
 		}
 
@@ -508,33 +518,41 @@ void Inventory::EquipItem(string itemType)
 	if (itemType == "RIGHT HAND")
 	{
 		Equipment* temp;
-			if (rightArm)
+			if (EquippedItems[RHAND])
 			{
-				temp = rightArm;
-				rightArm = equipment;
+				temp = EquippedItems[RHAND];
+				EquippedItems[RHAND] = equipment;
 				setEquipmentLookAt(temp);
+				SharedData::GetInstance()->tamagucci.SetIndex(RHAND);
+
 			}
-			else if (!rightArm)
+			else if (!EquippedItems[RHAND])
 			{
-				rightArm = new Equipment();
-				*rightArm = *equipment;
+				EquippedItems[RHAND] = new Equipment();
+				*EquippedItems[RHAND] = *equipment;
 				removeFromInventory(equipment);
+				SharedData::GetInstance()->tamagucci.SetIndex(RHAND);
+
 			}
 	}
 	if (itemType == "LEFT HAND")
 	{
 		Equipment* temp;
-		if (leftArm)
+		if (EquippedItems[LHAND])
 		{
-			temp = leftArm;
-			leftArm = equipment;
+			temp = EquippedItems[LHAND];
+			EquippedItems[LHAND] = equipment;
 			setEquipmentLookAt(temp);
+			SharedData::GetInstance()->tamagucci.SetIndex(LHAND);
+
 		}
-		else if (!leftArm)
+		else if (!EquippedItems[LHAND])
 		{
-			leftArm = new Equipment();
-			*leftArm = *equipment;
+			EquippedItems[LHAND] = new Equipment();
+			*EquippedItems[LHAND] = *equipment;
 			removeFromInventory(equipment);
+			SharedData::GetInstance()->tamagucci.SetIndex(LHAND);
+			
 		}
 	}
 }

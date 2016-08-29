@@ -2,7 +2,13 @@
 #define TAMAGUCCI_H
 #include "Vector3.h"
 #include "GameObject.h"
+#include "Equipment.h"
 #include <vector>
+
+const float ENERGYLOSSTIME = 05.f;
+const float HUNGERLOSSTIME = 00.f;
+const float HAPPYLOSSTIME = 0.f;
+
 using std::vector;
 class TAMAGUCCI
 {
@@ -52,7 +58,9 @@ public:
 	void MiniGame(double dt);
 	void MiniGameUpdatePosition(double dt);
 	void ResetTamagotchi();
+	void SetIndex(int index);
 	int GetScore();
+	void TamagucciBackgroundUpdate(double dt);
 	//friend std::ostream& operator<<(std::ostream& cout, FIRSTMENUPOPTIONS buttons);
 	//friend std::ostream& operator<<(std::ostream& cout, FOODCHOICES foodchoice);
 	TAMAGOTCHISTATE getTamagotchiState();
@@ -60,6 +68,7 @@ public:
 	GAMEOPTIONS getGameChoice();
 	FIRSTMENUPOPTIONS getFirstMenuOption();
 	FOODCHOICES getFoodChoice();
+	Equipment* getCurrentTama();
 	GameObject* GetTamTam();
 	GameObject* GetTamDrop();
 	GameObject* GetTamDrop2();
@@ -75,6 +84,7 @@ public:
 	bool GetSleep();
 	
 private:
+	int EquippedItemIndex = 0;
 	bool tamagucciFood = false; //Show the food in scene text
 	bool animationFood=false; //For scene text check if food animation is over //BUGGY
 	bool touchedFood = false; //For scene text check if food is touched
@@ -95,11 +105,5 @@ private:
 	FOODCHOICES foodChoice;
 	GAMEOPTIONS gameChoice;
 	//MOVEMENT STUFF
-	bool direction;
-	Vector3 randPos;
-	bool randomPosSet;
-	int happyLevel;
-	int hungerLevel;
-	int energyLevel;
 };
 #endif // !TAMAGUCCI_H

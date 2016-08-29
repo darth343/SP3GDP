@@ -1,5 +1,6 @@
 #pragma once
 #include "Monster.h"
+#include "Vector3.h"
 #include <string>
 #include <vector>
 using std::string;
@@ -38,9 +39,20 @@ public:
 	int GetTamEnergy();
 	int GetTamHunger();
 	void SetTamHappy(int&);
-	void SetTamHunger(int&);
+	void SetTamHunger(int);
 	void SetTamEnergy(int&);
-
+	void IncrementTamHappy();
+	void IncrementTamHunger(int amount = 1);
+	void IncrementTamEnergy();
+	void DecrementTamHappy();
+	void DecrementTamHunger();
+	void DecrementTamEnergy();
+	Vector3 position;
+	bool direction;
+	float energyLosstimer;
+	float hungerLosstimer;
+	float happinessLosstimer;
+	vector<Vector3> pooPositions;
 private:
 	int TamHappy;
 	int TamHunger;

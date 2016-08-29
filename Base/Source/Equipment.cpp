@@ -10,10 +10,15 @@ Equipment::Equipment()
 , damage(-1)
 , defense(-1)
 , type(NO_TYPE)
+, direction(true)
 {
+	position.Set(350, 100, 1);
 	TamHappy = 5;
 	TamHunger = 5;
 	TamEnergy = 5;
+	hungerLosstimer = 0;
+	energyLosstimer = 0;
+	happinessLosstimer = 0;
 }
 
 Equipment::~Equipment()
@@ -31,6 +36,46 @@ int Equipment::GetTamHunger()
 {
 	return TamHunger;
 }
+void Equipment::SetTamHunger(int hunger)
+{
+	TamHunger = hunger;
+}
+void Equipment::IncrementTamEnergy()
+{
+	TamEnergy++;
+	if (TamEnergy > 5)
+		TamEnergy = 5;
+}
+
+void Equipment::IncrementTamHappy()
+{
+	TamHappy++;
+	if (TamHappy > 5)
+		TamHappy = 5;
+}
+
+void Equipment::IncrementTamHunger(int amount)
+{
+	TamHunger += amount;
+	if (TamHunger > 5)
+		TamHunger = 5;
+}
+
+void Equipment::DecrementTamEnergy()
+{
+	TamEnergy--;
+}
+
+void Equipment::DecrementTamHappy()
+{
+	TamHappy--;
+}
+
+void Equipment::DecrementTamHunger()
+{
+	TamHunger--;
+}
+
 
 void Equipment::reset()
 {

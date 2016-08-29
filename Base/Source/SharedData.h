@@ -6,8 +6,7 @@
 #include "Enemy.h"
 #include <vector>
 #include "SoundManager.h"
-
-
+#include "Tamagucci.h"
 
 class SharedData
 {
@@ -39,7 +38,7 @@ public:
 	ISound* worldBGM;
 	ISound* battleStart;
 	ISound* title;
-
+	TAMAGUCCI tamagucci;
 	std::vector<Enemy*> enemyInventory;
 	bool ZKeyPressed;
 	bool UPkeyPressed;
@@ -73,6 +72,7 @@ private:
 		ENTERkeyPressed = false;
 		BACKkeyPressed = false;
 		IkeyPressed = false;
+
 
 		soundFootstep = NULL;
 		worldBGM = NULL;

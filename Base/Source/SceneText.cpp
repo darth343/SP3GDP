@@ -140,11 +140,12 @@ void SceneText::Init()
 	{
 		Equipment* temp = new Equipment();
 		Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::TOTAL_ETYPE -1);
+		Monster::MONSTER_TYPE randmonstertype = (Monster::MONSTER_TYPE)Math::RandIntMinMax((int)Monster::BANSHEE, (int)Monster::DRAGON);
 		//Equipment::EQUIPMENT_TYPE randType = Equipment::LEG;
 		stringstream ss;
-		ss << Monster::getMonster(Monster::CEREBUS).getName() << " " << randType;
+		ss << Monster::getMonster(randmonstertype).getName() << " " << randType;
 		temp->SetName(ss.str());
-		temp->SetMonster(Monster::getMonster(Monster::CEREBUS));
+		temp->SetMonster(Monster::getMonster(randmonstertype));
 		temp->setType(randType);
 		temp->setDamage(Equipment::getDatabase()[randType][0]->getDamage() + Math::RandIntMinMax(-10, 10));
 		temp->setDefense(Equipment::getDatabase()[randType][0]->getDefense() + Math::RandIntMinMax(-10, 10));
@@ -161,6 +162,7 @@ void SceneText::Init()
 			}
 		}
 	}
+	SharedData::GetInstance()->inventory.SortInventory();
 	playerBattleDialogue = false;
 	renderedMp = 100;
 	renderedHp = 100;
@@ -486,7 +488,7 @@ void SceneText::TamagucciUpdate(double dt)
 		tamhappy->Update(dt);
 		tamhappy->m_anim->animActive = true;
 	}
-	if (tamagucci.GetShowFood())
+	if (SharedData::GetInstance()->SharedData::GetInstance()->tamagucci.GetShowFood())
 	{
 		SpriteAnimation *tamfood = dynamic_cast<SpriteAnimation*>(meshList[GEO_TAMFOOD]);
 		if (tamfood)
@@ -496,7 +498,7 @@ void SceneText::TamagucciUpdate(double dt)
 		}
 	}
 	SpriteAnimation *sleep = dynamic_cast<SpriteAnimation*>(meshList[GEO_TAMSLEEP]);
-	if (sleep && tamagucci.GetSleep())
+	if (sleep && SharedData::GetInstance()->SharedData::GetInstance()->tamagucci.GetSleep())
 	{
 		sleep->Update(dt);
 		sleep->m_anim->animActive = true;
@@ -504,7 +506,7 @@ void SceneText::TamagucciUpdate(double dt)
 	SpriteAnimation *salad = dynamic_cast<SpriteAnimation*>(meshList[GEO_SALAD]);
 
 		foodAnimOver = false;
-		if (salad && tamagucci.GetTouchedFood() && salad->m_anim->animActive)
+		if (salad && SharedData::GetInstance()->tamagucci.GetTouchedFood() && salad->m_anim->animActive)
 		{
 			salad->Update(dt);
 		}
@@ -513,7 +515,7 @@ void SceneText::TamagucciUpdate(double dt)
 			foodAnimOver = true;
 			salad->m_anim->animActive = true;
 		}
-		tamagucci.SetAnimationOver(foodAnimOver);
+		SharedData::GetInstance()->tamagucci.SetAnimationOver(foodAnimOver);
 }
 
 void SceneText::UpdateInventory(double dt)
@@ -695,7 +697,6 @@ void SceneText::renderInventoryMenus()
 				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 46 - 159, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46 - (SharedData::GetInstance()->inventory.getSecondSeeker() * 20));
 			}
 		}
-		cout << xpos << endl;
 		break;
 	case Inventory::TAB2:
 		std::ostringstream ss;
@@ -774,7 +775,7 @@ void SceneText::MapUpdate(double dt)
 		GOupdate(dt);
 		SharedData::GetInstance()->soundManager.SoundPlay("Sound/route1.mp3", &SharedData::GetInstance()->worldBGM, 0.3f, false);
 	}
-
+	SharedData::GetInstance()->tamagucci.TamagucciBackgroundUpdate(dt);
 	PlayerUpdate(dt);
 	GOupdate(dt);
 	if (Application::IsKeyPressed('R'))
@@ -897,8 +898,7 @@ void SceneText::Update(double dt)
 		UpdateInventory(dt);
 		break;
 	case TAMAGUCCI_SCREEN:
-		if (SharedData::GetInstance()->inventory.getRightArm() || SharedData::GetInstance()->inventory.getLeftArm() || SharedData::GetInstance()->inventory.getArmour() || SharedData::GetInstance()->inventory.getHead())
-		tamagucci.UpdateTamagucci(dt);
+		SharedData::GetInstance()->tamagucci.UpdateTamagucci(dt);
 		TamagucciUpdate(dt);
 		break;
 	}
@@ -1086,13 +1086,13 @@ void SceneText::renderTamagotchiMenu()
 
 	Vector3 arrowPos;
 	stringstream ss;
-	switch (tamagucci.getMenuState())
+	switch (SharedData::GetInstance()->tamagucci.getMenuState())
 	{
 	case TAMAGUCCI::FIRSTMENU:
 		//RENDER OPTIONS
 		renderFirstTamagotchiFirstMenu();
 		//RENDER OPTION SEEKER
-		switch (tamagucci.getFirstMenuOption())
+		switch (SharedData::GetInstance()->tamagucci.getFirstMenuOption())
 		{
 		case TAMAGUCCI::FOOD:
 			arrowPos.Set(30, 60);
@@ -1113,12 +1113,12 @@ void SceneText::renderTamagotchiMenu()
 		Render2DMeshWScale(meshList[GEO_BATTLEARROW], false, 0.05, 0.03, arrowPos.x, arrowPos.y, false);
 		break;
 	case TAMAGUCCI::SECONDMENU:
-		switch (tamagucci.getFirstMenuOption())
+		switch (SharedData::GetInstance()->tamagucci.getFirstMenuOption())
 		{
 		case TAMAGUCCI::FOOD:
 			renderFirstTamagotchiFirstMenu(27.5f);
 			//RENDER MENU
-			switch (tamagucci.getFoodChoice())
+			switch (SharedData::GetInstance()->tamagucci.getFoodChoice())
 			{
 			case TAMAGUCCI::FC_SALAD:
 			case TAMAGUCCI::FC_HAMBURGER:
@@ -1145,29 +1145,29 @@ void SceneText::renderTamagotchiMenu()
 				break;
 			}
 			//RENDER OPTION SEEKER
-			switch (tamagucci.getFoodChoice())
+			switch (SharedData::GetInstance()->tamagucci.getFoodChoice())
 			{
 			case TAMAGUCCI::FC_SALAD:
 				arrowPos.Set(36.5, 59.5);
-				if (tamagucci.GetShowFood())
+				if (SharedData::GetInstance()->tamagucci.GetShowFood())
 				{
-					Render2DMeshWScale(meshList[GEO_SALAD], false, tamagucci.GetTamFood()->scale.x, tamagucci.GetTamFood()->scale.y, tamagucci.GetTamFood()->position.x, tamagucci.GetTamFood()->position.y, false);
-					Render2DMeshWScale(meshList[GEO_TAMFOOD], false, tamagucci.GetTamTam()->scale.x, tamagucci.GetTamTam()->scale.y, tamagucci.GetTamTam()->position.x + (tamagucci.GetTamTam()->scale.x * 0.5), tamagucci.GetTamTam()->position.y + (tamagucci.GetTamTam()->scale.y * 0.5), tamagucci.GetMoveLeft());
+					Render2DMeshWScale(meshList[GEO_SALAD], false, SharedData::GetInstance()->tamagucci.GetTamFood()->scale.x, SharedData::GetInstance()->tamagucci.GetTamFood()->scale.y, SharedData::GetInstance()->tamagucci.GetTamFood()->position.x, SharedData::GetInstance()->tamagucci.GetTamFood()->position.y, false);
+					Render2DMeshWScale(meshList[GEO_TAMFOOD], false, SharedData::GetInstance()->tamagucci.GetTamTam()->scale.x, SharedData::GetInstance()->tamagucci.GetTamTam()->scale.y, SharedData::GetInstance()->tamagucci.getCurrentTama()->position.x, SharedData::GetInstance()->tamagucci.getCurrentTama()->position.y, SharedData::GetInstance()->tamagucci.GetMoveLeft());
 				}
 				break;
 			case TAMAGUCCI::FC_HAMBURGER:
 				arrowPos.Set(36.5, 32.5);
-				if (tamagucci.GetShowFood())
+				if (SharedData::GetInstance()->tamagucci.GetShowFood())
 				{
-					Render2DMeshWScale(meshList[GEO_HAMGURGER], false, tamagucci.GetTamFood()->scale.x, tamagucci.GetTamFood()->scale.y, tamagucci.GetTamFood()->position.x, tamagucci.GetTamFood()->position.y, false);
-					Render2DMeshWScale(meshList[GEO_TAMFOOD], false, tamagucci.GetTamTam()->scale.x, tamagucci.GetTamTam()->scale.y, tamagucci.GetTamTam()->position.x + (tamagucci.GetTamTam()->scale.x * 0.5), tamagucci.GetTamTam()->position.y + (tamagucci.GetTamTam()->scale.y * 0.5), tamagucci.GetMoveLeft());
+					Render2DMeshWScale(meshList[GEO_HAMGURGER], false, SharedData::GetInstance()->tamagucci.GetTamFood()->scale.x, SharedData::GetInstance()->tamagucci.GetTamFood()->scale.y, SharedData::GetInstance()->tamagucci.GetTamFood()->position.x, SharedData::GetInstance()->tamagucci.GetTamFood()->position.y, false);
+					Render2DMeshWScale(meshList[GEO_TAMFOOD], false, SharedData::GetInstance()->tamagucci.GetTamTam()->scale.x, SharedData::GetInstance()->tamagucci.GetTamTam()->scale.y, SharedData::GetInstance()->tamagucci.getCurrentTama()->position.x, SharedData::GetInstance()->tamagucci.getCurrentTama()->position.y, SharedData::GetInstance()->tamagucci.GetMoveLeft());
 				}
 				break;
 			case TAMAGUCCI::FC_PORK:
-				if (tamagucci.GetShowFood())
+				if (SharedData::GetInstance()->tamagucci.GetShowFood())
 				{
-					Render2DMeshWScale(meshList[GEO_PORK], false, tamagucci.GetTamFood()->scale.x, tamagucci.GetTamFood()->scale.y, tamagucci.GetTamFood()->position.x, tamagucci.GetTamFood()->position.y, false);
-					Render2DMeshWScale(meshList[GEO_TAMFOOD], false, tamagucci.GetTamTam()->scale.x, tamagucci.GetTamTam()->scale.y, tamagucci.GetTamTam()->position.x + (tamagucci.GetTamTam()->scale.x * 0.5), tamagucci.GetTamTam()->position.y + (tamagucci.GetTamTam()->scale.y * 0.5), tamagucci.GetMoveLeft());
+					Render2DMeshWScale(meshList[GEO_PORK], false, SharedData::GetInstance()->tamagucci.GetTamFood()->scale.x, SharedData::GetInstance()->tamagucci.GetTamFood()->scale.y, SharedData::GetInstance()->tamagucci.GetTamFood()->position.x, SharedData::GetInstance()->tamagucci.GetTamFood()->position.y, false);
+					Render2DMeshWScale(meshList[GEO_TAMFOOD], false, SharedData::GetInstance()->tamagucci.GetTamTam()->scale.x, SharedData::GetInstance()->tamagucci.GetTamTam()->scale.y, SharedData::GetInstance()->tamagucci.getCurrentTama()->position.x, SharedData::GetInstance()->tamagucci.getCurrentTama()->position.y, SharedData::GetInstance()->tamagucci.GetMoveLeft());
 				}
 				break;
 			case TAMAGUCCI::FC_BACK:
@@ -1179,10 +1179,10 @@ void SceneText::renderTamagotchiMenu()
 		case TAMAGUCCI::SLEEP:
 		{
 								 renderFirstTamagotchiFirstMenu(0.f);
-								 if (tamagucci.GetSleep())
+								 if (SharedData::GetInstance()->tamagucci.GetSleep())
 								 {
 									RenderBackground(meshList[GEO_BLACK]);
-									Render2DMeshWScale(meshList[GEO_TAMSLEEP], false, 100, 100, tamagucci.GetTamTam()->position.x+60, tamagucci.GetTamTam()->position.y + 70, false);
+									Render2DMeshWScale(meshList[GEO_TAMSLEEP], false, 100, 100, SharedData::GetInstance()->tamagucci.GetTamTam()->position.x+60, SharedData::GetInstance()->tamagucci.GetTamTam()->position.y + 70, false);
 								 }
 								 else
 								 arrowPos.Set(170, 60);
@@ -1203,7 +1203,7 @@ void SceneText::renderTamagotchiMenu()
 			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 360, 7.5);
 
 			//RENDER OPTION SEEKER
-			switch (tamagucci.getGameChoice())
+			switch (SharedData::GetInstance()->tamagucci.getGameChoice())
 			{
 			case TAMAGUCCI::CATCHING:
 				arrowPos.Set(314.5, 57.5);
@@ -1220,19 +1220,25 @@ void SceneText::renderTamagotchiMenu()
 		}
 		break;
 	}
+
+	if (SharedData::GetInstance()->tamagucci.getCurrentTama())
+	for (int i = 0; i < SharedData::GetInstance()->tamagucci.getCurrentTama()->pooPositions.size(); ++i)
+	{
+		Render2DMeshWScale(meshList[GEO_POOP], false, 32, 32, SharedData::GetInstance()->tamagucci.getCurrentTama()->pooPositions[i].x, SharedData::GetInstance()->tamagucci.getCurrentTama()->pooPositions[i].y);
+	}
 }
 
 void SceneText::renderTamagotchiGame()
 {
 	ostringstream ss;
-	switch (tamagucci.getGameChoice())
+	switch (SharedData::GetInstance()->tamagucci.getGameChoice())
 	{
 	case TAMAGUCCI::CATCHING:
 		RenderBackground(meshList[GEO_TAMBG1]);
-		Render2DMeshWScale(meshList[GEO_STAR], false, tamagucci.GetTamDrop()->scale.x, tamagucci.GetTamDrop()->scale.y, tamagucci.GetTamDrop()->position.x, tamagucci.GetTamDrop()->position.y, false);
-		Render2DMeshWScale(meshList[GEO_POOP], false, tamagucci.GetTamDrop2()->scale.x, tamagucci.GetTamDrop2()->scale.y, tamagucci.GetTamDrop2()->position.x, tamagucci.GetTamDrop2()->position.y, false);
+		Render2DMeshWScale(meshList[GEO_STAR], false, SharedData::GetInstance()->tamagucci.GetTamDrop()->scale.x, SharedData::GetInstance()->tamagucci.GetTamDrop()->scale.y, SharedData::GetInstance()->tamagucci.GetTamDrop()->position.x, SharedData::GetInstance()->tamagucci.GetTamDrop()->position.y, false);
+		Render2DMeshWScale(meshList[GEO_POOP], false, SharedData::GetInstance()->tamagucci.GetTamDrop2()->scale.x, SharedData::GetInstance()->tamagucci.GetTamDrop2()->scale.y, SharedData::GetInstance()->tamagucci.GetTamDrop2()->position.x, SharedData::GetInstance()->tamagucci.GetTamDrop2()->position.y, false);
 		renderTamagotchiUI();
-		ss << "Score: " << tamagucci.GetScore() << "/ 20";
+		ss << "Score: " << SharedData::GetInstance()->tamagucci.GetScore() << "/ 20";
 		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 30, 50, 520);
 		break;
 	}
@@ -1242,11 +1248,11 @@ void SceneText::renderTamagotchiUI()
 {
 	Render2DMeshWScale(meshList[GEO_TAMAGUCCIUIBACKGROUND], false, 1, 1, 400, -291, false);
 	Render2DMeshWScale(meshList[GEO_TAMAGUCCIUIBACKGROUND], false, 1, 1, 400, 892, false);
-	if (SharedData::GetInstance()->inventory.getRightArm())
+	if (SharedData::GetInstance()->tamagucci.getCurrentTama())
 	{
-		Render2DMeshWScale(meshList[GEO_GREEN], false, 60, SharedData::GetInstance()->inventory.getRightArm()->GetTamHunger() * 12, 549, 516.5, false);
-		Render2DMeshWScale(meshList[GEO_GREEN], false, 60, SharedData::GetInstance()->inventory.getRightArm()->GetTamEnergy() * 12, 630, 516.5, false);
-		Render2DMeshWScale(meshList[GEO_GREEN], false, 60, SharedData::GetInstance()->inventory.getRightArm()->GetTamHappy() * 12, 717, 516.5, false);
+		Render2DMeshWScale(meshList[GEO_GREEN], false, 60, SharedData::GetInstance()->tamagucci.getCurrentTama()->GetTamHunger() * 12, 549, 516.5, false);
+		Render2DMeshWScale(meshList[GEO_GREEN], false, 60, SharedData::GetInstance()->tamagucci.getCurrentTama()->GetTamEnergy() * 12, 630, 516.5, false);
+		Render2DMeshWScale(meshList[GEO_GREEN], false, 60, SharedData::GetInstance()->tamagucci.getCurrentTama()->GetTamHappy() * 12, 717, 516.5, false);
 	}
 	Render2DMeshWScale(meshList[GEO_HUNGERFRAME], false, 60, 60, 549, 516.5, false);
 	Render2DMeshWScale(meshList[GEO_ENERGYFRAME], false, 60, 60, 630, 516.5, false);
@@ -1260,7 +1266,7 @@ void SceneText::RenderTamagucci()
 	renderTamagotchiUI();
 	ostringstream ss;
 
-	switch (tamagucci.getTamagotchiState())
+	switch (SharedData::GetInstance()->tamagucci.getTamagotchiState())
 	{
 	case TAMAGUCCI::MENU:
 		renderTamagotchiMenu();
@@ -1269,13 +1275,13 @@ void SceneText::RenderTamagucci()
 		renderTamagotchiGame();
 		break;
 	}
-	if (SharedData::GetInstance()->inventory.getRightArm())
+	if (SharedData::GetInstance()->tamagucci.getCurrentTama())
 	{
-		RenderTextOnScreen(meshList[GEO_TEXT], SharedData::GetInstance()->inventory.getRightArm()->getName(), Color(1, 1, 1), 30, 100, 500);
-		if (tamagucci.GetScore() < 20 && !tamagucci.GetShowFood() && !tamagucci.GetSleep())
-			Render2DMeshWScale(meshList[GEO_TAMAGUCCI], false, tamagucci.GetTamTam()->scale.x, tamagucci.GetTamTam()->scale.y, tamagucci.GetTamTam()->position.x, tamagucci.GetTamTam()->position.y, false);
-		if (tamagucci.GetScore() >= 20)
-			Render2DMeshWScale(meshList[GEO_TAMHAPPY], false, tamagucci.GetTamTam()->scale.x, tamagucci.GetTamTam()->scale.y, tamagucci.GetTamTam()->position.x + (tamagucci.GetTamTam()->scale.x * 0.5), tamagucci.GetTamTam()->position.y + (tamagucci.GetTamTam()->scale.y * 0.5), false);
+		RenderTextOnScreen(meshList[GEO_TEXT], SharedData::GetInstance()->tamagucci.getCurrentTama()->getName(), Color(1, 1, 1), 30, 100, 500);
+		if (SharedData::GetInstance()->tamagucci.GetScore() < 20 && !SharedData::GetInstance()->tamagucci.GetShowFood() && !SharedData::GetInstance()->tamagucci.GetSleep())
+			Render2DMeshWScale(meshList[GEO_TAMAGUCCI], false, SharedData::GetInstance()->tamagucci.GetTamTam()->scale.x, SharedData::GetInstance()->tamagucci.GetTamTam()->scale.y, SharedData::GetInstance()->tamagucci.getCurrentTama()->position.x, SharedData::GetInstance()->tamagucci.getCurrentTama()->position.y, false);
+		if (SharedData::GetInstance()->tamagucci.GetScore() >= 20)
+			Render2DMeshWScale(meshList[GEO_TAMHAPPY], false, SharedData::GetInstance()->tamagucci.GetTamTam()->scale.x, SharedData::GetInstance()->tamagucci.GetTamTam()->scale.y, SharedData::GetInstance()->tamagucci.GetTamTam()->position.x + (SharedData::GetInstance()->tamagucci.GetTamTam()->scale.x * 0.5), SharedData::GetInstance()->tamagucci.GetTamTam()->position.y + (SharedData::GetInstance()->tamagucci.GetTamTam()->scale.y * 0.5), false);
 	}
 }
 

@@ -112,7 +112,6 @@ private:
 	TAMAGUCCI* tamtam;
 	TAMAGUCCI* tamdrop;
 	Pathfinder testpathfinder;
-	TAMAGUCCI tamagucci;
 	GameObject* touch;
 	vector<GameObject *> m_goList;
 	int npcPic = 0; //Which npc picture to show on the dialogue
