@@ -145,12 +145,13 @@ void SceneText::Init()
 	for (int j = 0; j < 10; ++j)
 	{
 		Equipment* temp = new Equipment();
-		Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::TOTAL_ETYPE -1);
-		//Equipment::EQUIPMENT_TYPE randType = Equipment::LEG;
+		//Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::TOTAL_ETYPE -1);
+		Monster::MONSTER_TYPE randmonstertype = (Monster::MONSTER_TYPE)Math::RandIntMinMax(Monster::BANSHEE, Monster::DRAGON);
+		Equipment::EQUIPMENT_TYPE randType = Equipment::ARMOUR;
 		stringstream ss;
-		ss << Monster::getMonster(Monster::CEREBUS).getName() << " " << randType;
+		ss << Monster::getMonster(randmonstertype).getName() << " " << randType;
 		temp->SetName(ss.str());
-		temp->SetMonster(Monster::getMonster(Monster::CEREBUS));
+		temp->SetMonster(Monster::getMonster(randmonstertype));
 		temp->setType(randType);
 		temp->setDamage(Equipment::getDatabase()[randType][0]->getDamage() + Math::RandIntMinMax(-10, 10));
 		temp->setDefense(Equipment::getDatabase()[randType][0]->getDefense() + Math::RandIntMinMax(-10, 10));
@@ -886,6 +887,13 @@ void SceneText::Update(double dt)
 				//Player Lose should do auto load to previous save file
 				SharedData::GetInstance()->stateCheck = true;
 				SharedData::GetInstance()->gameState = SharedData::MENU;
+				SharedData::GetInstance()->playerTurn = true;
+				SharedData::GetInstance()->enemyTurn = false;
+				battleScene.SetFirstChoice(true);
+				battleScene.SetSecondChoice(false);
+				battleScene.SetBattleSelection(BattleSystem::BS_ATTACK);
+
+
 			}
 
 		}
@@ -1448,7 +1456,7 @@ void SceneText::RenderBattleDialogue()
 			ss.str("");
 			ss.precision(5);
 
-			switch (SharedData::GetInstance()->inventory.getArmour()->getType())
+			switch (SharedData::GetInstance()->inventory.getArmour()->getMonster().GetType())
 			{
 			case 0:
 			case 1:
@@ -1538,6 +1546,7 @@ void SceneText::RenderBattleAnimation()
 
 void SceneText::RenderBattleHUD()
 {
+	cout << "Armour Type = "<<SharedData::GetInstance()->inventory.getArmour()->getType() << endl;
 	//Rendering HP & MP bar and Background
 	Render2DMeshWScale(meshList[GEO_HPBARDESIGN], false, 0.5f, 0.1f, 0, 540, false);
 	Render2DMeshWScale(meshList[GEO_HPBAR], false, maxHpScale * (renderedHp / 100), 1.0f, hpPos.x, hpPos.y, false);
@@ -1602,7 +1611,7 @@ void SceneText::RenderBattleHUD()
 		{
 			if (SharedData::GetInstance()->inventory.getArmour() != NULL)
 			{
-				switch (SharedData::GetInstance()->inventory.getArmour()->getType())
+				switch (SharedData::GetInstance()->inventory.getArmour()->getMonster().GetType())
 				{
 				case 0:
 					ss << "Banshee Scream";

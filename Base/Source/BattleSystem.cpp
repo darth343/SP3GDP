@@ -238,7 +238,7 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 				if (SharedData::GetInstance()->inventory.getArmour() != NULL)
 				{
 					//theHero->UseMP(30);
-					switch (SharedData::GetInstance()->inventory.getArmour()->getType())
+					switch (SharedData::GetInstance()->inventory.getArmour()->getMonster().GetType())
 					{
 						//Different equided skill damage and mana cost
 					case 0:
@@ -266,6 +266,13 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 				else
 				{
 					battleSelection = BS_SKILL;
+				}
+				if (enemy->GetHealth() < 0)
+				{
+					//Player win
+					Reset();
+					mainScene->SetGS("TESTMAP");
+					//destory enemy here
 				}
 			}
 			else
