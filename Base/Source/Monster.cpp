@@ -22,6 +22,12 @@ string Monster::getName()
 {
 	return name;
 }
+
+int Monster::GetType()
+{
+	return type;
+}
+
 float  Monster::getDefense()
 {
 	return defense;
