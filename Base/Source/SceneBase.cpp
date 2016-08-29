@@ -294,6 +294,25 @@ void SceneBase::Init()
 	meshList[GEO_LIVES] = MeshBuilder::GenerateSpriteAnimation("slash", 1, 4);
 	meshList[GEO_LIVES]->textureID = LoadTGA("Image//Lives.tga");
 
+	meshList[GEO_PORTAL] = MeshBuilder::GenerateSpriteAnimation("slash", 3, 3);
+	meshList[GEO_PORTAL]->textureID = LoadTGA("Image//Portal.tga");
+	SpriteAnimation *portal = dynamic_cast<SpriteAnimation*>(meshList[GEO_PORTAL]);
+	if (portal)
+	{
+		portal->m_anim = new Animation();
+		portal->m_anim->Set(0, 8, 0, 1.f, true);
+	}
+
+	meshList[GEO_MONSTERBANSHEE] = MeshBuilder::GenerateSpriteAnimation("slash", 1, 3);
+	meshList[GEO_MONSTERBANSHEE]->textureID = LoadTGA("Image//Monster_BANSHEE.tga");
+	SpriteAnimation *banshee = dynamic_cast<SpriteAnimation*>(meshList[GEO_MONSTERBANSHEE]);
+	if (banshee)
+	{
+		banshee->m_anim = new Animation();
+		banshee->m_anim->Set(0, 2, 0, 1.f, true);
+	}
+
+
 	SpriteAnimation *boss = dynamic_cast<SpriteAnimation*>(meshList[GEO_BOSS]);
 	if (boss)
 	{

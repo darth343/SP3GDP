@@ -395,7 +395,7 @@ void BattleSystem::UpdateBattleSystem(static bool& UPkeyPressed, static bool& DN
 			else
 				theHero->SetDEF(SharedData::GetInstance()->inventory.GetTotalDEF()* 0.5);
 
-			int damageToPlayer = enemy->GetDamage() - theHero->GetDEF();
+			int damageToPlayer = enemy->GetDamage() - theHero->GetDEF()/5;
 			if (damageToPlayer < 0)
 				damageToPlayer = 0;
 			theHero->TakeDMG(damageToPlayer);

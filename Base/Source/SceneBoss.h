@@ -16,8 +16,6 @@
 
 #include "Tamagucci.h"
 
-#include "SharedData.h"
-
 class SceneBoss : public SceneBase
 {
 	enum GAMESTATE_TYPE
@@ -32,7 +30,6 @@ class SceneBoss : public SceneBase
 
 		BATTLE,
 		CATCH,
-		WIN,
 		LOSE,
 		GS_TOTAL,
 	};
@@ -41,7 +38,6 @@ class SceneBoss : public SceneBase
 	{
 		PLAY,
 		IN_DIALOUGE,
-		WINLOSE,
 		MS_TOTAL,
 	};
 
@@ -82,7 +78,7 @@ public:
 
 	void ItemScreenUpdate(double dt);
 	void EquipScreenUpdate(double dt);
-	
+
 	int currState = 1;
 	void RenderTamagucci();
 	void TamagucciUpdate(double dt);
@@ -117,6 +113,8 @@ private:
 	Pathfinder testpathfinder;
 	TAMAGUCCI tamagucci;
 	GameObject* touch;
+	GameObject* teleporter1;
+	GameObject* teleporter2;
 	vector<GameObject *> m_goList;
 	int npcPic = 0; //Which npc picture to show on the dialogue
 	float enemyCatchPercentage;
@@ -133,7 +131,7 @@ private:
 	CPlayerInfo* theHero; // Hero's information
 	GAMESTATE_TYPE GS; // Change GameState in SceneText.cpp line 144 for testing purposes
 	MAP_STATE MS;
-	
+
 	// Battle system
 	BattleSystem battleScene;
 	Vector3 battleMonsterPos;
