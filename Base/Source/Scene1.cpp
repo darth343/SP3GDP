@@ -10,6 +10,7 @@
 #include "SpriteAnimation.h"
 #include "Enemy.h"
 #include "Items.h"
+#include "SharedData.h"
 
 Scene1::Scene1()
 :
@@ -69,7 +70,7 @@ void Scene1::Init()
 	for (int i = 0; i < 4; ++i)
 	{
 		Enemy* theEnemy;
-		theEnemy = new Enemy(Monster::getMonster(Monster::BANSHEE), Vector3(32.f, 32.f, 1));
+		theEnemy = new Enemy(Monster::getMonster(Monster::GOLEM), Vector3(32.f, 32.f, 1));
 		theEnemy->type = GameObject::GO_ENEMY;
 		Vector3 RandPos;
 		while (RandPos.IsZero())
@@ -83,14 +84,20 @@ void Scene1::Init()
 	}
 
 	touch = new GameObject(Vector3(50.f, 50.f, 1));
-	touch->position.Set(0, 760, 1);
+	touch->position.Set(0, 820, 1);
 	touch->type = GameObject::GO_NEXT;
 	m_goList.push_back(touch);
 
+	GameObject* boss = new GameObject(Vector3(50.f, 50.f, 1));
+	boss->position.Set(450, 1100, 1);
+	boss->type = GameObject::GO_BOSS;
+	m_goList.push_back(boss);
+
+	
 	enemyMaxHealth = 100;
 	currHealth = 100;
 	enemyCatchPercentage = 0;
-	npc.ReadFromFile("NPC//2.txt", m_goList);
+	npc.ReadFromFile("NPC//Text.txt", m_goList);
 	vector<NPC*>npcvec = npc.GetVec();
 
 	for (int i = 0; i < npcvec.size(); i++)
@@ -106,16 +113,11 @@ void Scene1::Init()
 		m_goList.push_back(dynamic_cast<NPC*>(npcvec[i]));
 	}
 
-	// Initialise and load the REAR tile map
-	//m_cRearMap = new CMap();
-	//m_cRearMap->Init( 600, 800, 24, 32, 600, 1600 );
-	//m_cRearMap->LoadMap( "Image//MapDesign_Rear.csv" );
-
 	// Initialise the hero's position
 	theHero = new CPlayerInfo();
 	theHero->Init();
-	theHero->SetPosition(Vector3(1300, 60, 0));
-	theHero->SetPlayerMesh(meshList[GEO_HEROLR]);
+	theHero->SetPosition(Vector3(530, 64, 0));
+	theHero->SetPlayerMesh(meshList[GEO_HEROUP]);
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
 	Mtx44 perspective;
 	perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
@@ -126,9 +128,7 @@ void Scene1::Init()
 	battleMonsterScale.Set(0.3, 0.3, 1);
 	monsterScaleUp = true;
 
-
 	SharedData::GetInstance()->soundManager.Init();
-
 
 	//Battle HUD
 	maxHpScale = 17.4f;
@@ -145,12 +145,13 @@ void Scene1::Init()
 	for (int j = 0; j < 10; ++j)
 	{
 		Equipment* temp = new Equipment();
-		Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::TOTAL_ETYPE - 1);
-		//Equipment::EQUIPMENT_TYPE randType = Equipment::LEG;
+		//Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::TOTAL_ETYPE -1);
+		Monster::MONSTER_TYPE randmonstertype = (Monster::MONSTER_TYPE)Math::RandIntMinMax(Monster::BANSHEE, Monster::GOLEM);
+		Equipment::EQUIPMENT_TYPE randType = Equipment::ARMOUR;
 		stringstream ss;
-		ss << Monster::getMonster(Monster::CEREBUS).getName() << " " << randType;
+		ss << Monster::getMonster(randmonstertype).getName() << " " << randType;
 		temp->SetName(ss.str());
-		temp->SetMonster(Monster::getMonster(Monster::CEREBUS));
+		temp->SetMonster(Monster::getMonster(randmonstertype));
 		temp->setType(randType);
 		temp->setDamage(Equipment::getDatabase()[randType][0]->getDamage() + Math::RandIntMinMax(-10, 10));
 		temp->setDefense(Equipment::getDatabase()[randType][0]->getDefense() + Math::RandIntMinMax(-10, 10));
@@ -382,6 +383,13 @@ void Scene1::GOupdate(double dt)
 	{
 		sa->Update(dt);
 		sa->m_anim->animActive = true;
+	}
+	SpriteAnimation *lives = dynamic_cast<SpriteAnimation*>(meshList[GEO_LIVES]);
+	if (lives)
+	{
+		//lives->Update(dt);
+		lives->m_currentFrame = SharedData::GetInstance()->playerLives;
+		lives->m_anim->animActive = true;
 	}
 
 	SpriteAnimation *pic2 = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC2]);
@@ -893,6 +901,8 @@ void Scene1::Update(double dt)
 					//Player Lose should do auto load to previous save file
 					GS = LOSE;
 
+				//Player Lose should do auto load to previous save file
+
 				SharedData::GetInstance()->playerTurn = true;
 				SharedData::GetInstance()->enemyTurn = false;
 				battleScene.SetFirstChoice(true);
@@ -1037,11 +1047,8 @@ void Scene1::RenderTestMap()
 	RenderBackground(meshList[GEO_BACKGROUND]);
 	RenderTileMap(meshList[GEO_TILESET1], m_cMap);
 	RenderTileMap(meshList[GEO_TILESET1], m_cMap2);
-	std::ostringstream ss;
 
-	RenderPlayer();
-	Render2DMeshWScale(meshList[GEO_ICONTAM], false, 1, 1, 700, 10, false);
-	Render2DMeshWScale(meshList[GEO_ICONINV], false, 1, 1, 630, 10, false);
+	std::ostringstream ss;
 
 	for (int i = 0; i < m_goList.size(); i++)
 	{
@@ -1082,7 +1089,7 @@ void Scene1::RenderTestMap()
 		if (m_goList[i]->type == GameObject::GO_ENEMY)
 		{
 			Enemy* temp = (Enemy*)m_goList[i];
-			Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[0]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetFlipStatus(), 32);
+			Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetFlipStatus(), 50);
 		}
 		if (m_goList[i]->type == GameObject::GO_NEXT)
 		{
@@ -1096,8 +1103,24 @@ void Scene1::RenderTestMap()
 				}
 			}
 		}
+		if (m_goList[i]->type == GameObject::GO_BOSS)
+		{
+			if (m_goList[i]->CheckCollision(theHero->GetPosition(), theHero->GetMapOffset(), m_cMap))
+			{
+				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
+				if (Application::IsKeyPressed(VK_RETURN))
+				{
+					SharedData::GetInstance()->stateCheck = true;
+					SharedData::GetInstance()->gameState = SharedData::GAME_BOSS;
+				}
+			}
+		}
 	}
 	RenderTextOnScreen(meshList[GEO_TEXT], npctalk.str(), Color(1, 1, 0), 30, 60, 100);
+	RenderPlayer();
+	Render2DMeshWScale(meshList[GEO_ICONTAM], false, 1, 1, 700, 10, false);
+	Render2DMeshWScale(meshList[GEO_ICONINV], false, 1, 1, 630, 10, false);
+	Render2DMeshWScale(meshList[GEO_LIVES], false, 120, 50, 0, 550, false);
 
 	//On screen text
 	ss.str("");
@@ -1460,7 +1483,7 @@ void Scene1::RenderBattleDialogue()
 			ss.str("");
 			ss.precision(5);
 
-			switch (SharedData::GetInstance()->inventory.getArmour()->getType())
+			switch (SharedData::GetInstance()->inventory.getArmour()->getMonster().GetType())
 			{
 			case 0:
 			case 1:
@@ -1614,7 +1637,7 @@ void Scene1::RenderBattleHUD()
 		{
 			if (SharedData::GetInstance()->inventory.getArmour() != NULL)
 			{
-				switch (SharedData::GetInstance()->inventory.getArmour()->getType())
+				switch (SharedData::GetInstance()->inventory.getArmour()->getMonster().GetType())
 				{
 				case 0:
 					ss << "Banshee Scream";
@@ -1693,6 +1716,9 @@ void Scene1::Render()
 	case TAMAGUCCI_SCREEN:
 		RenderTamagucci();
 		break;
+	case LOSE:
+		RenderBackground(meshList[GEO_LOSE]);
+		break;
 	}
 }
 
@@ -1703,6 +1729,11 @@ void Scene1::Exit()
 	{
 		if (meshList[i])
 			delete meshList[i];
+	}
+	for (int i = 0; i < m_goList.size(); ++i)
+	{
+		delete m_goList[i];
+		m_goList.erase(m_goList.begin() + i);
 	}
 	glDeleteProgram(m_programID);
 	glDeleteVertexArrays(1, &m_vertexArrayID);

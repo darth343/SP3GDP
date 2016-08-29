@@ -93,7 +93,18 @@ void SceneText::Init()
 	boss->type = GameObject::GO_BOSS;
 	m_goList.push_back(boss);
 
-	teleporter1 = new GameObject(Vector3(20.f, 20.f, 1));
+	GameObject* teleporter2 = new GameObject(Vector3(20.f, 20.f, 1));
+	teleporter2->position.Set(182, 510, 1);
+	teleporter2->type = GameObject::GO_TELEPORT2;
+	m_goList.push_back(teleporter2);
+
+	GameObject* teleporter1 = new GameObject(Vector3(20.f, 20.f, 1));
+	teleporter1->position.Set(182, 154, 1);
+	teleporter1->type = GameObject::GO_TELEPORT;
+	m_goList.push_back(teleporter1);
+
+
+	/*teleporter1 = new GameObject(Vector3(20.f, 20.f, 1));
 	teleporter1->position.Set(182, 154, 1);
 	teleporter1->type = GameObject::GO_TELEPORT;
 	m_goList.push_back(teleporter1);
@@ -101,7 +112,7 @@ void SceneText::Init()
 	teleporter2 = new GameObject(Vector3(20.f, 20.f, 1));
 	teleporter2->position.Set(182, 510, 1);
 	teleporter2->type = GameObject::GO_TELEPORT2;
-	m_goList.push_back(teleporter2);
+	m_goList.push_back(teleporter2);*/
 
 	enemyMaxHealth = 100;
 	currHealth = 100;
@@ -1141,7 +1152,7 @@ void SceneText::RenderTestMap()
 
 				if (m_goList[i]->CheckCollision(theHero->GetPosition(), theHero->GetMapOffset(), m_cMap))
 				{
-					theHero->SetPosition(Vector3(teleporter2->position.x, teleporter2->position.y + 20, 0));
+					theHero->SetPosition(Vector3(182, 532, 0));
 				}
 			}
 			if (m_goList[i]->type == GameObject::GO_TELEPORT2)
@@ -1150,7 +1161,7 @@ void SceneText::RenderTestMap()
 
 				if (m_goList[i]->CheckCollision(theHero->GetPosition(), theHero->GetMapOffset(), m_cMap))
 				{
-					theHero->SetPosition(Vector3(teleporter1->position.x, 52, 0));
+					theHero->SetPosition(Vector3(182, 52, 0));
 				}
 			}
 		}
@@ -1768,6 +1779,11 @@ void SceneText::Exit()
 	{
 		if(meshList[i])
 			delete meshList[i];
+	}
+	for (int i = 0; i < m_goList.size(); ++i)
+	{
+			delete m_goList[i];
+			m_goList.erase(m_goList.begin() + i);
 	}
 	glDeleteProgram(m_programID);
 	glDeleteVertexArrays(1, &m_vertexArrayID);
