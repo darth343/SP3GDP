@@ -282,8 +282,8 @@ void SceneBase::Init()
 	meshList[GEO_SKINANIMATION]->textureID = LoadTGA("Image//screamAnimation.tga");
 	meshList[GEO_SCREAMANIMATION] = MeshBuilder::GenerateSpriteAnimation("scream", 1, 8);
 	meshList[GEO_SCREAMANIMATION]->textureID = LoadTGA("Image//screamAnimation.tga");
-	meshList[GEO_ROARANIMATION] = MeshBuilder::GenerateSpriteAnimation("slash", 1, 10);
-	meshList[GEO_ROARANIMATION]->textureID = LoadTGA("Image//slashAnimation2.tga");
+	meshList[GEO_ROARANIMATION] = MeshBuilder::GenerateSpriteAnimation("roar", 1, 8);
+	meshList[GEO_ROARANIMATION]->textureID = LoadTGA("Image//roarAnimation2.tga");
 
 	meshList[GEO_BOSS] = MeshBuilder::GenerateSpriteAnimation("slash", 1, 2);
 	meshList[GEO_BOSS]->textureID = LoadTGA("Image//boss.tga");
