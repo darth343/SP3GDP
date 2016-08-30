@@ -914,6 +914,8 @@ void Scene2::RenderTestMap()
 		}
 		if (m_goList[i]->type == GameObject::GO_DOWN)
 		{
+			Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false);
+
 			if (m_goList[i]->CheckCollision(theHero->GetPosition(), theHero->GetMapOffset(), m_cMap))
 			{
 				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
