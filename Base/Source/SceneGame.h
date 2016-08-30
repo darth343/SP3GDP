@@ -1,8 +1,7 @@
-#ifndef SCENE_TEXT_H
-#define SCENE_TEXT_H
+#ifndef SCENE_GAME_H
+#define SCENE_GAME_H
 #include "SceneBase.h"
 
-#include "Camera3.h"
 #include "Gauge.h"
 #include "Map.h"
 #include "PlayerInfo.h"
@@ -11,18 +10,17 @@
 #include "Enemy.h"
 #include "CharacterData.h"
 #include "BattleSystem.h"
-
 #include "Inventory.h"
-
 #include "Tamagucci.h"
 
 
-class SceneText : public SceneBase
+class SceneGame : public SceneBase
 {
+protected:
 	enum GAMESTATE_TYPE
 	{
 		START_SCREEN,
-		TESTMAP,
+		MAP,
 		INVENTORY_SCREEN,
 
 		ITEM_SCREEN,
@@ -41,21 +39,18 @@ class SceneText : public SceneBase
 		IN_DIALOUGE,
 		MS_TOTAL,
 	};
-
 public:
-	SceneText();
-	~SceneText();
+	SceneGame();
+	~SceneGame();
 
-	virtual void Init();
-	virtual void Update(double dt);
-	virtual void Render();
-	virtual void Exit();
+	void Init();
+	void Update(double dt);
+	void Render();
+	void Exit();
 	void RenderTileMap(Mesh* mesh, CMap* m_cMap, Vector3 speed = Vector3(1, 1, 1));
 
 	//Render Functions
-	void BasicRender(); // Basic Render Codes, do not touch unless needed 
 	void RenderPlayer(); // RenderPlayer
-	void RenderTestMap(); //RenderTestMap
 	void RenderCatch();
 	void RenderBattleScene(); //RenderBattleScene
 	void RenderMonster(); // Render Monsters here
@@ -67,9 +62,6 @@ public:
 	void RenderBattleDialogue();
 
 	//Update Functions
-	void MapUpdate(double dt);
-	void PlayerUpdate(double dt); // Update to the player 
-	void GOupdate(double dt); // Main GO Collisions
 	void UpdateInventory(double dt); // Updates for All Inventory 
 	void EnterBattleScene(Enemy* enemy); //its like the update for BattleScene
 	void CatchUpdate(double dt);
@@ -103,18 +95,13 @@ public:
 	void renderTamagotchiUI();
 	void renderInventoryItems();
 	void renderInventoryMenus();
-private:
-	NPC npc;
+protected:
 	Gauge* greenbar;
 	Gauge* redbar;
 	Gauge* chargebar;
 	Enemy* EnemyInBattle;
-	TAMAGUCCI* tamtam;
-	TAMAGUCCI* tamdrop;
-	Pathfinder testpathfinder;
-	GameObject* touch;
-
 	vector<GameObject *> m_goList;
+	GameObject* touch;
 	int npcPic = 0; //Which npc picture to show on the dialogue
 	float enemyCatchPercentage;
 	float enemyMaxHealth;
@@ -124,9 +111,6 @@ private:
 	int npcID = 0; //Changing state of npc dialogue
 	bool tamagucciFood = false;
 	bool foodAnimOver = false;
-
-	CMap* m_cMap;	// Handle to the tilemaps
-	CMap* m_cMap2;	// Handle to the tilemaps
 	GAMESTATE_TYPE GS; // Change GameState in SceneText.cpp line 144 for testing purposes
 	MAP_STATE MS;
 	
@@ -146,10 +130,8 @@ private:
 	float maxMpScale;
 	Vector3 mpPos;
 	float renderedMp;
-
 	int itemCursorPos = 0;
 	float cursorDebounce = 0;
-
 	ostringstream npctalk;
 	bool captured;
 };

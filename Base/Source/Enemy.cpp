@@ -186,26 +186,28 @@ void Enemy::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap
 {
 	if (CheckCollision(playerPos, mapOffset, m_cMap))
 	{
-	if (SharedData::GetInstance()->gameState == SharedData::GAME_S1)
-		{
-			SceneText* theScene = (SceneText*)Application::GetInstance().GetScene();
-			theScene->EnterBattleScene(this);
-		}
-		if (SharedData::GetInstance()->gameState == SharedData::GAME_BOSS)
-		{
-			SceneBoss* theScene = (SceneBoss*)Application::GetInstance().GetScene();
-			theScene->EnterBattleScene(this);
-		}
-		if (SharedData::GetInstance()->gameState == SharedData::GAME_S2)
-		{
-			Scene1* theScene = (Scene1*)Application::GetInstance().GetScene();
-			theScene->EnterBattleScene(this);
-		}
-		if (SharedData::GetInstance()->gameState == SharedData::GAME_S3)
-		{
-			Scene2* theScene = (Scene2*)Application::GetInstance().GetScene();
-			theScene->EnterBattleScene(this);
-		}
+		SceneGame* theScene = (SceneGame*)Application::GetInstance().GetScene();
+				theScene->EnterBattleScene(this);
+	//if (SharedData::GetInstance()->gameState == SharedData::GAME_S1)
+	//	{
+	//		SceneText* theScene = (SceneText*)Application::GetInstance().GetScene();
+	//		theScene->EnterBattleScene(this);
+	//	}
+	//	if (SharedData::GetInstance()->gameState == SharedData::GAME_BOSS)
+	//	{
+	//		SceneBoss* theScene = (SceneBoss*)Application::GetInstance().GetScene();
+	//		theScene->EnterBattleScene(this);
+	//	}
+	//	if (SharedData::GetInstance()->gameState == SharedData::GAME_S2)
+	//	{
+	//		Scene1* theScene = (Scene1*)Application::GetInstance().GetScene();
+	//		theScene->EnterBattleScene(this);
+	//	}
+	//	if (SharedData::GetInstance()->gameState == SharedData::GAME_S3)
+	//	{
+	//		Scene2* theScene = (Scene2*)Application::GetInstance().GetScene();
+	//		theScene->EnterBattleScene(this);
+	//	}
 	}
 
 	static float IDLE_TIME = 0.f;

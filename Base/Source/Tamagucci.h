@@ -6,7 +6,7 @@
 #include <vector>
 
 const float ENERGYLOSSTIME = 180.f;
-const float HUNGERLOSSTIME = 5.f;
+const float HUNGERLOSSTIME = 120.f;
 const float HAPPYLOSSTIME = 240.f;
 
 using std::vector;

@@ -1,5 +1,4 @@
 #include "PlayerInfo.h"
-#include "SceneText.h"
 #include <iostream>
 #include "Application.h"
 

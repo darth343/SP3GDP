@@ -140,7 +140,6 @@ void SceneMenu::Update(double dt)
 			switch (m_gs)
 			{
 			case GS_GAME:
-				SharedData::GetInstance()->stateCheck = true;
 				SharedData::GetInstance()->gameState = SharedData::STORY;
 				break;
 				//Other cases here

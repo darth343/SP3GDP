@@ -148,7 +148,6 @@ void SceneStory::Update(double dt)
 	}
 	if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 	{
-		SharedData::GetInstance()->stateCheck = true;
 		SharedData::GetInstance()->gameState = SharedData::GAME_S1;
 	}
 	else if (Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)

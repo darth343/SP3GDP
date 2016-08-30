@@ -14,19 +14,13 @@ NPC::NPC(Vector3 scale) : GameObject(scale)
 }
 NPC::~NPC()
 {
-	while (npcs.size() > 0)
-	{
-		NPC *go = npcs.back();
-		delete go;
-		npcs.pop_back();
-	}
 }
 void NPC::SetState(int &state)
 {
 	this->currState = state;
 }
 //Text file is going to include NPC id, NPC animation state, NPC dialogue state, NPC dialogue
-void NPC::ReadFromFile(string filename, vector<GameObject*>&m_goList)
+void NPC::ReadFromFile(string filename, vector<NPC*>&npcs)
 {
 	ifstream myfile;
 	myfile.open(filename);
@@ -65,10 +59,7 @@ void NPC::ReadFromFile(string filename, vector<GameObject*>&m_goList)
 	}
 	myfile.close();
 }
-vector<NPC*> NPC::GetVec()
-{
-	return npcs;
-}
+
 int NPC::GetNum()
 {
 	return num;

@@ -159,12 +159,46 @@ void Application::Init()
 
 void Application::Run()
 {
+	menuScene = new SceneMenu;
+	storyScene = new SceneStory;
+	WM_Scene = new Scene1();
+	AE_Scene = new Scene2();
+	KY_Scene = new Scene3();
+	HS_Scene = new Scene4();
+
+	menuScene->Init();
+	storyScene->Init();
+	WM_Scene->Init();
+	AE_Scene->Init();
+	KY_Scene->Init();
+	HS_Scene->Init();
+
 	//Main Loop
-	scene = new SceneText;
-	scene->Init();
+	scene = menuScene;
 	m_timer.startTimer();    // Start timer to calculate how long it takes to render this frame
 	while (!glfwWindowShouldClose(m_window) && !IsKeyPressed(VK_ESCAPE))
 	{
+		switch (SharedData::GetInstance()->gameState)
+		{
+			case SharedData::MENU:
+				scene = menuScene;
+				break;
+			case SharedData::STORY:
+				scene = storyScene;
+				break;
+			case SharedData::GAME_S1:
+				scene = WM_Scene;
+				break;
+			case SharedData::GAME_S2:
+				scene = AE_Scene;
+				break;
+			case SharedData::GAME_S3:
+				scene = KY_Scene;
+				break;
+			case SharedData::GAME_S4:
+				scene = HS_Scene;
+				break;
+		}
 		// Get the elapsed time
 		m_dElapsedTime = m_timer.getElapsedTime();
 		m_dAccumulatedTime_ThreadOne += m_dElapsedTime;
@@ -189,36 +223,39 @@ void Application::Run()
 		glfwPollEvents();
         m_timer.waitUntil(frameTime);       // Frame rate limiter. Limits each frame to a specified time in ms.   
 
-		if (SharedData::GetInstance()->stateCheck)
-		{
-			scene->Exit();
-			delete scene;
-			SharedData::GetInstance()->stateCheck = false;
+		//if (SharedData::GetInstance()->stateCheck)
+		//{
+		//	scene->Exit();
+		//	delete scene;
+		//	SharedData::GetInstance()->stateCheck = false;
 
-			switch (SharedData::GetInstance()->gameState)
-			{
-			case SharedData::MENU:
-				scene = new SceneMenu();
-				break;
-			case SharedData::STORY:
-				scene = new SceneStory();
-				break;
-			case SharedData::GAME_S1:
-				scene = new SceneText();
-				break;
-			case SharedData::GAME_S2:
-				scene = new Scene1();
-				break;
-			case SharedData::GAME_S3:
-				scene = new Scene2();
-				break;
-			case SharedData::GAME_BOSS:
-				scene = new SceneBoss();
-				break;
-			}
-			scene->Init();
+		//	switch (SharedData::GetInstance()->gameState)
+		//	{
+		//	case SharedData::MENU:
+		//		scene = new SceneMenu();
+		//		break;
+		//	case SharedData::STORY:
+		//		scene = new SceneStory();
+		//		break;
+		//	case SharedData::GAME_S1:
+		//		scene = new SceneText();
+		//		break;
+		//	case SharedData::GAME_S2:
+		//		scene = new Scene1();
+		//		break;
+		//	case SharedData::GAME_S3:
+		//		scene = new Scene2();
+		//		break;
+		//	case SharedData::GAME_S4:
+		//		scene = new Scene4();
+		//		break;
+		//	case SharedData::GAME_BOSS:
+		//		scene = new SceneBoss();
+		//		break;
+		//	}
+		//	scene->Init();
 
-		}
+		//}
 
 	} //Check if the ESC key had been pressed or if the window had been closed
 	scene->Exit();

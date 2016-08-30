@@ -5,12 +5,14 @@
 #include "timer.h"
 
 #include "SharedData.h"
-#include "SceneText.h"
 #include "Scene1.h"
 #include "Scene2.h"
+#include "Scene3.h"
+#include "Scene4.h"
 #include "SceneMenu.h"
 #include "SceneStory.h"
 #include "SceneBoss.h"
+#include "SceneGame.h"
 
 class Application
 {
@@ -48,9 +50,13 @@ private:
 	double m_dElapsedTime;
 	double m_dAccumulatedTime_ThreadOne;
 	double m_dAccumulatedTime_ThreadTwo;
-
+	Scene1* WM_Scene;
+	Scene2* AE_Scene;
+	Scene3* KY_Scene;
+	Scene4* HS_Scene;
+	Scene* menuScene;
+	Scene* storyScene;
 	// The handler for the scene
-
 	Scene *scene;
 
 };

@@ -1,4 +1,4 @@
-#include "Scene1.h"
+#include "Scene3.h"
 #include "GL\glew.h"
 
 #include "shader.hpp"
@@ -12,13 +12,13 @@
 #include "Items.h"
 #include "SharedData.h"
 
-Scene1::Scene1()
+Scene3::Scene3()
 : m_cMap(NULL)
 , m_cMap2(NULL)
 {
 }
 
-Scene1::~Scene1()
+Scene3::~Scene3()
 {
 	if (m_cMap)
 	{
@@ -32,52 +32,21 @@ Scene1::~Scene1()
 	}
 }
 
-void Scene1::Init()
+void Scene3::Init()
 {
 	SceneGame::Init();
 	//Init GameState Here for testing purposes
 	GS = MAP;
 	MS = PLAY;
+	capturedMonster = false;
 	// Initialise and load the tile map
 	m_cMap = new CMap();
 	m_cMap->Init(Application::GetInstance().GetScreenHeight(), Application::GetInstance().GetScreenWidth(), 32);
-	m_cMap->LoadMap("Data//MapData_WM.csv");
+	m_cMap->LoadMap("Data//KyMapData.csv");
 
 	m_cMap2 = new CMap();
 	m_cMap2->Init(Application::GetInstance().GetScreenHeight(), Application::GetInstance().GetScreenWidth(), 32);
-	m_cMap2->LoadMap("Data//MapData_WM2.csv");
-
-	GameObject* touch = new GameObject(Vector3(50.f, 50.f, 1));
-	cout << touch << endl;
-	touch->position.Set(0, 820, 1);
-	touch->type = GameObject::GO_NEXT;
-	m_goList.push_back(touch);
-
-	cout << m_goList.size() << endl;
-	GameObject* down = new GameObject(Vector3(50.f, 50.f, 1));
-	down->position.Set(370, 10, 1);
-	down->type = GameObject::GO_DOWN;
-	m_goList.push_back(down);
-
-	GameObject* s4 = new GameObject(Vector3(50.f, 50.f, 1));
-	s4->position.Set(910, 700, 1);
-	s4->type = GameObject::GO_S4;
-	m_goList.push_back(s4);
-
-	GameObject* boss = new GameObject(Vector3(50.f, 50.f, 1));
-	boss->position.Set(450, 1100, 1);
-	boss->type = GameObject::GO_BOSS;
-	m_goList.push_back(boss);
-
-	GameObject* teleporter2 = new GameObject(Vector3(20.f, 20.f, 1));
-	teleporter2->position.Set(182, 510, 1);
-	teleporter2->type = GameObject::GO_TELEPORT2;
-	m_goList.push_back(teleporter2);
-
-	GameObject* teleporter1 = new GameObject(Vector3(20.f, 20.f, 1));
-	teleporter1->position.Set(182, 154, 1);
-	teleporter1->type = GameObject::GO_TELEPORT;
-	m_goList.push_back(teleporter1);
+	m_cMap2->LoadMap("Data//KyMapData2.csv");
 
 	// Init for loading GameObjects
 	Items* thePotion = new Items(Vector3(32.f, 32.f, 1));
@@ -90,7 +59,7 @@ void Scene1::Init()
 	redbar->gauge = Gauge::GREENBAR;
 	redbar->position.Set(150, 150, 1);
 
-	greenbar= new Gauge(Vector3(0.f, 32.f, 1));
+	greenbar = new Gauge(Vector3(0.f, 32.f, 1));
 	greenbar->gauge = Gauge::GREENBAR;
 	greenbar->type = GameObject::GO_GREENBAR;
 	greenbar->position.Set(400, 150, 1);
@@ -100,66 +69,63 @@ void Scene1::Init()
 	chargebar->type = GameObject::GO_MOVE;
 	chargebar->position.Set(500, 150, 1);
 
+	GameObject* touch = new GameObject(Vector3(50.f, 50.f, 1));
+	touch->position.Set(820, 150, 1);
+	touch->type = GameObject::GO_DOWN;
+	m_goList.push_back(touch);
+
+	GameObject* down = new GameObject(Vector3(50.f, 50.f, 1));
+	down->position.Set(612, 1200, 1);
+	down->type = GameObject::GO_DOWN;
+	m_goList.push_back(down);
+
 	for (int i = 0; i < 4; ++i)
 	{
 		Enemy* theEnemy;
-		theEnemy = new Enemy(Monster::getMonster(Monster::BANSHEE), Vector3(50.f, 50.f, 1));
+		theEnemy = new Enemy(Monster::getMonster(Monster::DRAGON), Vector3(32.f, 32.f, 1));
 		theEnemy->type = GameObject::GO_ENEMY;
-		Vector3 RandPos;
-		while (RandPos.IsZero())
-		{
-			RandPos.Set(Math::RandIntMinMax(0, m_cMap->GetNumOfTiles_Width() - 1), Math::RandIntMinMax(0, m_cMap->GetNumOfTiles_Height() - 1), 0);
-			if (m_cMap->theMap[RandPos.y][RandPos.x].shouldCollide)
-				RandPos.SetZero();
-		}
-		theEnemy->position.Set(RandPos.x * 32, 600, 1);
+		theEnemy->position.Set(200, 700, 1);
 		m_goList.push_back(theEnemy);
 	}
-
-
-	/*teleporter1 = new GameObject(Vector3(20.f, 20.f, 1));
-	teleporter1->position.Set(182, 154, 1);
-	teleporter1->type = GameObject::GO_TELEPORT;
-	m_goList.push_back(teleporter1);
-
-	teleporter2 = new GameObject(Vector3(20.f, 20.f, 1));
-	teleporter2->position.Set(182, 510, 1);
-	teleporter2->type = GameObject::GO_TELEPORT2;
-	m_goList.push_back(teleporter2);*/
 
 	enemyMaxHealth = 100;
 	currHealth = 100;
 	enemyCatchPercentage = 0;
-	NPC::ReadFromFile("NPC//Text.txt", npcvec);
+	NPC::ReadFromFile("NPC//2.txt", npcvec);
 
 	for (int i = 0; i < npcvec.size(); i++)
 	{
 		if (npcvec[i]->GetID() == 1)
-			npcvec[i]->position.Set(500, 150, 1);
+			npcvec[i]->position.Set(500, 100, 1);
 		if (npcvec[i]->GetID() == 2)
-			npcvec[i]->position.Set(700, 100, 1);
+			npcvec[i]->position.Set(700, 200, 1);
 		if (npcvec[i]->GetID() == 3)
-			npcvec[i]->position.Set(100, 250, 1);
+			npcvec[i]->position.Set(100, 400, 1);
 		npcvec[i]->currDia = 1;
-
 		m_goList.push_back(dynamic_cast<NPC*>(npcvec[i]));
 	}
 
+	// Initialise and load the REAR tile map
+	//m_cRearMap = new CMap();
+	//m_cRearMap->Init( 600, 800, 24, 32, 600, 1600 );
+	//m_cRearMap->LoadMap( "Image//MapDesign_Rear.csv" );
+
 	// Initialise the hero's position
-	SharedData::GetInstance()->player->SetHP(100);
-	SharedData::GetInstance()->player->SetPosition(Vector3(530, 64, 0));
-	SharedData::GetInstance()->player->SetPlayerMesh(meshList[GEO_HEROUP]);
+	SharedData::GetInstance()->player->SetPosition(Vector3(615, 2000, 0));
+	SharedData::GetInstance()->player->SetPlayerMesh(meshList[GEO_HEROD]);
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
 	//Mtx44 perspective;
 	//perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
 	////perspective.SetToOrtho(-80, 80, -60, 60, -1000, 1000);
 	//projectionStack.LoadMatrix(perspective);
 
-	battleMonsterPos.Set(280, 240, 0);
-	battleMonsterScale.Set(300, 300, 1);
+	battleMonsterPos.Set(300, 240, 0);
+	battleMonsterScale.Set(0.3, 0.3, 1);
 	monsterScaleUp = true;
 
+
 	SharedData::GetInstance()->soundManager.Init();
+
 
 	//Battle HUD
 	maxHpScale = 17.4f;
@@ -167,19 +133,12 @@ void Scene1::Init()
 	mpPos.Set(36, 548.9, 0);
 	maxMpScale = 10.9f;
 
-	//new
-	flashEffect = false;
-	flashTimer = 0.0f;
-	renderedMp = 100;
-	renderedHp = 100;
-
 	for (int j = 0; j < 10; ++j)
 	{
 		Equipment* temp = new Equipment();
-		Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::TOTAL_ETYPE -1);
-		Monster::MONSTER_TYPE randmonstertype = (Monster::MONSTER_TYPE)Math::RandIntMinMax(Monster::BANSHEE, Monster::GOLEM);
-		//Equipment::EQUIPMENT_TYPE randType = Equipment::LEG;
 		//Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::TOTAL_ETYPE -1);
+		Monster::MONSTER_TYPE randmonstertype = (Monster::MONSTER_TYPE)Math::RandIntMinMax(Monster::BANSHEE, Monster::GOLEM);
+		Equipment::EQUIPMENT_TYPE randType = Equipment::ARMOUR;
 		stringstream ss;
 		ss << Monster::getMonster(randmonstertype).getName() << " " << randType;
 		temp->SetName(ss.str());
@@ -200,84 +159,88 @@ void Scene1::Init()
 			}
 		}
 	}
-	SharedData::GetInstance()->inventory.SortInventory();
+	flashEffect = false;
+	flashTimer = 0.0f;
 	renderedMp = 100;
 	renderedHp = 100;
 }
 
-void Scene1::PlayerUpdate(double dt)
+void Scene3::PlayerUpdate(double dt)
 {
 	if (MS == PLAY)
 	{
-		if (Application::IsKeyPressed('W'))
+		if (MS == PLAY)
 		{
-			SharedData::GetInstance()->player->SetPlayerMesh(meshList[GEO_HEROUP]);
-
-			SpriteAnimation *playerUP = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROUP]);
-			if (playerUP)
+			if (Application::IsKeyPressed('W'))
 			{
-				playerUP->Update(dt);
-				playerUP->m_anim->animActive = true;
+				SharedData::GetInstance()->player->SetPlayerMesh(meshList[GEO_HEROUP]);
+
+				SpriteAnimation *playerUP = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROUP]);
+				if (playerUP)
+				{
+					playerUP->Update(dt);
+					playerUP->m_anim->animActive = true;
+				}
+				SharedData::GetInstance()->player->MoveUpDown(false, m_cMap, dt);
+
 			}
-			SharedData::GetInstance()->player->MoveUpDown(false, m_cMap, dt);
+			if (Application::IsKeyPressed('S'))
+			{
+				SharedData::GetInstance()->player->SetPlayerMesh(meshList[GEO_HEROD]);
+
+				SpriteAnimation *playerDOWN = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROD]);
+				if (playerDOWN)
+				{
+					playerDOWN->Update(dt);
+					playerDOWN->m_anim->animActive = true;
+				}
+				SharedData::GetInstance()->player->MoveUpDown(true, m_cMap, dt);
+			}
+			if (Application::IsKeyPressed('A'))
+			{
+				SharedData::GetInstance()->player->SetPlayerMesh(meshList[GEO_HEROLR]);
+				SharedData::GetInstance()->player->SetFlipStatus(false);
+				SpriteAnimation *playerLEFT = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROLR]);
+				if (playerLEFT)
+				{
+					playerLEFT->Update(dt);
+					playerLEFT->m_anim->animActive = true;
+				}
+				SharedData::GetInstance()->player->MoveLeftRight(true, m_cMap, dt);
+			}
+			if (Application::IsKeyPressed('D'))
+			{
+				SharedData::GetInstance()->player->SetPlayerMesh(meshList[GEO_HEROLR]);
+				SharedData::GetInstance()->player->SetFlipStatus(true);
+				SpriteAnimation *playerRIGHT = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROLR]);
+				if (playerRIGHT)
+				{
+					playerRIGHT->Update(dt);
+
+					playerRIGHT->m_anim->animActive = true;
+				}
+				SharedData::GetInstance()->player->MoveLeftRight(false, m_cMap, dt);
+			}
 
 		}
-		if (Application::IsKeyPressed('S'))
-		{
-			SharedData::GetInstance()->player->SetPlayerMesh(meshList[GEO_HEROD]);
-
-			SpriteAnimation *playerDOWN = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROD]);
-			if (playerDOWN)
-			{
-				playerDOWN->Update(dt);
-				playerDOWN->m_anim->animActive = true;
-			}
-			SharedData::GetInstance()->player->MoveUpDown(true, m_cMap, dt);
-		}
-		if (Application::IsKeyPressed('A'))
-		{
-			SharedData::GetInstance()->player->SetPlayerMesh(meshList[GEO_HEROLR]);
-			SharedData::GetInstance()->player->SetFlipStatus(false);
-			SpriteAnimation *playerLEFT = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROLR]);
-			if (playerLEFT)
-			{
-				playerLEFT->Update(dt);
-				playerLEFT->m_anim->animActive = true;
-			}
-			SharedData::GetInstance()->player->MoveLeftRight(true, m_cMap, dt);
-		}
-		if (Application::IsKeyPressed('D'))
-		{
-			SharedData::GetInstance()->player->SetPlayerMesh(meshList[GEO_HEROLR]);
-			SharedData::GetInstance()->player->SetFlipStatus(true);
-			SpriteAnimation *playerRIGHT = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROLR]);
-			if (playerRIGHT)
-			{
-				playerRIGHT->Update(dt);
-
-				playerRIGHT->m_anim->animActive = true;
-			}
-			SharedData::GetInstance()->player->MoveLeftRight(false, m_cMap, dt);
-		}
-
 	}
 	SharedData::GetInstance()->player->HeroUpdate(m_cMap, dt, meshList);
 
 	if (Application::IsKeyPressed('W') || Application::IsKeyPressed('S') || Application::IsKeyPressed('A') || Application::IsKeyPressed('D'))
 	{
 		//cout << SharedData::GetInstance()->soundFootstep << endl;
-		SharedData::GetInstance()->soundManager.SoundPlay("Sound/footstepgrass.wav", &SharedData::GetInstance()->soundFootstep, 1.0f, false);
+		SharedData::GetInstance()->soundManager.SoundPlay("Sound/footstepgrass.wav", &SharedData::GetInstance()->soundFootstep, 1.0f, true);
 	}
 	else
 	{
 		SharedData::GetInstance()->soundManager.SoundPause(&SharedData::GetInstance()->soundFootstep);
 	}
-	
+
 	/*SpriteAnimation *arrow = dynamic_cast<SpriteAnimation*>(meshList[GEO_BATTLEARROW]);
 	if (arrow)
 	{
-		arrow->Update(dt);
-		arrow->m_anim->animActive = true;
+	arrow->Update(dt);
+	arrow->m_anim->animActive = true;
 	}*/
 
 	if (Application::IsKeyPressed('I') && !SharedData::GetInstance()->IkeyPressed && GS)
@@ -292,32 +255,13 @@ void Scene1::PlayerUpdate(double dt)
 	}
 }
 
-void Scene1::GOupdate(double dt)
+void Scene3::GOupdate(double dt)
 {
 	SpriteAnimation *sa = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC]);
 	if (sa)
 	{
 		sa->Update(dt);
 		sa->m_anim->animActive = true;
-	}
-	SpriteAnimation *portal = dynamic_cast<SpriteAnimation*>(meshList[GEO_PORTAL]);
-	if (portal)
-	{
-		portal->Update(dt * 0.1);
-		portal->m_anim->animActive = true;
-	}
-	SpriteAnimation *banshee = dynamic_cast<SpriteAnimation*>(meshList[GEO_MONSTERBANSHEE]);
-	if (banshee)
-	{
-		banshee->Update(dt);
-		banshee->m_anim->animActive = true;
-	}
-	SpriteAnimation *lives = dynamic_cast<SpriteAnimation*>(meshList[GEO_LIVES]);
-	if (lives)
-	{
-		//lives->Update(dt);
-		lives->m_currentFrame = SharedData::GetInstance()->playerLives;
-		lives->m_anim->animActive = true;
 	}
 
 	SpriteAnimation *pic2 = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC2]);
@@ -332,7 +276,6 @@ void Scene1::GOupdate(double dt)
 		pic3->Update(dt);
 		pic3->m_anim->animActive = true;
 	}
-
 	for (int i = 0; i < m_goList.size(); ++i)
 	{
 		if (m_goList[i]->type == GameObject::GO_ENEMY && MS == IN_DIALOUGE)
@@ -375,11 +318,11 @@ void Scene1::GOupdate(double dt)
 			}
 			if (temp->collideWhichNPC() == npcID)
 				temp->SetState(currState);
-			
+
 			if (temp->collisionDetected && Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 			{
 				npctalk.str("");
-				MS = IN_DIALOUGE;			
+				MS = IN_DIALOUGE;
 				SharedData::GetInstance()->ENTERkeyPressed = true;
 				temp->ScrollDialogue(dialogueNum);
 			}
@@ -424,27 +367,63 @@ void Scene1::GOupdate(double dt)
 	}
 }
 
-void Scene1::MapUpdate(double dt)
+void Scene3::MapUpdate(double dt)
 {
 	if (MS == PLAY)
 	{
 		PlayerUpdate(dt);
 		GOupdate(dt);
-		SharedData::GetInstance()->soundManager.SoundPlay("Sound/route1.mp3", &SharedData::GetInstance()->worldBGM, 0.3f, false);
+		SharedData::GetInstance()->soundManager.SoundPlay("Sound/route1.mp3", &SharedData::GetInstance()->worldBGM, 0.3f, true);
 	}
-	SharedData::GetInstance()->tamagucci.TamagucciBackgroundUpdate(dt);
+
 	PlayerUpdate(dt);
 	GOupdate(dt);
 	if (Application::IsKeyPressed('R'))
-		{
-			
-		}
+	{
+
+	}
 
 }
 
-void Scene1::Update(double dt)
+void Scene3::Update(double dt)
 {
 	SceneBase::Update(dt);
+	static bool f6press = false;
+	if (Application::IsKeyPressed(VK_F6) && !f6press)
+	{
+		f6press = true;
+		SharedData::GetInstance()->inventory.SortInventory();
+	}
+	else if (!Application::IsKeyPressed(VK_F6) && f6press)
+	{
+		f6press = false;
+	}
+	if (Application::IsKeyPressed('Z') && !SharedData::GetInstance()->ZKeyPressed)
+	{
+		SharedData::GetInstance()->ZKeyPressed = true;
+		if (GS != TAMAGUCCI_SCREEN)
+			GS = TAMAGUCCI_SCREEN;
+		else
+			GS = MAP;
+	}
+	else if (!Application::IsKeyPressed('Z') && SharedData::GetInstance()->ZKeyPressed)
+	{
+		SharedData::GetInstance()->ZKeyPressed = false;
+	}
+
+	//For battle scene Dialogue
+	if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed && SharedData::GetInstance()->playerBattleDialogue)
+	{
+		SharedData::GetInstance()->ENTERkeyPressed = true;
+		battleScene.EndPlayerTurn();
+		battleScene.SetBattleSelection(BattleSystem::BS_ATTACK);
+		SharedData::GetInstance()->playerBattleDialogue = false;
+	}
+	else if (!Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
+	{
+		SharedData::GetInstance()->ENTERkeyPressed = false;
+	}
+
 	switch (GS)
 	{
 	case MAP:
@@ -459,7 +438,8 @@ void Scene1::Update(double dt)
 	fps = (float)(1.f / dt);
 }
 
-void Scene1::RenderMap()
+static bool touched = true;
+void Scene3::RenderMap()
 {
 	RenderBackground(meshList[GEO_BACKGROUND]);
 	RenderTileMap(meshList[GEO_TILESET3], m_cMap2);
@@ -477,7 +457,8 @@ void Scene1::RenderMap()
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 0), 30, 0, 0);
 }
 
-void Scene1::RenderGO()
+
+void Scene3::RenderGO()
 {
 	for (int i = 0; i < m_goList.size(); i++)
 	{
@@ -532,18 +513,6 @@ void Scene1::RenderGO()
 				}
 			}
 		}
-
-		if (m_goList[i]->type == GameObject::GO_S4)
-		{
-			if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
-			{
-				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
-				if (Application::IsKeyPressed(VK_RETURN))
-				{
-					SharedData::GetInstance()->gameState = SharedData::GAME_S4;
-				}
-			}
-		}
 		if (m_goList[i]->type == GameObject::GO_DOWN)
 		{
 			if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
@@ -587,9 +556,10 @@ void Scene1::RenderGO()
 	}
 }
 
-void Scene1::Render()
+void Scene3::Render()
 {
 	SceneGame::Render();
+	// Check for which GameState we are in
 	switch (GS)
 	{
 	case MAP:
@@ -618,24 +588,16 @@ void Scene1::Render()
 	case TAMAGUCCI_SCREEN:
 		RenderTamagucci();
 		break;
-	case LOSE:
-		RenderBackground(meshList[GEO_LOSE]);
-		break;
 	}
 }
 
-void Scene1::Exit()
+void Scene3::Exit()
 {
 	// Cleanup VBO
-	for(int i = 0; i < NUM_GEOMETRY; ++i)
+	for (int i = 0; i < NUM_GEOMETRY; ++i)
 	{
-		if(meshList[i])
+		if (meshList[i])
 			delete meshList[i];
-	}
-	for (int i = 0; i < m_goList.size(); ++i)
-	{
-			delete m_goList[i];
-			m_goList.erase(m_goList.begin() + i);
 	}
 	glDeleteProgram(m_programID);
 	glDeleteVertexArrays(1, &m_vertexArrayID);

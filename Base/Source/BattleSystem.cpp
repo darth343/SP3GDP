@@ -1,7 +1,6 @@
 #include "BattleSystem.h"
 #include "Enemy.h"
 #include "Application.h"
-#include "SceneText.h"
 BattleSystem::BattleSystem() :
 battleStart(false),
 firstChoice(true),
@@ -119,7 +118,7 @@ bool BattleSystem::GetMonsterHitAnimation()
 
 void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 {
-	SceneText* mainScene = (SceneText*)Application::GetInstance().GetScene();
+	SceneGame * mainScene = (SceneGame*)Application::GetInstance().GetScene();
 
 	if (firstChoice)
 	{
@@ -161,7 +160,7 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 				SetSecondChoice(false);
 				cout << "ESCAPE LOHHHHHHHHHH!" << endl;
 				battleSelection = BS_ATTACK;
-				mainScene->SetGS("TESTMAP");
+				mainScene->SetGS("MAP");
 				mainScene->RemoveEnemy();
 				Reset();
 			}

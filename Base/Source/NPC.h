@@ -33,7 +33,7 @@ public:
 		NPC_DTOTAL,
 	};
 
-	void ReadFromFile(string,vector<GameObject*> &);
+	static void ReadFromFile(string, vector<NPC*>&npcs);
 	void SetDialogue(string);
 	void Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap);
 	void SetAnimationState(NPC_ANIMATION);
@@ -41,7 +41,6 @@ public:
 	void SetID(float);
 	bool GetMoveLeft();
 	bool GetMoveRight();
-	vector<NPC*>GetVec();
 	int GetID();
 	string GetDialogue();
 	int GetNum();
@@ -64,7 +63,6 @@ private:
 	bool moveLeft;
 	bool moveRight;
 	string npcDialogue;
-	vector<NPC*>npcs;
 	NPC_ANIMATION npcAnimationState;
 	NPC_DIALOGUE npcDialogueState;
 };

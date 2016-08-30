@@ -48,9 +48,6 @@
     <ClCompile Include="Source\LoadOBJ.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\SceneText.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Map.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -90,9 +87,6 @@
     <ClCompile Include="Source\Pathfinder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Scene1.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\SceneBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -108,7 +102,19 @@
     <ClCompile Include="Source\SceneStory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\SceneBoss.cpp">
+    <ClCompile Include="Source\SceneGame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene1.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene4.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -146,16 +152,10 @@
     <ClInclude Include="Source\LoadTGA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\SceneTexture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Camera3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\LoadOBJ.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\SceneText.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Map.h">
@@ -209,12 +209,6 @@
     <ClInclude Include="Source\Pathfinder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Scene1.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\SceneBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\SceneMenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -230,7 +224,19 @@
     <ClInclude Include="Source\SceneStory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\SceneBoss.h">
+    <ClInclude Include="Source\SceneGame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene4.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

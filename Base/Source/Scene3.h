@@ -1,5 +1,5 @@
-#ifndef SCENE_4_H
-#define SCENE_4_H
+#ifndef SCENE_3_H
+#define SCENE_3_H
 #include "SceneGame.h"
 
 #include "Camera3.h"
@@ -16,12 +16,13 @@
 
 #include "Tamagucci.h"
 
+#include "SharedData.h"
 
-class Scene4 : public SceneGame
+class Scene3 : public SceneGame
 {
 public:
-	Scene4();
-	~Scene4();
+	Scene3();
+	~Scene3();
 
 	virtual void Init();
 	virtual void Update(double dt);

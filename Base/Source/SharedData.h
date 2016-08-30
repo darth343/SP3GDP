@@ -20,7 +20,6 @@ public:
 		GAME_S2,
 		GAME_S3,
 		GAME_S4,
-		GAME_SECRET,
 		GAME_BOSS,
 		MAX,
 	};
@@ -30,7 +29,6 @@ public:
 		return &data;
 	}
 	GAMESTATE gameState;
-	bool stateCheck = false;
 	
 	Monster monType; // Monster Calls
 	Inventory inventory;
