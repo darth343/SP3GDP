@@ -12,6 +12,7 @@ public:
 		CEREBUS,
 		DRAGON,
 		GOLEM,
+		BOSS,
 		MONSTER_TOTAL,
 	};
 	Monster();
@@ -24,6 +25,8 @@ public:
 	float getMaxHealth();
 	float getDamage();
 	void takeDamage(int damage);
+	int GetType();
+
 private:
 	static Monster* database[MONSTER_TOTAL];
 	MONSTER_TYPE type;

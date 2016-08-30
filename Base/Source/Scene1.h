@@ -16,7 +16,6 @@
 
 #include "Tamagucci.h"
 
-#include "SharedData.h"
 
 class Scene1 : public SceneBase
 {
@@ -32,6 +31,7 @@ class Scene1 : public SceneBase
 
 		BATTLE,
 		CATCH,
+		LOSE,
 		GS_TOTAL,
 	};
 
@@ -104,16 +104,7 @@ public:
 	void renderInventoryItems();
 	void renderInventoryMenus();
 private:
-	NPC npc;
-	Gauge* greenbar;
-	Gauge* redbar;
-	Gauge* chargebar;
-	Enemy* EnemyInBattle;
-	TAMAGUCCI* tamtam;
-	TAMAGUCCI* tamdrop;
-	Pathfinder testpathfinder;
-	TAMAGUCCI tamagucci;
-	GameObject* touch;
+
 	vector<GameObject *> m_goList;
 	int npcPic = 0; //Which npc picture to show on the dialogue
 	float enemyCatchPercentage;
@@ -128,7 +119,7 @@ private:
 	CMap* m_cMap;	// Handle to the tilemaps
 	CMap* m_cMap2;	// Handle to the tilemaps
 	CPlayerInfo* theHero; // Hero's information
-	GAMESTATE_TYPE GS; // Change GameState in Scene1.cpp line 144 for testing purposes
+	GAMESTATE_TYPE GS; // Change GameState in SceneText.cpp line 144 for testing purposes
 	MAP_STATE MS;
 
 	// Battle system
@@ -136,14 +127,14 @@ private:
 	Vector3 battleMonsterPos;
 	Vector3 battleMonsterScale;
 	bool monsterScaleUp;
-	bool playerBattleDialogue;
 
 	//Battle System HP bar 
 	float maxHpScale;
 	Vector3 hpPos;
 	float renderedHp;
 	bool capturedMonster;
-
+	bool flashEffect;
+	float flashTimer;
 	float maxMpScale;
 	Vector3 mpPos;
 	float renderedMp;
@@ -153,6 +144,16 @@ private:
 
 	ostringstream npctalk;
 	bool captured;
+
+	NPC npc;
+	Gauge* greenbar;
+	Gauge* redbar;
+	Gauge* chargebar;
+	Enemy* EnemyInBattle;
+	TAMAGUCCI* tamtam;
+	TAMAGUCCI* tamdrop;
+	Pathfinder testpathfinder;
+	TAMAGUCCI tamagucci;
 };
 
 #endif

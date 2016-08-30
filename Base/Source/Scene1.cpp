@@ -10,12 +10,12 @@
 #include "SpriteAnimation.h"
 #include "Enemy.h"
 #include "Items.h"
+#include "SharedData.h"
 
 Scene1::Scene1()
 :
 m_cMap(NULL)
 , EnemyInBattle(NULL)
-//, NPCInConvo(NULL)
 {
 }
 
@@ -67,24 +67,32 @@ void Scene1::Init()
 	chargebar->type = GameObject::GO_MOVE;
 	chargebar->position.Set(500, 150, 1);
 
-	touch = new GameObject(Vector3(50.f, 50.f, 1));
-	touch->position.Set(820, 150, 1);
-	touch->type = GameObject::GO_NEXT;
-	m_goList.push_back(touch);
-
 	for (int i = 0; i < 4; ++i)
 	{
 		Enemy* theEnemy;
-		theEnemy = new Enemy(Monster::getMonster(Monster::DRAGON), Vector3(32.f, 32.f, 1));
+		theEnemy = new Enemy(Monster::getMonster(Monster::GOLEM), Vector3(32.f, 32.f, 1));
 		theEnemy->type = GameObject::GO_ENEMY;
-		theEnemy->position.Set(200, 700, 1);
+		Vector3 RandPos;
+		while (RandPos.IsZero())
+		{
+			RandPos.Set(Math::RandIntMinMax(0, m_cMap->GetNumOfTiles_Width() - 1), Math::RandIntMinMax(0, m_cMap->GetNumOfTiles_Height() - 1), 0);
+			if (m_cMap->theMap[RandPos.y][RandPos.x].shouldCollide)
+				RandPos.SetZero();
+		}
+		theEnemy->position.Set(RandPos.x * 32, 600, 1);
 		m_goList.push_back(theEnemy);
 	}
 
+	GameObject* boss = new GameObject(Vector3(50.f, 50.f, 1));
+	boss->position.Set(450, 1100, 1);
+	boss->type = GameObject::GO_BOSS;
+	m_goList.push_back(boss);
+
+	
 	enemyMaxHealth = 100;
 	currHealth = 100;
 	enemyCatchPercentage = 0;
-	npc.ReadFromFile("NPC//2.txt", m_goList);
+	npc.ReadFromFile("NPC//Text.txt", m_goList);
 	vector<NPC*>npcvec = npc.GetVec();
 
 	for (int i = 0; i < npcvec.size(); i++)
@@ -94,21 +102,17 @@ void Scene1::Init()
 		if (npcvec[i]->GetID() == 2)
 			npcvec[i]->position.Set(700, 200, 1);
 		if (npcvec[i]->GetID() == 3)
-			npcvec[i]->position.Set(100, 400, 1);
+			npcvec[i]->position.Set(100, 180, 1);
 		npcvec[i]->currDia = 1;
+
 		m_goList.push_back(dynamic_cast<NPC*>(npcvec[i]));
 	}
-
-	// Initialise and load the REAR tile map
-	//m_cRearMap = new CMap();
-	//m_cRearMap->Init( 600, 800, 24, 32, 600, 1600 );
-	//m_cRearMap->LoadMap( "Image//MapDesign_Rear.csv" );
 
 	// Initialise the hero's position
 	theHero = new CPlayerInfo();
 	theHero->Init();
 	theHero->SetPosition(Vector3(530, 64, 0));
-	theHero->SetPlayerMesh(meshList[GEO_HEROWALK]);
+	theHero->SetPlayerMesh(meshList[GEO_HEROUP]);
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
 	Mtx44 perspective;
 	perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
@@ -119,9 +123,7 @@ void Scene1::Init()
 	battleMonsterScale.Set(0.3, 0.3, 1);
 	monsterScaleUp = true;
 
-
 	SharedData::GetInstance()->soundManager.Init();
-
 
 	//Battle HUD
 	maxHpScale = 17.4f;
@@ -129,15 +131,22 @@ void Scene1::Init()
 	mpPos.Set(36, 548.9, 0);
 	maxMpScale = 10.9f;
 
+	//new
+	flashEffect = false;
+	flashTimer = 0.0f;
+	renderedMp = 100;
+	renderedHp = 100;
+
 	for (int j = 0; j < 10; ++j)
 	{
 		Equipment* temp = new Equipment();
-		Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::TOTAL_ETYPE - 1);
-		//Equipment::EQUIPMENT_TYPE randType = Equipment::LEG;
+		//Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::TOTAL_ETYPE -1);
+		Monster::MONSTER_TYPE randmonstertype = (Monster::MONSTER_TYPE)Math::RandIntMinMax(Monster::BANSHEE, Monster::GOLEM);
+		Equipment::EQUIPMENT_TYPE randType = Equipment::ARMOUR;
 		stringstream ss;
-		ss << Monster::getMonster(Monster::CEREBUS).getName() << " " << randType;
+		ss << Monster::getMonster(randmonstertype).getName() << " " << randType;
 		temp->SetName(ss.str());
-		temp->SetMonster(Monster::getMonster(Monster::CEREBUS));
+		temp->SetMonster(Monster::getMonster(randmonstertype));
 		temp->setType(randType);
 		temp->setDamage(Equipment::getDatabase()[randType][0]->getDamage() + Math::RandIntMinMax(-10, 10));
 		temp->setDefense(Equipment::getDatabase()[randType][0]->getDefense() + Math::RandIntMinMax(-10, 10));
@@ -154,9 +163,6 @@ void Scene1::Init()
 			}
 		}
 	}
-	playerBattleDialogue = false;
-	renderedMp = 100;
-	renderedHp = 100;
 }
 
 bool Scene1::GetMonsterScaleUp()
@@ -227,10 +233,10 @@ void Scene1::SetGS(string set)
 
 void Scene1::CatchUpdate(double dt)
 {
-	enemyCatchPercentage = (EnemyInBattle->GetMaxHealth() - EnemyInBattle->GetHealth()) / EnemyInBattle->GetMaxHealth() * redbar->scale.x;
+	enemyCatchPercentage = (EnemyInBattle->GetMaxHealth() - EnemyInBattle->GetHealth()) / EnemyInBattle->GetMaxHealth() * 100;
 
 	float prevScale = greenbar->scale.x;
-	greenbar->scale.x = enemyCatchPercentage;
+	greenbar->scale.x = enemyCatchPercentage * 0.01 * redbar->scale.x; // * 0.01 is the same as divide by 100
 	if (greenbar->scale.x > prevScale)
 	{
 		greenbar->position.x -= (greenbar->scale.x - prevScale) * 0.5;
@@ -247,12 +253,19 @@ void Scene1::CatchUpdate(double dt)
 			capturedMonster = true;
 			currState = 3;
 			SharedData::GetInstance()->inventory.addToInventory(EnemyInBattle);
+			battleScene.SetBattleSelection(BattleSystem::BS_ATTACK);
+			battleScene.SetFirstChoice(true);
+			battleScene.SetSecondChoice(false);
+			SharedData::GetInstance()->playerTurn = true;
+			SharedData::GetInstance()->enemyTurn = false;
 			RemoveEnemy();
+			SharedData::GetInstance()->soundManager.StopAllSound();
 			GS = TESTMAP;
 			return;
 		}
 		else if (!chargebar->CheckCollision(greenbar, m_cMap))
 		{
+			SharedData::GetInstance()->playerBattleDialogue = true;
 			GS = BATTLE;
 		}
 	}
@@ -276,13 +289,56 @@ void Scene1::PlayerUpdate(double dt)
 	if (MS == PLAY)
 	{
 		if (Application::IsKeyPressed('W'))
+		{
+			theHero->SetPlayerMesh(meshList[GEO_HEROUP]);
+
+			SpriteAnimation *playerUP = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROUP]);
+			if (playerUP)
+			{
+				playerUP->Update(dt);
+				playerUP->m_anim->animActive = true;
+			}
 			this->theHero->MoveUpDown(false, m_cMap, dt);
+
+		}
 		if (Application::IsKeyPressed('S'))
+		{
+			theHero->SetPlayerMesh(meshList[GEO_HEROD]);
+
+			SpriteAnimation *playerDOWN = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROD]);
+			if (playerDOWN)
+			{
+				playerDOWN->Update(dt);
+				playerDOWN->m_anim->animActive = true;
+			}
 			this->theHero->MoveUpDown(true, m_cMap, dt);
+		}
 		if (Application::IsKeyPressed('A'))
+		{
+			theHero->SetPlayerMesh(meshList[GEO_HEROLR]);
+			theHero->SetFlipStatus(false);
+			SpriteAnimation *playerLEFT = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROLR]);
+			if (playerLEFT)
+			{
+				playerLEFT->Update(dt);
+				playerLEFT->m_anim->animActive = true;
+			}
 			this->theHero->MoveLeftRight(true, m_cMap, dt);
+		}
 		if (Application::IsKeyPressed('D'))
+		{
+			theHero->SetPlayerMesh(meshList[GEO_HEROLR]);
+			theHero->SetFlipStatus(true);
+			SpriteAnimation *playerRIGHT = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROLR]);
+			if (playerRIGHT)
+			{
+				playerRIGHT->Update(dt);
+
+				playerRIGHT->m_anim->animActive = true;
+			}
 			this->theHero->MoveLeftRight(false, m_cMap, dt);
+		}
+
 	}
 	theHero->HeroUpdate(m_cMap, dt, meshList);
 
@@ -317,11 +373,20 @@ void Scene1::PlayerUpdate(double dt)
 
 void Scene1::GOupdate(double dt)
 {
+	cout <<"Gamestate " <<  GS << endl;
+
 	SpriteAnimation *sa = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC]);
 	if (sa)
 	{
 		sa->Update(dt);
 		sa->m_anim->animActive = true;
+	}
+	SpriteAnimation *lives = dynamic_cast<SpriteAnimation*>(meshList[GEO_LIVES]);
+	if (lives)
+	{
+		//lives->Update(dt);
+		lives->m_currentFrame = SharedData::GetInstance()->playerLives;
+		lives->m_anim->animActive = true;
 	}
 
 	SpriteAnimation *pic2 = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC2]);
@@ -482,26 +547,6 @@ void Scene1::UpdateInventory(double dt)
 
 void Scene1::renderInventoryItems()
 {
-	static float xpos = 0.f;
-	static float ypos = 0.f;
-
-	if (Application::IsKeyPressed('U'))
-	{
-		ypos += 0.5f;
-	}
-	if (Application::IsKeyPressed('J'))
-	{
-		ypos -= 0.5f;
-	}
-	if (Application::IsKeyPressed('H'))
-	{
-		xpos -= 0.5f;
-	}
-	if (Application::IsKeyPressed('K'))
-	{
-		xpos += 0.5f;
-	}
-
 	for (int i = 0; i < SharedData::GetInstance()->inventory.EQinventory.size(); ++i)
 	{
 		if (SharedData::GetInstance()->inventory.EQinventory[i]->getName() == "UNDEFINED")
@@ -531,18 +576,18 @@ void Scene1::renderInventoryItems()
 
 	if (SharedData::GetInstance()->inventory.getArmour())
 	{
-		Render2DMeshWScale(meshList[GEO_CHESTPLATE], false, 44.5, 44.5, 426.5 + 47.5, 254 + 107.5, false);
+		Render2DMeshWScale(meshList[GEO_CHESTPLATE], false, 44.5, 44.5, 474, 361.5, false);
 	}
 
 	if (SharedData::GetInstance()->inventory.getRightArm())
 	{
 		if (SharedData::GetInstance()->inventory.getRightArm()->getType() == Equipment::SWORD)
 		{
-			Render2DMeshWScale(meshList[GEO_SWORD], false, 44.5, 44.5, 426.5 + 93.5, 254 + 105.5, false);
+			Render2DMeshWScale(meshList[GEO_SWORD], false, 44.5, 44.5, 520, 359.5, false);
 		}
 		else if (SharedData::GetInstance()->inventory.getRightArm()->getType() == Equipment::SHIELD)
 		{
-			Render2DMeshWScale(meshList[GEO_SHIELD], false, 44.5, 44.5, 426.5 + 93.5, 254 + 105.5, false);
+			Render2DMeshWScale(meshList[GEO_SHIELD], false, 44.5, 44.5, 520, 359.5, false);
 		}
 	}
 
@@ -575,41 +620,117 @@ void Scene1::renderInventoryItems()
 	ss.str("");
 	ss << "DEFENSE:         " << SharedData::GetInstance()->inventory.GetTotalDEF();
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 30, 43, 371 - 33);
+
+	ss.str("");
+	ss << "Potions:          " << SharedData::GetInstance()->inventory.GetPotionCount();
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 43.5, 180 + 22);
+	ss.str("");
+	ss << "Traps:            " << SharedData::GetInstance()->inventory.GetPotionCount();
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 43.5, 180 - 22.5 + 22);
+	ss.str("");
+	ss << "Encrypted Memory: " << SharedData::GetInstance()->inventory.GetPotionCount();
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 43.5, 180 - 45 + 22);
 }
 
 void Scene1::renderInventoryMenus()
 {
-	if (SharedData::GetInstance()->inventory.getEquipmentLookAt()->getName() != "UNDEFINED")
+	static float xpos = 0.f;
+	static float ypos = 0.f;
+
+	if (Application::IsKeyPressed('U'))
 	{
-		std::ostringstream ss;
-		ss.str("");
-		ss << "Name: " << SharedData::GetInstance()->inventory.getEquipmentLookAt()->getName() << endl;
-		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392);
-		ss.str("");
-		ss << "Damage: " << SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDamage() << endl;
-		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392 - 20);
-		ss.str("");
-		ss << "Defense: " << SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDefense() << endl;
-		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392 - 40);
+		ypos += 0.5f;
+	}
+	if (Application::IsKeyPressed('J'))
+	{
+		ypos -= 0.5f;
+	}
+	if (Application::IsKeyPressed('H'))
+	{
+		xpos -= 0.5f;
+	}
+	if (Application::IsKeyPressed('K'))
+	{
+		xpos += 0.5f;
 	}
 
-	if (SharedData::GetInstance()->inventory.getInputState() == Inventory::INVENTORY)
-		Render2DMesh(meshList[GEO_INVENTORYSEEKER], false, 1, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46);
-	if (SharedData::GetInstance()->inventory.getInputState() == Inventory::EQUIP_OPTIONS)
+	switch (SharedData::GetInstance()->inventory.getState())
 	{
-		Render2DMeshWScale(meshList[GEO_INVENTORYSECONDBACKGROUND], false, 122, -44 - (float)(SharedData::GetInstance()->inventory.getOptions().size() * 18), 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 36, 290 + SharedData::GetInstance()->inventory.getSeeker().y * 46);
-		for (int i = 0; i < SharedData::GetInstance()->inventory.getOptions().size(); ++i)
+	case Inventory::TAB1:
+		if (SharedData::GetInstance()->inventory.getEquipmentLookAt()->getName() != "UNDEFINED")
 		{
 			std::ostringstream ss;
 			ss.str("");
-			ss << SharedData::GetInstance()->inventory.getOptions()[i];
-			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 46, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46 - (i * 20));
+			ss << "Name: " << SharedData::GetInstance()->inventory.getEquipmentLookAt()->getName() << endl;
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392);
+			ss.str("");
+			ss << "Damage: " << SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDamage() << endl;
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392 - 20);
+			ss.str("");
+			ss << "Defense: " << SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDefense() << endl;
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392 - 40);
+			ss.str("");
+			ss << "AVG: " << (SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDefense() + SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDamage()) * 0.5 << endl;
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392 - 60);
 		}
+
+		if (SharedData::GetInstance()->inventory.getInputState() == Inventory::INVENTORY)
+			Render2DMesh(meshList[GEO_INVENTORYSEEKER], false, 1, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46);
+		if (SharedData::GetInstance()->inventory.getInputState() == Inventory::EQUIP_OPTIONS)
+		{
+			if (SharedData::GetInstance()->inventory.getSeeker().x < 5)
+			{
+				Render2DMeshWScale(meshList[GEO_INVENTORYSECONDBACKGROUND], false, 122, -44 - (float)(SharedData::GetInstance()->inventory.getOptions().size() * 18), 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 36, 290 + SharedData::GetInstance()->inventory.getSeeker().y * 46);
+				for (int i = 0; i < SharedData::GetInstance()->inventory.getOptions().size(); ++i)
+				{
+					std::ostringstream ss;
+					ss.str("");
+					ss << SharedData::GetInstance()->inventory.getOptions()[i];
+					RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 46, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46 - (i * 20));
+				}
+				std::ostringstream ss;
+				ss.str("");
+				ss << SharedData::GetInstance()->inventory.getOptions()[SharedData::GetInstance()->inventory.getSecondSeeker()];
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 46, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46 - (SharedData::GetInstance()->inventory.getSecondSeeker() * 20));
+			}
+			else if (SharedData::GetInstance()->inventory.getSeeker().x >= 5)
+			{
+				Render2DMeshWScale(meshList[GEO_INVENTORYSECONDBACKGROUND], false, 122, -44 - (float)(SharedData::GetInstance()->inventory.getOptions().size() * 18), 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 36 - 159, 290 + SharedData::GetInstance()->inventory.getSeeker().y * 46);
+				for (int i = 0; i < SharedData::GetInstance()->inventory.getOptions().size(); ++i)
+				{
+					std::ostringstream ss;
+					ss.str("");
+					ss << SharedData::GetInstance()->inventory.getOptions()[i];
+					RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 46 - 159, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46 - (i * 20));
+				}
+				std::ostringstream ss;
+				ss.str("");
+				ss << SharedData::GetInstance()->inventory.getOptions()[SharedData::GetInstance()->inventory.getSecondSeeker()];
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 46 - 159, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46 - (SharedData::GetInstance()->inventory.getSecondSeeker() * 20));
+			}
+		}
+		cout << xpos << endl;
+		break;
+	case Inventory::TAB2:
 		std::ostringstream ss;
-		ss.str("");
-		ss << SharedData::GetInstance()->inventory.getOptions()[SharedData::GetInstance()->inventory.getSecondSeeker()];
-		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 46, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46 - (SharedData::GetInstance()->inventory.getSecondSeeker() * 20));
+		if (SharedData::GetInstance()->inventory.getSeeker().y == Items::POTION)
+		{
+			ss << "Potions:          " << SharedData::GetInstance()->inventory.GetPotionCount();
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 43.5, 180 + 22);
+		}
+		if (SharedData::GetInstance()->inventory.getSeeker().y == Items::TRAP)
+		{
+			ss << "Traps:            " << SharedData::GetInstance()->inventory.GetPotionCount();
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 43.5, 180 - 22.5 + 22);
+		}
+		if (SharedData::GetInstance()->inventory.getSeeker().y == Items::ENCRYPTED_MEMORY)
+		{
+			ss << "Encrypted Memory: " << SharedData::GetInstance()->inventory.GetPotionCount();
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 43.5, 180 - 45 + 22);
+		}
+		break;
 	}
+	//	cout << xpos << " " << ypos << endl;
 }
 
 void Scene1::RenderInventory()
@@ -688,7 +809,7 @@ void Scene1::Update(double dt)
 	if (Application::IsKeyPressed(VK_F6) && !f6press)
 	{
 		f6press = true;
-		m_cMap->LoadMap("Data//MapData.csv");
+		SharedData::GetInstance()->inventory.SortInventory();
 	}
 	else if (!Application::IsKeyPressed(VK_F6) && f6press)
 	{
@@ -707,12 +828,48 @@ void Scene1::Update(double dt)
 		SharedData::GetInstance()->ZKeyPressed = false;
 	}
 
+	//For battle scene Dialogue
+	if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed && SharedData::GetInstance()->playerBattleDialogue)
+	{
+		SharedData::GetInstance()->ENTERkeyPressed = true;
+		battleScene.EndPlayerTurn();
+		battleScene.SetBattleSelection(BattleSystem::BS_ATTACK);
+		SharedData::GetInstance()->playerBattleDialogue = false;
+	}
+	else if (!Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
+	{
+		SharedData::GetInstance()->ENTERkeyPressed = false;
+	}
+
 	switch (GS)
 	{
 	case TESTMAP:
 		MapUpdate(dt);
 		break;
 	case BATTLE:
+
+		//Updating of catch percentage
+		enemyCatchPercentage = (EnemyInBattle->GetMaxHealth() - EnemyInBattle->GetHealth()) / EnemyInBattle->GetMaxHealth() * 100;
+
+		//Flashing effect of dialogue
+		if (flashEffect)
+		{
+			flashTimer += 1.5 * dt;
+			if (flashTimer > 1.0f)
+			{
+				flashTimer = 0;
+				flashEffect = false;
+			}
+		}
+		else
+		{
+			flashTimer -= 1.5 * dt;
+			if (flashTimer < -1.0f)
+			{
+				flashTimer = 0.0f;
+				flashEffect = true;
+			}
+		}
 
 		//Decrease Rendered HP on screen
 		if (theHero->GetHP() < renderedHp)
@@ -731,9 +888,23 @@ void Scene1::Update(double dt)
 			}
 			else if (renderedHp < 0.0f)
 			{
+				if (SharedData::GetInstance()->playerLives > 0)
+				{
+					SharedData::GetInstance()->playerLives--;
+					SharedData::GetInstance()->stateCheck = true;
+					SharedData::GetInstance()->gameState = SharedData::GAME_S1;
+				}
+				else
+					//Player Lose should do auto load to previous save file
+					GS = LOSE;
+
 				//Player Lose should do auto load to previous save file
-				SharedData::GetInstance()->stateCheck = true;
-				SharedData::GetInstance()->gameState = SharedData::MENU;
+
+				SharedData::GetInstance()->playerTurn = true;
+				SharedData::GetInstance()->enemyTurn = false;
+				battleScene.SetFirstChoice(true);
+				battleScene.SetSecondChoice(false);
+				battleScene.SetBattleSelection(BattleSystem::BS_ATTACK);
 			}
 
 		}
@@ -745,6 +916,7 @@ void Scene1::Update(double dt)
 		}
 		battleScene.UpdateBattleSystem(SharedData::GetInstance()->UPkeyPressed, SharedData::GetInstance()->DNkeyPressed, SharedData::GetInstance()->LEFTkeyPressed, SharedData::GetInstance()->RIGHTkeyPressed, SharedData::GetInstance()->ENTERkeyPressed, theHero, EnemyInBattle);
 		//SharedData::GetInstance()->soundManager.SoundPlay("Sound/battleStart.mp3", &SharedData::GetInstance()->battleStart, 0.3f, true);
+
 		if (SharedData::GetInstance()->BS_SlashRender)
 		{
 			SpriteAnimation *slashAnimation = dynamic_cast<SpriteAnimation*>(meshList[GEO_SLASHANIMATION]);
@@ -758,7 +930,7 @@ void Scene1::Update(double dt)
 				{
 					SharedData::GetInstance()->BS_SlashRender = false;
 					slashAnimation->m_currentFrame = 0;
-					playerBattleDialogue = true;
+					SharedData::GetInstance()->playerBattleDialogue = true;
 				}
 			}
 		}
@@ -768,9 +940,6 @@ void Scene1::Update(double dt)
 			//cout << "Animation = " << slashAnimation->m_currentFrame << endl;
 			if (stabAnimation)
 			{
-				//It keep increasing the currentFrame because it is in update therefore the if statement is inaccurate
-				//it is not as what i thought it would be only run 0-9 then stop
-				//look at this COUT below to debug why sometime it didnt run after the 1st try
 				stabAnimation->m_anim->animActive = true;
 				stabAnimation->Update(dt);
 
@@ -778,7 +947,73 @@ void Scene1::Update(double dt)
 				{
 					SharedData::GetInstance()->BS_StabRender = false;
 					stabAnimation->m_currentFrame = 0;
-					playerBattleDialogue = true;
+					SharedData::GetInstance()->playerBattleDialogue = true;
+				}
+			}
+		}
+		if (SharedData::GetInstance()->BS_ScreamRender)
+		{
+			SpriteAnimation *screamAnimation = dynamic_cast<SpriteAnimation*>(meshList[GEO_SCREAMANIMATION]);
+
+			if (screamAnimation)
+			{
+				screamAnimation->m_anim->animActive = true;
+				screamAnimation->Update(dt);
+
+				if (screamAnimation->m_anim->animActive == false)
+				{
+					SharedData::GetInstance()->BS_ScreamRender = false;
+					screamAnimation->m_currentFrame = 0;
+					SharedData::GetInstance()->playerBattleDialogue = true;
+				}
+			}
+		}
+		if (SharedData::GetInstance()->BS_BiteRender)
+		{
+			SpriteAnimation *biteAnimation = dynamic_cast<SpriteAnimation*>(meshList[GEO_BITEANIMATION]);
+			if (biteAnimation)
+			{
+				biteAnimation->m_anim->animActive = true;
+				biteAnimation->Update(dt);
+
+				if (biteAnimation->m_anim->animActive == false)
+				{
+					SharedData::GetInstance()->BS_BiteRender = false;
+					biteAnimation->m_currentFrame = 0;
+					SharedData::GetInstance()->playerBattleDialogue = true;
+				}
+			}
+		}
+		if (SharedData::GetInstance()->BS_RoarRender)
+		{
+			SpriteAnimation *roarAnimation = dynamic_cast<SpriteAnimation*>(meshList[GEO_ROARANIMATION]);
+
+			if (roarAnimation)
+			{
+				roarAnimation->m_anim->animActive = true;
+				roarAnimation->Update(dt);
+
+				if (roarAnimation->m_anim->animActive == false)
+				{
+					SharedData::GetInstance()->BS_RoarRender = false;
+					roarAnimation->m_currentFrame = 0;
+					SharedData::GetInstance()->playerBattleDialogue = true;
+				}
+			}
+		}
+		if (SharedData::GetInstance()->BS_SkinRender)
+		{
+			SpriteAnimation *skinAnimation = dynamic_cast<SpriteAnimation*>(meshList[GEO_SKINANIMATION]);
+			if (skinAnimation)
+			{
+				skinAnimation->m_anim->animActive = true;
+				skinAnimation->Update(dt);
+
+				if (skinAnimation->m_anim->animActive == false)
+				{
+					SharedData::GetInstance()->BS_SkinRender = false;
+					skinAnimation->m_currentFrame = 0;
+					SharedData::GetInstance()->playerBattleDialogue = true;
 				}
 			}
 		}
@@ -812,17 +1047,10 @@ void Scene1::RenderTestMap()
 
 	std::ostringstream ss;
 
-	RenderPlayer();
-	Render2DMeshWScale(meshList[GEO_ICONTAM], false, 1, 1, 700, 10, false);
-	Render2DMeshWScale(meshList[GEO_ICONINV], false, 1, 1, 630, 10, false);
-
 	for (int i = 0; i < m_goList.size(); i++)
 	{
 		if (m_goList[i]->active == true)
 		{
-			if (m_goList[i]->type == GameObject::GO_NEXT)
-				Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false);
-
 			if (m_goList[i]->type == GameObject::GO_ITEM)
 			{
 				Items* temp = (Items*)m_goList[i];
@@ -840,43 +1068,32 @@ void Scene1::RenderTestMap()
 				if (renderNPCstuff)
 				{
 					if (npcPic == 1)
-						Render2DMeshWScale(meshList[GEO_NPCPIC], false, 350, 350, 650, 220, false);
+						Render2DMeshWScale(meshList[GEO_NPCPIC], false, 350, 350, 450, 60, false);
 					if (npcPic == 2)
-						Render2DMeshWScale(meshList[GEO_NPCPIC2], false, 350, 350, 650, 220, false);
+						Render2DMeshWScale(meshList[GEO_NPCPIC2], false, 350, 350, 450, 60, false);
 					if (npcPic == 3)
-						Render2DMeshWScale(meshList[GEO_NPCPIC3], false, 350, 350, 650, 220, false);
+						Render2DMeshWScale(meshList[GEO_NPCPIC3], false, 350, 350, 450, 60, false);
 					Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.25, 10, 20, false);
 				}
 				if (temp->GetID() == 1 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
-					Render2DMeshWScale(meshList[GEO_NPC1_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight());
+					Render2DMeshWScale(meshList[GEO_NPC1_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight(), 32);
 				if (temp->GetID() == 2 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
-					Render2DMeshWScale(meshList[GEO_NPC3_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight());
+					Render2DMeshWScale(meshList[GEO_NPC3_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight(), 32);
 				if (temp->GetID() == 3 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
-					Render2DMeshWScale(meshList[GEO_NPC2_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight());
+					Render2DMeshWScale(meshList[GEO_NPC2_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight(), 32);
 			}
 		}
 		if (m_goList[i]->type == GameObject::GO_ENEMY)
 		{
 			Enemy* temp = (Enemy*)m_goList[i];
-			Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[0]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetFlipStatus(), 32);
-		}
-		if (m_goList[i]->type == GameObject::GO_NEXT)
-		{
-			if (m_goList[i]->CheckCollision(theHero->GetPosition(), theHero->GetMapOffset(), m_cMap))
-			{
-				if (capturedMonster)
-				{
-					Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
-					if (Application::IsKeyPressed('Y'))
-					{
-						SharedData::GetInstance()->stateCheck = true;
-						SharedData::GetInstance()->gameState = SharedData::GAME_S2;
-					}
-				}
-			}
+			Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetFlipStatus(), 32);
 		}
 	}
 	RenderTextOnScreen(meshList[GEO_TEXT], npctalk.str(), Color(1, 1, 0), 30, 60, 100);
+	RenderPlayer();
+	Render2DMeshWScale(meshList[GEO_ICONTAM], false, 1, 1, 700, 10, false);
+	Render2DMeshWScale(meshList[GEO_ICONINV], false, 1, 1, 630, 10, false);
+	Render2DMeshWScale(meshList[GEO_LIVES], false, 120, 50, 0, 550, false);
 
 	//On screen text
 	ss.str("");
@@ -919,10 +1136,6 @@ void Scene1::RenderMonster()
 			battleMonsterPos.y += 3.0f;
 			if (battleMonsterScale.x < 0.3 || battleMonsterScale.y < 0.3)
 			{
-				//Reset to player's turn after enemy end its turn
-				//There must be something here i forgot to reset so 
-				//The slash animation isn't working properly
-
 				battleScene.SetMonsterHitAnimation(false);
 				battleScene.SetFirstChoice(true);
 				battleScene.SetSecondChoice(false);
@@ -931,10 +1144,11 @@ void Scene1::RenderMonster()
 				SharedData::GetInstance()->playerTurn = true;
 				battleMonsterScale.x = 0.3f;
 				battleMonsterScale.y = 0.3f;
+				battleMonsterPos.x = 300;
+				battleMonsterPos.y = 240;
 				monsterScaleUp = true;
 			}
 		}
-		//cout << "x : " << battleMonsterScale.x << ", y : " << battleMonsterScale.y << endl;
 	}
 
 	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
@@ -1191,9 +1405,12 @@ void Scene1::RenderCatch()
 
 void Scene1::RenderBattleDialogue()
 {
-	if (playerBattleDialogue)
+	//Player Attack Enemy Dialogue
+	if (SharedData::GetInstance()->playerBattleDialogue && battleScene.GetBattleSelection() == BattleSystem::BS_SLASH ||
+		SharedData::GetInstance()->playerBattleDialogue && battleScene.GetBattleSelection() == BattleSystem::BS_STAB ||
+		SharedData::GetInstance()->playerBattleDialogue && battleScene.GetBattleSelection() == BattleSystem::BS_SKILL)
 	{
-		Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1.5, 0.3, -50, 0, false);
+		Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false);
 
 		if (battleScene.GetBattleSelection() == BattleSystem::BS_SLASH)
 		{
@@ -1202,30 +1419,129 @@ void Scene1::RenderBattleDialogue()
 			ss.precision(5);
 			ss << "You Slash Enemy for " << theHero->GetDMG() << ", Enemy HP left " << EnemyInBattle->GetHealth();
 
-			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 200, 100);
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 200, 100);
+
+			if (flashEffect)
+			{
+				ss.str("");
+				ss.precision(5);
+				ss << "Press enter to continue ";
+
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 15, 300, 50);
+			}
 		}
-		else if (battleScene.GetBattleSelection() == BattleSystem::BS_SLASH)
+
+		if (battleScene.GetBattleSelection() == BattleSystem::BS_STAB)
 		{
 			std::ostringstream ss;
 			ss.str("");
 			ss.precision(5);
 			ss << "You stab Enemy for " << theHero->GetDMG() << ", Enemy HP left " << EnemyInBattle->GetHealth();
 
-			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 200, 100);
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 200, 100);
+
+			if (flashEffect)
+			{
+				ss.str("");
+				ss.precision(5);
+				ss << "Press enter to continue ";
+
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 15, 300, 50);
+			}
+
 		}
-		SharedData::GetInstance()->enemyTurn = true;
-		SharedData::GetInstance()->enemyHitPlayer = true;
-		SharedData::GetInstance()->playerTurn = false;
-		playerBattleDialogue = false;
+		if (battleScene.GetBattleSelection() == BattleSystem::BS_SKILL)
+		{
+			std::ostringstream ss;
+			ss.str("");
+			ss.precision(5);
+
+			switch (SharedData::GetInstance()->inventory.getArmour()->getMonster().GetType())
+			{
+			case 0:
+			case 1:
+			case 2:
+				ss << "You damage Enemy for " << theHero->GetDMG() << ", Enemy HP left " << EnemyInBattle->GetHealth();
+				break;
+			case 3:
+				ss << "defend increased!!";
+				break;
+			}
+
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 200, 100);
+
+			if (flashEffect)
+			{
+				ss.str("");
+				ss.precision(5);
+				ss << "Press enter to continue ";
+
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 15, 300, 50);
+			}
+
+		}
 	}
+	else if (SharedData::GetInstance()->playerBattleDialogue && battleScene.GetBattleSelection() == BattleSystem::BS_CAPTURE ||
+		SharedData::GetInstance()->playerBattleDialogue && battleScene.GetBattleSelection() == BattleSystem::BS_RUN)
+	{
+		Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false);
+
+		if (battleScene.GetBattleSelection() == BattleSystem::BS_CAPTURE)
+		{
+			std::ostringstream ss;
+			ss.str("");
+			ss.precision(5);
+			ss << "You failed to capture the enemy!";
+
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 200, 100);
+
+			if (flashEffect)
+			{
+				ss.str("");
+				ss.precision(5);
+				ss << "Press enter to continue ";
+
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 15, 300, 50);
+			}
+		}
+
+		if (battleScene.GetBattleSelection() == BattleSystem::BS_RUN)
+		{
+			std::ostringstream ss;
+			ss.str("");
+			ss.precision(5);
+			ss << "You failed to escape!";
+
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 200, 100);
+
+			if (flashEffect)
+			{
+				ss.str("");
+				ss.precision(5);
+				ss << "Press enter to continue ";
+
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 15, 300, 50);
+			}
+
+		}
+	}
+
 }
 
 void Scene1::RenderBattleAnimation()
 {
 	if (SharedData::GetInstance()->BS_SlashRender)
-		Render2DMeshWScale(meshList[GEO_SLASHANIMATION], false, 200.0f, 200.0f, battleMonsterPos.x + 120.f, battleMonsterPos.y + 80.0f, false);
+		Render2DMeshWScale(meshList[GEO_SLASHANIMATION], false, 200.0f, 200.0f, battleMonsterPos.x, battleMonsterPos.y, false);
 	if (SharedData::GetInstance()->BS_StabRender)
-		Render2DMeshWScale(meshList[GEO_STABANIMATION], false, 200.0f, 200.0f, battleMonsterPos.x + 120.0f, battleMonsterPos.y + 80.0f, false);
+		Render2DMeshWScale(meshList[GEO_STABANIMATION], false, 200.0f, 200.0f, battleMonsterPos.x, battleMonsterPos.y, false);
+	if (SharedData::GetInstance()->BS_BiteRender)
+		Render2DMeshWScale(meshList[GEO_BITEANIMATION], false, 200.0f, 200.0f, battleMonsterPos.x, battleMonsterPos.y, false);
+	if (SharedData::GetInstance()->BS_ScreamRender)
+		Render2DMeshWScale(meshList[GEO_SCREAMANIMATION], false, 200.0f, 200.0f, battleMonsterPos.x, battleMonsterPos.y, false);
+	if (SharedData::GetInstance()->BS_RoarRender)
+		Render2DMeshWScale(meshList[GEO_ROARANIMATION], false, 200.0f, 200.0f, battleMonsterPos.x, battleMonsterPos.y, false);
+	if (SharedData::GetInstance()->BS_SkinRender)
+		Render2DMeshWScale(meshList[GEO_SKINANIMATION], false, 200.0f, 200.0f, battleMonsterPos.x, battleMonsterPos.y, false);
 }
 
 void Scene1::RenderBattleHUD()
@@ -1263,7 +1579,7 @@ void Scene1::RenderBattleHUD()
 		!SharedData::GetInstance()->enemyTurn &&
 		!SharedData::GetInstance()->BS_SlashRender &&
 		!SharedData::GetInstance()->BS_StabRender &&
-		!playerBattleDialogue)
+		!SharedData::GetInstance()->playerBattleDialogue)
 	{
 		Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1.5, 0.3, -50, 0, false);
 
@@ -1291,7 +1607,30 @@ void Scene1::RenderBattleHUD()
 		if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice())
 			ss << "Capture";
 		else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice())
-			ss << "Monster's Skill";
+		{
+			if (SharedData::GetInstance()->inventory.getArmour() != NULL)
+			{
+				switch (SharedData::GetInstance()->inventory.getArmour()->getMonster().GetType())
+				{
+				case 0:
+					ss << "Banshee Scream";
+					break;
+				case 1:
+					ss << "Cerebus Bite";
+					break;
+				case 2:
+					ss << "Dragon Roar";
+					break;
+				case 3:
+					ss << "GOLEM SKIN";
+					break;
+				}
+			}
+			else
+			{
+				ss << "No skill Equided";
+			}
+		}
 		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 200, 50);
 
 		ss.str("");
@@ -1350,6 +1689,9 @@ void Scene1::Render()
 	case TAMAGUCCI_SCREEN:
 		RenderTamagucci();
 		break;
+	case LOSE:
+		RenderBackground(meshList[GEO_LOSE]);
+		break;
 	}
 }
 
@@ -1360,6 +1702,11 @@ void Scene1::Exit()
 	{
 		if (meshList[i])
 			delete meshList[i];
+	}
+	for (int i = 0; i < m_goList.size(); ++i)
+	{
+		delete m_goList[i];
+		m_goList.erase(m_goList.begin() + i);
 	}
 	glDeleteProgram(m_programID);
 	glDeleteVertexArrays(1, &m_vertexArrayID);
