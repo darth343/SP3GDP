@@ -586,7 +586,12 @@ void SceneGame::Update(double dt)
 				if (SharedData::GetInstance()->playerLives > 0)
 				{
 					SharedData::GetInstance()->playerLives--;
+					SharedData::GetInstance()->player->SetPosition(Vector3(530, 64, 0));
+					SharedData::GetInstance()->player->SetHP(100);
+					renderedHp = 100;
 					SharedData::GetInstance()->gameState = SharedData::GAME_S1;
+					GS = MAP;
+					cout << SharedData::GetInstance()->playerLives << endl;
 				}
 				else
 					//Player Lose should do auto load to previous save file
@@ -599,6 +604,10 @@ void SceneGame::Update(double dt)
 				battleScene.SetFirstChoice(true);
 				battleScene.SetSecondChoice(false);
 				battleScene.SetBattleSelection(BattleSystem::BS_ATTACK);
+				RemoveEnemy();
+				//SceneGame* mainScene = (SceneGame*)Application::GetInstance().GetScene();
+
+				//mainScene->RemoveEnemy();
 			}
 
 		}

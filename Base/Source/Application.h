@@ -56,6 +56,7 @@ private:
 	Scene4* HS_Scene;
 	Scene* menuScene;
 	Scene* storyScene;
+	SceneBoss* bossScene;
 	// The handler for the scene
 	Scene *scene;
 

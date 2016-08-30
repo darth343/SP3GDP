@@ -528,6 +528,7 @@ void Scene1::RenderGO()
 				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
 				if (Application::IsKeyPressed(VK_RETURN))
 				{
+					SharedData::GetInstance()->player->SetPosition(Vector3(1300, -100, 0));
 					SharedData::GetInstance()->gameState = SharedData::GAME_S2;
 				}
 			}
@@ -540,6 +541,7 @@ void Scene1::RenderGO()
 				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
 				if (Application::IsKeyPressed(VK_RETURN))
 				{
+					SharedData::GetInstance()->player->SetPosition(Vector3(0, 227, 0));
 					SharedData::GetInstance()->gameState = SharedData::GAME_S4;
 				}
 			}
@@ -551,6 +553,8 @@ void Scene1::RenderGO()
 				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
 				if (Application::IsKeyPressed(VK_RETURN))
 				{
+					SharedData::GetInstance()->player->SetPosition(Vector3(400, 800, 0));
+
 					SharedData::GetInstance()->gameState = SharedData::GAME_S3;
 				}
 			}
@@ -562,6 +566,7 @@ void Scene1::RenderGO()
 				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
 				if (Application::IsKeyPressed(VK_RETURN))
 				{
+					SharedData::GetInstance()->player->SetPosition(Vector3(400, 0, 0));
 					SharedData::GetInstance()->gameState = SharedData::GAME_BOSS;
 				}
 			}

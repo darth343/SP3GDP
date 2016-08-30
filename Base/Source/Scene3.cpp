@@ -69,11 +69,6 @@ void Scene3::Init()
 	chargebar->type = GameObject::GO_MOVE;
 	chargebar->position.Set(500, 150, 1);
 
-	GameObject* touch = new GameObject(Vector3(50.f, 50.f, 1));
-	touch->position.Set(820, 150, 1);
-	touch->type = GameObject::GO_DOWN;
-	m_goList.push_back(touch);
-
 	GameObject* down = new GameObject(Vector3(50.f, 50.f, 1));
 	down->position.Set(612, 1200, 1);
 	down->type = GameObject::GO_DOWN;
@@ -276,6 +271,13 @@ void Scene3::GOupdate(double dt)
 		pic3->Update(dt);
 		pic3->m_anim->animActive = true;
 	}
+	SpriteAnimation *lives = dynamic_cast<SpriteAnimation*>(meshList[GEO_LIVES]);
+	if (lives)
+	{
+		//lives->Update(dt);
+		lives->m_currentFrame = SharedData::GetInstance()->playerLives;
+		lives->m_anim->animActive = true;
+	}
 	for (int i = 0; i < m_goList.size(); ++i)
 	{
 		if (m_goList[i]->type == GameObject::GO_ENEMY && MS == IN_DIALOUGE)
@@ -442,8 +444,8 @@ static bool touched = true;
 void Scene3::RenderMap()
 {
 	RenderBackground(meshList[GEO_BACKGROUND]);
-	RenderTileMap(meshList[GEO_TILESET3], m_cMap2);
 	RenderTileMap(meshList[GEO_TILESET3], m_cMap);
+	RenderTileMap(meshList[GEO_TILESET1], m_cMap2);
 	std::ostringstream ss;
 	RenderPlayer();
 	Render2DMeshWScale(meshList[GEO_ICONTAM], false, 1, 1, 700, 10, false);
@@ -502,17 +504,6 @@ void Scene3::RenderGO()
 			Enemy* temp = (Enemy*)m_goList[i];
 			Render2DMeshWScale(meshList[GEO_MONSTERBANSHEE], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetFlipStatus(), 50);
 		}
-		if (m_goList[i]->type == GameObject::GO_NEXT)
-		{
-			if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
-			{
-				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
-				if (Application::IsKeyPressed(VK_RETURN))
-				{
-					SharedData::GetInstance()->gameState = SharedData::GAME_S2;
-				}
-			}
-		}
 		if (m_goList[i]->type == GameObject::GO_DOWN)
 		{
 			if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
@@ -520,37 +511,9 @@ void Scene3::RenderGO()
 				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
 				if (Application::IsKeyPressed(VK_RETURN))
 				{
-					SharedData::GetInstance()->gameState = SharedData::GAME_S3;
+					SharedData::GetInstance()->player->SetPosition(Vector3(400, -300, 0));
+					SharedData::GetInstance()->gameState = SharedData::GAME_S1;
 				}
-			}
-		}
-		if (m_goList[i]->type == GameObject::GO_BOSS)
-		{
-			if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
-			{
-				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
-				if (Application::IsKeyPressed(VK_RETURN))
-				{
-					SharedData::GetInstance()->gameState = SharedData::GAME_BOSS;
-				}
-			}
-		}
-		if (m_goList[i]->type == GameObject::GO_TELEPORT)
-		{
-			Render2DMeshWScale(meshList[GEO_PORTAL], false, 50, 50, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, false);
-
-			if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
-			{
-				SharedData::GetInstance()->player->SetPosition(Vector3(182, 532, 0));
-			}
-		}
-		if (m_goList[i]->type == GameObject::GO_TELEPORT2)
-		{
-			Render2DMeshWScale(meshList[GEO_PORTAL], false, 50, 50, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, false);
-
-			if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
-			{
-				SharedData::GetInstance()->player->SetPosition(Vector3(182, 52, 0));
 			}
 		}
 	}
