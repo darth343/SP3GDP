@@ -79,20 +79,19 @@ void Scene1::Init()
 			if (m_cMap->theMap[RandPos.y][RandPos.x].shouldCollide)
 				RandPos.SetZero();
 		}
-		theEnemy->position.Set(RandPos.x * 32, 600, 1);
+		theEnemy->position.Set(RandPos.x * 32, RandPos.y * 32, 1);
 		m_goList.push_back(theEnemy);
 	}
 
-	GameObject* boss = new GameObject(Vector3(50.f, 50.f, 1));
-	boss->position.Set(450, 1100, 1);
-	boss->type = GameObject::GO_BOSS;
-	m_goList.push_back(boss);
+	GameObject* touch = new GameObject(Vector3(50.f, 50.f, 1));
+	touch->position.Set(1500, 80, 1);
+	touch->type = GameObject::GO_NEXT;
+	m_goList.push_back(touch);
 
-	
 	enemyMaxHealth = 100;
 	currHealth = 100;
 	enemyCatchPercentage = 0;
-	npc.ReadFromFile("NPC//Text.txt", m_goList);
+	npc.ReadFromFile("NPC//2.txt", m_goList);
 	vector<NPC*>npcvec = npc.GetVec();
 
 	for (int i = 0; i < npcvec.size(); i++)
@@ -100,9 +99,9 @@ void Scene1::Init()
 		if (npcvec[i]->GetID() == 1)
 			npcvec[i]->position.Set(500, 100, 1);
 		if (npcvec[i]->GetID() == 2)
-			npcvec[i]->position.Set(700, 200, 1);
+			npcvec[i]->position.Set(700, 300, 1);
 		if (npcvec[i]->GetID() == 3)
-			npcvec[i]->position.Set(100, 180, 1);
+			npcvec[i]->position.Set(100, 360, 1);
 		npcvec[i]->currDia = 1;
 
 		m_goList.push_back(dynamic_cast<NPC*>(npcvec[i]));
@@ -111,7 +110,7 @@ void Scene1::Init()
 	// Initialise the hero's position
 	theHero = new CPlayerInfo();
 	theHero->Init();
-	theHero->SetPosition(Vector3(530, 64, 0));
+	theHero->SetPosition(Vector3(1300, 64, 0));
 	theHero->SetPlayerMesh(meshList[GEO_HEROUP]);
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
 	Mtx44 perspective;
@@ -373,8 +372,6 @@ void Scene1::PlayerUpdate(double dt)
 
 void Scene1::GOupdate(double dt)
 {
-	cout <<"Gamestate " <<  GS << endl;
-
 	SpriteAnimation *sa = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC]);
 	if (sa)
 	{
@@ -1087,6 +1084,20 @@ void Scene1::RenderTestMap()
 		{
 			Enemy* temp = (Enemy*)m_goList[i];
 			Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetFlipStatus(), 32);
+		}
+		if (m_goList[i]->type == GameObject::GO_NEXT)
+		{
+			Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false);
+
+			if (m_goList[i]->CheckCollision(theHero->GetPosition(), theHero->GetMapOffset(), m_cMap))
+			{
+				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
+				if (Application::IsKeyPressed(VK_RETURN))
+				{
+					SharedData::GetInstance()->stateCheck = true;
+					SharedData::GetInstance()->gameState = SharedData::GAME_S1;
+				}
+			}
 		}
 	}
 	RenderTextOnScreen(meshList[GEO_TEXT], npctalk.str(), Color(1, 1, 0), 30, 60, 100);

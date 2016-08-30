@@ -209,6 +209,9 @@ void Application::Run()
 			case SharedData::GAME_S3:
 				scene = new Scene2();
 				break;
+			case SharedData::GAME_S4:
+				scene = new Scene4();
+				break;
 			case SharedData::GAME_BOSS:
 				scene = new SceneBoss();
 				break;
