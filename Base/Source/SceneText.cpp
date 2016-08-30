@@ -46,6 +46,26 @@ void SceneText::Init()
 	m_cMap2->Init(Application::GetInstance().GetScreenHeight(), Application::GetInstance().GetScreenWidth(), 32);
 	m_cMap2->LoadMap("Data//MapData_WM2.csv");
 
+	GameObject* touch = new GameObject(Vector3(50.f, 50.f, 1));
+	touch->position.Set(0, 820, 1);
+	touch->type = GameObject::GO_NEXT;
+	m_goList.push_back(touch);
+
+	GameObject* boss = new GameObject(Vector3(50.f, 50.f, 1));
+	boss->position.Set(450, 1100, 1);
+	boss->type = GameObject::GO_BOSS;
+	m_goList.push_back(boss);
+
+	GameObject* teleporter2 = new GameObject(Vector3(20.f, 20.f, 1));
+	teleporter2->position.Set(182, 510, 1);
+	teleporter2->type = GameObject::GO_TELEPORT2;
+	m_goList.push_back(teleporter2);
+
+	GameObject* teleporter1 = new GameObject(Vector3(20.f, 20.f, 1));
+	teleporter1->position.Set(182, 154, 1);
+	teleporter1->type = GameObject::GO_TELEPORT;
+	m_goList.push_back(teleporter1);
+
 	// Init for loading GameObjects
 	Items* thePotion = new Items(Vector3(32.f, 32.f, 1));
 	thePotion->type = GameObject::GO_ITEM;
@@ -82,26 +102,6 @@ void SceneText::Init()
 		theEnemy->position.Set(RandPos.x * 32, 600, 1);
 		m_goList.push_back(theEnemy);
 	}
-
-	touch = new GameObject(Vector3(50.f, 50.f, 1));
-	touch->position.Set(0, 820, 1);
-	touch->type = GameObject::GO_NEXT;
-	m_goList.push_back(touch);
-
-	GameObject* boss = new GameObject(Vector3(50.f, 50.f, 1));
-	boss->position.Set(450, 1100, 1);
-	boss->type = GameObject::GO_BOSS;
-	m_goList.push_back(boss);
-
-	GameObject* teleporter2 = new GameObject(Vector3(20.f, 20.f, 1));
-	teleporter2->position.Set(182, 510, 1);
-	teleporter2->type = GameObject::GO_TELEPORT2;
-	m_goList.push_back(teleporter2);
-
-	GameObject* teleporter1 = new GameObject(Vector3(20.f, 20.f, 1));
-	teleporter1->position.Set(182, 154, 1);
-	teleporter1->type = GameObject::GO_TELEPORT;
-	m_goList.push_back(teleporter1);
 
 
 	/*teleporter1 = new GameObject(Vector3(20.f, 20.f, 1));

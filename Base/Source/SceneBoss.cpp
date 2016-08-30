@@ -72,11 +72,6 @@ void SceneBoss::Init()
 		theEnemy->position.Set(500, 600, 1);
 		m_goList.push_back(theEnemy);
 
-	touch = new GameObject(Vector3(50.f, 50.f, 1));
-	touch->position.Set(0, 760, 1);
-	touch->type = GameObject::GO_NEXT;
-	m_goList.push_back(touch);
-
 	GameObject* boss = new GameObject(Vector3(50.f, 50.f, 1));
 	boss->position.Set(470, 1030, 1);
 	boss->type = GameObject::GO_BOSS;

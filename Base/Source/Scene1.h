@@ -104,18 +104,7 @@ public:
 	void renderInventoryItems();
 	void renderInventoryMenus();
 private:
-	NPC npc;
-	Gauge* greenbar;
-	Gauge* redbar;
-	Gauge* chargebar;
-	Enemy* EnemyInBattle;
-	TAMAGUCCI* tamtam;
-	TAMAGUCCI* tamdrop;
-	Pathfinder testpathfinder;
-	TAMAGUCCI tamagucci;
-	GameObject* touch;
-	//GameObject* teleporter1;
-	//GameObject* teleporter2;
+
 	vector<GameObject *> m_goList;
 	int npcPic = 0; //Which npc picture to show on the dialogue
 	float enemyCatchPercentage;
@@ -155,6 +144,16 @@ private:
 
 	ostringstream npctalk;
 	bool captured;
+
+	NPC npc;
+	Gauge* greenbar;
+	Gauge* redbar;
+	Gauge* chargebar;
+	Enemy* EnemyInBattle;
+	TAMAGUCCI* tamtam;
+	TAMAGUCCI* tamdrop;
+	Pathfinder testpathfinder;
+	TAMAGUCCI tamagucci;
 };
 
 #endif

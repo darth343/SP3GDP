@@ -112,9 +112,7 @@ private:
 	TAMAGUCCI* tamdrop;
 	Pathfinder testpathfinder;
 	TAMAGUCCI tamagucci;
-	GameObject* touch;
-	GameObject* teleporter1;
-	GameObject* teleporter2;
+
 	vector<GameObject *> m_goList;
 	int npcPic = 0; //Which npc picture to show on the dialogue
 	float enemyCatchPercentage;

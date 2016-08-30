@@ -83,11 +83,6 @@ void Scene1::Init()
 		m_goList.push_back(theEnemy);
 	}
 
-	touch = new GameObject(Vector3(50.f, 50.f, 1));
-	touch->position.Set(0, 820, 1);
-	touch->type = GameObject::GO_NEXT;
-	m_goList.push_back(touch);
-
 	GameObject* boss = new GameObject(Vector3(50.f, 50.f, 1));
 	boss->position.Set(450, 1100, 1);
 	boss->type = GameObject::GO_BOSS;
@@ -378,6 +373,8 @@ void Scene1::PlayerUpdate(double dt)
 
 void Scene1::GOupdate(double dt)
 {
+	cout <<"Gamestate " <<  GS << endl;
+
 	SpriteAnimation *sa = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC]);
 	if (sa)
 	{
@@ -1089,31 +1086,7 @@ void Scene1::RenderTestMap()
 		if (m_goList[i]->type == GameObject::GO_ENEMY)
 		{
 			Enemy* temp = (Enemy*)m_goList[i];
-			Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetFlipStatus(), 50);
-		}
-		if (m_goList[i]->type == GameObject::GO_NEXT)
-		{
-			if (m_goList[i]->CheckCollision(theHero->GetPosition(), theHero->GetMapOffset(), m_cMap))
-			{
-				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
-				if (Application::IsKeyPressed(VK_RETURN))
-				{
-					SharedData::GetInstance()->stateCheck = true;
-					SharedData::GetInstance()->gameState = SharedData::GAME_S2;
-				}
-			}
-		}
-		if (m_goList[i]->type == GameObject::GO_BOSS)
-		{
-			if (m_goList[i]->CheckCollision(theHero->GetPosition(), theHero->GetMapOffset(), m_cMap))
-			{
-				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
-				if (Application::IsKeyPressed(VK_RETURN))
-				{
-					SharedData::GetInstance()->stateCheck = true;
-					SharedData::GetInstance()->gameState = SharedData::GAME_BOSS;
-				}
-			}
+			Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetFlipStatus(), 32);
 		}
 	}
 	RenderTextOnScreen(meshList[GEO_TEXT], npctalk.str(), Color(1, 1, 0), 30, 60, 100);

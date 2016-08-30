@@ -83,25 +83,11 @@ void Scene4::Init()
 		m_goList.push_back(theEnemy);
 	}
 
-	touch = new GameObject(Vector3(50.f, 50.f, 1));
-	touch->position.Set(0, 820, 1);
-	touch->type = GameObject::GO_NEXT;
-	m_goList.push_back(touch);
 
 	GameObject* boss = new GameObject(Vector3(50.f, 50.f, 1));
 	boss->position.Set(450, 1100, 1);
 	boss->type = GameObject::GO_BOSS;
 	m_goList.push_back(boss);
-
-	GameObject* teleporter2 = new GameObject(Vector3(20.f, 20.f, 1));
-	teleporter2->position.Set(182, 510, 1);
-	teleporter2->type = GameObject::GO_TELEPORT2;
-	m_goList.push_back(teleporter2);
-
-	GameObject* teleporter1 = new GameObject(Vector3(20.f, 20.f, 1));
-	teleporter1->position.Set(182, 154, 1);
-	teleporter1->type = GameObject::GO_TELEPORT;
-	m_goList.push_back(teleporter1);
 
 
 	/*teleporter1 = new GameObject(Vector3(20.f, 20.f, 1));
@@ -1122,18 +1108,7 @@ void Scene4::RenderTestMap()
 			Enemy* temp = (Enemy*)m_goList[i];
 			Render2DMeshWScale(meshList[GEO_MONSTERBANSHEE], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetFlipStatus(), 50);
 		}
-		if (m_goList[i]->type == GameObject::GO_NEXT)
-		{
-			if (m_goList[i]->CheckCollision(theHero->GetPosition(), theHero->GetMapOffset(), m_cMap))
-			{
-				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
-				if (Application::IsKeyPressed(VK_RETURN))
-				{
-					SharedData::GetInstance()->stateCheck = true;
-					SharedData::GetInstance()->gameState = SharedData::GAME_S2;
-				}
-			}
-		}
+
 		if (m_goList[i]->type == GameObject::GO_BOSS)
 		{
 			if (m_goList[i]->CheckCollision(theHero->GetPosition(), theHero->GetMapOffset(), m_cMap))
@@ -1146,24 +1121,7 @@ void Scene4::RenderTestMap()
 				}
 			}
 		}
-		if (m_goList[i]->type == GameObject::GO_TELEPORT)
-		{
-			Render2DMeshWScale(meshList[GEO_PORTAL], false, 50, 50, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false);
 
-			if (m_goList[i]->CheckCollision(theHero->GetPosition(), theHero->GetMapOffset(), m_cMap))
-			{
-				theHero->SetPosition(Vector3(182, 532, 0));
-			}
-		}
-		if (m_goList[i]->type == GameObject::GO_TELEPORT2)
-		{
-			Render2DMeshWScale(meshList[GEO_PORTAL], false, 50, 50, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false);
-
-			if (m_goList[i]->CheckCollision(theHero->GetPosition(), theHero->GetMapOffset(), m_cMap))
-			{
-				theHero->SetPosition(Vector3(182, 52, 0));
-			}
-		}
 	}
 	RenderTextOnScreen(meshList[GEO_TEXT], npctalk.str(), Color(1, 1, 0), 30, 60, 100);
 	RenderPlayer();
