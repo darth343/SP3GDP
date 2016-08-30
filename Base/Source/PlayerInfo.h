@@ -5,8 +5,6 @@
 #include "Mesh.h"
 #include "Items.h"
 #include "Equipment.h"
-#include "SharedData.h"
-
 
 class CPlayerInfo
 {
@@ -40,6 +38,8 @@ public:
 	void HeroUpdate(CMap* m_cMap, double dt, Mesh **meshList);
 	// Get Player Mesh
 	Mesh* GetPlayerMesh();
+	// Add Player HP
+	void AddHealth(int health);
 	// Set Player Mesh
 	void SetPlayerMesh(Mesh* mesh);
 	// Get Flip Status

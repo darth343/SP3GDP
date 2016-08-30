@@ -21,6 +21,15 @@ Inventory::~Inventory()
 {
 }
 
+void Inventory::usePotion()
+{
+	if (ItemInventory[Items::POTION] > 0)
+	{
+		SharedData::GetInstance()->player->AddHealth(25);
+		ItemInventory[Items::POTION]--;
+	}
+}
+
 void Inventory::addToInventory(Items::ITEM_TYPE type)
 {
 	ItemInventory[type]++;
@@ -94,6 +103,7 @@ void Inventory::addToInventory(Enemy* enemy)
 			break;
 		}
 	}
+
 }
 
 Vector3 Inventory::getSeeker()
@@ -114,6 +124,11 @@ vector<string> Inventory::getOptions()
 int Inventory::GetPotionCount()
 {
 	return ItemInventory[Items::POTION];
+}
+
+int Inventory::GetMemoryCount()
+{
+	return ItemInventory[Items::ENCRYPTED_MEMORY];
 }
 
 void Inventory::printInventory()
@@ -205,6 +220,8 @@ void Inventory::UpdateInput()
 					case Equipment::SHIELD:
 						options.push_back("RIGHT HAND");
 						options.push_back("LEFT HAND");
+						if (ItemInventory[Items::ENCRYPTED_MEMORY] >= 100)
+						options.push_back("POWER UP");
 						options.push_back("DISCARD");
 						options.push_back("BACK");
 						break;
@@ -212,6 +229,8 @@ void Inventory::UpdateInput()
 					case Equipment::ARMOUR:
 					case Equipment::LEG:
 						options.push_back("EQUIP");
+						if (ItemInventory[Items::ENCRYPTED_MEMORY] >= 100)
+						options.push_back("POWER UP");
 						options.push_back("DISCARD");
 						options.push_back("BACK");
 						break;
@@ -258,6 +277,14 @@ void Inventory::UpdateInput()
 				{
 					removeFromInventory(getEquipmentLookAt());
 					SortInventory();
+				}
+				if (options[secondSeeker] == "POWER UP")
+				{
+					if (ItemInventory[Items::ENCRYPTED_MEMORY] >= 100)
+					{
+						PowerUp(getEquipmentLookAt());
+						ItemInventory[Items::ENCRYPTED_MEMORY] -= 100;
+					}
 				}
 				if (options[secondSeeker] == "RIGHT HAND" || options[secondSeeker] == "LEFT HAND" || options[secondSeeker] == "EQUIP")
 				{
@@ -325,6 +352,46 @@ void Inventory::UpdateInput()
 					SharedData::GetInstance()->ENTERkeyPressed = false;
 				}
 				break;
+			case EQUIP_OPTIONS:
+				if (Application::IsKeyPressed(VK_DOWN) && !SharedData::GetInstance()->DNkeyPressed)
+				{
+					secondSeeker++;
+					if (secondSeeker > options.size() - 1)
+						secondSeeker = 0;
+					SharedData::GetInstance()->DNkeyPressed = true;
+				}
+				else if (!Application::IsKeyPressed(VK_DOWN) && SharedData::GetInstance()->DNkeyPressed)
+				{
+					SharedData::GetInstance()->DNkeyPressed = false;
+				}
+
+				if (Application::IsKeyPressed(VK_UP) && !SharedData::GetInstance()->UPkeyPressed)
+				{
+					secondSeeker--;
+					if (secondSeeker < 0)
+						secondSeeker = options.size() - 1;
+					SharedData::GetInstance()->UPkeyPressed = true;
+				}
+				else if (!Application::IsKeyPressed(VK_UP) && SharedData::GetInstance()->UPkeyPressed)
+				{
+					SharedData::GetInstance()->UPkeyPressed = false;
+				}
+				if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
+				{
+					SharedData::GetInstance()->ENTERkeyPressed = true;
+					if (options[secondSeeker] == "USE")
+					{
+						if (seeker.y == Items::POTION)
+						usePotion();
+					}
+					if (options[secondSeeker] == "RIGHT HAND" || options[secondSeeker] == "LEFT HAND" || options[secondSeeker] == "EQUIP")
+					{
+						EquipItem(options[secondSeeker]);
+					}
+					secondSeeker = 0;
+					inputeState = INVENTORY;
+				}
+
 			}
 			break;
 	}
@@ -447,8 +514,15 @@ void Inventory::removeFromInventory(Equipment* equipment)
 			delete EQinventory[i];
 			EQinventory[i] = NULL;
 			EQinventory[i] = new Equipment;
+			SharedData::GetInstance()->inventory.ItemInventory[Items::ENCRYPTED_MEMORY] += 50;
 		}
 	}
+}
+
+void Inventory::PowerUp(Equipment* equipment)
+{
+	equipment->setDamage(equipment->getDamage() + Math::RandIntMinMax(0, 10));
+	equipment->setDefense(equipment->getDefense() + Math::RandIntMinMax(0, 10));
 }
 
 void Inventory::EquipItem(string itemType)
@@ -465,6 +539,7 @@ void Inventory::EquipItem(string itemType)
 				EquippedItems[HEAD] = equipment;
 				setEquipmentLookAt(temp);
 				SharedData::GetInstance()->tamagucci.SetIndex(HEAD);
+				EquippedItems[HEAD]->position.x = Math::RandFloatMinMax(0.f, 700);
 			}
 			else if (!EquippedItems[HEAD])
 			{
@@ -472,6 +547,7 @@ void Inventory::EquipItem(string itemType)
 				*EquippedItems[HEAD] = *equipment;
 				removeFromInventory(equipment);
 				SharedData::GetInstance()->tamagucci.SetIndex(HEAD);
+				EquippedItems[HEAD]->position.x = Math::RandFloatMinMax(0.f, 700);
 			}
 		}
 
@@ -484,6 +560,7 @@ void Inventory::EquipItem(string itemType)
 				EquippedItems[CHEST] = equipment;
 				setEquipmentLookAt(temp);
 				SharedData::GetInstance()->tamagucci.SetIndex(CHEST);
+				EquippedItems[CHEST]->position.x = Math::RandFloatMinMax(0.f, 700);
 			}
 			else if (!EquippedItems[CHEST])
 			{
@@ -491,6 +568,7 @@ void Inventory::EquipItem(string itemType)
 				*EquippedItems[CHEST] = *equipment;
 				removeFromInventory(equipment);
 				SharedData::GetInstance()->tamagucci.SetIndex(CHEST);
+				EquippedItems[CHEST]->position.x = Math::RandFloatMinMax(0.f, 700);
 			}
 		}
 
@@ -503,6 +581,8 @@ void Inventory::EquipItem(string itemType)
 				EquippedItems[LEGS] = equipment;
 				setEquipmentLookAt(temp);
 				SharedData::GetInstance()->tamagucci.SetIndex(LEGS);
+				EquippedItems[LEGS]->position.x = Math::RandFloatMinMax(0.f, 700);
+
 			}
 			else if (!EquippedItems[LEGS])
 			{
@@ -510,6 +590,8 @@ void Inventory::EquipItem(string itemType)
 				*EquippedItems[LEGS] = *equipment;
 				removeFromInventory(equipment);
 				SharedData::GetInstance()->tamagucci.SetIndex(LEGS);
+				EquippedItems[LEGS]->position.x = Math::RandFloatMinMax(0.f, 700);
+
 
 			}
 		}
@@ -524,6 +606,8 @@ void Inventory::EquipItem(string itemType)
 				EquippedItems[RHAND] = equipment;
 				setEquipmentLookAt(temp);
 				SharedData::GetInstance()->tamagucci.SetIndex(RHAND);
+				EquippedItems[RHAND]->position.x = Math::RandFloatMinMax(0.f, 700);
+
 
 			}
 			else if (!EquippedItems[RHAND])
@@ -532,7 +616,8 @@ void Inventory::EquipItem(string itemType)
 				*EquippedItems[RHAND] = *equipment;
 				removeFromInventory(equipment);
 				SharedData::GetInstance()->tamagucci.SetIndex(RHAND);
-
+				EquippedItems[RHAND]->position.x = Math::RandFloatMinMax(0.f, 700);
+				
 			}
 	}
 	if (itemType == "LEFT HAND")
@@ -544,7 +629,8 @@ void Inventory::EquipItem(string itemType)
 			EquippedItems[LHAND] = equipment;
 			setEquipmentLookAt(temp);
 			SharedData::GetInstance()->tamagucci.SetIndex(LHAND);
-
+			EquippedItems[LHAND]->position.x = Math::RandFloatMinMax(0.f, 700);
+			
 		}
 		else if (!EquippedItems[LHAND])
 		{
@@ -552,7 +638,8 @@ void Inventory::EquipItem(string itemType)
 			*EquippedItems[LHAND] = *equipment;
 			removeFromInventory(equipment);
 			SharedData::GetInstance()->tamagucci.SetIndex(LHAND);
-			
+			EquippedItems[LHAND]->position.x = Math::RandFloatMinMax(0.f, 700);
+						
 		}
 	}
 }

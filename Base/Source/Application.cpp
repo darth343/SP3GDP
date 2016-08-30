@@ -159,6 +159,7 @@ void Application::Init()
 
 void Application::Run()
 {
+	unsigned counter = 0;
 	//Main Loop
 	scene = new SceneText;
 	scene->Init();
@@ -181,6 +182,8 @@ void Application::Run()
 		}
 		// Render the scene
 		scene->Render();
+
+		
 		//Swap buffers
 		glfwSwapBuffers(m_window);
 		//Get and organize events, like keyboard and mouse input, window resizing, etc...
@@ -205,6 +208,9 @@ void Application::Run()
 				break;
 			case SharedData::GAME_S2:
 				scene = new Scene1();
+				break;
+			case SharedData::GAME_BOSS:
+				scene = new SceneBoss();
 				break;
 			}
 			scene->Init();

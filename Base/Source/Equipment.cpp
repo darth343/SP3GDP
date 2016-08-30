@@ -64,16 +64,22 @@ void Equipment::IncrementTamHunger(int amount)
 void Equipment::DecrementTamEnergy()
 {
 	TamEnergy--;
+	if (TamEnergy < 0)
+		TamEnergy = 0;
 }
 
 void Equipment::DecrementTamHappy()
 {
 	TamHappy--;
+	if (TamHappy < 0)
+		TamHappy = 0;
 }
 
 void Equipment::DecrementTamHunger()
 {
 	TamHunger--;
+	if (TamHunger < 0)
+		TamHunger = 0;
 }
 
 
@@ -104,15 +110,6 @@ void Equipment::setType(EQUIPMENT_TYPE type)
 {
 	this->type = type;
 }
-void Equipment::setDamage(float damage)
-{
-	this->damage = damage;
-}
-
-void Equipment::setDefense(float defense)
-{
-	this->defense = defense;
-}
 
 string Equipment::getName()
 {
@@ -138,6 +135,17 @@ float Equipment::getDefense()
 {
 	return defense;
 }
+
+void Equipment::setDamage(float damage)
+{
+	this->damage = damage;
+}
+
+void Equipment::setDefense(float defense)
+{
+	this->defense = defense;
+}
+
 
 std::ostream& operator<<(std::ostream& cout, Equipment::EQUIPMENT_TYPE type)
 {

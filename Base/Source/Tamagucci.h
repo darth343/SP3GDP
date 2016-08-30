@@ -5,9 +5,9 @@
 #include "Equipment.h"
 #include <vector>
 
-const float ENERGYLOSSTIME = 05.f;
-const float HUNGERLOSSTIME = 00.f;
-const float HAPPYLOSSTIME = 0.f;
+const float ENERGYLOSSTIME = 180.f;
+const float HUNGERLOSSTIME = 120.f;
+const float HAPPYLOSSTIME = 240.f;
 
 using std::vector;
 class TAMAGUCCI
@@ -55,8 +55,10 @@ public:
 	~TAMAGUCCI();
 	void UpdateTamagucci(double dt);
 	void GetTamagucciInput();
-	void MiniGame(double dt);
-	void MiniGameUpdatePosition(double dt);
+	void MiniGame1(double dt);
+	void MiniGame2(double dt){};
+	void MiniGame1UpdatePosition(double dt);
+	void MiniGame2UpdatePosition(double dt){};
 	void ResetTamagotchi();
 	void SetIndex(int index);
 	int GetScore();
@@ -90,6 +92,7 @@ private:
 	bool touchedFood = false; //For scene text check if food is touched
 	bool moveLeft = false; //Sprite Animation Flip
 	bool sleep = false;
+	float sleeptimer = 0;
 	GameObject* tamtam;
 	GameObject* tamdrop;
 	GameObject* tamdrop2;

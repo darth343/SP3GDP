@@ -30,6 +30,13 @@ void CPlayerInfo::Init(void)
 
 }
 
+void CPlayerInfo::AddHealth(int health)
+{
+	playerHP += health;
+	if (playerHP > 100)
+		playerHP = 100;
+}
+
 Mesh* CPlayerInfo::GetPlayerMesh()
 {
 	return playerMesh;

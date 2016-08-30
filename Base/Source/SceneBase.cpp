@@ -276,6 +276,36 @@ void SceneBase::Init()
 	meshList[GEO_STABANIMATION]->textureID = LoadTGA("Image//stabAnimation.tga");
 	meshList[GEO_SLASHANIMATION] = MeshBuilder::GenerateSpriteAnimation("slash", 1, 10);
 	meshList[GEO_SLASHANIMATION]->textureID = LoadTGA("Image//slashAnimation2.tga");
+	meshList[GEO_BITEANIMATION] = MeshBuilder::GenerateSpriteAnimation("stab", 1, 8);
+	meshList[GEO_BITEANIMATION]->textureID = LoadTGA("Image//stabAnimation.tga");
+	meshList[GEO_SKINANIMATION] = MeshBuilder::GenerateSpriteAnimation("SCREAM", 1, 8);
+	meshList[GEO_SKINANIMATION]->textureID = LoadTGA("Image//screamAnimation.tga");
+	meshList[GEO_SCREAMANIMATION] = MeshBuilder::GenerateSpriteAnimation("scream", 1, 8);
+	meshList[GEO_SCREAMANIMATION]->textureID = LoadTGA("Image//screamAnimation.tga");
+	meshList[GEO_ROARANIMATION] = MeshBuilder::GenerateSpriteAnimation("roar", 1, 8);
+	meshList[GEO_ROARANIMATION]->textureID = LoadTGA("Image//roarAnimation2.tga");
+
+	meshList[GEO_BOSS] = MeshBuilder::GenerateSpriteAnimation("slash", 1, 2);
+	meshList[GEO_BOSS]->textureID = LoadTGA("Image//boss.tga");
+	meshList[GEO_WIN] = MeshBuilder::Generate2DMesh("GEO_BATTLESCENE", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_WIN]->textureID = LoadTGA("Image//SciFi_Win.tga");
+	meshList[GEO_LOSE] = MeshBuilder::Generate2DMesh("GEO_BATTLESCENE", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_LOSE]->textureID = LoadTGA("Image//SciFi_Lose.tga");
+	meshList[GEO_LIVES] = MeshBuilder::GenerateSpriteAnimation("slash", 1, 4);
+	meshList[GEO_LIVES]->textureID = LoadTGA("Image//Lives.tga");
+
+	SpriteAnimation *boss = dynamic_cast<SpriteAnimation*>(meshList[GEO_BOSS]);
+	if (boss)
+	{
+		boss->m_anim = new Animation();
+		boss->m_anim->Set(0, 1, 0, 1.f, true);
+	}
+	SpriteAnimation *lives = dynamic_cast<SpriteAnimation*>(meshList[GEO_LIVES]);
+	if (lives)
+	{
+		lives->m_anim = new Animation();
+		lives->m_anim->Set(0, 3, 0, 1.f, true);
+	}
 	SpriteAnimation *playerLR = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROLR]);
 	if (playerLR)
 	{
@@ -408,6 +438,32 @@ void SceneBase::Init()
 		stabAnimation->m_anim->Set(0, 7, 0, 1.f, true);
 	}
 
+	SpriteAnimation *roarAnimation = dynamic_cast<SpriteAnimation*>(meshList[GEO_ROARANIMATION]);
+	if (roarAnimation)
+	{
+		roarAnimation->m_anim = new Animation();
+		roarAnimation->m_anim->Set(0, 9, 0, 1.f, true);
+	}
+
+	SpriteAnimation *biteAnimation = dynamic_cast<SpriteAnimation*>(meshList[GEO_BITEANIMATION]);
+	if (biteAnimation)
+	{
+		biteAnimation->m_anim = new Animation();
+		biteAnimation->m_anim->Set(0, 7, 0, 1.f, true);
+	}
+	SpriteAnimation *screamAnimation = dynamic_cast<SpriteAnimation*>(meshList[GEO_SCREAMANIMATION]);
+	if (screamAnimation)
+	{
+		screamAnimation->m_anim = new Animation();
+		screamAnimation->m_anim->Set(0, 7, 0, 1.f, true);
+	}
+
+	SpriteAnimation *skinAnimation = dynamic_cast<SpriteAnimation*>(meshList[GEO_SKINANIMATION]);
+	if (skinAnimation)
+	{
+		skinAnimation->m_anim = new Animation();
+		skinAnimation->m_anim->Set(0, 7, 0, 1.f, true);
+	}
 
 	Math::InitRNG();
 	camera.Init(Vector3(0, 0, 10), Vector3(0, 0, 0), Vector3(0, 1, 0));

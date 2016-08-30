@@ -32,8 +32,12 @@ public:
 	void SetFirstChoice(bool set);
 	void SetSecondChoice(bool set);
 	void SetEscapeChance(float percetage);
-	void SetBattleSelection(BATTLE_SELECTION selection);	
+	void SetBattleSelection(BATTLE_SELECTION selection);
 	void SetMonsterHitAnimation(bool set);
+
+	//new
+	void EndPlayerTurn();
+	void EndEnemyTurn();
 
 	void Reset();
 
@@ -53,18 +57,13 @@ private:
 	bool battleStart;				  //Detect if the battle has started
 
 	Vector3 arrowPos;				  //Arrow's placing for Battle Scene 
-	
+
 	bool firstChoice, secondChoice;   //Battle scene Selection
 
 	float escapePercentage;			  //Escape chances
 
 	BATTLE_SELECTION battleSelection; //Selection chosen in battlescene
-	
+
 	bool monsterHitAnimation;
-
-
-
-
-	
 };
 

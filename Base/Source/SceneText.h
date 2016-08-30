@@ -32,6 +32,7 @@ class SceneText : public SceneBase
 
 		BATTLE,
 		CATCH,
+		LOSE,
 		GS_TOTAL,
 	};
 
@@ -126,7 +127,6 @@ private:
 
 	CMap* m_cMap;	// Handle to the tilemaps
 	CMap* m_cMap2;	// Handle to the tilemaps
-	CPlayerInfo* theHero; // Hero's information
 	GAMESTATE_TYPE GS; // Change GameState in SceneText.cpp line 144 for testing purposes
 	MAP_STATE MS;
 	
@@ -135,14 +135,14 @@ private:
 	Vector3 battleMonsterPos;
 	Vector3 battleMonsterScale;
 	bool monsterScaleUp;
-	bool playerBattleDialogue;
 
 	//Battle System HP bar 
 	float maxHpScale;
 	Vector3 hpPos;
 	float renderedHp;
 	bool capturedMonster;
-
+	bool flashEffect;
+	float flashTimer;
 	float maxMpScale;
 	Vector3 mpPos;
 	float renderedMp;
