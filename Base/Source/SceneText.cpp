@@ -51,6 +51,12 @@ void SceneText::Init()
 	touch->type = GameObject::GO_NEXT;
 	m_goList.push_back(touch);
 
+	GameObject* down = new GameObject(Vector3(50.f, 50.f, 1));
+	down->position.Set(370, 25, 1);
+	down->type = GameObject::GO_DOWN;
+	m_goList.push_back(down);
+
+
 	GameObject* boss = new GameObject(Vector3(50.f, 50.f, 1));
 	boss->position.Set(450, 1100, 1);
 	boss->type = GameObject::GO_BOSS;
@@ -1132,6 +1138,18 @@ void SceneText::RenderTestMap()
 							SharedData::GetInstance()->stateCheck = true;
 							SharedData::GetInstance()->gameState = SharedData::GAME_S2;
 						}
+				}
+			}
+			if (m_goList[i]->type == GameObject::GO_DOWN)
+			{
+				if (m_goList[i]->CheckCollision(theHero->GetPosition(), theHero->GetMapOffset(), m_cMap))
+				{
+					Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
+					if (Application::IsKeyPressed(VK_RETURN))
+					{
+						SharedData::GetInstance()->stateCheck = true;
+						SharedData::GetInstance()->gameState = SharedData::GAME_S3;
+					}
 				}
 			}
 			if (m_goList[i]->type == GameObject::GO_BOSS)

@@ -10,6 +10,7 @@
 #include "SpriteAnimation.h"
 #include "Enemy.h"
 #include "Items.h"
+#include "SharedData.h"
 
 Scene2::Scene2()
 	:
@@ -69,7 +70,7 @@ void Scene2::Init()
 
 	touch = new GameObject(Vector3(50.f, 50.f, 1));
 	touch->position.Set(820, 150, 1);
-	touch->type = GameObject::GO_NEXT;
+	touch->type = GameObject::GO_DOWN;
 	m_goList.push_back(touch);
 
 	for (int i = 0; i < 4; ++i)
@@ -820,7 +821,7 @@ void Scene2::RenderTestMap()
 	{
 		if (m_goList[i]->active == true)
 		{
-			if (m_goList[i]->type == GameObject::GO_NEXT)
+			if (m_goList[i]->type == GameObject::GO_DOWN)
 				Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false);
 
 			if (m_goList[i]->type == GameObject::GO_ITEM)
@@ -860,7 +861,7 @@ void Scene2::RenderTestMap()
 			Enemy* temp = (Enemy*)m_goList[i];
 			Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[0]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetFlipStatus(), 32);
 		}
-		if (m_goList[i]->type == GameObject::GO_NEXT)
+		if (m_goList[i]->type == GameObject::GO_DOWN)
 		{
 			if (m_goList[i]->CheckCollision(theHero->GetPosition(), theHero->GetMapOffset(), m_cMap))
 			{
@@ -870,7 +871,7 @@ void Scene2::RenderTestMap()
 					if (Application::IsKeyPressed('Y'))
 					{
 						SharedData::GetInstance()->stateCheck = true;
-						SharedData::GetInstance()->gameState = SharedData::GAME_S2;
+						SharedData::GetInstance()->gameState = SharedData::GAME_S3;
 					}
 				}
 			}

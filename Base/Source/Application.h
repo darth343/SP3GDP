@@ -7,6 +7,7 @@
 #include "SharedData.h"
 #include "SceneText.h"
 #include "Scene1.h"
+#include "Scene2.h"
 #include "SceneMenu.h"
 #include "SceneStory.h"
 #include "SceneBoss.h"
