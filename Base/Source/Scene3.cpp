@@ -133,7 +133,7 @@ void Scene3::Init()
 	mpPos.Set(36, 548.9, 0);
 	maxMpScale = 10.9f;
 
-	for (int j = 0; j < 10; ++j)
+	for (int j = 0; j < 0; ++j)
 	{
 		Equipment* temp = new Equipment();
 		//Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::TOTAL_ETYPE -1);

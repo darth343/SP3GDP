@@ -40,6 +40,8 @@ enum ENEMY_STATES
 	friend std::ostream& operator<<(std::ostream& cout, ENEMY_STATES state);
 
 private:
+	float patrolTime;
+	float idleTime;
 	string enemyName;
 	Vector3 prevHeroPos;
 	Vector3 patrolPos;

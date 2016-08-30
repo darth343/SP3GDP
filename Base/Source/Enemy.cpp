@@ -11,6 +11,8 @@ Enemy::Enemy(Monster monster, Vector3 scale)
 , monster(monster)
 , flip(false)
 {
+	idleTime = 0.f;
+	patrolTime = 0.f;
 	enemyStates = E_IDLE;
 }
 
@@ -210,28 +212,31 @@ void Enemy::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap
 	//	}
 	}
 
-	static float IDLE_TIME = 0.f;
-	static float PATROL_TIME = 0.f;
 	switch (enemyStates)
 	{
 	case E_IDLE:
 	{
-		IDLE_TIME += dt;
-		if (PATROL_TIME > 0.f)
+		idleTime += dt;
+		if (patrolTime > 0.f)
 		{
-			PATROL_TIME = 0.f;
+			patrolTime = 0.f;
 		}
-		if (IDLE_TIME > IDLE_TIMER)
+		if (idleTime > IDLE_TIMER)
 		{
 			if (patrolPos.IsZero())
 			{
-				Vector3 RandMapPos(Math::RandIntMinMax(0, m_cMap->GetNumOfTiles_Width()-1), Math::RandIntMinMax(0, m_cMap->GetNumOfTiles_Height()-1), 0);
+				Vector3 RandMapPos(Math::RandIntMinMax(0, m_cMap->GetNumOfTiles_Width()-1), Math::RandIntMinMax(16, m_cMap->GetNumOfTiles_Height()-1), 0);
 				if (m_cMap->theMap[RandMapPos.y][RandMapPos.x].shouldCollide)
 					return;
 				patrolPos = RandMapPos;
 			}
 			else
 			{
+				if (idleTime > IDLE_TIMER + 10)
+				{
+					patrolPos.SetZero();
+					thePath.initializedStartandEnd = false;
+				}
 				Vector3 EnemyPos = (position)* (1.f / m_cMap->GetTileSize());
 				thePath.FindPath(m_cMap->theMap[EnemyPos.y][EnemyPos.x], m_cMap->theMap[patrolPos.y][patrolPos.x], m_cMap);
 				if (thePath.found)
@@ -248,16 +253,16 @@ void Enemy::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap
 	}
 	case E_PATROL:
 	{
-		PATROL_TIME += dt;
-		if (IDLE_TIME > 0.f)
+		patrolTime += dt;
+		if (idleTime > 0.f)
 		{
-			IDLE_TIME = 0.f;
+			idleTime = 0.f;
 		}
 		if (thePath.found)
 		{
 			Tile nextTile = thePath.pathToEnd.back();
 			MoveTo(dt, nextTile, m_cMap);
-			if ((nextTile.Pos * m_cMap->GetTileSize() - position).Length() < 5.f)
+			if ((nextTile.Pos * m_cMap->GetTileSize() - position).Length() < 2.f)
 			{
 				if (thePath.pathToEnd.size() > 1)
 				{
@@ -283,13 +288,13 @@ void Enemy::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap
 	case E_CHASE:
 	{
 		int TilesInBetween = ((playerPos + mapOffset) - position).Length() / m_cMap->GetTileSize();
-		if (IDLE_TIME > 0.f)
+		if (idleTime > 0.f)
 		{
-			IDLE_TIME = 0.f;
+			idleTime = 0.f;
 		}
-		if (PATROL_TIME > 0.f)
+		if (patrolTime > 0.f)
 		{
-			PATROL_TIME = 0.f;
+			patrolTime = 0.f;
 		}
 		Vector3 EnemyPos = (position) * (1.f / m_cMap->GetTileSize());
 		Vector3 HeroPos = (playerPos + mapOffset) * (1.f / m_cMap->GetTileSize());
