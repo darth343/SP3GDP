@@ -111,10 +111,10 @@ void Scene2::Init()
 	theHero->SetPosition(Vector3(530, 64, 0));
 	theHero->SetPlayerMesh(meshList[GEO_HEROWALK]);
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
-	Mtx44 perspective;
-	perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
-	//perspective.SetToOrtho(-80, 80, -60, 60, -1000, 1000);
-	projectionStack.LoadMatrix(perspective);
+	//Mtx44 perspective;
+	//perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
+	////perspective.SetToOrtho(-80, 80, -60, 60, -1000, 1000);
+	//projectionStack.LoadMatrix(perspective);
 
 	battleMonsterPos.Set(300, 240, 0);
 	battleMonsterScale.Set(0.3, 0.3, 1);

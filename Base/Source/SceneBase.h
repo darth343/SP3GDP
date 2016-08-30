@@ -171,12 +171,12 @@ protected:
 	CharacterData FontData;
 	unsigned m_vertexArrayID;
 	Mesh* meshList[NUM_GEOMETRY];
-	unsigned m_programID;
-	unsigned m_parameters[U_TOTAL];
-	Camera3 camera;
 	MS modelStack;
 	MS viewStack;
 	MS projectionStack;
+	unsigned m_programID;
+	unsigned m_parameters[U_TOTAL];
+	Camera3 camera;
 	Light lights[2];
 	float fps;
 	float xtranslate;

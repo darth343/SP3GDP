@@ -492,11 +492,11 @@ void SceneBase::Init()
 	Math::InitRNG();
 	camera.Init(Vector3(0, 0, 10), Vector3(0, 0, 0), Vector3(0, 1, 0));
 
-	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
-	Mtx44 perspective;
-	perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
-	//perspective.SetToOrtho(-80, 80, -60, 60, -1000, 1000);
-	projectionStack.LoadMatrix(perspective);
+	//// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
+	//Mtx44 perspective;
+	//perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
+	////perspective.SetToOrtho(-80, 80, -60, 60, -1000, 1000);
+	//projectionStack.LoadMatrix(perspective);
 }
 
 void SceneBase::RenderTile(Mesh* mesh, unsigned tileID, float size, float x, float y)
@@ -682,14 +682,14 @@ void SceneBase::Render()
 	//perspective.SetToOrtho(-80, 80, -60, 60, -1000, 1000);
 	projectionStack.LoadMatrix(perspective);
 
-	// Camera matrix
+	//// Camera matrix
 	viewStack.LoadIdentity();
 	viewStack.LookAt(
 		camera.position.x, camera.position.y, camera.position.z,
 		camera.target.x, camera.target.y, camera.target.z,
 		camera.up.x, camera.up.y, camera.up.z
 		);
-	// Model matrix : an identity matrix (model will be at the origin)
+	//// Model matrix : an identity matrix (model will be at the origin)
 	modelStack.LoadIdentity();
 }
 
@@ -722,12 +722,12 @@ void SceneBase::Update(double dt)
 
 void SceneBase::Exit()
 {
-	// Cleanup VBO
-	for (int i = 0; i < NUM_GEOMETRY; ++i)
-	{
-		if (meshList[i])
-			delete meshList[i];
-	}
-	glDeleteProgram(m_programID);
-	glDeleteVertexArrays(1, &m_vertexArrayID);
+	//// Cleanup VBO
+	//for (int i = 0; i < NUM_GEOMETRY; ++i)
+	//{
+	//	if (meshList[i])
+	//		delete meshList[i];
+	//}
+	//glDeleteProgram(m_programID);
+	//glDeleteVertexArrays(1, &m_vertexArrayID);
 }

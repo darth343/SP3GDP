@@ -9,12 +9,10 @@ TAMAGUCCI::TAMAGUCCI()
 	tamtam = new GameObject;
 	tamtam->position.Set(350, 100, 1);
 	tamtam->scale.Set(64, 64, 1);
-
 	tamdrop = new GameObject;
 	tamdrop->position.Set(Math::RandFloatMinMax(0, 730), 600, 1);
 	tamdrop->type = GameObject::GO_TAMDROP1;
 	tamdrop->scale.Set(64, 64, 1);
-
 	tamdrop2 = new GameObject;
 	tamdrop2->position.Set(Math::RandFloatMinMax(0, 730), 650, 1);
 	tamdrop2->type = GameObject::GO_TAMDROP2;
@@ -30,6 +28,14 @@ TAMAGUCCI::TAMAGUCCI()
 
 TAMAGUCCI::~TAMAGUCCI()
 {
+	if (tamtam)
+	delete tamtam;
+	if (tamdrop)
+	delete tamdrop;
+	if (tamdrop2)
+	delete tamdrop2;
+	if (tamfood)
+	delete tamfood;
 }
 
 //std::ostream& operator<<(std::ostream& cout, TAMAGUCCI::MENUBUTTONS buttons)
@@ -217,6 +223,9 @@ void TAMAGUCCI::UpdateTamagucci(double dt)
 }
 void TAMAGUCCI::GetTamagucciInput()
 {
+	if (SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex] == NULL)
+		return;
+
 	switch (menuState)
 	{
 	case FIRSTMENU:

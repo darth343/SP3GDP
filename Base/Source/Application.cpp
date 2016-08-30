@@ -160,7 +160,7 @@ void Application::Init()
 void Application::Run()
 {
 	//Main Loop
-	scene = new SceneMenu;
+	scene = new SceneText;
 	scene->Init();
 	m_timer.startTimer();    // Start timer to calculate how long it takes to render this frame
 	while (!glfwWindowShouldClose(m_window) && !IsKeyPressed(VK_ESCAPE))
@@ -191,6 +191,7 @@ void Application::Run()
 
 		if (SharedData::GetInstance()->stateCheck)
 		{
+			scene->Exit();
 			delete scene;
 			SharedData::GetInstance()->stateCheck = false;
 

@@ -113,7 +113,25 @@ private:
 	}
 	~SharedData()
 	{
-
+		if (soundFootstep)
+		soundFootstep->drop();
+		if(worldBGM)
+		worldBGM->drop();
+		if (battleStart)
+		battleStart->drop();
+		if (title)
+		title->drop();
+		if (slash)
+		slash->drop();
+		if (stab)
+		stab->drop();
+		if (skill)
+		skill->drop();
+		if (click)
+		click->drop();
+		if (player)
+			delete player;
+		Monster::Exit();
 	}
 };
 

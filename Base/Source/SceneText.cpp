@@ -141,10 +141,10 @@ void SceneText::Init()
 	// Initialise the hero's position
 	SharedData::GetInstance()->player->SetPlayerMesh(meshList[GEO_HEROUP]);
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
-	Mtx44 perspective;
-	perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
-	//perspective.SetToOrtho(-80, 80, -60, 60, -1000, 1000);
-	projectionStack.LoadMatrix(perspective);
+	//Mtx44 perspective;
+	//perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
+	////perspective.SetToOrtho(-80, 80, -60, 60, -1000, 1000);
+	//projectionStack.LoadMatrix(perspective);
 
 	battleMonsterPos.Set(280, 240, 0);
 	battleMonsterScale.Set(300, 300, 1);
@@ -875,7 +875,10 @@ void SceneText::Update(double dt)
 		if (GS != TAMAGUCCI_SCREEN)
 			GS = TAMAGUCCI_SCREEN;
 		else
+		{
+			SharedData::GetInstance()->tamagucci.ResetTamagotchi();
 			GS = TESTMAP;
+		}
 	}
 	else if (!Application::IsKeyPressed('Z') && SharedData::GetInstance()->ZKeyPressed)
 	{
@@ -1154,7 +1157,7 @@ void SceneText::RenderTestMap()
 			}
 			if (m_goList[i]->type == GameObject::GO_DOWN)
 			{
-				if (m_goList[i]->CheckCollision(theHero->GetPosition(), theHero->GetMapOffset(), m_cMap))
+				if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
 				{
 					Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
 					if (Application::IsKeyPressed(VK_RETURN))

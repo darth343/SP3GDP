@@ -104,11 +104,11 @@ void SceneBoss::Init()
 	// Initialise the hero's position
 	SharedData::GetInstance()->player->SetPosition(Vector3(530, 64, 0));
 	SharedData::GetInstance()->player->SetPlayerMesh(meshList[GEO_HEROWALK]);
-	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
-	Mtx44 perspective;
-	perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
-	//perspective.SetToOrtho(-80, 80, -60, 60, -1000, 1000);
-	projectionStack.LoadMatrix(perspective);
+	//// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
+	//Mtx44 perspective;
+	//perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
+	////perspective.SetToOrtho(-80, 80, -60, 60, -1000, 1000);
+	//projectionStack.LoadMatrix(perspective);
 
 	battleMonsterPos.Set(270, 240, 0);
 	battleMonsterScale.Set(300, 320, 1);

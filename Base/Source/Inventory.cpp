@@ -19,6 +19,18 @@ Inventory::Inventory(Vector3 scale)
 
 Inventory::~Inventory()
 {
+	for (int i = 0; i < EI_TOTAL; ++i)
+	{
+		if (EquippedItems[i])
+			delete EquippedItems[i];
+	}
+	for (int i = 0; i < EQinventory.size(); ++i)
+	{
+		if (EQinventory[i])
+		{
+			delete EQinventory[i];
+		}
+	}
 }
 
 void Inventory::usePotion()

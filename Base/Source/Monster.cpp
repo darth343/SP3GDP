@@ -54,6 +54,15 @@ Monster Monster::getMonster(MONSTER_TYPE type)
 	return *database[type];
 }
 
+void Monster::Exit()
+{
+	for (int i = 0; i < MONSTER_TOTAL; ++i)
+	{
+		if (database[i])
+			delete database[i];
+	}
+}
+
 
 void Monster::InitDatabase()
 {

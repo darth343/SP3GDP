@@ -17,6 +17,7 @@ public:
 	};
 	Monster();
 	~Monster();
+	static void Exit();
 	static void InitDatabase();
 	static Monster getMonster(MONSTER_TYPE type);
 	string getName();

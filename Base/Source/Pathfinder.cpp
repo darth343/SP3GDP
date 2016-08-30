@@ -8,7 +8,30 @@ Pathfinder::Pathfinder()
 
 Pathfinder::~Pathfinder()
 {
+	//ClearLists();
+	//delete start;
+	//delete end;
+}
 
+void Pathfinder::ClearLists()
+{
+	while (openList.size() > 0)
+	{
+		Node * temp;
+		temp = openList.back();
+		openList.pop_back();
+		delete temp;
+	}
+	openList.clear();
+
+	while (visitedList.size() > 0)
+	{
+		Node * temp;
+		temp = visitedList.back();
+		visitedList.pop_back();
+		delete temp;
+	}
+	visitedList.clear();
 }
 
 void Pathfinder::FindPath(Tile startTile, Tile endTile, CMap* m_cMap)

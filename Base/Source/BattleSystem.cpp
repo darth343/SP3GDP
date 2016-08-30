@@ -196,7 +196,7 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 				theHero->SetDMG(SharedData::GetInstance()->inventory.GetTotalATK()* 0.5);
 
 			// * by 0.5 because it might 1 hit the enemy 
-			enemy->TakeDamage(theHero->GetDMG()* 0.5);
+			enemy->TakeDamage(theHero->GetDMG());
 
 			SharedData::GetInstance()->BS_SlashRender = true;
 
