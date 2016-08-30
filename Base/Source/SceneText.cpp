@@ -52,10 +52,14 @@ void SceneText::Init()
 	m_goList.push_back(touch);
 
 	GameObject* down = new GameObject(Vector3(50.f, 50.f, 1));
-	down->position.Set(370, 25, 1);
+	down->position.Set(370, 10, 1);
 	down->type = GameObject::GO_DOWN;
 	m_goList.push_back(down);
 
+	GameObject* s4 = new GameObject(Vector3(50.f, 50.f, 1));
+	s4->position.Set(910, 700, 1);
+	s4->type = GameObject::GO_S4;
+	m_goList.push_back(s4);
 
 	GameObject* boss = new GameObject(Vector3(50.f, 50.f, 1));
 	boss->position.Set(450, 1100, 1);
@@ -129,11 +133,11 @@ void SceneText::Init()
 	for (int i = 0; i < npcvec.size(); i++)
 	{
 		if (npcvec[i]->GetID() == 1)
-			npcvec[i]->position.Set(500, 100, 1);
+			npcvec[i]->position.Set(500, 150, 1);
 		if (npcvec[i]->GetID() == 2)
-			npcvec[i]->position.Set(700, 200, 1);
+			npcvec[i]->position.Set(700, 100, 1);
 		if (npcvec[i]->GetID() == 3)
-			npcvec[i]->position.Set(100, 180, 1);
+			npcvec[i]->position.Set(100, 250, 1);
 		npcvec[i]->currDia = 1;
 
 		m_goList.push_back(dynamic_cast<NPC*>(npcvec[i]));
@@ -1086,6 +1090,7 @@ void SceneText::RenderTestMap()
 	RenderTileMap(meshList[GEO_TILESET3], m_cMap2);
 	RenderTileMap(meshList[GEO_TILESET3], m_cMap);
 	std::ostringstream ss;
+	RenderPlayer();
 
 	for (int i = 0; i < m_goList.size(); i++)
 	{
@@ -1164,6 +1169,20 @@ void SceneText::RenderTestMap()
 					}
 				}
 			}
+			if (m_goList[i]->type == GameObject::GO_S4)
+			{
+				Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false);
+
+				if (m_goList[i]->CheckCollision(theHero->GetPosition(), theHero->GetMapOffset(), m_cMap))
+				{
+					Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
+					if (Application::IsKeyPressed(VK_RETURN))
+					{
+						SharedData::GetInstance()->stateCheck = true;
+						SharedData::GetInstance()->gameState = SharedData::GAME_S4;
+					}
+				}
+			}
 			if (m_goList[i]->type == GameObject::GO_TELEPORT)
 			{
 				Render2DMeshWScale(meshList[GEO_PORTAL], false, 50, 50, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false);
@@ -1184,7 +1203,6 @@ void SceneText::RenderTestMap()
 			}
 		}
 	RenderTextOnScreen(meshList[GEO_TEXT], npctalk.str(), Color(1, 1, 0), 30, 60, 100);
-	RenderPlayer();
 	Render2DMeshWScale(meshList[GEO_ICONTAM], false, 1, 1, 700, 10, false);
 	Render2DMeshWScale(meshList[GEO_ICONINV], false, 1, 1, 630, 10, false);
 	Render2DMeshWScale(meshList[GEO_LIVES], false, 120, 50, 0, 550, false);

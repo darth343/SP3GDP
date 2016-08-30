@@ -13,9 +13,9 @@
 #include "SharedData.h"
 
 Scene4::Scene4()
-	:
-	m_cMap(NULL)
-	, EnemyInBattle(NULL)
+:
+m_cMap(NULL)
+, EnemyInBattle(NULL)
 {
 }
 
@@ -45,6 +45,7 @@ void Scene4::Init()
 	m_cMap2 = new CMap();
 	m_cMap2->Init(Application::GetInstance().GetScreenHeight(), Application::GetInstance().GetScreenWidth(), 32);
 	m_cMap2->LoadMap("Data//MapData_HS2.csv");
+	
 
 	// Init for loading GameObjects
 	Items* thePotion = new Items(Vector3(32.f, 32.f, 1));
@@ -82,28 +83,15 @@ void Scene4::Init()
 		theEnemy->position.Set(RandPos.x * 32, 600, 1);
 		m_goList.push_back(theEnemy);
 	}
-
-
-	GameObject* boss = new GameObject(Vector3(50.f, 50.f, 1));
-	boss->position.Set(450, 1100, 1);
-	boss->type = GameObject::GO_BOSS;
-	m_goList.push_back(boss);
-
-
-	/*teleporter1 = new GameObject(Vector3(20.f, 20.f, 1));
-	teleporter1->position.Set(182, 154, 1);
-	teleporter1->type = GameObject::GO_TELEPORT;
-	m_goList.push_back(teleporter1);
-
-	teleporter2 = new GameObject(Vector3(20.f, 20.f, 1));
-	teleporter2->position.Set(182, 510, 1);
-	teleporter2->type = GameObject::GO_TELEPORT2;
-	m_goList.push_back(teleporter2);*/
+	GameObject* touch = new GameObject(Vector3(50.f, 50.f, 1));
+	touch->position.Set(0, 540, 1);
+	touch->type = GameObject::GO_NEXT;
+	m_goList.push_back(touch);
 
 	enemyMaxHealth = 100;
 	currHealth = 100;
 	enemyCatchPercentage = 0;
-	npc.ReadFromFile("NPC//Text.txt", m_goList);
+	//npc.ReadFromFile("NPC//Text.txt", m_goList);
 	vector<NPC*>npcvec = npc.GetVec();
 
 	for (int i = 0; i < npcvec.size(); i++)
@@ -1063,8 +1051,9 @@ static bool touched = true;
 void Scene4::RenderTestMap()
 {
 	RenderBackground(meshList[GEO_BACKGROUND]);
+	RenderTileMap(meshList[GEO_TILESET4], m_cMap);
 	RenderTileMap(meshList[GEO_TILESET3], m_cMap2);
-	RenderTileMap(meshList[GEO_TILESET3], m_cMap);
+
 	std::ostringstream ss;
 
 	for (int i = 0; i < m_goList.size(); i++)
@@ -1108,16 +1097,17 @@ void Scene4::RenderTestMap()
 			Enemy* temp = (Enemy*)m_goList[i];
 			Render2DMeshWScale(meshList[GEO_MONSTERBANSHEE], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetFlipStatus(), 50);
 		}
-
-		if (m_goList[i]->type == GameObject::GO_BOSS)
+		if (m_goList[i]->type == GameObject::GO_NEXT)
 		{
+			Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false);
+
 			if (m_goList[i]->CheckCollision(theHero->GetPosition(), theHero->GetMapOffset(), m_cMap))
 			{
 				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
 				if (Application::IsKeyPressed(VK_RETURN))
 				{
 					SharedData::GetInstance()->stateCheck = true;
-					SharedData::GetInstance()->gameState = SharedData::GAME_BOSS;
+					SharedData::GetInstance()->gameState = SharedData::GAME_S1;
 				}
 			}
 		}
@@ -1327,18 +1317,18 @@ void Scene4::renderTamagotchiMenu()
 			break;
 		case TAMAGUCCI::SLEEP:
 		{
-			renderFirstTamagotchiFirstMenu(0.f);
-			if (tamagucci.GetSleep())
-			{
-				RenderBackground(meshList[GEO_BLACK]);
-				Render2DMeshWScale(meshList[GEO_TAMSLEEP], false, 100, 100, tamagucci.GetTamTam()->position.x + 60, tamagucci.GetTamTam()->position.y + 70, false);
-			}
-			else
-				arrowPos.Set(170, 60);
-			Render2DMeshWScale(meshList[GEO_BATTLEARROW], false, 0.05, 0.03, arrowPos.x, arrowPos.y, false);
-			renderTamagotchiUI();
+								 renderFirstTamagotchiFirstMenu(0.f);
+								 if (tamagucci.GetSleep())
+								 {
+									 RenderBackground(meshList[GEO_BLACK]);
+									 Render2DMeshWScale(meshList[GEO_TAMSLEEP], false, 100, 100, tamagucci.GetTamTam()->position.x + 60, tamagucci.GetTamTam()->position.y + 70, false);
+								 }
+								 else
+									 arrowPos.Set(170, 60);
+								 Render2DMeshWScale(meshList[GEO_BATTLEARROW], false, 0.05, 0.03, arrowPos.x, arrowPos.y, false);
+								 renderTamagotchiUI();
 		}
-		break;
+			break;
 		case TAMAGUCCI::ENTERTAINMENT:
 			//RENDER MENU AND OPTIONS
 			renderFirstTamagotchiFirstMenu(27.5f);
