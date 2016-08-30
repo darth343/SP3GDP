@@ -73,6 +73,11 @@ void Scene2::Init()
 	touch->type = GameObject::GO_DOWN;
 	m_goList.push_back(touch);
 
+	GameObject* down = new GameObject(Vector3(50.f, 50.f, 1));
+	down->position.Set(612, 1200, 1);
+	down->type = GameObject::GO_DOWN;
+	m_goList.push_back(down);
+
 	for (int i = 0; i < 4; ++i)
 	{
 		Enemy* theEnemy;
@@ -108,8 +113,8 @@ void Scene2::Init()
 	// Initialise the hero's position
 	theHero = new CPlayerInfo();
 	theHero->Init();
-	theHero->SetPosition(Vector3(530, 64, 0));
-	theHero->SetPlayerMesh(meshList[GEO_HEROWALK]);
+	theHero->SetPosition(Vector3(615, 2000, 0));
+	theHero->SetPlayerMesh(meshList[GEO_HEROD]);
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
 	Mtx44 perspective;
 	perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
@@ -276,14 +281,60 @@ void Scene2::PlayerUpdate(double dt)
 {
 	if (MS == PLAY)
 	{
-		if (Application::IsKeyPressed('W'))
-			this->theHero->MoveUpDown(false, m_cMap, dt);
-		if (Application::IsKeyPressed('S'))
-			this->theHero->MoveUpDown(true, m_cMap, dt);
-		if (Application::IsKeyPressed('A'))
-			this->theHero->MoveLeftRight(true, m_cMap, dt);
-		if (Application::IsKeyPressed('D'))
-			this->theHero->MoveLeftRight(false, m_cMap, dt);
+		if (MS == PLAY)
+		{
+			if (Application::IsKeyPressed('W'))
+			{
+				theHero->SetPlayerMesh(meshList[GEO_HEROUP]);
+
+				SpriteAnimation *playerUP = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROUP]);
+				if (playerUP)
+				{
+					playerUP->Update(dt);
+					playerUP->m_anim->animActive = true;
+				}
+				this->theHero->MoveUpDown(false, m_cMap, dt);
+
+			}
+			if (Application::IsKeyPressed('S'))
+			{
+				theHero->SetPlayerMesh(meshList[GEO_HEROD]);
+
+				SpriteAnimation *playerDOWN = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROD]);
+				if (playerDOWN)
+				{
+					playerDOWN->Update(dt);
+					playerDOWN->m_anim->animActive = true;
+				}
+				this->theHero->MoveUpDown(true, m_cMap, dt);
+			}
+			if (Application::IsKeyPressed('A'))
+			{
+				theHero->SetPlayerMesh(meshList[GEO_HEROLR]);
+				theHero->SetFlipStatus(false);
+				SpriteAnimation *playerLEFT = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROLR]);
+				if (playerLEFT)
+				{
+					playerLEFT->Update(dt);
+					playerLEFT->m_anim->animActive = true;
+				}
+				this->theHero->MoveLeftRight(true, m_cMap, dt);
+			}
+			if (Application::IsKeyPressed('D'))
+			{
+				theHero->SetPlayerMesh(meshList[GEO_HEROLR]);
+				theHero->SetFlipStatus(true);
+				SpriteAnimation *playerRIGHT = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROLR]);
+				if (playerRIGHT)
+				{
+					playerRIGHT->Update(dt);
+
+					playerRIGHT->m_anim->animActive = true;
+				}
+				this->theHero->MoveLeftRight(false, m_cMap, dt);
+			}
+
+		}
 	}
 	theHero->HeroUpdate(m_cMap, dt, meshList);
 
@@ -865,14 +916,11 @@ void Scene2::RenderTestMap()
 		{
 			if (m_goList[i]->CheckCollision(theHero->GetPosition(), theHero->GetMapOffset(), m_cMap))
 			{
-				if (capturedMonster)
+				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
+				if (Application::IsKeyPressed(VK_RETURN))
 				{
-					Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
-					if (Application::IsKeyPressed('Y'))
-					{
-						SharedData::GetInstance()->stateCheck = true;
-						SharedData::GetInstance()->gameState = SharedData::GAME_S3;
-					}
+					SharedData::GetInstance()->stateCheck = true;
+					SharedData::GetInstance()->gameState = SharedData::GAME_S1;
 				}
 			}
 		}
