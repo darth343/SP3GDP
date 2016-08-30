@@ -266,7 +266,7 @@ void Scene2::EnterBattleScene(Enemy* enemy)
 {
 	battleScene.SetBattleStart(true);
 	SharedData::GetInstance()->soundManager.StopAllSound();
-	SharedData::GetInstance()->soundManager.SoundPlayOnce("Sound/battleStart.mp3", &SharedData::GetInstance()->battleStart, 0.3f);
+	SharedData::GetInstance()->soundManager.SoundPlay("Sound/battleStart.mp3", &SharedData::GetInstance()->battleStart, 0.3f, true);
 	EnemyInBattle = enemy;
 	GS = BATTLE;
 }
@@ -289,7 +289,7 @@ void Scene2::PlayerUpdate(double dt)
 	if (Application::IsKeyPressed('W') || Application::IsKeyPressed('S') || Application::IsKeyPressed('A') || Application::IsKeyPressed('D'))
 	{
 		//cout << SharedData::GetInstance()->soundFootstep << endl;
-		SharedData::GetInstance()->soundManager.SoundPlayOnce("Sound/footstepgrass.wav", &SharedData::GetInstance()->soundFootstep, 1.0f);
+		SharedData::GetInstance()->soundManager.SoundPlay("Sound/footstepgrass.wav", &SharedData::GetInstance()->soundFootstep, 1.0f, true);
 	}
 	else
 	{
@@ -665,7 +665,7 @@ void Scene2::MapUpdate(double dt)
 	{
 		PlayerUpdate(dt);
 		GOupdate(dt);
-		SharedData::GetInstance()->soundManager.SoundPlayOnce("Sound/route1.mp3", &SharedData::GetInstance()->worldBGM, 0.3f);
+		SharedData::GetInstance()->soundManager.SoundPlay("Sound/route1.mp3", &SharedData::GetInstance()->worldBGM, 0.3f, true);
 	}
 
 	PlayerUpdate(dt);
