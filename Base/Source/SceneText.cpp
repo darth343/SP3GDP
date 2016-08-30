@@ -10,10 +10,10 @@
 #include "SpriteAnimation.h"
 #include "Enemy.h"
 #include "Items.h"
+#include "SharedData.h"
 
 SceneText::SceneText()
-:
-m_cMap(NULL)
+: m_cMap(NULL)
 , EnemyInBattle(NULL)
 {
 }
@@ -45,6 +45,26 @@ void SceneText::Init()
 	m_cMap2->Init(Application::GetInstance().GetScreenHeight(), Application::GetInstance().GetScreenWidth(), 32);
 	m_cMap2->LoadMap("Data//MapData_WM2.csv");
 
+	GameObject* touch = new GameObject(Vector3(50.f, 50.f, 1));
+	touch->position.Set(0, 820, 1);
+	touch->type = GameObject::GO_NEXT;
+	m_goList.push_back(touch);
+
+	GameObject* boss = new GameObject(Vector3(50.f, 50.f, 1));
+	boss->position.Set(450, 1100, 1);
+	boss->type = GameObject::GO_BOSS;
+	m_goList.push_back(boss);
+
+	GameObject* teleporter2 = new GameObject(Vector3(20.f, 20.f, 1));
+	teleporter2->position.Set(182, 510, 1);
+	teleporter2->type = GameObject::GO_TELEPORT2;
+	m_goList.push_back(teleporter2);
+
+	GameObject* teleporter1 = new GameObject(Vector3(20.f, 20.f, 1));
+	teleporter1->position.Set(182, 154, 1);
+	teleporter1->type = GameObject::GO_TELEPORT;
+	m_goList.push_back(teleporter1);
+
 	// Init for loading GameObjects
 	Items* thePotion = new Items(Vector3(32.f, 32.f, 1));
 	thePotion->type = GameObject::GO_ITEM;
@@ -69,7 +89,7 @@ void SceneText::Init()
 	for (int i = 0; i < 4; ++i)
 	{
 		Enemy* theEnemy;
-		theEnemy = new Enemy(Monster::getMonster(Monster::BANSHEE), Vector3(32.f, 32.f, 1));
+		theEnemy = new Enemy(Monster::getMonster(Monster::BANSHEE), Vector3(50.f, 50.f, 1));
 		theEnemy->type = GameObject::GO_ENEMY;
 		Vector3 RandPos;
 		while (RandPos.IsZero())
@@ -82,15 +102,16 @@ void SceneText::Init()
 		m_goList.push_back(theEnemy);
 	}
 
-	touch = new GameObject(Vector3(50.f, 50.f, 1));
-	touch->position.Set(0, 760, 1);
-	touch->type = GameObject::GO_NEXT;
-	m_goList.push_back(touch);
 
-	GameObject* boss = new GameObject(Vector3(50.f, 50.f, 1));
-	boss->position.Set(470, 1030, 1);
-	boss->type = GameObject::GO_BOSS;
-	m_goList.push_back(boss);
+	/*teleporter1 = new GameObject(Vector3(20.f, 20.f, 1));
+	teleporter1->position.Set(182, 154, 1);
+	teleporter1->type = GameObject::GO_TELEPORT;
+	m_goList.push_back(teleporter1);
+
+	teleporter2 = new GameObject(Vector3(20.f, 20.f, 1));
+	teleporter2->position.Set(182, 510, 1);
+	teleporter2->type = GameObject::GO_TELEPORT2;
+	m_goList.push_back(teleporter2);*/
 
 	enemyMaxHealth = 100;
 	currHealth = 100;
@@ -111,11 +132,6 @@ void SceneText::Init()
 		m_goList.push_back(dynamic_cast<NPC*>(npcvec[i]));
 	}
 
-	// Initialise and load the REAR tile map
-	//m_cRearMap = new CMap();
-	//m_cRearMap->Init( 600, 800, 24, 32, 600, 1600 );
-	//m_cRearMap->LoadMap( "Image//MapDesign_Rear.csv" );
-
 	// Initialise the hero's position
 	SharedData::GetInstance()->player->SetPlayerMesh(meshList[GEO_HEROUP]);
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
@@ -124,13 +140,11 @@ void SceneText::Init()
 	//perspective.SetToOrtho(-80, 80, -60, 60, -1000, 1000);
 	projectionStack.LoadMatrix(perspective);
 
-	battleMonsterPos.Set(300, 240, 0);
-	battleMonsterScale.Set(0.3, 0.3, 1);
+	battleMonsterPos.Set(280, 240, 0);
+	battleMonsterScale.Set(300, 300, 1);
 	monsterScaleUp = true;
 
-
 	SharedData::GetInstance()->soundManager.Init();
-
 
 	//Battle HUD
 	maxHpScale = 17.4f;
@@ -148,7 +162,7 @@ void SceneText::Init()
 	{
 		Equipment* temp = new Equipment();
 		Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::TOTAL_ETYPE -1);
-		Monster::MONSTER_TYPE randmonstertype = (Monster::MONSTER_TYPE)Math::RandIntMinMax((int)Monster::BANSHEE, (int)Monster::DRAGON);
+		Monster::MONSTER_TYPE randmonstertype = (Monster::MONSTER_TYPE)Math::RandIntMinMax(Monster::BANSHEE, Monster::GOLEM);
 		//Equipment::EQUIPMENT_TYPE randType = Equipment::LEG;
 		//Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::TOTAL_ETYPE -1);
 		stringstream ss;
@@ -390,7 +404,18 @@ void SceneText::GOupdate(double dt)
 		sa->Update(dt);
 		sa->m_anim->animActive = true;
 	}
-	
+	SpriteAnimation *portal = dynamic_cast<SpriteAnimation*>(meshList[GEO_PORTAL]);
+	if (portal)
+	{
+		portal->Update(dt * 0.1);
+		portal->m_anim->animActive = true;
+	}
+	SpriteAnimation *banshee = dynamic_cast<SpriteAnimation*>(meshList[GEO_MONSTERBANSHEE]);
+	if (banshee)
+	{
+		banshee->Update(dt);
+		banshee->m_anim->animActive = true;
+	}
 	SpriteAnimation *lives = dynamic_cast<SpriteAnimation*>(meshList[GEO_LIVES]);
 	if (lives)
 	{
@@ -1107,7 +1132,7 @@ void SceneText::RenderTestMap()
 			if (m_goList[i]->type == GameObject::GO_ENEMY)
 			{
 				Enemy* temp = (Enemy*)m_goList[i];
-				Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[0]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetFlipStatus(),32);
+				Render2DMeshWScale(meshList[GEO_MONSTERBANSHEE], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetFlipStatus(), 50);
 			}
 			if (m_goList[i]->type == GameObject::GO_NEXT)
 			{
@@ -1131,6 +1156,24 @@ void SceneText::RenderTestMap()
 						SharedData::GetInstance()->stateCheck = true;
 						SharedData::GetInstance()->gameState = SharedData::GAME_BOSS;
 					}
+				}
+			}
+			if (m_goList[i]->type == GameObject::GO_TELEPORT)
+			{
+				Render2DMeshWScale(meshList[GEO_PORTAL], false, 50, 50, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, false);
+
+				if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
+				{
+					SharedData::GetInstance()->player->SetPosition(Vector3(182, 532, 0));
+				}
+			}
+			if (m_goList[i]->type == GameObject::GO_TELEPORT2)
+			{
+				Render2DMeshWScale(meshList[GEO_PORTAL], false, 50, 50, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, false);
+
+				if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
+				{
+					SharedData::GetInstance()->player->SetPosition(Vector3(182, 52, 0));
 				}
 			}
 		}
@@ -1163,23 +1206,24 @@ void SceneText::RenderMonster()
 {
 	if (battleScene.GetMonsterHitAnimation())
 	{
-		if (battleMonsterScale.x < 0.5 && battleMonsterScale.y < 0.5 && monsterScaleUp)
+		if (monsterScaleUp)
 		{
-			battleMonsterScale.x += 0.01;
-			battleMonsterScale.y += 0.01;
-			battleMonsterPos.x -= 4.0f;
-			battleMonsterPos.y -= 3.0f;
+			battleMonsterScale.x += 3;
+			battleMonsterScale.y += 3;
+			battleMonsterPos.x -= 2.f;
+			battleMonsterPos.y -= 2.f;
 
-			if (battleMonsterScale.x > 0.5 || battleMonsterScale.y > 0.5)
+			if (battleMonsterScale.x > 330 || battleMonsterScale.y > 330)
 				monsterScaleUp = false;
 		}
-		if (battleMonsterScale.x > 0.3  && !monsterScaleUp || battleMonsterScale.y > 0.3 && !monsterScaleUp)
+		else if (!monsterScaleUp)
 		{
-			battleMonsterScale.x -= 0.01;
-			battleMonsterScale.y -= 0.01;
-			battleMonsterPos.x += 4.0f;
-			battleMonsterPos.y += 3.0f;
-			if (battleMonsterScale.x < 0.3 || battleMonsterScale.y < 0.3)
+			battleMonsterScale.x -= 3;
+			battleMonsterScale.y -= 3;
+			battleMonsterPos.x += 2.f;
+			battleMonsterPos.y += 2.f;
+
+			if (battleMonsterScale.x < 300 || battleMonsterScale.y < 300)
 			{
 				battleScene.SetMonsterHitAnimation(false);
 				battleScene.SetFirstChoice(true);
@@ -1187,16 +1231,16 @@ void SceneText::RenderMonster()
 				battleScene.SetBattleSelection(BattleSystem::BS_ATTACK);
 				SharedData::GetInstance()->enemyTurn = false;
 				SharedData::GetInstance()->playerTurn = true;
-				battleMonsterScale.x = 0.3f;
-				battleMonsterScale.y = 0.3f;
-				battleMonsterPos.x = 300;
+				//battleMonsterScale.x = 300.f;
+				//battleMonsterScale.y = 300.f;
+				battleMonsterPos.x = 280;
 				battleMonsterPos.y = 240;
 				monsterScaleUp = true;
 			}
 		}
 	}
 
-	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
+	Render2DMeshWScale(meshList[GEO_MONSTERBANSHEE], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
 
 
 	
@@ -1760,6 +1804,11 @@ void SceneText::Exit()
 	{
 		if(meshList[i])
 			delete meshList[i];
+	}
+	for (int i = 0; i < m_goList.size(); ++i)
+	{
+			delete m_goList[i];
+			m_goList.erase(m_goList.begin() + i);
 	}
 	glDeleteProgram(m_programID);
 	glDeleteVertexArrays(1, &m_vertexArrayID);

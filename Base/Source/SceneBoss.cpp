@@ -10,6 +10,8 @@
 #include "SpriteAnimation.h"
 #include "Enemy.h"
 #include "Items.h"
+#include "SharedData.h"
+
 
 SceneBoss::SceneBoss()
 :
@@ -41,10 +43,7 @@ void SceneBoss::Init()
 	m_cMap->Init(Application::GetInstance().GetScreenHeight(), Application::GetInstance().GetScreenWidth(), 32);
 	m_cMap->LoadMap("Data//MapData_BOSS.csv");
 
-	/*m_cMap2 = new CMap();
-	m_cMap2->Init(Application::GetInstance().GetScreenHeight(), Application::GetInstance().GetScreenWidth(), 32);
-	m_cMap2->LoadMap("Data//MapData_WM2.csv");
-*/
+	
 	// Init for loading GameObjects
 	Items* thePotion = new Items(Vector3(32.f, 32.f, 1));
 	thePotion->type = GameObject::GO_ITEM;
@@ -56,7 +55,7 @@ void SceneBoss::Init()
 	redbar->gauge = Gauge::GREENBAR;
 	redbar->position.Set(150, 150, 1);
 
-	greenbar= new Gauge(Vector3(0.f, 32.f, 1));
+	greenbar = new Gauge(Vector3(0.f, 32.f, 1));
 	greenbar->gauge = Gauge::GREENBAR;
 	greenbar->type = GameObject::GO_GREENBAR;
 	greenbar->position.Set(400, 150, 1);
@@ -69,19 +68,19 @@ void SceneBoss::Init()
 	Enemy* theEnemy;
 		theEnemy = new Enemy(Monster::getMonster(Monster::BOSS), Vector3(32.f, 32.f, 1));
 		theEnemy->type = GameObject::GO_ENEMY;
-		theEnemy->position.Set(350, 800, 0);
 		theEnemy->scale.Set(100, 130, 1);
+		theEnemy->position.Set(500, 600, 1);
 		m_goList.push_back(theEnemy);
 
-	touch = new GameObject(Vector3(50.f, 50.f, 1));
-	touch->position.Set(0, 760, 1);
-	touch->type = GameObject::GO_NEXT;
-	m_goList.push_back(touch);
+	GameObject* boss = new GameObject(Vector3(50.f, 50.f, 1));
+	boss->position.Set(470, 1030, 1);
+	boss->type = GameObject::GO_BOSS;
+	m_goList.push_back(boss);
 
 	enemyMaxHealth = 100;
 	currHealth = 100;
 	enemyCatchPercentage = 0;
-	npc.ReadFromFile("NPC//Text.txt",m_goList);
+	//npc.ReadFromFile("NPC//Text.txt", m_goList);
 	vector<NPC*>npcvec = npc.GetVec();
 
 	for (int i = 0; i < npcvec.size(); i++)
@@ -111,13 +110,11 @@ void SceneBoss::Init()
 	//perspective.SetToOrtho(-80, 80, -60, 60, -1000, 1000);
 	projectionStack.LoadMatrix(perspective);
 
-	battleMonsterPos.Set(300, 240, 0);
-	battleMonsterScale.Set(0.3, 0.3, 1);
+	battleMonsterPos.Set(270, 240, 0);
+	battleMonsterScale.Set(300, 320, 1);
 	monsterScaleUp = true;
 
-
 	SharedData::GetInstance()->soundManager.Init();
-
 
 	//Battle HUD
 	maxHpScale = 17.4f;
@@ -134,12 +131,13 @@ void SceneBoss::Init()
 	for (int j = 0; j < 10; ++j)
 	{
 		Equipment* temp = new Equipment();
-		Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::TOTAL_ETYPE -1);
-		//Equipment::EQUIPMENT_TYPE randType = Equipment::LEG;
+		//Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::TOTAL_ETYPE -1);
+		Monster::MONSTER_TYPE randmonstertype = (Monster::MONSTER_TYPE)Math::RandIntMinMax(Monster::BANSHEE, Monster::GOLEM);
+		Equipment::EQUIPMENT_TYPE randType = Equipment::ARMOUR;
 		stringstream ss;
-		ss << Monster::getMonster(Monster::CEREBUS).getName() << " " << randType;
+		ss << Monster::getMonster(randmonstertype).getName() << " " << randType;
 		temp->SetName(ss.str());
-		temp->SetMonster(Monster::getMonster(Monster::CEREBUS));
+		temp->SetMonster(Monster::getMonster(randmonstertype));
 		temp->setType(randType);
 		temp->setDamage(Equipment::getDatabase()[randType][0]->getDamage() + Math::RandIntMinMax(-10, 10));
 		temp->setDefense(Equipment::getDatabase()[randType][0]->getDefense() + Math::RandIntMinMax(-10, 10));
@@ -344,12 +342,12 @@ void SceneBoss::PlayerUpdate(double dt)
 	{
 		SharedData::GetInstance()->soundManager.SoundPause(&SharedData::GetInstance()->soundFootstep);
 	}
-	
+
 	/*SpriteAnimation *arrow = dynamic_cast<SpriteAnimation*>(meshList[GEO_BATTLEARROW]);
 	if (arrow)
 	{
-		arrow->Update(dt);
-		arrow->m_anim->animActive = true;
+	arrow->Update(dt);
+	arrow->m_anim->animActive = true;
 	}*/
 
 	if (Application::IsKeyPressed('I') && !SharedData::GetInstance()->IkeyPressed && GS)
@@ -366,21 +364,21 @@ void SceneBoss::PlayerUpdate(double dt)
 
 void SceneBoss::GOupdate(double dt)
 {
-
-	SpriteAnimation *boss = dynamic_cast<SpriteAnimation*>(meshList[GEO_BOSS]);
-	if (boss)
-	{
-		boss->Update(dt * 0.4);
-		boss->m_anim->animActive = true;
-	}
-
 	SpriteAnimation *sa = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC]);
 	if (sa)
 	{
 		sa->Update(dt);
 		sa->m_anim->animActive = true;
 	}
-	
+
+	SpriteAnimation *lives = dynamic_cast<SpriteAnimation*>(meshList[GEO_LIVES]);
+	if (lives)
+	{
+		//lives->Update(dt);
+		lives->m_currentFrame = SharedData::GetInstance()->playerLives;
+		lives->m_anim->animActive = true;
+	}
+
 	SpriteAnimation *pic2 = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC2]);
 	if (pic2)
 	{
@@ -435,11 +433,11 @@ void SceneBoss::GOupdate(double dt)
 			}
 			if (temp->collideWhichNPC() == npcID)
 				temp->SetState(currState);
-			
+
 			if (temp->collisionDetected && Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 			{
 				npctalk.str("");
-				MS = IN_DIALOUGE;			
+				MS = IN_DIALOUGE;
 				SharedData::GetInstance()->ENTERkeyPressed = true;
 				temp->ScrollDialogue(dialogueNum);
 			}
@@ -509,17 +507,17 @@ void SceneBoss::TamagucciUpdate(double dt)
 	}
 	SpriteAnimation *salad = dynamic_cast<SpriteAnimation*>(meshList[GEO_SALAD]);
 
-		foodAnimOver = false;
-		if (salad && tamagucci.GetTouchedFood() && salad->m_anim->animActive)
-		{
-			salad->Update(dt);
-		}
-		else if (!salad->m_anim->animActive)
-		{
-			foodAnimOver = true;
-			salad->m_anim->animActive = true;
-		}
-		tamagucci.SetAnimationOver(foodAnimOver);
+	foodAnimOver = false;
+	if (salad && tamagucci.GetTouchedFood() && salad->m_anim->animActive)
+	{
+		salad->Update(dt);
+	}
+	else if (!salad->m_anim->animActive)
+	{
+		foodAnimOver = true;
+		salad->m_anim->animActive = true;
+	}
+	tamagucci.SetAnimationOver(foodAnimOver);
 }
 
 void SceneBoss::UpdateInventory(double dt)
@@ -575,7 +573,7 @@ void SceneBoss::renderInventoryItems()
 	{
 		if (SharedData::GetInstance()->inventory.getRightArm()->getType() == Equipment::SWORD)
 		{
-			Render2DMeshWScale(meshList[GEO_SWORD], false, 44.5, 44.5, 520,359.5, false);
+			Render2DMeshWScale(meshList[GEO_SWORD], false, 44.5, 44.5, 520, 359.5, false);
 		}
 		else if (SharedData::GetInstance()->inventory.getRightArm()->getType() == Equipment::SHIELD)
 		{
@@ -669,7 +667,7 @@ void SceneBoss::renderInventoryMenus()
 		if (SharedData::GetInstance()->inventory.getInputState() == Inventory::INVENTORY)
 			Render2DMesh(meshList[GEO_INVENTORYSEEKER], false, 1, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46);
 		if (SharedData::GetInstance()->inventory.getInputState() == Inventory::EQUIP_OPTIONS)
-		{ 
+		{
 			if (SharedData::GetInstance()->inventory.getSeeker().x < 5)
 			{
 				Render2DMeshWScale(meshList[GEO_INVENTORYSECONDBACKGROUND], false, 122, -44 - (float)(SharedData::GetInstance()->inventory.getOptions().size() * 18), 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 36, 290 + SharedData::GetInstance()->inventory.getSeeker().y * 46);
@@ -685,7 +683,7 @@ void SceneBoss::renderInventoryMenus()
 				ss << SharedData::GetInstance()->inventory.getOptions()[SharedData::GetInstance()->inventory.getSecondSeeker()];
 				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 46, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46 - (SharedData::GetInstance()->inventory.getSecondSeeker() * 20));
 			}
-			else if(SharedData::GetInstance()->inventory.getSeeker().x >= 5)
+			else if (SharedData::GetInstance()->inventory.getSeeker().x >= 5)
 			{
 				Render2DMeshWScale(meshList[GEO_INVENTORYSECONDBACKGROUND], false, 122, -44 - (float)(SharedData::GetInstance()->inventory.getOptions().size() * 18), 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 36 - 159, 290 + SharedData::GetInstance()->inventory.getSeeker().y * 46);
 				for (int i = 0; i < SharedData::GetInstance()->inventory.getOptions().size(); ++i)
@@ -718,11 +716,11 @@ void SceneBoss::renderInventoryMenus()
 		if (SharedData::GetInstance()->inventory.getSeeker().y == Items::ENCRYPTED_MEMORY)
 		{
 			ss << "Encrypted Memory: " << SharedData::GetInstance()->inventory.GetPotionCount();
-			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 43.5, 180 - 45+ 22);
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 43.5, 180 - 45 + 22);
 		}
 		break;
 	}
-//	cout << xpos << " " << ypos << endl;
+	//	cout << xpos << " " << ypos << endl;
 }
 
 void SceneBoss::RenderInventory()
@@ -784,9 +782,9 @@ void SceneBoss::MapUpdate(double dt)
 	PlayerUpdate(dt);
 	GOupdate(dt);
 	if (Application::IsKeyPressed('R'))
-		{
-			
-		}
+	{
+
+	}
 
 }
 void SceneBoss::NPCUpdate(double dt)
@@ -871,7 +869,11 @@ void SceneBoss::Update(double dt)
 			//if enemy not dead		
 			if (EnemyInBattle->GetHealth() < 0)
 			{
-				GS = WIN;
+				SceneBoss* mainScene = (SceneBoss*)Application::GetInstance().GetScene();
+
+				//Player win
+				battleScene.Reset();
+				mainScene->RemoveEnemy();
 				//destory enemy here
 			}
 			else if (renderedHp < 0.0f)
@@ -883,8 +885,10 @@ void SceneBoss::Update(double dt)
 					SharedData::GetInstance()->gameState = SharedData::GAME_S1;
 				}
 				else
+					//Player Lose should do auto load to previous save file
+					GS = LOSE;
+
 				//Player Lose should do auto load to previous save file
-				GS = LOSE;
 
 				SharedData::GetInstance()->playerTurn = true;
 				SharedData::GetInstance()->enemyTurn = false;
@@ -892,6 +896,7 @@ void SceneBoss::Update(double dt)
 				battleScene.SetSecondChoice(false);
 				battleScene.SetBattleSelection(BattleSystem::BS_ATTACK);
 			}
+
 		}
 
 		//Decrease RenderedMP on screen
@@ -1011,7 +1016,7 @@ void SceneBoss::Update(double dt)
 		break;
 	case TAMAGUCCI_SCREEN:
 		if (SharedData::GetInstance()->inventory.getRightArm() || SharedData::GetInstance()->inventory.getLeftArm() || SharedData::GetInstance()->inventory.getArmour() || SharedData::GetInstance()->inventory.getHead())
-		tamagucci.UpdateTamagucci(dt);
+			tamagucci.UpdateTamagucci(dt);
 		TamagucciUpdate(dt);
 		break;
 	}
@@ -1027,13 +1032,8 @@ static bool touched = true;
 void SceneBoss::RenderTestMap()
 {
 	RenderBackground(meshList[GEO_BACKGROUND]);
-	//RenderTileMap(meshList[GEO_TILESET3], m_cMap2);
 	RenderTileMap(meshList[GEO_TILESET3], m_cMap);
 	std::ostringstream ss;
-
-	RenderPlayer();
-	Render2DMeshWScale(meshList[GEO_ICONTAM], false, 1, 1, 700, 10, false);
-	Render2DMeshWScale(meshList[GEO_ICONINV], false, 1, 1, 630, 10, false);
 
 	for (int i = 0; i < m_goList.size(); i++)
 	{
@@ -1064,32 +1064,51 @@ void SceneBoss::RenderTestMap()
 					Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.25, 10, 20, false);
 				}
 				if (temp->GetID() == 1 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
-					Render2DMeshWScale(meshList[GEO_NPC1_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(),32);
+					Render2DMeshWScale(meshList[GEO_NPC1_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
 				if (temp->GetID() == 2 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
-					Render2DMeshWScale(meshList[GEO_NPC3_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(),32);
+					Render2DMeshWScale(meshList[GEO_NPC3_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
 				if (temp->GetID() == 3 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
-					Render2DMeshWScale(meshList[GEO_NPC2_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(),32);
-				}
+					Render2DMeshWScale(meshList[GEO_NPC2_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
 			}
-			if (m_goList[i]->type == GameObject::GO_ENEMY)
+		}
+		if (m_goList[i]->type == GameObject::GO_ENEMY)
+		{
+			Enemy* temp = (Enemy*)m_goList[i];
+			Render2DMeshWScale(meshList[GEO_BOSS], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetFlipStatus(), 32);
+		}
+		if (m_goList[i]->type == GameObject::GO_NEXT)
+		{
+			if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
 			{
 				Enemy* temp = (Enemy*)m_goList[i];
 				Render2DMeshWScale(meshList[GEO_BOSS], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetFlipStatus(),32);
-			}
-			if (m_goList[i]->type == GameObject::GO_NEXT)
-			{
-				if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
+				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
+				if (Application::IsKeyPressed(VK_RETURN))
 				{
-					Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
-						if (Application::IsKeyPressed(VK_RETURN))
-						{
-							SharedData::GetInstance()->stateCheck = true;
-							SharedData::GetInstance()->gameState = SharedData::GAME_S2;
-						}
+					SharedData::GetInstance()->stateCheck = true;
+					SharedData::GetInstance()->gameState = SharedData::GAME_S2;
 				}
 			}
 		}
+		if (m_goList[i]->type == GameObject::GO_BOSS)
+		{
+			if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
+			{
+				if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
+				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
+				if (Application::IsKeyPressed(VK_RETURN))
+				{
+					SharedData::GetInstance()->stateCheck = true;
+					SharedData::GetInstance()->gameState = SharedData::GAME_BOSS;
+				}
+			}
+		}
+	}
 	RenderTextOnScreen(meshList[GEO_TEXT], npctalk.str(), Color(1, 1, 0), 30, 60, 100);
+	RenderPlayer();
+	Render2DMeshWScale(meshList[GEO_ICONTAM], false, 1, 1, 700, 10, false);
+	Render2DMeshWScale(meshList[GEO_ICONINV], false, 1, 1, 630, 10, false);
+	Render2DMeshWScale(meshList[GEO_LIVES], false, 120, 50, 0, 550, false);
 
 	//On screen text
 	ss.str("");
@@ -1114,23 +1133,23 @@ void SceneBoss::RenderMonster()
 {
 	if (battleScene.GetMonsterHitAnimation())
 	{
-		if (battleMonsterScale.x < 0.5 && battleMonsterScale.y < 0.5 && monsterScaleUp)
+		if (monsterScaleUp)
 		{
-			battleMonsterScale.x += 0.01;
-			battleMonsterScale.y += 0.01;
-			battleMonsterPos.x -= 4.0f;
-			battleMonsterPos.y -= 3.0f;
+			battleMonsterScale.x += 3;
+			battleMonsterScale.y += 3;
+			battleMonsterPos.x -= 2.0f;
+			battleMonsterPos.y -= 2.0f;
 
-			if (battleMonsterScale.x > 0.5 || battleMonsterScale.y > 0.5)
+			if (battleMonsterScale.x > 320 || battleMonsterScale.y > 340)
 				monsterScaleUp = false;
 		}
-		if (battleMonsterScale.x > 0.3  && !monsterScaleUp || battleMonsterScale.y > 0.3 && !monsterScaleUp)
+		if (!monsterScaleUp)
 		{
-			battleMonsterScale.x -= 0.01;
-			battleMonsterScale.y -= 0.01;
-			battleMonsterPos.x += 4.0f;
-			battleMonsterPos.y += 3.0f;
-			if (battleMonsterScale.x < 0.3 || battleMonsterScale.y < 0.3)
+			battleMonsterScale.x -= 3;
+			battleMonsterScale.y -= 3;
+			battleMonsterPos.x += 2.0f;
+			battleMonsterPos.y += 2.0f;
+			if (battleMonsterScale.x < 300 || battleMonsterScale.y < 320)
 			{
 				battleScene.SetMonsterHitAnimation(false);
 				battleScene.SetFirstChoice(true);
@@ -1138,19 +1157,15 @@ void SceneBoss::RenderMonster()
 				battleScene.SetBattleSelection(BattleSystem::BS_ATTACK);
 				SharedData::GetInstance()->enemyTurn = false;
 				SharedData::GetInstance()->playerTurn = true;
-				battleMonsterScale.x = 0.3f;
-				battleMonsterScale.y = 0.3f;
-				battleMonsterPos.x = 300;
+				//battleMonsterScale.x = 0.3f;
+				//battleMonsterScale.y = 0.3f;
+				battleMonsterPos.x = 270;
 				battleMonsterPos.y = 240;
 				monsterScaleUp = true;
 			}
 		}
 	}
-
-	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
-
-
-	
+	Render2DMeshWScale(meshList[GEO_BOSS], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
 }
 
 void SceneBoss::renderFirstTamagotchiFirstMenu(float yoffset)
@@ -1176,7 +1191,7 @@ void SceneBoss::renderTamagotchiMenu()
 {
 	static float xpos = 0.f;
 	static float ypos = 0.f;
-	
+
 	if (Application::IsKeyPressed('I'))
 	{
 		ypos += 0.5f;
@@ -1233,7 +1248,7 @@ void SceneBoss::renderTamagotchiMenu()
 			case TAMAGUCCI::FC_SALAD:
 			case TAMAGUCCI::FC_HAMBURGER:
 			case TAMAGUCCI::FC_PORK:
-				
+
 				ss << "SALAD";
 				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 80, 59.5);
 				ss.str("");
@@ -1291,11 +1306,11 @@ void SceneBoss::renderTamagotchiMenu()
 								 renderFirstTamagotchiFirstMenu(0.f);
 								 if (tamagucci.GetSleep())
 								 {
-									RenderBackground(meshList[GEO_BLACK]);
-									Render2DMeshWScale(meshList[GEO_TAMSLEEP], false, 100, 100, tamagucci.GetTamTam()->position.x+60, tamagucci.GetTamTam()->position.y + 70, false);
+									 RenderBackground(meshList[GEO_BLACK]);
+									 Render2DMeshWScale(meshList[GEO_TAMSLEEP], false, 100, 100, tamagucci.GetTamTam()->position.x + 60, tamagucci.GetTamTam()->position.y + 70, false);
 								 }
 								 else
-								 arrowPos.Set(170, 60);
+									 arrowPos.Set(170, 60);
 								 Render2DMeshWScale(meshList[GEO_BATTLEARROW], false, 0.05, 0.03, arrowPos.x, arrowPos.y, false);
 								 renderTamagotchiUI();
 		}
@@ -1326,7 +1341,7 @@ void SceneBoss::renderTamagotchiMenu()
 				break;
 			}
 			Render2DMeshWScale(meshList[GEO_BATTLEARROW], false, 0.05, 0.03, arrowPos.x, arrowPos.y, false);
-				break;
+			break;
 		}
 		break;
 	}
@@ -1452,7 +1467,7 @@ void SceneBoss::RenderBattleDialogue()
 			ss.str("");
 			ss.precision(5);
 
-			switch (SharedData::GetInstance()->inventory.getArmour()->getType())
+			switch (SharedData::GetInstance()->inventory.getArmour()->getMonster().GetType())
 			{
 			case 0:
 			case 1:
@@ -1606,7 +1621,7 @@ void SceneBoss::RenderBattleHUD()
 		{
 			if (SharedData::GetInstance()->inventory.getArmour() != NULL)
 			{
-				switch (SharedData::GetInstance()->inventory.getArmour()->getType())
+				switch (SharedData::GetInstance()->inventory.getArmour()->getMonster().GetType())
 				{
 				case 0:
 					ss << "Banshee Scream";
@@ -1685,9 +1700,6 @@ void SceneBoss::Render()
 	case TAMAGUCCI_SCREEN:
 		RenderTamagucci();
 		break;
-	case WIN:
-		RenderBackground(meshList[GEO_WIN]);
-		break;
 	case LOSE:
 		RenderBackground(meshList[GEO_LOSE]);
 		break;
@@ -1697,9 +1709,9 @@ void SceneBoss::Render()
 void SceneBoss::Exit()
 {
 	// Cleanup VBO
-	for(int i = 0; i < NUM_GEOMETRY; ++i)
+	for (int i = 0; i < NUM_GEOMETRY; ++i)
 	{
-		if(meshList[i])
+		if (meshList[i])
 			delete meshList[i];
 	}
 	glDeleteProgram(m_programID);

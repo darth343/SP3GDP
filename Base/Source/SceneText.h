@@ -16,7 +16,6 @@
 
 #include "Tamagucci.h"
 
-#include "SharedData.h"
 
 class SceneText : public SceneBase
 {
@@ -114,6 +113,7 @@ private:
 	TAMAGUCCI* tamdrop;
 	Pathfinder testpathfinder;
 	GameObject* touch;
+
 	vector<GameObject *> m_goList;
 	int npcPic = 0; //Which npc picture to show on the dialogue
 	float enemyCatchPercentage;

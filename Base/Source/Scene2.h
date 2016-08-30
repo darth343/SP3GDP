@@ -1,5 +1,5 @@
-#ifndef SCENE_1_H
-#define SCENE_1_H
+#ifndef SCENE_2_H
+#define SCENE_2_H
 #include "SceneBase.h"
 
 #include "Camera3.h"
@@ -16,8 +16,9 @@
 
 #include "Tamagucci.h"
 
+#include "SharedData.h"
 
-class Scene1 : public SceneBase
+class Scene2 : public SceneBase
 {
 	enum GAMESTATE_TYPE
 	{
@@ -31,7 +32,6 @@ class Scene1 : public SceneBase
 
 		BATTLE,
 		CATCH,
-		LOSE,
 		GS_TOTAL,
 	};
 
@@ -43,8 +43,8 @@ class Scene1 : public SceneBase
 	};
 
 public:
-	Scene1();
-	~Scene1();
+	Scene2();
+	~Scene2();
 
 	virtual void Init();
 	virtual void Update(double dt);
@@ -104,7 +104,16 @@ public:
 	void renderInventoryItems();
 	void renderInventoryMenus();
 private:
-
+	NPC npc;
+	Gauge* greenbar;
+	Gauge* redbar;
+	Gauge* chargebar;
+	Enemy* EnemyInBattle;
+	TAMAGUCCI* tamtam;
+	TAMAGUCCI* tamdrop;
+	Pathfinder testpathfinder;
+	TAMAGUCCI tamagucci;
+	GameObject* touch;
 	vector<GameObject *> m_goList;
 	int npcPic = 0; //Which npc picture to show on the dialogue
 	float enemyCatchPercentage;
@@ -118,7 +127,8 @@ private:
 
 	CMap* m_cMap;	// Handle to the tilemaps
 	CMap* m_cMap2;	// Handle to the tilemaps
-	GAMESTATE_TYPE GS; // Change GameState in SceneText.cpp line 144 for testing purposes
+	CPlayerInfo* theHero; // Hero's information
+	GAMESTATE_TYPE GS; // Change GameState in Scene2.cpp line 144 for testing purposes
 	MAP_STATE MS;
 
 	// Battle system
@@ -126,14 +136,14 @@ private:
 	Vector3 battleMonsterPos;
 	Vector3 battleMonsterScale;
 	bool monsterScaleUp;
+	bool playerBattleDialogue;
 
 	//Battle System HP bar 
 	float maxHpScale;
 	Vector3 hpPos;
 	float renderedHp;
 	bool capturedMonster;
-	bool flashEffect;
-	float flashTimer;
+
 	float maxMpScale;
 	Vector3 mpPos;
 	float renderedMp;
@@ -143,16 +153,6 @@ private:
 
 	ostringstream npctalk;
 	bool captured;
-
-	NPC npc;
-	Gauge* greenbar;
-	Gauge* redbar;
-	Gauge* chargebar;
-	Enemy* EnemyInBattle;
-	TAMAGUCCI* tamtam;
-	TAMAGUCCI* tamdrop;
-	Pathfinder testpathfinder;
-	TAMAGUCCI tamagucci;
 };
 
 #endif

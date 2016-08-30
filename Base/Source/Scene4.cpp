@@ -1,4 +1,4 @@
-#include "Scene1.h"
+#include "Scene4.h"
 #include "GL\glew.h"
 
 #include "shader.hpp"
@@ -12,14 +12,14 @@
 #include "Items.h"
 #include "SharedData.h"
 
-Scene1::Scene1()
-:
-m_cMap(NULL)
-, EnemyInBattle(NULL)
+Scene4::Scene4()
+	:
+	m_cMap(NULL)
+	, EnemyInBattle(NULL)
 {
 }
 
-Scene1::~Scene1()
+Scene4::~Scene4()
 {
 	if (m_cMap)
 	{
@@ -28,7 +28,7 @@ Scene1::~Scene1()
 	}
 }
 
-void Scene1::Init()
+void Scene4::Init()
 {
 	SceneBase::Init();
 	Monster::InitDatabase();
@@ -40,11 +40,11 @@ void Scene1::Init()
 	// Initialise and load the tile map
 	m_cMap = new CMap();
 	m_cMap->Init(Application::GetInstance().GetScreenHeight(), Application::GetInstance().GetScreenWidth(), 32);
-	m_cMap->LoadMap("Data//ArunMapData.csv");
+	m_cMap->LoadMap("Data//MapData_HS.csv");
 
 	m_cMap2 = new CMap();
 	m_cMap2->Init(Application::GetInstance().GetScreenHeight(), Application::GetInstance().GetScreenWidth(), 32);
-	m_cMap2->LoadMap("Data//ArunMapData2.csv");
+	m_cMap2->LoadMap("Data//MapData_HS2.csv");
 
 	// Init for loading GameObjects
 	Items* thePotion = new Items(Vector3(32.f, 32.f, 1));
@@ -70,7 +70,7 @@ void Scene1::Init()
 	for (int i = 0; i < 4; ++i)
 	{
 		Enemy* theEnemy;
-		theEnemy = new Enemy(Monster::getMonster(Monster::GOLEM), Vector3(32.f, 32.f, 1));
+		theEnemy = new Enemy(Monster::getMonster(Monster::BANSHEE), Vector3(50.f, 50.f, 1));
 		theEnemy->type = GameObject::GO_ENEMY;
 		Vector3 RandPos;
 		while (RandPos.IsZero())
@@ -83,12 +83,23 @@ void Scene1::Init()
 		m_goList.push_back(theEnemy);
 	}
 
+
 	GameObject* boss = new GameObject(Vector3(50.f, 50.f, 1));
 	boss->position.Set(450, 1100, 1);
 	boss->type = GameObject::GO_BOSS;
 	m_goList.push_back(boss);
 
-	
+
+	/*teleporter1 = new GameObject(Vector3(20.f, 20.f, 1));
+	teleporter1->position.Set(182, 154, 1);
+	teleporter1->type = GameObject::GO_TELEPORT;
+	m_goList.push_back(teleporter1);
+
+	teleporter2 = new GameObject(Vector3(20.f, 20.f, 1));
+	teleporter2->position.Set(182, 510, 1);
+	teleporter2->type = GameObject::GO_TELEPORT2;
+	m_goList.push_back(teleporter2);*/
+
 	enemyMaxHealth = 100;
 	currHealth = 100;
 	enemyCatchPercentage = 0;
@@ -109,17 +120,18 @@ void Scene1::Init()
 	}
 
 	// Initialise the hero's position
-	SharedData::GetInstance()->player->SetPosition(Vector3(1300, 60, 0));
-	SharedData::GetInstance()->player->SetPlayerMesh(meshList[GEO_HEROLR]);
-
+	theHero = new CPlayerInfo();
+	theHero->Init();
+	theHero->SetPosition(Vector3(530, 64, 0));
+	theHero->SetPlayerMesh(meshList[GEO_HEROUP]);
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
 	Mtx44 perspective;
 	perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
 	//perspective.SetToOrtho(-80, 80, -60, 60, -1000, 1000);
 	projectionStack.LoadMatrix(perspective);
 
-	battleMonsterPos.Set(300, 240, 0);
-	battleMonsterScale.Set(0.3, 0.3, 1);
+	battleMonsterPos.Set(280, 240, 0);
+	battleMonsterScale.Set(300, 300, 1);
 	monsterScaleUp = true;
 
 	SharedData::GetInstance()->soundManager.Init();
@@ -164,57 +176,57 @@ void Scene1::Init()
 	}
 }
 
-bool Scene1::GetMonsterScaleUp()
+bool Scene4::GetMonsterScaleUp()
 {
 	return monsterScaleUp;
 }
 
-void Scene1::SetMonsterScaleUp(bool set)
+void Scene4::SetMonsterScaleUp(bool set)
 {
 	this->monsterScaleUp = set;
 }
 
-float Scene1::GetBattleMonsterScaleX()
+float Scene4::GetBattleMonsterScaleX()
 {
 	return battleMonsterScale.x;
 }
 
-void Scene1::SetBattleMonsterScaleX(float x)
+void Scene4::SetBattleMonsterScaleX(float x)
 {
 	this->battleMonsterScale.x = x;
 }
 
-float Scene1::GetBattleMonsterScaleY()
+float Scene4::GetBattleMonsterScaleY()
 {
 	return battleMonsterScale.y;
 }
 
-void Scene1::SetBattleMonsterScaleY(float y)
+void Scene4::SetBattleMonsterScaleY(float y)
 {
 	this->battleMonsterScale.y = y;
 }
 
-float Scene1::GetBattleMonsterPosX()
+float Scene4::GetBattleMonsterPosX()
 {
 	return battleMonsterPos.x;
 }
 
-float Scene1::GetBattleMonsterPosY()
+float Scene4::GetBattleMonsterPosY()
 {
 	return battleMonsterPos.y;
 }
 
-void Scene1::SetBattleMonsterPosX(float x)
+void Scene4::SetBattleMonsterPosX(float x)
 {
 	this->battleMonsterPos.x = x;
 }
 
-void Scene1::SetBattleMonsterPosY(float y)
+void Scene4::SetBattleMonsterPosY(float y)
 {
 	this->battleMonsterPos.y = y;
 }
 
-void Scene1::SetGS(string set)
+void Scene4::SetGS(string set)
 {
 	if (set == "START_SCREEN")
 		GS = START_SCREEN;
@@ -230,7 +242,7 @@ void Scene1::SetGS(string set)
 		GS = CATCH;
 }
 
-void Scene1::CatchUpdate(double dt)
+void Scene4::CatchUpdate(double dt)
 {
 	enemyCatchPercentage = (EnemyInBattle->GetMaxHealth() - EnemyInBattle->GetHealth()) / EnemyInBattle->GetMaxHealth() * 100;
 
@@ -274,7 +286,7 @@ void Scene1::CatchUpdate(double dt)
 	}
 }
 
-void Scene1::EnterBattleScene(Enemy* enemy)
+void Scene4::EnterBattleScene(Enemy* enemy)
 {
 	battleScene.SetBattleStart(true);
 	SharedData::GetInstance()->soundManager.StopAllSound();
@@ -283,13 +295,13 @@ void Scene1::EnterBattleScene(Enemy* enemy)
 	GS = BATTLE;
 }
 
-void Scene1::PlayerUpdate(double dt)
+void Scene4::PlayerUpdate(double dt)
 {
 	if (MS == PLAY)
 	{
 		if (Application::IsKeyPressed('W'))
 		{
-			SharedData::GetInstance()->player->SetPlayerMesh(meshList[GEO_HEROUP]);
+			theHero->SetPlayerMesh(meshList[GEO_HEROUP]);
 
 			SpriteAnimation *playerUP = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROUP]);
 			if (playerUP)
@@ -297,12 +309,12 @@ void Scene1::PlayerUpdate(double dt)
 				playerUP->Update(dt);
 				playerUP->m_anim->animActive = true;
 			}
-			SharedData::GetInstance()->player->MoveUpDown(false, m_cMap, dt);
+			this->theHero->MoveUpDown(false, m_cMap, dt);
 
 		}
 		if (Application::IsKeyPressed('S'))
 		{
-			SharedData::GetInstance()->player->SetPlayerMesh(meshList[GEO_HEROD]);
+			theHero->SetPlayerMesh(meshList[GEO_HEROD]);
 
 			SpriteAnimation *playerDOWN = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROD]);
 			if (playerDOWN)
@@ -310,24 +322,24 @@ void Scene1::PlayerUpdate(double dt)
 				playerDOWN->Update(dt);
 				playerDOWN->m_anim->animActive = true;
 			}
-			SharedData::GetInstance()->player->MoveUpDown(true, m_cMap, dt);
+			this->theHero->MoveUpDown(true, m_cMap, dt);
 		}
 		if (Application::IsKeyPressed('A'))
 		{
-			SharedData::GetInstance()->player->SetPlayerMesh(meshList[GEO_HEROLR]);
-			SharedData::GetInstance()->player->SetFlipStatus(false);
+			theHero->SetPlayerMesh(meshList[GEO_HEROLR]);
+			theHero->SetFlipStatus(false);
 			SpriteAnimation *playerLEFT = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROLR]);
 			if (playerLEFT)
 			{
 				playerLEFT->Update(dt);
 				playerLEFT->m_anim->animActive = true;
 			}
-			SharedData::GetInstance()->player->MoveLeftRight(true, m_cMap, dt);
+			this->theHero->MoveLeftRight(true, m_cMap, dt);
 		}
 		if (Application::IsKeyPressed('D'))
 		{
-			SharedData::GetInstance()->player->SetPlayerMesh(meshList[GEO_HEROLR]);
-			SharedData::GetInstance()->player->SetFlipStatus(true);
+			theHero->SetPlayerMesh(meshList[GEO_HEROLR]);
+			theHero->SetFlipStatus(true);
 			SpriteAnimation *playerRIGHT = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROLR]);
 			if (playerRIGHT)
 			{
@@ -335,11 +347,11 @@ void Scene1::PlayerUpdate(double dt)
 
 				playerRIGHT->m_anim->animActive = true;
 			}
-			SharedData::GetInstance()->player->MoveLeftRight(false, m_cMap, dt);
+			this->theHero->MoveLeftRight(false, m_cMap, dt);
 		}
 
 	}
-	SharedData::GetInstance()->player->HeroUpdate(m_cMap, dt, meshList);
+	theHero->HeroUpdate(m_cMap, dt, meshList);
 
 	if (Application::IsKeyPressed('W') || Application::IsKeyPressed('S') || Application::IsKeyPressed('A') || Application::IsKeyPressed('D'))
 	{
@@ -370,15 +382,25 @@ void Scene1::PlayerUpdate(double dt)
 	}
 }
 
-void Scene1::GOupdate(double dt)
+void Scene4::GOupdate(double dt)
 {
-	cout <<"Gamestate " <<  GS << endl;
-
 	SpriteAnimation *sa = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC]);
 	if (sa)
 	{
 		sa->Update(dt);
 		sa->m_anim->animActive = true;
+	}
+	SpriteAnimation *portal = dynamic_cast<SpriteAnimation*>(meshList[GEO_PORTAL]);
+	if (portal)
+	{
+		portal->Update(dt * 0.1);
+		portal->m_anim->animActive = true;
+	}
+	SpriteAnimation *banshee = dynamic_cast<SpriteAnimation*>(meshList[GEO_MONSTERBANSHEE]);
+	if (banshee)
+	{
+		banshee->Update(dt);
+		banshee->m_anim->animActive = true;
 	}
 	SpriteAnimation *lives = dynamic_cast<SpriteAnimation*>(meshList[GEO_LIVES]);
 	if (lives)
@@ -405,7 +427,7 @@ void Scene1::GOupdate(double dt)
 		if (m_goList[i]->type == GameObject::GO_ENEMY && MS == IN_DIALOUGE)
 			continue;
 
-		m_goList[i]->Update(dt, SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap);
+		m_goList[i]->Update(dt, theHero->GetPosition(), theHero->GetMapOffset(), m_cMap);
 
 		if (m_goList[i]->type == GameObject::GO_NPC)
 		{
@@ -491,7 +513,7 @@ void Scene1::GOupdate(double dt)
 	}
 }
 //For the mini game
-void Scene1::TamagucciUpdate(double dt)
+void Scene4::TamagucciUpdate(double dt)
 {
 	SpriteAnimation *tamhappy = dynamic_cast<SpriteAnimation*>(meshList[GEO_TAMHAPPY]);
 	if (tamhappy)
@@ -529,7 +551,7 @@ void Scene1::TamagucciUpdate(double dt)
 	tamagucci.SetAnimationOver(foodAnimOver);
 }
 
-void Scene1::UpdateInventory(double dt)
+void Scene4::UpdateInventory(double dt)
 {
 	if (Application::IsKeyPressed('I') && !SharedData::GetInstance()->IkeyPressed)
 	{
@@ -544,7 +566,7 @@ void Scene1::UpdateInventory(double dt)
 	SharedData::GetInstance()->inventory.Update(dt);
 }
 
-void Scene1::renderInventoryItems()
+void Scene4::renderInventoryItems()
 {
 	for (int i = 0; i < SharedData::GetInstance()->inventory.EQinventory.size(); ++i)
 	{
@@ -631,7 +653,7 @@ void Scene1::renderInventoryItems()
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 43.5, 180 - 45 + 22);
 }
 
-void Scene1::renderInventoryMenus()
+void Scene4::renderInventoryMenus()
 {
 	static float xpos = 0.f;
 	static float ypos = 0.f;
@@ -732,14 +754,14 @@ void Scene1::renderInventoryMenus()
 	//	cout << xpos << " " << ypos << endl;
 }
 
-void Scene1::RenderInventory()
+void Scene4::RenderInventory()
 {
 	RenderBackground(meshList[GEO_INVENTORYBACKGROUND]);
 	renderInventoryItems();
 	renderInventoryMenus();
 }
 
-void Scene1::RenderItemScreen()
+void Scene4::RenderItemScreen()
 {
 	//std::ostringstream ss;
 	//ss.str("");
@@ -754,7 +776,7 @@ void Scene1::RenderItemScreen()
 	//RenderTextOnScreen(meshList[GEO_TEXT], ss2.str(), Color(1, 0, 0), 60, 300, 390);
 }
 
-void Scene1::ItemScreenUpdate(double dt)
+void Scene4::ItemScreenUpdate(double dt)
 {
 	if (Application::IsKeyPressed('I') && !SharedData::GetInstance()->IkeyPressed)
 	{
@@ -769,7 +791,7 @@ void Scene1::ItemScreenUpdate(double dt)
 	SharedData::GetInstance()->inventory.Update(dt);
 }
 
-void Scene1::RenderEquipScreen()
+void Scene4::RenderEquipScreen()
 {
 	std::ostringstream ss;
 	ss.str("");
@@ -779,7 +801,7 @@ void Scene1::RenderEquipScreen()
 
 }
 
-void Scene1::MapUpdate(double dt)
+void Scene4::MapUpdate(double dt)
 {
 	if (MS == PLAY)
 	{
@@ -796,12 +818,12 @@ void Scene1::MapUpdate(double dt)
 	}
 
 }
-void Scene1::NPCUpdate(double dt)
+void Scene4::NPCUpdate(double dt)
 {
 	GOupdate(dt);
 }
 
-void Scene1::Update(double dt)
+void Scene4::Update(double dt)
 {
 	SceneBase::Update(dt);
 	static bool f6press = false;
@@ -871,14 +893,14 @@ void Scene1::Update(double dt)
 		}
 
 		//Decrease Rendered HP on screen
-		if (SharedData::GetInstance()->player->GetHP() < renderedHp)
+		if (theHero->GetHP() < renderedHp)
 		{
 			renderedHp -= dt * 100;
 
 			//if enemy not dead		
 			if (EnemyInBattle->GetHealth() < 0)
 			{
-				Scene1* mainScene = (Scene1*)Application::GetInstance().GetScene();
+				Scene4* mainScene = (Scene4*)Application::GetInstance().GetScene();
 
 				//Player win
 				battleScene.Reset();
@@ -909,11 +931,11 @@ void Scene1::Update(double dt)
 		}
 
 		//Decrease RenderedMP on screen
-		if (SharedData::GetInstance()->player->GetMP() < renderedMp)
+		if (theHero->GetMP() < renderedMp)
 		{
 			renderedMp -= dt * 100;
 		}
-		battleScene.UpdateBattleSystem(SharedData::GetInstance()->UPkeyPressed, SharedData::GetInstance()->DNkeyPressed, SharedData::GetInstance()->LEFTkeyPressed, SharedData::GetInstance()->RIGHTkeyPressed, SharedData::GetInstance()->ENTERkeyPressed, SharedData::GetInstance()->player, EnemyInBattle);
+		battleScene.UpdateBattleSystem(SharedData::GetInstance()->UPkeyPressed, SharedData::GetInstance()->DNkeyPressed, SharedData::GetInstance()->LEFTkeyPressed, SharedData::GetInstance()->RIGHTkeyPressed, SharedData::GetInstance()->ENTERkeyPressed, theHero, EnemyInBattle);
 		//SharedData::GetInstance()->soundManager.SoundPlay("Sound/battleStart.mp3", &SharedData::GetInstance()->battleStart, 0.3f, true);
 
 		if (SharedData::GetInstance()->BS_SlashRender)
@@ -1032,18 +1054,17 @@ void Scene1::Update(double dt)
 	fps = (float)(1.f / dt);
 }
 
-void Scene1::RenderPlayer()
+void Scene4::RenderPlayer()
 {
-	Render2DMesh(SharedData::GetInstance()->player->GetPlayerMesh(), false, 32.0f, SharedData::GetInstance()->player->GetPosition().x, SharedData::GetInstance()->player->GetPosition().y, SharedData::GetInstance()->player->GetFlipStatus());
+	Render2DMesh(theHero->GetPlayerMesh(), false, 32.0f, theHero->GetPosition().x, theHero->GetPosition().y, theHero->GetFlipStatus());
 }
 
 static bool touched = true;
-void Scene1::RenderTestMap()
+void Scene4::RenderTestMap()
 {
 	RenderBackground(meshList[GEO_BACKGROUND]);
-	RenderTileMap(meshList[GEO_TILESET1], m_cMap);
-	RenderTileMap(meshList[GEO_TILESET1], m_cMap2);
-
+	RenderTileMap(meshList[GEO_TILESET3], m_cMap2);
+	RenderTileMap(meshList[GEO_TILESET3], m_cMap);
 	std::ostringstream ss;
 
 	for (int i = 0; i < m_goList.size(); i++)
@@ -1054,9 +1075,9 @@ void Scene1::RenderTestMap()
 			{
 				Items* temp = (Items*)m_goList[i];
 				if (temp->itemType == Items::POTION)
-					Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, false);
+					Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false);
 				if (temp->itemType == Items::TRAP)
-					Render2DMeshWScale(meshList[GEO_TRAP], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, false);
+					Render2DMeshWScale(meshList[GEO_TRAP], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, false);
 			}
 			if (m_goList[i]->type == GameObject::GO_NPC)
 			{
@@ -1075,30 +1096,32 @@ void Scene1::RenderTestMap()
 					Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.25, 10, 20, false);
 				}
 				if (temp->GetID() == 1 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
-					Render2DMeshWScale(meshList[GEO_NPC1_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
+					Render2DMeshWScale(meshList[GEO_NPC1_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight(), 32);
 				if (temp->GetID() == 2 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
-					Render2DMeshWScale(meshList[GEO_NPC3_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
+					Render2DMeshWScale(meshList[GEO_NPC3_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight(), 32);
 				if (temp->GetID() == 3 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
-					Render2DMeshWScale(meshList[GEO_NPC2_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
+					Render2DMeshWScale(meshList[GEO_NPC2_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetMoveRight(), 32);
 			}
 		}
 		if (m_goList[i]->type == GameObject::GO_ENEMY)
 		{
 			Enemy* temp = (Enemy*)m_goList[i];
-			Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[0]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetFlipStatus(), 32);
+			Render2DMeshWScale(meshList[GEO_MONSTERBANSHEE], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - theHero->GetMapOffset().x, m_goList[i]->position.y - theHero->GetMapOffset().y, temp->GetFlipStatus(), 50);
 		}
-		if (m_goList[i]->type == GameObject::GO_NEXT)
+
+		if (m_goList[i]->type == GameObject::GO_BOSS)
 		{
-			if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
+			if (m_goList[i]->CheckCollision(theHero->GetPosition(), theHero->GetMapOffset(), m_cMap))
 			{
 				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
 				if (Application::IsKeyPressed(VK_RETURN))
 				{
 					SharedData::GetInstance()->stateCheck = true;
-					SharedData::GetInstance()->gameState = SharedData::GAME_S2;
+					SharedData::GetInstance()->gameState = SharedData::GAME_BOSS;
 				}
 			}
 		}
+
 	}
 	RenderTextOnScreen(meshList[GEO_TEXT], npctalk.str(), Color(1, 1, 0), 30, 60, 100);
 	RenderPlayer();
@@ -1113,7 +1136,7 @@ void Scene1::RenderTestMap()
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 0), 30, 0, 0);
 }
 
-void Scene1::RemoveEnemy()
+void Scene4::RemoveEnemy()
 {
 	for (int i = 0; i < m_goList.size(); ++i)
 	{
@@ -1125,27 +1148,28 @@ void Scene1::RemoveEnemy()
 	}
 }
 
-void Scene1::RenderMonster()
+void Scene4::RenderMonster()
 {
 	if (battleScene.GetMonsterHitAnimation())
 	{
-		if (battleMonsterScale.x < 0.5 && battleMonsterScale.y < 0.5 && monsterScaleUp)
+		if (monsterScaleUp)
 		{
-			battleMonsterScale.x += 0.01;
-			battleMonsterScale.y += 0.01;
-			battleMonsterPos.x -= 4.0f;
-			battleMonsterPos.y -= 3.0f;
+			battleMonsterScale.x += 3;
+			battleMonsterScale.y += 3;
+			battleMonsterPos.x -= 2.f;
+			battleMonsterPos.y -= 2.f;
 
-			if (battleMonsterScale.x > 0.5 || battleMonsterScale.y > 0.5)
+			if (battleMonsterScale.x > 330 || battleMonsterScale.y > 330)
 				monsterScaleUp = false;
 		}
-		if (battleMonsterScale.x > 0.3  && !monsterScaleUp || battleMonsterScale.y > 0.3 && !monsterScaleUp)
+		else if (!monsterScaleUp)
 		{
-			battleMonsterScale.x -= 0.01;
-			battleMonsterScale.y -= 0.01;
-			battleMonsterPos.x += 4.0f;
-			battleMonsterPos.y += 3.0f;
-			if (battleMonsterScale.x < 0.3 || battleMonsterScale.y < 0.3)
+			battleMonsterScale.x -= 3;
+			battleMonsterScale.y -= 3;
+			battleMonsterPos.x += 2.f;
+			battleMonsterPos.y += 2.f;
+
+			if (battleMonsterScale.x < 300 || battleMonsterScale.y < 300)
 			{
 				battleScene.SetMonsterHitAnimation(false);
 				battleScene.SetFirstChoice(true);
@@ -1153,22 +1177,22 @@ void Scene1::RenderMonster()
 				battleScene.SetBattleSelection(BattleSystem::BS_ATTACK);
 				SharedData::GetInstance()->enemyTurn = false;
 				SharedData::GetInstance()->playerTurn = true;
-				battleMonsterScale.x = 0.3f;
-				battleMonsterScale.y = 0.3f;
-				battleMonsterPos.x = 300;
+				//battleMonsterScale.x = 300.f;
+				//battleMonsterScale.y = 300.f;
+				battleMonsterPos.x = 280;
 				battleMonsterPos.y = 240;
 				monsterScaleUp = true;
 			}
 		}
 	}
 
-	Render2DMeshWScale(meshList[GEO_BATTLEMONSTER], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
+	Render2DMeshWScale(meshList[GEO_MONSTERBANSHEE], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
 
 
 
 }
 
-void Scene1::renderFirstTamagotchiFirstMenu(float yoffset)
+void Scene4::renderFirstTamagotchiFirstMenu(float yoffset)
 {
 	stringstream ss;
 	ss << "Foods";
@@ -1187,7 +1211,7 @@ void Scene1::renderFirstTamagotchiFirstMenu(float yoffset)
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 660, 60 + yoffset);
 }
 
-void Scene1::renderTamagotchiMenu()
+void Scene4::renderTamagotchiMenu()
 {
 	static float xpos = 0.f;
 	static float ypos = 0.f;
@@ -1303,18 +1327,18 @@ void Scene1::renderTamagotchiMenu()
 			break;
 		case TAMAGUCCI::SLEEP:
 		{
-								 renderFirstTamagotchiFirstMenu(0.f);
-								 if (tamagucci.GetSleep())
-								 {
-									 RenderBackground(meshList[GEO_BLACK]);
-									 Render2DMeshWScale(meshList[GEO_TAMSLEEP], false, 100, 100, tamagucci.GetTamTam()->position.x + 60, tamagucci.GetTamTam()->position.y + 70, false);
-								 }
-								 else
-									 arrowPos.Set(170, 60);
-								 Render2DMeshWScale(meshList[GEO_BATTLEARROW], false, 0.05, 0.03, arrowPos.x, arrowPos.y, false);
-								 renderTamagotchiUI();
+			renderFirstTamagotchiFirstMenu(0.f);
+			if (tamagucci.GetSleep())
+			{
+				RenderBackground(meshList[GEO_BLACK]);
+				Render2DMeshWScale(meshList[GEO_TAMSLEEP], false, 100, 100, tamagucci.GetTamTam()->position.x + 60, tamagucci.GetTamTam()->position.y + 70, false);
+			}
+			else
+				arrowPos.Set(170, 60);
+			Render2DMeshWScale(meshList[GEO_BATTLEARROW], false, 0.05, 0.03, arrowPos.x, arrowPos.y, false);
+			renderTamagotchiUI();
 		}
-			break;
+		break;
 		case TAMAGUCCI::ENTERTAINMENT:
 			//RENDER MENU AND OPTIONS
 			renderFirstTamagotchiFirstMenu(27.5f);
@@ -1347,7 +1371,7 @@ void Scene1::renderTamagotchiMenu()
 	}
 }
 
-void Scene1::renderTamagotchiGame()
+void Scene4::renderTamagotchiGame()
 {
 	ostringstream ss;
 	switch (tamagucci.getGameChoice())
@@ -1363,7 +1387,7 @@ void Scene1::renderTamagotchiGame()
 	}
 }
 
-void Scene1::renderTamagotchiUI()
+void Scene4::renderTamagotchiUI()
 {
 	Render2DMeshWScale(meshList[GEO_TAMAGUCCIUIBACKGROUND], false, 1, 1, 400, -291, false);
 	Render2DMeshWScale(meshList[GEO_TAMAGUCCIUIBACKGROUND], false, 1, 1, 400, 892, false);
@@ -1378,7 +1402,7 @@ void Scene1::renderTamagotchiUI()
 	Render2DMeshWScale(meshList[GEO_HAPPINESSFRAME], false, 60, 60, 717, 516.5, false);
 }
 
-void Scene1::RenderTamagucci()
+void Scene4::RenderTamagucci()
 {
 	//RenderBackground(meshList[GEO_TAMAGUCCIBACKGROUND]);
 	RenderBackground(meshList[GEO_TAMLIVINGROOM]);
@@ -1404,7 +1428,7 @@ void Scene1::RenderTamagucci()
 	}
 }
 
-void Scene1::RenderCatch()
+void Scene4::RenderCatch()
 {
 	RenderBackground(meshList[GEO_BATTLESCENE]);
 	RenderMonster();
@@ -1414,7 +1438,7 @@ void Scene1::RenderCatch()
 	Render2DMeshWScale(meshList[GEO_BAR], false, chargebar->scale.x, chargebar->scale.y, chargebar->position.x, chargebar->position.y, false);
 }
 
-void Scene1::RenderBattleDialogue()
+void Scene4::RenderBattleDialogue()
 {
 	//Player Attack Enemy Dialogue
 	if (SharedData::GetInstance()->playerBattleDialogue && battleScene.GetBattleSelection() == BattleSystem::BS_SLASH ||
@@ -1428,7 +1452,7 @@ void Scene1::RenderBattleDialogue()
 			std::ostringstream ss;
 			ss.str("");
 			ss.precision(5);
-			ss << "You Slash Enemy for " << SharedData::GetInstance()->player->GetDMG() << ", Enemy HP left " << EnemyInBattle->GetHealth();
+			ss << "You Slash Enemy for " << theHero->GetDMG() << ", Enemy HP left " << EnemyInBattle->GetHealth();
 
 			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 200, 100);
 
@@ -1447,7 +1471,7 @@ void Scene1::RenderBattleDialogue()
 			std::ostringstream ss;
 			ss.str("");
 			ss.precision(5);
-			ss << "You stab Enemy for " << SharedData::GetInstance()->player->GetDMG() << ", Enemy HP left " << EnemyInBattle->GetHealth();
+			ss << "You stab Enemy for " << theHero->GetDMG() << ", Enemy HP left " << EnemyInBattle->GetHealth();
 
 			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 200, 100);
 
@@ -1472,7 +1496,7 @@ void Scene1::RenderBattleDialogue()
 			case 0:
 			case 1:
 			case 2:
-				ss << "You damage Enemy for " << SharedData::GetInstance()->player->GetDMG() << ", Enemy HP left " << EnemyInBattle->GetHealth();
+				ss << "You damage Enemy for " << theHero->GetDMG() << ", Enemy HP left " << EnemyInBattle->GetHealth();
 				break;
 			case 3:
 				ss << "defend increased!!";
@@ -1539,7 +1563,7 @@ void Scene1::RenderBattleDialogue()
 
 }
 
-void Scene1::RenderBattleAnimation()
+void Scene4::RenderBattleAnimation()
 {
 	if (SharedData::GetInstance()->BS_SlashRender)
 		Render2DMeshWScale(meshList[GEO_SLASHANIMATION], false, 200.0f, 200.0f, battleMonsterPos.x, battleMonsterPos.y, false);
@@ -1555,7 +1579,7 @@ void Scene1::RenderBattleAnimation()
 		Render2DMeshWScale(meshList[GEO_SKINANIMATION], false, 200.0f, 200.0f, battleMonsterPos.x, battleMonsterPos.y, false);
 }
 
-void Scene1::RenderBattleHUD()
+void Scene4::RenderBattleHUD()
 {
 	//Rendering HP & MP bar and Background
 	Render2DMeshWScale(meshList[GEO_HPBARDESIGN], false, 0.5f, 0.1f, 0, 540, false);
@@ -1660,7 +1684,7 @@ void Scene1::RenderBattleHUD()
 
 }
 
-void Scene1::RenderBattleScene()
+void Scene4::RenderBattleScene()
 {
 	RenderBackground(meshList[GEO_BATTLESCENE]);
 	RenderMonster();
@@ -1669,7 +1693,7 @@ void Scene1::RenderBattleScene()
 	RenderBattleDialogue();
 }
 
-void Scene1::Render()
+void Scene4::Render()
 {
 	SceneBase::Render();
 	// Check for which GameState we are in
@@ -1706,7 +1730,7 @@ void Scene1::Render()
 	}
 }
 
-void Scene1::Exit()
+void Scene4::Exit()
 {
 	// Cleanup VBO
 	for (int i = 0; i < NUM_GEOMETRY; ++i)
@@ -1723,7 +1747,7 @@ void Scene1::Exit()
 	glDeleteVertexArrays(1, &m_vertexArrayID);
 }
 
-void Scene1::RenderTileMap(Mesh* mesh, CMap* map, Vector3 speed)
+void Scene4::RenderTileMap(Mesh* mesh, CMap* map, Vector3 speed)
 {
 	for (int y = 0; y < map->theNumOfTiles_Height; ++y)
 	{
@@ -1731,7 +1755,7 @@ void Scene1::RenderTileMap(Mesh* mesh, CMap* map, Vector3 speed)
 		{
 			//if (map->theMap[y][x].BlockID != 0)
 			{
-				RenderTile(mesh, map->theMap[y][x].BlockID, 32, x*map->GetTileSize() - (SharedData::GetInstance()->player->GetMapOffset().x * speed.x), y*map->GetTileSize() - (SharedData::GetInstance()->player->GetMapOffset().y* speed.y));
+				RenderTile(mesh, map->theMap[y][x].BlockID, 32, x*map->GetTileSize() - (theHero->GetMapOffset().x * speed.x), y*map->GetTileSize() - (theHero->GetMapOffset().y* speed.y));
 			}
 		}
 	}

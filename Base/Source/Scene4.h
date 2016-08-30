@@ -1,5 +1,5 @@
-#ifndef SCENE_1_H
-#define SCENE_1_H
+#ifndef SCENE_4_H
+#define SCENE_4_H
 #include "SceneBase.h"
 
 #include "Camera3.h"
@@ -17,7 +17,7 @@
 #include "Tamagucci.h"
 
 
-class Scene1 : public SceneBase
+class Scene4 : public SceneBase
 {
 	enum GAMESTATE_TYPE
 	{
@@ -43,8 +43,8 @@ class Scene1 : public SceneBase
 	};
 
 public:
-	Scene1();
-	~Scene1();
+	Scene4();
+	~Scene4();
 
 	virtual void Init();
 	virtual void Update(double dt);
@@ -104,6 +104,15 @@ public:
 	void renderInventoryItems();
 	void renderInventoryMenus();
 private:
+	NPC npc;
+	Gauge* greenbar;
+	Gauge* redbar;
+	Gauge* chargebar;
+	Enemy* EnemyInBattle;
+	TAMAGUCCI* tamtam;
+	TAMAGUCCI* tamdrop;
+	Pathfinder testpathfinder;
+	TAMAGUCCI tamagucci;
 
 	vector<GameObject *> m_goList;
 	int npcPic = 0; //Which npc picture to show on the dialogue
@@ -118,6 +127,7 @@ private:
 
 	CMap* m_cMap;	// Handle to the tilemaps
 	CMap* m_cMap2;	// Handle to the tilemaps
+	CPlayerInfo* theHero; // Hero's information
 	GAMESTATE_TYPE GS; // Change GameState in SceneText.cpp line 144 for testing purposes
 	MAP_STATE MS;
 
@@ -143,16 +153,6 @@ private:
 
 	ostringstream npctalk;
 	bool captured;
-
-	NPC npc;
-	Gauge* greenbar;
-	Gauge* redbar;
-	Gauge* chargebar;
-	Enemy* EnemyInBattle;
-	TAMAGUCCI* tamtam;
-	TAMAGUCCI* tamdrop;
-	Pathfinder testpathfinder;
-	TAMAGUCCI tamagucci;
 };
 
 #endif

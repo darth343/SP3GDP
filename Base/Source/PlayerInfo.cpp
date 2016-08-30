@@ -54,7 +54,7 @@ void CPlayerInfo::SetPlayerMesh(Mesh* mesh)
 
 void CPlayerInfo::TakeDMG(float dmg)
 {
-	this->SetHP(this->playerHP - dmg - playerDefense / 100);
+	this->SetHP(this->playerHP - dmg);
 }
 
 void CPlayerInfo::UseMP(float mp)

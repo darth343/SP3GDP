@@ -233,6 +233,8 @@ void SceneBase::Init()
 	meshList[GEO_TILESET2]->textureID = LoadTGA("Image//tileSet2.tga");
 	meshList[GEO_TILESET3] = MeshBuilder::GenerateTileSet("GEO_TILESET3", 30, 30);
 	meshList[GEO_TILESET3]->textureID = LoadTGA("Image//tileSet3.tga");
+	meshList[GEO_TILESET4] = MeshBuilder::GenerateTileSet("GEO_TILESET4", 8, 8);
+	meshList[GEO_TILESET4]->textureID = LoadTGA("Image//tileSet4.tga");
 	meshList[GEO_REDTILE] = MeshBuilder::Generate2DMesh("GEO_REDTILE", Color(1, 1, 1), 0.0f, 0.0f, 32.0f, 32.0f);
 	meshList[GEO_REDTILE]->textureID = LoadTGA("Image//redTile.tga");
 	meshList[GEO_POOP] = MeshBuilder::Generate2DMesh("GEO_REDTILE", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
@@ -276,14 +278,17 @@ void SceneBase::Init()
 	meshList[GEO_STABANIMATION]->textureID = LoadTGA("Image//stabAnimation.tga");
 	meshList[GEO_SLASHANIMATION] = MeshBuilder::GenerateSpriteAnimation("slash", 1, 10);
 	meshList[GEO_SLASHANIMATION]->textureID = LoadTGA("Image//slashAnimation2.tga");
-	meshList[GEO_BITEANIMATION] = MeshBuilder::GenerateSpriteAnimation("stab", 1, 8);
-	meshList[GEO_BITEANIMATION]->textureID = LoadTGA("Image//stabAnimation.tga");
-	meshList[GEO_SKINANIMATION] = MeshBuilder::GenerateSpriteAnimation("SCREAM", 1, 8);
-	meshList[GEO_SKINANIMATION]->textureID = LoadTGA("Image//screamAnimation.tga");
+	meshList[GEO_BITEANIMATION] = MeshBuilder::GenerateSpriteAnimation("bite", 1, 8);
+	meshList[GEO_BITEANIMATION]->textureID = LoadTGA("Image//biteAnimation.tga");
+	meshList[GEO_SKINANIMATION] = MeshBuilder::GenerateSpriteAnimation("skin", 1, 8);
+	meshList[GEO_SKINANIMATION]->textureID = LoadTGA("Image//skinAnimation.tga");
 	meshList[GEO_SCREAMANIMATION] = MeshBuilder::GenerateSpriteAnimation("scream", 1, 8);
 	meshList[GEO_SCREAMANIMATION]->textureID = LoadTGA("Image//screamAnimation.tga");
 	meshList[GEO_ROARANIMATION] = MeshBuilder::GenerateSpriteAnimation("roar", 1, 8);
 	meshList[GEO_ROARANIMATION]->textureID = LoadTGA("Image//roarAnimation2.tga");
+
+	meshList[GEO_INSTRUCTIONBG] = MeshBuilder::Generate2DMesh("GEO_INSTRUCTIONBG", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_INSTRUCTIONBG]->textureID = LoadTGA("Image//instructionbg.tga");
 
 	meshList[GEO_BOSS] = MeshBuilder::GenerateSpriteAnimation("slash", 1, 2);
 	meshList[GEO_BOSS]->textureID = LoadTGA("Image//boss.tga");
@@ -293,6 +298,25 @@ void SceneBase::Init()
 	meshList[GEO_LOSE]->textureID = LoadTGA("Image//SciFi_Lose.tga");
 	meshList[GEO_LIVES] = MeshBuilder::GenerateSpriteAnimation("slash", 1, 4);
 	meshList[GEO_LIVES]->textureID = LoadTGA("Image//Lives.tga");
+
+	meshList[GEO_PORTAL] = MeshBuilder::GenerateSpriteAnimation("slash", 3, 3);
+	meshList[GEO_PORTAL]->textureID = LoadTGA("Image//Portal.tga");
+	SpriteAnimation *portal = dynamic_cast<SpriteAnimation*>(meshList[GEO_PORTAL]);
+	if (portal)
+	{
+		portal->m_anim = new Animation();
+		portal->m_anim->Set(0, 8, 0, 1.f, true);
+	}
+
+	meshList[GEO_MONSTERBANSHEE] = MeshBuilder::GenerateSpriteAnimation("slash", 1, 3);
+	meshList[GEO_MONSTERBANSHEE]->textureID = LoadTGA("Image//Monster_BANSHEE.tga");
+	SpriteAnimation *banshee = dynamic_cast<SpriteAnimation*>(meshList[GEO_MONSTERBANSHEE]);
+	if (banshee)
+	{
+		banshee->m_anim = new Animation();
+		banshee->m_anim->Set(0, 2, 0, 1.f, true);
+	}
+
 
 	SpriteAnimation *boss = dynamic_cast<SpriteAnimation*>(meshList[GEO_BOSS]);
 	if (boss)
