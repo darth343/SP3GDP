@@ -343,95 +343,98 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 }
 void BattleSystem::GetBattleChoiceInput(static bool& UPkeyPressed, static bool& DNkeyPressed, static bool& LEFTkeyPressed, static bool& RIGHTkeyPressed, static bool& ENTERkeyPressed)
 {
-	if (Application::IsKeyPressed(VK_UP) && !UPkeyPressed)
+	if (!SharedData::GetInstance()->playerBattleDialogue)
 	{
-		SharedData::GetInstance()->soundManager.SoundPlay("Sound/click.mp3", &SharedData::GetInstance()->click, 1.0f, false);
+		if (Application::IsKeyPressed(VK_UP) && !UPkeyPressed)
+		{
+			SharedData::GetInstance()->soundManager.SoundPlay("Sound/click.mp3", &SharedData::GetInstance()->click, 1.0f, false);
 
-		UPkeyPressed = true;
-		battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 2);
+			UPkeyPressed = true;
+			battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 2);
 
-		if (firstChoice && battleSelection < BS_ATTACK)
-			battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 4);
-		else if (secondChoice && battleSelection < BS_SLASH)
-			battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 4);
+			if (firstChoice && battleSelection < BS_ATTACK)
+				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 4);
+			else if (secondChoice && battleSelection < BS_SLASH)
+				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 4);
 
-		cout << "BS = " << battleSelection << endl;
-	}
-	else if (!Application::IsKeyPressed(VK_UP) && UPkeyPressed)
-	{
+			cout << "BS = " << battleSelection << endl;
+		}
+		else if (!Application::IsKeyPressed(VK_UP) && UPkeyPressed)
+		{
 
-		SharedData::GetInstance()->soundManager.SoundPlay("Sound/click.mp3", &SharedData::GetInstance()->click, 1.0f, false);
+			SharedData::GetInstance()->soundManager.SoundPlay("Sound/click.mp3", &SharedData::GetInstance()->click, 1.0f, false);
 
-		UPkeyPressed = false;
-	}
+			UPkeyPressed = false;
+		}
 
-	if (Application::IsKeyPressed(VK_DOWN) && !DNkeyPressed)
-	{
+		if (Application::IsKeyPressed(VK_DOWN) && !DNkeyPressed)
+		{
 
-		SharedData::GetInstance()->soundManager.SoundPlay("Sound/click.mp3", &SharedData::GetInstance()->click, 1.0f, false);
+			SharedData::GetInstance()->soundManager.SoundPlay("Sound/click.mp3", &SharedData::GetInstance()->click, 1.0f, false);
 
-		DNkeyPressed = true;
-		battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 2);
+			DNkeyPressed = true;
+			battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 2);
 
-		if (firstChoice && battleSelection > BS_RUN)
-			battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 4);
-		else if (secondChoice && battleSelection > BS_BACK)
-			battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 4);
+			if (firstChoice && battleSelection > BS_RUN)
+				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 4);
+			else if (secondChoice && battleSelection > BS_BACK)
+				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 4);
 
-		cout << "BS = " << battleSelection << endl;
-	}
-	else if (!Application::IsKeyPressed(VK_DOWN) && DNkeyPressed)
-	{
+			cout << "BS = " << battleSelection << endl;
+		}
+		else if (!Application::IsKeyPressed(VK_DOWN) && DNkeyPressed)
+		{
 
-		SharedData::GetInstance()->soundManager.SoundPlay("Sound/click.mp3", &SharedData::GetInstance()->click, 1.0f, false);
+			SharedData::GetInstance()->soundManager.SoundPlay("Sound/click.mp3", &SharedData::GetInstance()->click, 1.0f, false);
 
-		DNkeyPressed = false;
-	}
+			DNkeyPressed = false;
+		}
 
-	if (Application::IsKeyPressed(VK_LEFT) && !LEFTkeyPressed)
-	{
+		if (Application::IsKeyPressed(VK_LEFT) && !LEFTkeyPressed)
+		{
 
-		SharedData::GetInstance()->soundManager.SoundPlay("Sound/click.mp3", &SharedData::GetInstance()->click, 1.0f, false);
+			SharedData::GetInstance()->soundManager.SoundPlay("Sound/click.mp3", &SharedData::GetInstance()->click, 1.0f, false);
 
-		LEFTkeyPressed = true;
-		battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 1);
+			LEFTkeyPressed = true;
+			battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 1);
 
-		if (firstChoice && battleSelection < BS_ATTACK)
-			battleSelection = BS_RUN;
-		else if (secondChoice && battleSelection < BS_SLASH)
-			battleSelection = BS_BACK;
+			if (firstChoice && battleSelection < BS_ATTACK)
+				battleSelection = BS_RUN;
+			else if (secondChoice && battleSelection < BS_SLASH)
+				battleSelection = BS_BACK;
 
-		cout << "BS = " << battleSelection << endl;
-	}
-	else if (!Application::IsKeyPressed(VK_LEFT) && LEFTkeyPressed)
-	{
+			cout << "BS = " << battleSelection << endl;
+		}
+		else if (!Application::IsKeyPressed(VK_LEFT) && LEFTkeyPressed)
+		{
 
-		SharedData::GetInstance()->soundManager.SoundPlay("Sound/click.mp3", &SharedData::GetInstance()->click, 1.0f, false);
+			SharedData::GetInstance()->soundManager.SoundPlay("Sound/click.mp3", &SharedData::GetInstance()->click, 1.0f, false);
 
-		LEFTkeyPressed = false;
-	}
+			LEFTkeyPressed = false;
+		}
 
-	if (Application::IsKeyPressed(VK_RIGHT) && !RIGHTkeyPressed)
-	{
+		if (Application::IsKeyPressed(VK_RIGHT) && !RIGHTkeyPressed)
+		{
 
-		SharedData::GetInstance()->soundManager.SoundPlay("Sound/click.mp3", &SharedData::GetInstance()->click, 1.0f, false);
+			SharedData::GetInstance()->soundManager.SoundPlay("Sound/click.mp3", &SharedData::GetInstance()->click, 1.0f, false);
 
-		RIGHTkeyPressed = true;
-		battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 1);
+			RIGHTkeyPressed = true;
+			battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 1);
 
-		if (firstChoice && battleSelection > BS_RUN)
-			battleSelection = BS_ATTACK;
-		else if (secondChoice && battleSelection > BS_BACK)
-			battleSelection = BS_SLASH;
+			if (firstChoice && battleSelection > BS_RUN)
+				battleSelection = BS_ATTACK;
+			else if (secondChoice && battleSelection > BS_BACK)
+				battleSelection = BS_SLASH;
 
-		cout << "BS = " << battleSelection << endl;
-	}
-	else if (!Application::IsKeyPressed(VK_RIGHT) && RIGHTkeyPressed)
-	{
+			cout << "BS = " << battleSelection << endl;
+		}
+		else if (!Application::IsKeyPressed(VK_RIGHT) && RIGHTkeyPressed)
+		{
 
-		SharedData::GetInstance()->soundManager.SoundPlay("Sound/click.mp3", &SharedData::GetInstance()->click, 1.0f, false);
+			SharedData::GetInstance()->soundManager.SoundPlay("Sound/click.mp3", &SharedData::GetInstance()->click, 1.0f, false);
 
-		RIGHTkeyPressed = false;
+			RIGHTkeyPressed = false;
+		}
 	}
 }
 void BattleSystem::UpdateBattleSystem(static bool& UPkeyPressed, static bool& DNkeyPressed, static bool& LEFTkeyPressed, static bool& RIGHTkeyPressed, static bool& ENTERkeyPressed, CPlayerInfo* theHero, Enemy* enemy)

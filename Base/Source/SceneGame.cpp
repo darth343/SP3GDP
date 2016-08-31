@@ -1219,12 +1219,16 @@ void SceneGame::RenderBattleDialogue()
 			switch (SharedData::GetInstance()->inventory.getArmour()->getMonster().GetType())
 			{
 			case 0:
+				ss << "You damage Enemy for " << SharedData::GetInstance()->player->GetDMG()* 2.35 << ", Enemy HP left " << EnemyInBattle->GetHealth();
+				break;
 			case 1:
+				ss << "You damage Enemy for " << SharedData::GetInstance()->player->GetDMG()* 2.85 << ", Enemy HP left " << EnemyInBattle->GetHealth();
+				break;
 			case 2:
-				ss << "You damage Enemy for " << SharedData::GetInstance()->player->GetDMG() << ", Enemy HP left " << EnemyInBattle->GetHealth();
+				ss << "You damage Enemy for " << SharedData::GetInstance()->player->GetDMG()* 3.15 << ", Enemy HP left " << EnemyInBattle->GetHealth();
 				break;
 			case 3:
-				ss << "defend increased!!";
+				ss << "Defence increased by 15";
 				break;
 			}
 
