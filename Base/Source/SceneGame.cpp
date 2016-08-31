@@ -190,7 +190,7 @@ void SceneGame::EnterBattleScene(Enemy* enemy)
 {
 	battleScene.SetBattleStart(true);
 	SharedData::GetInstance()->soundManager.StopAllSound();
-	SharedData::GetInstance()->soundManager.SoundPlay("Sound/battleStart.mp3", &SharedData::GetInstance()->battleStart, 0.3f, true)
+	SharedData::GetInstance()->soundManager.SoundPlay("Sound/battleStart.mp3", &SharedData::GetInstance()->battleStart, 0.3f, true);
 	renderedHp = 0;
 	renderedMp = 0;
 	cout << "Battle" << endl;
