@@ -206,9 +206,8 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 			if (SharedData::GetInstance()->inventory.GetTotalATK() <= 0)
 				theHero->SetDMG(10);
 			else
-				theHero->SetDMG(SharedData::GetInstance()->inventory.GetTotalATK()* 0.5);
+				theHero->SetDMG(SharedData::GetInstance()->inventory.GetTotalATK());
 
-			// * by 0.5 because it might 1 hit the enemy 
 			enemy->TakeDamage(theHero->GetDMG());
 
 			SharedData::GetInstance()->BS_SlashRender = true;
@@ -236,8 +235,8 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 			if (SharedData::GetInstance()->inventory.GetTotalATK() <= 0)
 				theHero->SetDMG(15);
 			else
-				theHero->SetDMG(SharedData::GetInstance()->inventory.GetTotalATK() * 0.5);
-			enemy->TakeDamage(theHero->GetDMG()* 0.5);
+				theHero->SetDMG(SharedData::GetInstance()->inventory.GetTotalATK());
+			enemy->TakeDamage(theHero->GetDMG());
 			SharedData::GetInstance()->BS_StabRender = true;
 
 			cout << "Player Stab Enemy for " << theHero->GetDMG() << " Enemy HP left " << enemy->GetHealth() << endl;
@@ -253,13 +252,9 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 			break;
 		case BS_SKILL:
 
-			//minus enemy hp, then enemy turn = true, player turn = false
-			theHero->UseMP(50);
-			battleSelection = BS_ATTACK;
-			cout << " Monster's skills " << battleSelection << endl;
 			SharedData::GetInstance()->soundManager.SoundPlay("Sound/skill.mp3", &SharedData::GetInstance()->skill, 1.0f, false);
 
-			if (theHero->GetMP() >= 30)
+			if (theHero->GetMP() >= 15)
 			{
 				if (SharedData::GetInstance()->inventory.getArmour() != NULL)
 				{
@@ -268,24 +263,33 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 					{
 						//Different equided skill damage and mana cost
 					case 0:
-						theHero->UseMP(0);
-						enemy->TakeDamage(theHero->GetDMG()* 0.35);
+						theHero->UseMP(15);
+						enemy->TakeDamage(theHero->GetDMG()* 2.35);
 						SharedData::GetInstance()->BS_ScreamRender = true;
 						break;
 					case 1:
-						theHero->UseMP(35);
-						enemy->TakeDamage(theHero->GetDMG()* 0.25);
-						SharedData::GetInstance()->BS_BiteRender = true;
+						if (theHero->GetMP() >= 35)
+						{
+							theHero->UseMP(35);
+							enemy->TakeDamage(theHero->GetDMG()* 2.85);
+							SharedData::GetInstance()->BS_BiteRender = true;
+						}
 						break;
 					case 2:
-						theHero->UseMP(0);
-						enemy->TakeDamage(theHero->GetDMG()* 0.15);
-						SharedData::GetInstance()->BS_RoarRender = true;
+						if (theHero->GetMP() >= 60)
+						{
+							theHero->UseMP(60);
+							enemy->TakeDamage(theHero->GetDMG()* 3.15);
+							SharedData::GetInstance()->BS_RoarRender = true;
+						}
 						break;
 					case 3:
-						theHero->UseMP(0);
-						theHero->SetDEF(theHero->GetDEF() + 15);
-						SharedData::GetInstance()->BS_SkinRender = true;
+						if (theHero->GetMP() >= 20)
+						{
+							theHero->UseMP(20);
+							theHero->SetDEF(theHero->GetDEF() + 15);
+							SharedData::GetInstance()->BS_SkinRender = true;
+						}
 						break;
 					}
 				}
