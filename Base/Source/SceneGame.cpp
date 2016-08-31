@@ -161,6 +161,19 @@ void SceneGame::CatchUpdate(double dt)
 		if (chargebar->CheckCollision(greenbar))
 		{
 			cout << "CAPTURED" << endl;
+
+			if (SharedData::GetInstance()->gameState == SharedData::GAME_S1)
+				SharedData::GetInstance()->capturedBanshee = true;
+
+			else if (SharedData::GetInstance()->gameState == SharedData::GAME_S2)
+				SharedData::GetInstance()->capturedGolem = true;
+
+			else if (SharedData::GetInstance()->gameState == SharedData::GAME_S3)
+				SharedData::GetInstance()->capturedCerebus = true;
+
+			else if (SharedData::GetInstance()->gameState == SharedData::GAME_S4)
+				SharedData::GetInstance()->capturedDragon = true;
+
 			capturedMonster = true;
 			currState = 3;
 			SharedData::GetInstance()->inventory.addToInventory(EnemyInBattle);
@@ -547,6 +560,7 @@ void SceneGame::Update(double dt)
 	case BATTLE:
 
 		//Updating of catch percentage
+		if (EnemyInBattle->GetHealth() > 0)
 		SharedData::GetInstance()->enemyCatchPercentage = (EnemyInBattle->GetMaxHealth() - EnemyInBattle->GetHealth()) / EnemyInBattle->GetMaxHealth() * 100 + SharedData::GetInstance()->trapPercentageIncrease;;
 
 		//Flashing effect of dialogue
@@ -580,13 +594,16 @@ void SceneGame::Update(double dt)
 			}
 
 			//if enemy not dead		
-			if (EnemyInBattle->GetHealth() < 0)
+			if (EnemyInBattle->GetHealth() <= 0)
 			{
 				SceneGame* mainScene = (SceneGame*)Application::GetInstance().GetScene();
 
 				//Player win
 				battleScene.Reset();
 				mainScene->RemoveEnemy();
+
+				if (SharedData::GetInstance()->gameState == SharedData::GAME_BOSS)
+					GS = WIN;
 				//destory enemy here
 			}
 			else if (renderedHp < 0.0f)
@@ -613,6 +630,7 @@ void SceneGame::Update(double dt)
 				battleScene.SetSecondChoice(false);
 				battleScene.SetBattleSelection(BattleSystem::BS_ATTACK);
 				SharedData::GetInstance()->soundManager.StopSingleSound("Sound/battleStart.mp3");
+				if (SharedData::GetInstance()->gameState != SharedData::GAME_BOSS)
 				RemoveEnemy();
 				//SceneGame* mainScene = (SceneGame*)Application::GetInstance().GetScene();
 
@@ -825,19 +843,22 @@ void SceneGame::RenderMonster()
 			}
 		}
 		if (SharedData::GetInstance()->gameState == SharedData::GAME_S1)
-{
+		{
 		Render2DMeshWScale(meshList[GEO_MONSTERBANSHEE], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
 
-}
+		}
 
 	if (SharedData::GetInstance()->gameState == SharedData::GAME_S4)
 	{
 		Render2DMeshWScale(meshList[GEO_DRAGONDOWN], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
 	}
-			if (SharedData::GetInstance()->gameState == SharedData::GAME_S2)
-
+	if (SharedData::GetInstance()->gameState == SharedData::GAME_S2)
 	{
-			Render2DMeshWScale(meshList[GEO_MONSTER], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
+		Render2DMeshWScale(meshList[GEO_MONSTER], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
+	}
+	if (SharedData::GetInstance()->gameState == SharedData::GAME_BOSS)
+	{
+		Render2DMeshWScale(meshList[GEO_BOSS], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
 	}
 
 	
@@ -1158,19 +1179,14 @@ void SceneGame::RenderBattleDialogue()
 			switch (SharedData::GetInstance()->inventory.getArmour()->getMonster().GetType())
 			{
 			case 0:
-				ss << "You damage Enemy for " << SharedData::GetInstance()->player->GetDMG()* 2.35 << ", Enemy HP left " << EnemyInBattle->GetHealth();
-				break;
 			case 1:
-				ss << "You damage Enemy for " << SharedData::GetInstance()->player->GetDMG()* 2.85 << ", Enemy HP left " << EnemyInBattle->GetHealth();
-				break;
 			case 2:
-				ss << "You damage Enemy for " << SharedData::GetInstance()->player->GetDMG()* 3.15 << ", Enemy HP left " << EnemyInBattle->GetHealth();
+				ss << "You damage Enemy for " << SharedData::GetInstance()->player->GetDMG() << ", Enemy HP left " << EnemyInBattle->GetHealth();
 				break;
 			case 3:
-				ss << "Defence increased by 15";
+				ss << "defend increased!!";
 				break;
 			}
-
 
 			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 200, 100);
 

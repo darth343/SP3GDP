@@ -197,6 +197,8 @@ void SceneBase::Init()
 	meshList[GEO_HAMGURGER]->textureID = LoadTGA("Image//Burger.tga");
 	meshList[GEO_POPUP] = MeshBuilder::Generate2DMesh("GEO_POPUP", Color(1, 1, 1), 0.0f, 0.0f, 500.f, 150.0f);
 	meshList[GEO_POPUP]->textureID = LoadTGA("Image//popUP.tga");
+	meshList[GEO_POPUPNO] = MeshBuilder::Generate2DMesh("GEO_POPUP", Color(1, 1, 1), 0.0f, 0.0f, 500.f, 150.0f);
+	meshList[GEO_POPUPNO]->textureID = LoadTGA("Image//popUPNO.tga");
 	meshList[GEO_PORK] = MeshBuilder::Generate2DMesh("GEO_FOOD", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
 	meshList[GEO_PORK]->textureID = LoadTGA("Image//Pork.tga");
 

@@ -174,12 +174,12 @@ void Scene1::Init()
 	renderedMp = 100;
 	renderedHp = 100;
 
-	for (int j = 0; j < 0; ++j)
+	for (int j = 0; j < 10; ++j)
 	{
 		Equipment* temp = new Equipment();
-		Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::TOTAL_ETYPE -1);
+		//Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::TOTAL_ETYPE -1);
 		Monster::MONSTER_TYPE randmonstertype = (Monster::MONSTER_TYPE)Math::RandIntMinMax(Monster::BANSHEE, Monster::GOLEM);
-		//Equipment::EQUIPMENT_TYPE randType = Equipment::LEG;
+		Equipment::EQUIPMENT_TYPE randType = Equipment::ARMOUR;
 		//Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::TOTAL_ETYPE -1);
 		stringstream ss;
 		ss << Monster::getMonster(randmonstertype).getName() << " " << randType;
@@ -295,6 +295,13 @@ void Scene1::PlayerUpdate(double dt)
 
 void Scene1::GOupdate(double dt)
 {
+	if (Application::IsKeyPressed('V'))
+	{
+		SharedData::GetInstance()->capturedBanshee = true;
+		SharedData::GetInstance()->capturedCerebus = true;
+		SharedData::GetInstance()->capturedDragon = true;
+		SharedData::GetInstance()->capturedGolem = true;
+	}
 	SpriteAnimation *sa = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC]);
 	if (sa)
 	{
@@ -568,11 +575,19 @@ void Scene1::RenderGO()
 		{
 			if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
 			{
-				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
-				if (Application::IsKeyPressed(VK_RETURN))
+				if (SharedData::GetInstance()->capturedBanshee && SharedData::GetInstance()->capturedCerebus && SharedData::GetInstance()->capturedGolem && SharedData::GetInstance()->capturedDragon)
+
 				{
-					SharedData::GetInstance()->player->SetPosition(Vector3(400, -400, 0));
-					SharedData::GetInstance()->gameState = SharedData::GAME_BOSS;
+					Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
+					if (Application::IsKeyPressed(VK_RETURN))
+					{
+						SharedData::GetInstance()->player->SetPosition(Vector3(400, -400, 0));
+						SharedData::GetInstance()->gameState = SharedData::GAME_BOSS;
+					}
+				}
+				else
+				{
+					Render2DMeshWScale(meshList[GEO_POPUPNO], false, 1, 1, 150, 200, false);
 				}
 			}
 		}
@@ -629,6 +644,16 @@ void Scene1::Render()
 		break;
 	case LOSE:
 		RenderBackground(meshList[GEO_LOSE]);
+		if (Application::IsKeyPressed(VK_SPACE) && !SharedData::GetInstance()->SpaceKeyPressed)
+		{
+			SharedData::GetInstance()->SpaceKeyPressed = true;
+		}
+		else if (!Application::IsKeyPressed(VK_SPACE) && SharedData::GetInstance()->SpaceKeyPressed)
+		{
+			SharedData::GetInstance()->SpaceKeyPressed = false;
+			SharedData::GetInstance()->gameState = SharedData::MENU;
+			GS = MAP;
+		}
 		break;
 	}
 }
