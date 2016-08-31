@@ -115,7 +115,7 @@ void Scene3::Init()
 	//projectionStack.LoadMatrix(perspective);
 
 	battleMonsterPos.Set(300, 240, 0);
-	battleMonsterScale.Set(0.3, 0.3, 1);
+	battleMonsterScale.Set(300, 300, 1);
 	monsterScaleUp = true;
 
 

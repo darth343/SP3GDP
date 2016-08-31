@@ -179,8 +179,8 @@ void Scene1::Init()
 		Equipment* temp = new Equipment();
 		//Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::TOTAL_ETYPE -1);
 		Monster::MONSTER_TYPE randmonstertype = (Monster::MONSTER_TYPE)Math::RandIntMinMax(Monster::BANSHEE, Monster::GOLEM);
-		Equipment::EQUIPMENT_TYPE randType = Equipment::ARMOUR;
-		//Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::TOTAL_ETYPE -1);
+		//Equipment::EQUIPMENT_TYPE randType = Equipment::ARMOUR;
+		Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::TOTAL_ETYPE -1);
 		stringstream ss;
 		ss << Monster::getMonster(randmonstertype).getName() << " " << randType;
 		temp->SetName(ss.str());
