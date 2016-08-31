@@ -616,7 +616,6 @@ void Scene1::Render()
 		RenderMap();
 		RenderInventory();
 		break;
-
 	case ITEM_SCREEN:
 		RenderBackground(meshList[GEO_INVENTORYBACKGROUND]);
 		RenderItemScreen();

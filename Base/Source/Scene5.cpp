@@ -554,6 +554,9 @@ void Scene5::Render()
 	case TAMAGUCCI_SCREEN:
 		RenderTamagucci();
 		break;
+	case WIN:
+		RenderBackground(meshList[GEO_WIN]);
+		break;
 	case LOSE:
 		RenderBackground(meshList[GEO_LOSE]);
 		break;
