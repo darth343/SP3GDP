@@ -104,6 +104,7 @@ void Scene1::Init()
 	{
 		Enemy* theEnemy;
 		theEnemy = new Enemy(Monster::getMonster(Monster::BANSHEE), Vector3(50.f, 50.f, 1));
+		SharedData::GetInstance()->monType.SetType(Monster::BANSHEE);
 		theEnemy->type = GameObject::GO_ENEMY;
 		Vector3 RandPos;
 		while (RandPos.IsZero())
@@ -536,6 +537,8 @@ void Scene1::RenderGO()
 
 		if (m_goList[i]->type == GameObject::GO_S4)
 		{
+			Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, false);
+
 			if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
 			{
 				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);

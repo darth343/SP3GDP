@@ -12,7 +12,6 @@
 #include "Scene5.h"
 #include "SceneMenu.h"
 #include "SceneStory.h"
-#include "SceneBoss.h"
 #include "SceneGame.h"
 
 class Application
@@ -55,9 +54,10 @@ private:
 	Scene2* AE_Scene;
 	Scene3* KY_Scene;
 	Scene4* HS_Scene;
+	Scene5* bossScene;
+
 	Scene* menuScene;
 	Scene* storyScene;
-	Scene5* bossScene;
 	// The handler for the scene
 	Scene *scene;
 

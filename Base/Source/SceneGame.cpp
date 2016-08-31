@@ -758,47 +758,54 @@ void SceneGame::RemoveEnemy()
 void SceneGame::RenderMonster()
 {
 	if (battleScene.GetMonsterHitAnimation())
-	{
-		if (monsterScaleUp)
 		{
-			battleMonsterScale.x += 3;
-			battleMonsterScale.y += 3;
-			battleMonsterPos.x -= 2.f;
-			battleMonsterPos.y -= 2.f;
-
-			if (battleMonsterScale.x > 330 || battleMonsterScale.y > 330)
-				monsterScaleUp = false;
-		}
-		else if (!monsterScaleUp)
-		{
-			battleMonsterScale.x -= 3;
-			battleMonsterScale.y -= 3;
-			battleMonsterPos.x += 2.f;
-			battleMonsterPos.y += 2.f;
-
-			if (battleMonsterScale.x < 300 || battleMonsterScale.y < 300)
+			if (monsterScaleUp)
 			{
-				battleScene.SetMonsterHitAnimation(false);
-				battleScene.SetFirstChoice(true);
-				battleScene.SetSecondChoice(false);
-				battleScene.SetBattleSelection(BattleSystem::BS_ATTACK);
-				SharedData::GetInstance()->enemyTurn = false;
-				SharedData::GetInstance()->playerTurn = true;
-				//battleMonsterScale.x = 300.f;
-				//battleMonsterScale.y = 300.f;
-				battleMonsterPos.x = 280;
-				battleMonsterPos.y = 240;
-				monsterScaleUp = true;
+				battleMonsterScale.x += 3;
+				battleMonsterScale.y += 3;
+				battleMonsterPos.x -= 2.f;
+				battleMonsterPos.y -= 2.f;
+
+				if (battleMonsterScale.x > 330 || battleMonsterScale.y > 330)
+					monsterScaleUp = false;
+			}
+			else if (!monsterScaleUp)
+			{
+				battleMonsterScale.x -= 3;
+				battleMonsterScale.y -= 3;
+				battleMonsterPos.x += 2.f;
+				battleMonsterPos.y += 2.f;
+
+				if (battleMonsterScale.x < 300 || battleMonsterScale.y < 300)
+				{
+					battleScene.SetMonsterHitAnimation(false);
+					battleScene.SetFirstChoice(true);
+					battleScene.SetSecondChoice(false);
+					battleScene.SetBattleSelection(BattleSystem::BS_ATTACK);
+					SharedData::GetInstance()->enemyTurn = false;
+					SharedData::GetInstance()->playerTurn = true;
+					//battleMonsterScale.x = 300.f;
+					//battleMonsterScale.y = 300.f;
+					battleMonsterPos.x = 280;
+					battleMonsterPos.y = 240;
+					monsterScaleUp = true;
+				}
 			}
 		}
-	}
+		if (SharedData::GetInstance()->gameState == SharedData::GAME_S1)
+{
+		Render2DMeshWScale(meshList[GEO_MONSTERBANSHEE], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
+
+}
+
 	if (SharedData::GetInstance()->gameState == SharedData::GAME_S4)
 	{
 		Render2DMeshWScale(meshList[GEO_DRAGONDOWN], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
 	}
-	else
+			if (SharedData::GetInstance()->gameState == SharedData::GAME_S2)
+
 	{
-		Render2DMeshWScale(meshList[GEO_MONSTERBANSHEE], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
+			Render2DMeshWScale(meshList[GEO_MONSTER], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
 	}
 
 	

@@ -23,6 +23,7 @@ public:
 	string getName();
 	float getDefense();
 	float getHealth();
+	void SetType(MONSTER_TYPE type);
 	float getMaxHealth();
 	float getDamage();
 	void takeDamage(int damage);

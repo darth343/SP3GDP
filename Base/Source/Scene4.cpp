@@ -73,7 +73,7 @@ void Scene4::Init()
 	for (int i = 0; i < 4; ++i)
 	{
 		Enemy* theEnemy;
-		theEnemy = new Enemy(Monster::getMonster(Monster::BANSHEE), Vector3(50.f, 50.f, 1));
+		theEnemy = new Enemy(Monster::getMonster(Monster::DRAGON), Vector3(50.f, 50.f, 1));
 		theEnemy->type = GameObject::GO_ENEMY;
 		Vector3 RandPos;
 		while (RandPos.IsZero())

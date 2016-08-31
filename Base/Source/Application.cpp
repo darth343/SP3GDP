@@ -199,6 +199,7 @@ void Application::Run()
 				break;
 			case SharedData::GAME_S4:
 				scene = HS_Scene;
+				break;
 			case SharedData::GAME_BOSS:
 				scene = bossScene;
 				break;
