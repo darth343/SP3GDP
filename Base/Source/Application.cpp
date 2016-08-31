@@ -165,6 +165,7 @@ void Application::Run()
 	AE_Scene = new Scene2();
 	KY_Scene = new Scene3();
 	HS_Scene = new Scene4();
+	bossScene = new Scene5();
 
 	menuScene->Init();
 	storyScene->Init();
@@ -172,6 +173,7 @@ void Application::Run()
 	AE_Scene->Init();
 	KY_Scene->Init();
 	HS_Scene->Init();
+	bossScene->Init();
 
 	//Main Loop
 	scene = menuScene;
@@ -198,7 +200,7 @@ void Application::Run()
 			case SharedData::GAME_S4:
 				scene = HS_Scene;
 			case SharedData::GAME_BOSS:
-				//scene = bossScene;
+				scene = bossScene;
 				break;
 		}
 		// Get the elapsed time

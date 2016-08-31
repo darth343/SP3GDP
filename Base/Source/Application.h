@@ -9,6 +9,7 @@
 #include "Scene2.h"
 #include "Scene3.h"
 #include "Scene4.h"
+#include "Scene5.h"
 #include "SceneMenu.h"
 #include "SceneStory.h"
 #include "SceneBoss.h"
@@ -56,7 +57,7 @@ private:
 	Scene4* HS_Scene;
 	Scene* menuScene;
 	Scene* storyScene;
-	SceneBoss* bossScene;
+	Scene5* bossScene;
 	// The handler for the scene
 	Scene *scene;
 

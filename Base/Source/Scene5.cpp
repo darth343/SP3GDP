@@ -1,4 +1,4 @@
-#include "Scene1.h"
+#include "Scene5.h"
 #include "GL\glew.h"
 
 #include "shader.hpp"
@@ -12,13 +12,13 @@
 #include "Items.h"
 #include "SharedData.h"
 
-Scene1::Scene1()
+Scene5::Scene5()
 : m_cMap(NULL)
 , m_cMap2(NULL)
 {
 }
 
-Scene1::~Scene1()
+Scene5::~Scene5()
 {
 	if (m_cMap)
 	{
@@ -32,7 +32,7 @@ Scene1::~Scene1()
 	}
 }
 
-void Scene1::Init()
+void Scene5::Init()
 {
 	SceneGame::Init();
 	//Init GameState Here for testing purposes
@@ -41,11 +41,7 @@ void Scene1::Init()
 	// Initialise and load the tile map
 	m_cMap = new CMap();
 	m_cMap->Init(Application::GetInstance().GetScreenHeight(), Application::GetInstance().GetScreenWidth(), 32);
-	m_cMap->LoadMap("Data//MapData_WM.csv");
-
-	m_cMap2 = new CMap();
-	m_cMap2->Init(Application::GetInstance().GetScreenHeight(), Application::GetInstance().GetScreenWidth(), 32);
-	m_cMap2->LoadMap("Data//MapData_WM2.csv");
+	m_cMap->LoadMap("Data//MapData_Boss.csv");
 
 	GameObject* touch = new GameObject(Vector3(50.f, 50.f, 1));
 	cout << touch << endl;
@@ -100,21 +96,12 @@ void Scene1::Init()
 	chargebar->type = GameObject::GO_MOVE;
 	chargebar->position.Set(500, 150, 1);
 
-	for (int i = 0; i < 4; ++i)
-	{
-		Enemy* theEnemy;
-		theEnemy = new Enemy(Monster::getMonster(Monster::BANSHEE), Vector3(50.f, 50.f, 1));
-		theEnemy->type = GameObject::GO_ENEMY;
-		Vector3 RandPos;
-		while (RandPos.IsZero())
-		{
-			RandPos.Set(Math::RandIntMinMax(0, m_cMap->GetNumOfTiles_Width() - 1), Math::RandIntMinMax(0, m_cMap->GetNumOfTiles_Height() - 1), 0);
-			if (m_cMap->theMap[RandPos.y][RandPos.x].shouldCollide)
-				RandPos.SetZero();
-		}
-		theEnemy->position.Set(RandPos.x * 32, 600, 1);
-		m_goList.push_back(theEnemy);
-	}
+	Enemy* theEnemy;
+	theEnemy = new Enemy(Monster::getMonster(Monster::BOSS), Vector3(50.f, 50.f, 1));
+	theEnemy->type = GameObject::GO_ENEMY;
+		
+	theEnemy->position.Set(400, 600, 1);
+	m_goList.push_back(theEnemy);
 
 
 	/*teleporter1 = new GameObject(Vector3(20.f, 20.f, 1));
@@ -205,7 +192,7 @@ void Scene1::Init()
 	renderedHp = 100;
 }
 
-void Scene1::PlayerUpdate(double dt)
+void Scene5::PlayerUpdate(double dt)
 {
 	if (MS == PLAY)
 	{
@@ -292,7 +279,7 @@ void Scene1::PlayerUpdate(double dt)
 	}
 }
 
-void Scene1::GOupdate(double dt)
+void Scene5::GOupdate(double dt)
 {
 	SpriteAnimation *sa = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC]);
 	if (sa)
@@ -306,11 +293,11 @@ void Scene1::GOupdate(double dt)
 		portal->Update(dt * 0.1);
 		portal->m_anim->animActive = true;
 	}
-	SpriteAnimation *banshee = dynamic_cast<SpriteAnimation*>(meshList[GEO_MONSTERBANSHEE]);
-	if (banshee)
+	SpriteAnimation *boss = dynamic_cast<SpriteAnimation*>(meshList[GEO_BOSS]);
+	if (boss)
 	{
-		banshee->Update(dt);
-		banshee->m_anim->animActive = true;
+		boss->Update(dt);
+		boss->m_anim->animActive = true;
 	}
 	SpriteAnimation *lives = dynamic_cast<SpriteAnimation*>(meshList[GEO_LIVES]);
 	if (lives)
@@ -424,7 +411,7 @@ void Scene1::GOupdate(double dt)
 	}
 }
 
-void Scene1::MapUpdate(double dt)
+void Scene5::MapUpdate(double dt)
 {
 	if (MS == PLAY)
 	{
@@ -442,7 +429,7 @@ void Scene1::MapUpdate(double dt)
 
 }
 
-void Scene1::Update(double dt)
+void Scene5::Update(double dt)
 {
 	SceneBase::Update(dt);
 	switch (GS)
@@ -459,10 +446,9 @@ void Scene1::Update(double dt)
 	fps = (float)(1.f / dt);
 }
 
-void Scene1::RenderMap()
+void Scene5::RenderMap()
 {
 	RenderBackground(meshList[GEO_BACKGROUND]);
-	RenderTileMap(meshList[GEO_TILESET3], m_cMap2);
 	RenderTileMap(meshList[GEO_TILESET3], m_cMap);
 	std::ostringstream ss;
 	RenderPlayer();
@@ -477,7 +463,7 @@ void Scene1::RenderMap()
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 0), 30, 0, 0);
 }
 
-void Scene1::RenderGO()
+void Scene5::RenderGO()
 {
 	for (int i = 0; i < m_goList.size(); i++)
 	{
@@ -519,7 +505,7 @@ void Scene1::RenderGO()
 		if (m_goList[i]->type == GameObject::GO_ENEMY)
 		{
 			Enemy* temp = (Enemy*)m_goList[i];
-			Render2DMeshWScale(meshList[GEO_MONSTERBANSHEE], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetFlipStatus(), 50);
+			Render2DMeshWScale(meshList[GEO_BOSS], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetFlipStatus(), 50);
 		}
 		if (m_goList[i]->type == GameObject::GO_NEXT)
 		{
@@ -555,7 +541,7 @@ void Scene1::RenderGO()
 				{
 					SharedData::GetInstance()->player->SetPosition(Vector3(400, 800, 0));
 
-					SharedData::GetInstance()->gameState = SharedData::GAME_S3;
+					SharedData::GetInstance()->gameState = SharedData::GAME_S1;
 				}
 			}
 		}
@@ -566,7 +552,7 @@ void Scene1::RenderGO()
 				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
 				if (Application::IsKeyPressed(VK_RETURN))
 				{
-					SharedData::GetInstance()->player->SetPosition(Vector3(400, -400, 0));
+					SharedData::GetInstance()->player->SetPosition(Vector3(400, 0, 0));
 					SharedData::GetInstance()->gameState = SharedData::GAME_BOSS;
 				}
 			}
@@ -592,7 +578,7 @@ void Scene1::RenderGO()
 	}
 }
 
-void Scene1::Render()
+void Scene5::Render()
 {
 	SceneGame::Render();
 	switch (GS)
@@ -629,7 +615,7 @@ void Scene1::Render()
 	}
 }
 
-void Scene1::Exit()
+void Scene5::Exit()
 {
 	// Cleanup VBO
 	for(int i = 0; i < NUM_GEOMETRY; ++i)
