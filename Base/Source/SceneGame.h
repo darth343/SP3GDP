@@ -30,6 +30,7 @@ protected:
 		BATTLE,
 		CATCH,
 		LOSE,
+		WIN,
 		GS_TOTAL,
 	};
 

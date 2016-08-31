@@ -271,6 +271,12 @@ void Scene3::GOupdate(double dt)
 		pic3->Update(dt);
 		pic3->m_anim->animActive = true;
 	}
+	SpriteAnimation *cerebus = dynamic_cast<SpriteAnimation*>(meshList[GEO_MONSTERCEREBUS]);
+	if (cerebus)
+	{
+		cerebus->Update(dt);
+		cerebus->m_anim->animActive = true;
+	}
 	SpriteAnimation *lives = dynamic_cast<SpriteAnimation*>(meshList[GEO_LIVES]);
 	if (lives)
 	{
@@ -502,7 +508,7 @@ void Scene3::RenderGO()
 		if (m_goList[i]->type == GameObject::GO_ENEMY)
 		{
 			Enemy* temp = (Enemy*)m_goList[i];
-			Render2DMeshWScale(meshList[GEO_MONSTERBANSHEE], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetFlipStatus(), 50);
+			Render2DMeshWScale(meshList[GEO_MONSTERCEREBUS], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetFlipStatus(), 50);
 		}
 		if (m_goList[i]->type == GameObject::GO_DOWN)
 		{
@@ -551,6 +557,19 @@ void Scene3::Render()
 
 	case TAMAGUCCI_SCREEN:
 		RenderTamagucci();
+		break;
+	case LOSE:
+		RenderBackground(meshList[GEO_LOSE]);
+		if (Application::IsKeyPressed(VK_SPACE) && !SharedData::GetInstance()->SpaceKeyPressed)
+		{
+			SharedData::GetInstance()->SpaceKeyPressed = true;
+		}
+		else if (!Application::IsKeyPressed(VK_SPACE) && SharedData::GetInstance()->SpaceKeyPressed)
+		{
+			SharedData::GetInstance()->SpaceKeyPressed = false;
+			SharedData::GetInstance()->gameState = SharedData::MENU;
+			GS = MAP;
+		}
 		break;
 	}
 }

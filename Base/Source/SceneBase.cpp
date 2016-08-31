@@ -197,6 +197,8 @@ void SceneBase::Init()
 	meshList[GEO_HAMGURGER]->textureID = LoadTGA("Image//Burger.tga");
 	meshList[GEO_POPUP] = MeshBuilder::Generate2DMesh("GEO_POPUP", Color(1, 1, 1), 0.0f, 0.0f, 500.f, 150.0f);
 	meshList[GEO_POPUP]->textureID = LoadTGA("Image//popUP.tga");
+	meshList[GEO_POPUPNO] = MeshBuilder::Generate2DMesh("GEO_POPUP", Color(1, 1, 1), 0.0f, 0.0f, 500.f, 150.0f);
+	meshList[GEO_POPUPNO]->textureID = LoadTGA("Image//popUPNO.tga");
 	meshList[GEO_PORK] = MeshBuilder::Generate2DMesh("GEO_FOOD", Color(1, 1, 1), 0.0f, 0.0f, 1.f, 1.0f);
 	meshList[GEO_PORK]->textureID = LoadTGA("Image//Pork.tga");
 
@@ -327,6 +329,15 @@ void SceneBase::Init()
 	{
 		banshee->m_anim = new Animation();
 		banshee->m_anim->Set(0, 2, 0, 1.f, true);
+	}
+
+	meshList[GEO_MONSTERCEREBUS] = MeshBuilder::GenerateSpriteAnimation("slash", 1, 3);
+	meshList[GEO_MONSTERCEREBUS]->textureID = LoadTGA("Image//Monster_CERBERUS.tga");
+	SpriteAnimation *cerebus = dynamic_cast<SpriteAnimation*>(meshList[GEO_MONSTERCEREBUS]);
+	if (cerebus)
+	{
+		cerebus->m_anim = new Animation();
+		cerebus->m_anim->Set(0, 2, 0, 1.f, true);
 	}
 
 	meshList[GEO_MONSTER] = MeshBuilder::GenerateSpriteAnimation("slash", 1, 4);
