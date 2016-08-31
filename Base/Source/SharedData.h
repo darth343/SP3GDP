@@ -70,6 +70,9 @@ public:
 	int playerLives;
 	CPlayerInfo* player;
 
+	float trapPercentageIncrease;
+	float enemyCatchPercentage;
+
 private:
 	SharedData()
 	{
@@ -108,6 +111,8 @@ private:
 		player->SetPosition(Vector3(530, 64, 0));
 		playerBattleDialogue = false;
 		playerLives = 3;
+		trapPercentageIncrease = 0.0f;
+		enemyCatchPercentage = 0.0f;
 	}
 	~SharedData()
 	{

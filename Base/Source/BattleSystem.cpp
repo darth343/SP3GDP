@@ -7,7 +7,8 @@ firstChoice(true),
 secondChoice(false),
 arrowPos(120, 90, 0),
 battleSelection(BS_ATTACK),
-monsterHitAnimation(false)
+monsterHitAnimation(false), 
+openItemBag(false)
 {
 }
 
@@ -46,6 +47,16 @@ void BattleSystem::SetEscapeChance(float percentage)
 void BattleSystem::SetBattleSelection(BATTLE_SELECTION selection)
 {
 	this->battleSelection = selection;
+}
+
+void BattleSystem::SetOpenItemBag(bool set)
+{
+	this->openItemBag = set;
+}
+
+bool BattleSystem::GetOpenItemBag()
+{
+	return openItemBag;
 }
 
 bool BattleSystem::GetBattleStart()
@@ -138,6 +149,7 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 			//Battle selection set to Item's
 			firstChoice = false;
 			secondChoice = true;
+			SetOpenItemBag(true);
 			cout << "Item Bag" << battleSelection << endl;
 			break;
 
@@ -146,6 +158,7 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 			mainScene->SetGS("CATCH");
 			battleStart = false;
 			break;
+
 
 		case BS_RUN:
 			cout << "RUN AWAY" << battleSelection << endl;
@@ -292,14 +305,25 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 			{
 				//Display no mana
 			}
+			break;
 
-
+		case BS_POTION:
+			SharedData::GetInstance()->inventory.removeFromInventory(Items::POTION);
+			theHero->SetHP(theHero->GetHP() + 20);
+			break;
+		case BS_TRAP:
+			SharedData::GetInstance()->inventory.removeFromInventory(Items::TRAP);
+			SharedData::GetInstance()->trapPercentageIncrease = 20.0f;
+			SharedData::GetInstance()->enemyCatchPercentage += SharedData::GetInstance()->trapPercentageIncrease;
+			if (SharedData::GetInstance()->enemyCatchPercentage > 100.0f)
+				SharedData::GetInstance()->enemyCatchPercentage = 100.0f;
 			break;
 		case BS_BACK:
 			cout << " Back " << battleSelection << endl;
 
 			firstChoice = true;
 			secondChoice = false;
+			SetOpenItemBag(false);
 			battleSelection = BS_ATTACK;
 			//Render back 1st page choices (Attack, Item bag, Capture, Run)
 			break;
@@ -307,7 +331,6 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 		}
 		if (battleSelection == BS_ATTACK)
 		{
-
 			secondChoice = false;
 			firstChoice = true;
 		}
@@ -318,7 +341,6 @@ void BattleSystem::GetBattleChoiceInput(static bool& UPkeyPressed, static bool& 
 {
 	if (Application::IsKeyPressed(VK_UP) && !UPkeyPressed)
 	{
-
 		SharedData::GetInstance()->soundManager.SoundPlay("Sound/click.mp3", &SharedData::GetInstance()->click, 1.0f, false);
 
 		UPkeyPressed = true;

@@ -48,7 +48,10 @@ void Monster::takeDamage(int damage)
 {
 	health -= damage;
 }
-
+void Monster::SetType(MONSTER_TYPE type)
+{
+	this->type = type;
+}
 Monster Monster::getMonster(MONSTER_TYPE type)
 {
 	return *database[type];

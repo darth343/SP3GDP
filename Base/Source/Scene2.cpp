@@ -72,7 +72,8 @@ void Scene2::Init()
 	for (int i = 0; i < 4; ++i)
 	{
 		Enemy* theEnemy;
-		theEnemy = new Enemy(Monster::getMonster(Monster::GOLEM), Vector3(32.f, 32.f, 1));
+		theEnemy = new Enemy(Monster::getMonster(Monster::GOLEM), Vector3(50.f, 50.f, 1));
+		SharedData::GetInstance()->monType.SetType(Monster::GOLEM);
 		theEnemy->type = GameObject::GO_ENEMY;
 		Vector3 RandPos;
 		while (RandPos.IsZero())
@@ -117,8 +118,8 @@ void Scene2::Init()
 	////perspective.SetToOrtho(-80, 80, -60, 60, -1000, 1000);
 	//projectionStack.LoadMatrix(perspective);
 
-	battleMonsterPos.Set(300, 240, 0);
-	battleMonsterScale.Set(0.3, 0.3, 1);
+	battleMonsterPos.Set(280, 240, 0);
+	battleMonsterScale.Set(300, 300, 1);
 	monsterScaleUp = true;
 
 	SharedData::GetInstance()->soundManager.Init();
@@ -258,6 +259,14 @@ void Scene2::GOupdate(double dt)
 		sa->Update(dt);
 		sa->m_anim->animActive = true;
 	}
+
+	SpriteAnimation *golem = dynamic_cast<SpriteAnimation*>(meshList[GEO_MONSTER]);
+	if (golem)
+	{
+		golem->Update(dt);
+		golem->m_anim->animActive = true;
+	}
+
 	SpriteAnimation *lives = dynamic_cast<SpriteAnimation*>(meshList[GEO_LIVES]);
 	if (lives)
 	{
@@ -501,7 +510,7 @@ void Scene2::RenderGO()
 		if (m_goList[i]->type == GameObject::GO_ENEMY)
 		{
 			Enemy* temp = (Enemy*)m_goList[i];
-			Render2DMeshWScale(meshList[GEO_MONSTERBANSHEE], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetFlipStatus(), 50);
+			Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetFlipStatus(), 50);
 		}
 		if (m_goList[i]->type == GameObject::GO_NEXT)
 		{

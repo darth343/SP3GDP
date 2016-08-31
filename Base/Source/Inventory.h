@@ -41,6 +41,7 @@ public:
 	void removeFromInventory(Equipment* equipment);
 	void printInventory();
 	void usePotion();
+	void useTrap();
 	void UpdateSeeker();
 	void UpdateInput();
 	void Update(double dt);
@@ -51,6 +52,7 @@ public:
 	void EquipItem(string itemType);
 	void PowerUp(Equipment* equipment);
 	int GetPotionCount();
+	int GetTrapCount();
 	int GetMemoryCount();
 	int GetTotalATK();
 	int GetTotalDEF();
