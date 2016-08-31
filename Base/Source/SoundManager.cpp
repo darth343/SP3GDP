@@ -4,6 +4,10 @@
 #include "SoundManager.h"
 #include <stddef.h>
 #include <iostream>
+
+using std::cout;
+using std::endl;
+
 SoundManager::SoundManager()
 	: soundEngine(NULL)
 {
@@ -36,6 +40,7 @@ void SoundManager::SoundPlay(const char*  fileName, ISound ** soundType, float v
 		(*soundType) = NULL;
 	if ((*soundType))
 		(*soundType)->setVolume(volume);
+	cout << "SoundPLaying" << endl;
 
 }
 
@@ -54,6 +59,7 @@ void SoundManager::StopAllSound()
 void SoundManager::StopSingleSound(const char* fileName)
 {
 	soundEngine->removeSoundSource(fileName);
+	cout << "StopOne" << endl;
 }
 
 #endif

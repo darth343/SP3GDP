@@ -553,7 +553,7 @@ void Scene1::RenderGO()
 				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
 				if (Application::IsKeyPressed(VK_RETURN))
 				{
-					SharedData::GetInstance()->player->SetPosition(Vector3(400, 800, 0));
+					SharedData::GetInstance()->player->SetPosition(Vector3(590, 3000, 0));
 
 					SharedData::GetInstance()->gameState = SharedData::GAME_S3;
 				}

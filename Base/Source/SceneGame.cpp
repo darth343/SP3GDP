@@ -191,6 +191,7 @@ void SceneGame::EnterBattleScene(Enemy* enemy)
 	battleScene.SetBattleStart(true);
 	SharedData::GetInstance()->soundManager.StopAllSound();
 	SharedData::GetInstance()->soundManager.SoundPlay("Sound/battleStart.mp3", &SharedData::GetInstance()->battleStart, 0.3f, true);
+	cout << "Battle" << endl;
 	EnemyInBattle = enemy;
 	GS = BATTLE;
 }
@@ -604,6 +605,7 @@ void SceneGame::Update(double dt)
 				battleScene.SetFirstChoice(true);
 				battleScene.SetSecondChoice(false);
 				battleScene.SetBattleSelection(BattleSystem::BS_ATTACK);
+				SharedData::GetInstance()->soundManager.StopSingleSound("Sound/battleStart.mp3");
 				RemoveEnemy();
 				//SceneGame* mainScene = (SceneGame*)Application::GetInstance().GetScene();
 

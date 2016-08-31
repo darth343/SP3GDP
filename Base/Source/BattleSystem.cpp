@@ -95,6 +95,7 @@ void BattleSystem::EndEnemyTurn()
 
 void BattleSystem::Reset()
 {
+	SharedData::GetInstance()->soundManager.StopSingleSound("Sound/battleStart.mp3");
 	battleStart = false;
 	SharedData::GetInstance()->enemyTurn = false;
 	SharedData::GetInstance()->playerTurn = true;
@@ -169,7 +170,7 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 
 				escapePercentage = 25.0f;
 				cout << "WHY YOU NO ESCAPE!!!!" << endl;
-
+				
 				// new
 				SharedData::GetInstance()->playerBattleDialogue = true;
 			}
