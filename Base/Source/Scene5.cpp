@@ -423,6 +423,7 @@ void Scene5::RenderMap()
 	RenderPlayer();
 	Render2DMeshWScale(meshList[GEO_ICONTAM], false, 1, 1, 700, 10, false);
 	Render2DMeshWScale(meshList[GEO_ICONINV], false, 1, 1, 630, 10, false);
+	Render2DMeshWScale(meshList[GEO_ICONQUEST], false, 1, 1, 560, 10, false);
 	Render2DMeshWScale(meshList[GEO_LIVES], false, 120, 50, 0, 550, false);
 
 	//On screen text
@@ -487,6 +488,23 @@ void Scene5::RenderGO()
 				}
 			}
 		}
+	}
+	if (renderQuest)
+	{
+		Render2DMeshWScale(meshList[GEO_QUEST], false, 1.5, 1.5, 100, 80);
+		MS = IN_DIALOUGE;
+
+		if (SharedData::GetInstance()->capturedBanshee)
+			Render2DMeshWScale(meshList[GEO_TICKCROSS], false, 1, 1, 245, 250);
+
+		if (SharedData::GetInstance()->capturedCerebus)
+			Render2DMeshWScale(meshList[GEO_TICKCROSS], false, 1, 1, 245, 100);
+
+		if (SharedData::GetInstance()->capturedDragon)
+			Render2DMeshWScale(meshList[GEO_TICKCROSS], false, 1, 1, 500, 100);
+
+		if (SharedData::GetInstance()->capturedGolem)
+			Render2DMeshWScale(meshList[GEO_TICKCROSS], false, 1, 1, 500, 250);
 	}
 }
 

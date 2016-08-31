@@ -72,9 +72,9 @@ void Scene3::Init()
 	for (int i = 0; i < 4; ++i)
 	{
 		Enemy* theEnemy;
-		theEnemy = new Enemy(Monster::getMonster(Monster::CEREBUS), Vector3(50.f, 50.f, 1));
+		theEnemy = new Enemy(Monster::getMonster(Monster::CEREBUS), Vector3(32.f, 32.f, 1));
 		theEnemy->type = GameObject::GO_ENEMY;
-		theEnemy->position.Set(200, 700, 1);
+		theEnemy->position.Set(200, 500, 1);
 		m_goList.push_back(theEnemy);
 	}
 
@@ -90,7 +90,7 @@ void Scene3::Init()
 		if (npcvec[i]->GetID() == 2)
 			npcvec[i]->position.Set(700, 200, 1);
 		if (npcvec[i]->GetID() == 3)
-			npcvec[i]->position.Set(100, 400, 1);
+			npcvec[i]->position.Set(100, 900, 1);
 		npcvec[i]->currDia = 1;
 		m_goList.push_back(dynamic_cast<NPC*>(npcvec[i]));
 	}
@@ -457,6 +457,7 @@ void Scene3::RenderMap()
 	RenderPlayer();
 	Render2DMeshWScale(meshList[GEO_ICONTAM], false, 1, 1, 700, 10, false);
 	Render2DMeshWScale(meshList[GEO_ICONINV], false, 1, 1, 630, 10, false);
+	Render2DMeshWScale(meshList[GEO_ICONQUEST], false, 1, 1, 560, 10, false);
 	Render2DMeshWScale(meshList[GEO_LIVES], false, 120, 50, 0, 550, false);
 
 	//On screen text
@@ -486,6 +487,13 @@ void Scene3::RenderGO()
 				if (MS == IN_DIALOUGE)
 					temp->SetAnimationState(NPC::NPC_AIDLE);
 
+				if (temp->GetID() == 1 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
+					Render2DMeshWScale(meshList[GEO_NPC1_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
+				if (temp->GetID() == 2 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
+					Render2DMeshWScale(meshList[GEO_NPC3_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
+				if (temp->GetID() == 3 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
+					Render2DMeshWScale(meshList[GEO_NPC2_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
+
 				if (renderNPCstuff)
 				{
 					if (npcPic == 1)
@@ -496,12 +504,6 @@ void Scene3::RenderGO()
 						Render2DMeshWScale(meshList[GEO_NPCPIC3], false, 350, 350, 450, 60, false);
 					Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.25, 10, 20, false);
 				}
-				if (temp->GetID() == 1 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
-					Render2DMeshWScale(meshList[GEO_NPC1_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
-				if (temp->GetID() == 2 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
-					Render2DMeshWScale(meshList[GEO_NPC3_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
-				if (temp->GetID() == 3 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
-					Render2DMeshWScale(meshList[GEO_NPC2_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
 				
 				RenderTextOnScreen(meshList[GEO_TEXT], npctalk.str(), Color(1, 1, 0), 30, 60, 100);
 			}
@@ -509,7 +511,7 @@ void Scene3::RenderGO()
 		if (m_goList[i]->type == GameObject::GO_ENEMY)
 		{
 			Enemy* temp = (Enemy*)m_goList[i];
-			Render2DMeshWScale(meshList[GEO_MONSTERCEREBUS], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetFlipStatus(), 50);
+			Render2DMeshWScale(meshList[GEO_MONSTERCEREBUS], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetFlipStatus(), 32);
 		}
 		if (m_goList[i]->type == GameObject::GO_DOWN)
 		{
@@ -524,6 +526,23 @@ void Scene3::RenderGO()
 				}
 			}
 		}
+	}
+	if (renderQuest)
+	{
+		Render2DMeshWScale(meshList[GEO_QUEST], false, 1.5, 1.5, 100, 80);
+		MS = IN_DIALOUGE;
+
+		if (SharedData::GetInstance()->capturedBanshee)
+			Render2DMeshWScale(meshList[GEO_TICKCROSS], false, 1, 1, 245, 250);
+
+		if (SharedData::GetInstance()->capturedCerebus)
+			Render2DMeshWScale(meshList[GEO_TICKCROSS], false, 1, 1, 245, 100);
+
+		if (SharedData::GetInstance()->capturedDragon)
+			Render2DMeshWScale(meshList[GEO_TICKCROSS], false, 1, 1, 500, 100);
+
+		if (SharedData::GetInstance()->capturedGolem)
+			Render2DMeshWScale(meshList[GEO_TICKCROSS], false, 1, 1, 500, 250);
 	}
 }
 

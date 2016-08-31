@@ -52,6 +52,7 @@ public:
 	bool BACKkeyPressed;
 	bool IkeyPressed;
 	bool SpaceKeyPressed;
+	bool QKeyPressed;
 
 	bool BS_SlashRender;
 	bool BS_StabRender;
@@ -97,6 +98,7 @@ private:
 		BACKkeyPressed = false;
 		IkeyPressed = false;
 		SpaceKeyPressed = false;
+		QKeyPressed = false;
 
 		soundFootstep = NULL;
 		worldBGM = NULL;

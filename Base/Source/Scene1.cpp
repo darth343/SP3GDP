@@ -476,6 +476,7 @@ void Scene1::RenderMap()
 	RenderPlayer();
 	Render2DMeshWScale(meshList[GEO_ICONTAM], false, 1, 1, 700, 10, false);
 	Render2DMeshWScale(meshList[GEO_ICONINV], false, 1, 1, 630, 10, false);
+	Render2DMeshWScale(meshList[GEO_ICONQUEST], false, 1, 1, 560, 10, false);
 	Render2DMeshWScale(meshList[GEO_LIVES], false, 120, 50, 0, 550, false);
 
 	//On screen text
@@ -487,6 +488,7 @@ void Scene1::RenderMap()
 
 void Scene1::RenderGO()
 {
+
 	for (int i = 0; i < m_goList.size(); i++)
 	{
 		if (m_goList[i]->active == true)
@@ -521,7 +523,7 @@ void Scene1::RenderGO()
 					Render2DMeshWScale(meshList[GEO_NPC3_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
 				if (temp->GetID() == 3 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
 					Render2DMeshWScale(meshList[GEO_NPC2_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
-				RenderTextOnScreen(meshList[GEO_TEXT], npctalk.str(), Color(1, 1, 0), 30, 60, 100);
+				RenderTextOnScreen(meshList[GEO_TEXT], npctalk.str(), Color(1, 1, 0), 30, 60, 115);
 			}
 		}
 		if (m_goList[i]->type == GameObject::GO_ENEMY)
@@ -611,6 +613,23 @@ void Scene1::RenderGO()
 				SharedData::GetInstance()->player->SetPosition(Vector3(182, 72, 0));
 			}
 		}
+	}
+	if (renderQuest)
+	{
+		Render2DMeshWScale(meshList[GEO_QUEST], false, 1.5, 1.5, 100, 80);
+		MS = IN_DIALOUGE;
+
+		if (SharedData::GetInstance()->capturedBanshee)
+			Render2DMeshWScale(meshList[GEO_TICKCROSS], false, 1, 1, 245, 250);
+
+		if (SharedData::GetInstance()->capturedCerebus)
+			Render2DMeshWScale(meshList[GEO_TICKCROSS], false, 1, 1, 245, 100);
+
+		if (SharedData::GetInstance()->capturedDragon)
+			Render2DMeshWScale(meshList[GEO_TICKCROSS], false, 1, 1, 500, 100);
+
+		if (SharedData::GetInstance()->capturedGolem)
+			Render2DMeshWScale(meshList[GEO_TICKCROSS], false, 1, 1, 500, 250);
 	}
 }
 

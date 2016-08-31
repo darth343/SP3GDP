@@ -79,7 +79,7 @@ void SceneMenu::Update(double dt)
 		quit->Update(dt*0.5);
 		quit->m_anim->animActive = true;
 	}
-		if (Application::IsKeyPressed(VK_DOWN) && !SharedData::GetInstance()->DNkeyPressed)
+	if (Application::IsKeyPressed(VK_DOWN) && !SharedData::GetInstance()->DNkeyPressed  && !renderInstructionNow && !renderStoryNow)
 		{
 			SharedData::GetInstance()->DNkeyPressed = true;
 			m_gs = static_cast<GAMESTATE_TYPE>(m_gs + 1);
@@ -95,7 +95,7 @@ void SceneMenu::Update(double dt)
 		{
 			SharedData::GetInstance()->DNkeyPressed = false;
 		}
-		if (Application::IsKeyPressed(VK_UP) && !SharedData::GetInstance()->UPkeyPressed)
+		if (Application::IsKeyPressed(VK_UP) && !SharedData::GetInstance()->UPkeyPressed && !renderInstructionNow && !renderStoryNow)
 		{
 			SharedData::GetInstance()->UPkeyPressed = true;
 			m_gs = static_cast<GAMESTATE_TYPE>(m_gs - 1);
@@ -163,15 +163,25 @@ void SceneMenu::Update(double dt)
 				break;
 
 			case GS_INSTRUCTIONS:
-				if (renderInstructionNow && Application::IsKeyPressed(VK_RETURN))
+				if (renderInstructionNow && Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 				{
+					SharedData::GetInstance()->ENTERkeyPressed = true;
+				}
+				else if (renderInstructionNow && !Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
+				{
+					SharedData::GetInstance()->ENTERkeyPressed = false;
 					renderInstructionNow = false;
 					m_gs = GS_GAME;
 				}
 				break;
 			case GS_INTRODUCTION:
-				if (renderStoryNow && Application::IsKeyPressed(VK_RETURN))
+				if (renderStoryNow && Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 				{
+					SharedData::GetInstance()->ENTERkeyPressed = true;
+				}
+				else if (renderStoryNow && !Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
+				{
+					SharedData::GetInstance()->ENTERkeyPressed = false;
 					renderStoryNow = false;
 					m_gs = GS_GAME;
 				}

@@ -581,6 +581,23 @@ void SceneGame::Update(double dt)
 	{
 		SharedData::GetInstance()->ZKeyPressed = false;
 	}
+	if (Application::IsKeyPressed('Q') && !SharedData::GetInstance()->QKeyPressed)
+	{
+		SharedData::GetInstance()->QKeyPressed = true;
+
+		if (!renderQuest)
+			renderQuest = true;
+
+		else if (renderQuest)
+		{
+			renderQuest = false;
+			MS = PLAY;
+		}
+	}
+	else if (!Application::IsKeyPressed('Q') && SharedData::GetInstance()->QKeyPressed)
+	{
+		SharedData::GetInstance()->QKeyPressed = false;
+	}
 
 	//For battle scene Dialogue
 	if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed && SharedData::GetInstance()->playerBattleDialogue)
