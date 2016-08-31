@@ -86,11 +86,6 @@ void Scene2::Init()
 		m_goList.push_back(theEnemy);
 	}
 
-	GameObject* touch = new GameObject(Vector3(50.f, 50.f, 1));
-	touch->position.Set(1500, 80, 1);
-	touch->type = GameObject::GO_NEXT;
-	m_goList.push_back(touch);
-
 	enemyMaxHealth = 100;
 	currHealth = 100;
 	enemyCatchPercentage = 0;
@@ -108,6 +103,11 @@ void Scene2::Init()
 
 		m_goList.push_back(dynamic_cast<NPC*>(npcvec[i]));
 	}
+
+	GameObject* touch = new GameObject(Vector3(50.f, 50.f, 1));
+	touch->position.Set(1500, 80, 1);
+	touch->type = GameObject::GO_NEXT;
+	m_goList.push_back(touch);
 
 	// Initialise the hero's position
 	SharedData::GetInstance()->player->SetPosition(Vector3(1300, 60, 0));
@@ -459,6 +459,7 @@ void Scene2::RenderMap()
 	RenderPlayer();
 	Render2DMeshWScale(meshList[GEO_ICONTAM], false, 1, 1, 700, 10, false);
 	Render2DMeshWScale(meshList[GEO_ICONINV], false, 1, 1, 630, 10, false);
+	Render2DMeshWScale(meshList[GEO_ICONQUEST], false, 1, 1, 560, 10, false);
 	Render2DMeshWScale(meshList[GEO_LIVES], false, 120, 50, 0, 550, false);
 
 	//On screen text
@@ -519,50 +520,29 @@ void Scene2::RenderGO()
 				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
 				if (Application::IsKeyPressed(VK_RETURN))
 				{
-					SharedData::GetInstance()->gameState = SharedData::GAME_S2;
+					SharedData::GetInstance()->player->SetMapOffset(Vector3(0, 0, 0));
+					SharedData::GetInstance()->player->SetPosition(Vector3(80, 830, 0));
+					SharedData::GetInstance()->gameState = SharedData::GAME_S1;
 				}
 			}
 		}
-		if (m_goList[i]->type == GameObject::GO_DOWN)
-		{
-			if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
-			{
-				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
-				if (Application::IsKeyPressed(VK_RETURN))
-				{
-					SharedData::GetInstance()->gameState = SharedData::GAME_S3;
-				}
-			}
-		}
-		if (m_goList[i]->type == GameObject::GO_BOSS)
-		{
-			if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
-			{
-				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
-				if (Application::IsKeyPressed(VK_RETURN))
-				{
-					SharedData::GetInstance()->gameState = SharedData::GAME_BOSS;
-				}
-			}
-		}
-		if (m_goList[i]->type == GameObject::GO_TELEPORT)
-		{
-			Render2DMeshWScale(meshList[GEO_PORTAL], false, 50, 50, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, false);
+	}
+	if (renderQuest)
+	{
+		Render2DMeshWScale(meshList[GEO_QUEST], false, 1.5, 1.5, 100, 80);
+		MS = IN_DIALOUGE;
 
-			if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
-			{
-				SharedData::GetInstance()->player->SetPosition(Vector3(182, 532, 0));
-			}
-		}
-		if (m_goList[i]->type == GameObject::GO_TELEPORT2)
-		{
-			Render2DMeshWScale(meshList[GEO_PORTAL], false, 50, 50, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, false);
+		if (SharedData::GetInstance()->capturedBanshee)
+			Render2DMeshWScale(meshList[GEO_TICKCROSS], false, 1, 1, 245, 250);
 
-			if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
-			{
-				SharedData::GetInstance()->player->SetPosition(Vector3(182, 52, 0));
-			}
-		}
+		if (SharedData::GetInstance()->capturedCerebus)
+			Render2DMeshWScale(meshList[GEO_TICKCROSS], false, 1, 1, 245, 100);
+
+		if (SharedData::GetInstance()->capturedDragon)
+			Render2DMeshWScale(meshList[GEO_TICKCROSS], false, 1, 1, 500, 100);
+
+		if (SharedData::GetInstance()->capturedGolem)
+			Render2DMeshWScale(meshList[GEO_TICKCROSS], false, 1, 1, 500, 250);
 	}
 }
 

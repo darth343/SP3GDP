@@ -24,6 +24,11 @@ SceneStory::~SceneStory()
 void SceneStory::Init()
 {
 	SceneBase::Init();
+	flip = false;
+	herox = -15;
+	cooldown = 1.f;
+	showFirst = false;
+	showSecond = false;
 }
 
 
@@ -31,82 +36,6 @@ void SceneStory::Update(double dt)
 {
 
 	//SharedData::GetInstance()->soundManager.SoundPlay("Sound/title.mp3", &SharedData::GetInstance()->title, 0.3f, false);
-
-	SpriteAnimation *logo = dynamic_cast<SpriteAnimation*>(meshList[GEO_LOGO]);
-	if (logo)
-	{
-		logo->Update(dt*0.5);
-		logo->m_anim->animActive = true;
-	}
-
-	SpriteAnimation *play = dynamic_cast<SpriteAnimation*>(meshList[GEO_MENUPLAY]);
-	SpriteAnimation *quit = dynamic_cast<SpriteAnimation*>(meshList[GEO_MENUQUIT]);
-	SpriteAnimation *opt = dynamic_cast<SpriteAnimation*>(meshList[GEO_MENUOPT]);
-	SpriteAnimation *inst = dynamic_cast<SpriteAnimation*>(meshList[GEO_MENUINST]);
-	SpriteAnimation *story = dynamic_cast<SpriteAnimation*>(meshList[GEO_MENUSTORY]);
-
-	if (play && m_gs == GS_GAME)
-	{
-		play->Update(dt*0.5);
-		play->m_anim->animActive = true;
-	}
-	if (inst && m_gs == GS_INSTRUCTIONS)
-	{
-		inst->Update(dt*0.5);
-		inst->m_anim->animActive = true;
-		opt->m_currentFrame = 0;
-		quit->m_currentFrame = 0;
-		story->m_currentFrame = 0;
-		play->m_currentFrame = 0;
-	}
-	if (story && m_gs == GS_INTRODUCTION)
-	{
-		story->Update(dt*0.5);
-		story->m_anim->animActive = true;
-	}
-	if (opt && m_gs == GS_OPTIONS)
-	{
-		opt->Update(dt*0.5);
-		opt->m_anim->animActive = true;
-
-	}
-	if (quit && m_gs == GS_QUIT)
-	{
-		quit->Update(dt*0.5);
-		quit->m_anim->animActive = true;
-	}
-	if (Application::IsKeyPressed(VK_DOWN) && !SharedData::GetInstance()->DNkeyPressed)
-	{
-		SharedData::GetInstance()->DNkeyPressed = true;
-		m_gs = static_cast<GAMESTATE_TYPE>(m_gs + 1);
-		if (m_gs > GS_QUIT)
-			m_gs = GS_GAME;
-		play->m_currentFrame = 0;
-		quit->m_currentFrame = 0;
-		inst->m_currentFrame = 0;
-		story->m_currentFrame = 0;
-		opt->m_currentFrame = 0;
-	}
-	else if (!Application::IsKeyPressed(VK_DOWN) && SharedData::GetInstance()->DNkeyPressed)
-	{
-		SharedData::GetInstance()->DNkeyPressed = false;
-	}
-	if (Application::IsKeyPressed(VK_UP) && !SharedData::GetInstance()->UPkeyPressed)
-	{
-		SharedData::GetInstance()->UPkeyPressed = true;
-		m_gs = static_cast<GAMESTATE_TYPE>(m_gs - 1);
-		if (m_gs < GS_GAME)
-			m_gs = GS_QUIT;
-		play->m_currentFrame = 0;
-		quit->m_currentFrame = 0;
-		inst->m_currentFrame = 0;
-		story->m_currentFrame = 0;
-		opt->m_currentFrame = 0;
-	}
-	else if (!Application::IsKeyPressed(VK_UP) && SharedData::GetInstance()->UPkeyPressed)
-	{
-		SharedData::GetInstance()->UPkeyPressed = false;
-	}
 
 	fps = (float)(1.f / dt);
 	SpriteAnimation *hero = dynamic_cast<SpriteAnimation*>(meshList[GEO_HEROLR]);
@@ -142,12 +71,10 @@ void SceneStory::Update(double dt)
 	{
 		herox += 70 * dt;
 	}
-	else if (herox > 810)
-	{
-		
-	}
+
 	if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 	{
+		herox = -15;
 		SharedData::GetInstance()->gameState = SharedData::GAME_S1;
 	}
 	else if (Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
@@ -174,8 +101,7 @@ void SceneStory::Render()
 	else if (!showFirst && !showSecond)
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 30, 100, 70);
 
-	if (herox >= 800)
-		RenderTextOnScreen(meshList[GEO_TEXT], "ENTER to get in the game", Color(1, 1, 1), 30, 280, 70);
+	RenderTextOnScreen(meshList[GEO_TEXT], "ENTER to skip/get in the game", Color(1, 1, 1), 20, 280, 20);
 }
 
 void SceneStory::Exit()

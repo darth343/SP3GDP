@@ -47,27 +47,6 @@ void Scene1::Init()
 	m_cMap2->Init(Application::GetInstance().GetScreenHeight(), Application::GetInstance().GetScreenWidth(), 32);
 	m_cMap2->LoadMap("Data//MapData_WM2.csv");
 
-	GameObject* touch = new GameObject(Vector3(50.f, 50.f, 1));
-	cout << touch << endl;
-	touch->position.Set(0, 820, 1);
-	touch->type = GameObject::GO_NEXT;
-	m_goList.push_back(touch);
-
-	cout << m_goList.size() << endl;
-	GameObject* down = new GameObject(Vector3(50.f, 50.f, 1));
-	down->position.Set(370, 10, 1);
-	down->type = GameObject::GO_DOWN;
-	m_goList.push_back(down);
-
-	GameObject* s4 = new GameObject(Vector3(50.f, 50.f, 1));
-	s4->position.Set(910, 700, 1);
-	s4->type = GameObject::GO_S4;
-	m_goList.push_back(s4);
-
-	GameObject* boss = new GameObject(Vector3(50.f, 50.f, 1));
-	boss->position.Set(450, 1100, 1);
-	boss->type = GameObject::GO_BOSS;
-	m_goList.push_back(boss);
 
 	GameObject* teleporter2 = new GameObject(Vector3(20.f, 20.f, 1));
 	teleporter2->position.Set(182, 510, 1);
@@ -116,6 +95,27 @@ void Scene1::Init()
 		theEnemy->position.Set(RandPos.x * 32, 600, 1);
 		m_goList.push_back(theEnemy);
 	}
+
+	GameObject* touch = new GameObject(Vector3(50.f, 50.f, 1));
+	cout << touch << endl;
+	touch->position.Set(0, 820, 1);
+	touch->type = GameObject::GO_NEXT;
+	m_goList.push_back(touch);
+
+	GameObject* down = new GameObject(Vector3(50.f, 50.f, 1));
+	down->position.Set(370, 10, 1);
+	down->type = GameObject::GO_DOWN;
+	m_goList.push_back(down);
+
+	GameObject* s4 = new GameObject(Vector3(50.f, 50.f, 1));
+	s4->position.Set(910, 700, 1);
+	s4->type = GameObject::GO_S4;
+	m_goList.push_back(s4);
+
+	GameObject* boss = new GameObject(Vector3(50.f, 50.f, 1));
+	boss->position.Set(450, 1100, 1);
+	boss->type = GameObject::GO_BOSS;
+	m_goList.push_back(boss);
 
 
 	/*teleporter1 = new GameObject(Vector3(20.f, 20.f, 1));
@@ -476,6 +476,7 @@ void Scene1::RenderMap()
 	RenderPlayer();
 	Render2DMeshWScale(meshList[GEO_ICONTAM], false, 1, 1, 700, 10, false);
 	Render2DMeshWScale(meshList[GEO_ICONINV], false, 1, 1, 630, 10, false);
+	Render2DMeshWScale(meshList[GEO_ICONQUEST], false, 1, 1, 560, 10, false);
 	Render2DMeshWScale(meshList[GEO_LIVES], false, 120, 50, 0, 550, false);
 
 	//On screen text
@@ -487,6 +488,7 @@ void Scene1::RenderMap()
 
 void Scene1::RenderGO()
 {
+
 	for (int i = 0; i < m_goList.size(); i++)
 	{
 		if (m_goList[i]->active == true)
@@ -521,7 +523,7 @@ void Scene1::RenderGO()
 					Render2DMeshWScale(meshList[GEO_NPC3_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
 				if (temp->GetID() == 3 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
 					Render2DMeshWScale(meshList[GEO_NPC2_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
-				RenderTextOnScreen(meshList[GEO_TEXT], npctalk.str(), Color(1, 1, 0), 30, 60, 100);
+				RenderTextOnScreen(meshList[GEO_TEXT], npctalk.str(), Color(1, 1, 0), 30, 60, 115);
 			}
 		}
 		if (m_goList[i]->type == GameObject::GO_ENEMY)
@@ -597,6 +599,7 @@ void Scene1::RenderGO()
 
 			if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
 			{
+				SharedData::GetInstance()->player->SetMapOffset(Vector3(0, 0, 0));
 				SharedData::GetInstance()->player->SetPosition(Vector3(182, 532, 0));
 			}
 		}
@@ -606,9 +609,27 @@ void Scene1::RenderGO()
 
 			if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
 			{
-				SharedData::GetInstance()->player->SetPosition(Vector3(182, 52, 0));
+				SharedData::GetInstance()->player->SetMapOffset(Vector3(0, 0, 0));
+				SharedData::GetInstance()->player->SetPosition(Vector3(182, 72, 0));
 			}
 		}
+	}
+	if (renderQuest)
+	{
+		Render2DMeshWScale(meshList[GEO_QUEST], false, 1.5, 1.5, 100, 80);
+		MS = IN_DIALOUGE;
+
+		if (SharedData::GetInstance()->capturedBanshee)
+			Render2DMeshWScale(meshList[GEO_TICKCROSS], false, 1, 1, 245, 250);
+
+		if (SharedData::GetInstance()->capturedCerebus)
+			Render2DMeshWScale(meshList[GEO_TICKCROSS], false, 1, 1, 245, 100);
+
+		if (SharedData::GetInstance()->capturedDragon)
+			Render2DMeshWScale(meshList[GEO_TICKCROSS], false, 1, 1, 500, 100);
+
+		if (SharedData::GetInstance()->capturedGolem)
+			Render2DMeshWScale(meshList[GEO_TICKCROSS], false, 1, 1, 500, 250);
 	}
 }
 

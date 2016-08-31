@@ -23,6 +23,10 @@ public:
 
 		BS_POTION,
 		BS_TRAP,
+		BS_BACK2,
+
+
+
 
 		BS_TOTAL,
 	};
@@ -44,7 +48,7 @@ public:
 	void EndEnemyTurn();
 
 	void Reset();
-
+	void ResetAnimation();
 	bool GetOpenItemBag();
 	bool GetBattleStart();
 	float GetArrowPosX();

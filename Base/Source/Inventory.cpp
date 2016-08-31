@@ -178,6 +178,172 @@ void Inventory::UpdateInput()
 {
 	switch (state)
 	{
+	case TAB0:
+		switch (inputeState)
+		{
+		case INVENTORY:
+			if (Application::IsKeyPressed(VK_DOWN) && !SharedData::GetInstance()->DNkeyPressed)
+			{
+				seeker.y--;
+				seeker.x = 0;
+				if (seeker.y < 1)
+				{
+					state = TAB1;
+					ResetInventory();
+				}
+				SharedData::GetInstance()->DNkeyPressed = true;
+			}
+			else if (!Application::IsKeyPressed(VK_DOWN) && SharedData::GetInstance()->DNkeyPressed)
+			{
+				SharedData::GetInstance()->DNkeyPressed = false;
+			}
+			if (Application::IsKeyPressed(VK_UP) && !SharedData::GetInstance()->UPkeyPressed)
+			{
+				if (seeker.y < 3)
+				{
+					seeker.y++;
+					seeker.x = 0;
+				}
+				SharedData::GetInstance()->UPkeyPressed = true;
+			}
+			else if (!Application::IsKeyPressed(VK_UP) && SharedData::GetInstance()->UPkeyPressed)
+			{
+				SharedData::GetInstance()->UPkeyPressed = false;
+			}
+			if (Application::IsKeyPressed(VK_RIGHT) && !SharedData::GetInstance()->RIGHTkeyPressed)
+			{
+				if (seeker.x < 1 && seeker.y == 2)
+					seeker.x++;
+				SharedData::GetInstance()->RIGHTkeyPressed = true;
+			}
+			else if (!Application::IsKeyPressed(VK_RIGHT) && SharedData::GetInstance()->RIGHTkeyPressed)
+			{
+				SharedData::GetInstance()->RIGHTkeyPressed = false;
+			}
+			if (Application::IsKeyPressed(VK_LEFT) && !SharedData::GetInstance()->LEFTkeyPressed)
+			{
+				if (seeker.x > -1 && seeker.y == 2)
+					seeker.x--;
+				SharedData::GetInstance()->LEFTkeyPressed = true;
+			}
+			else if (!Application::IsKeyPressed(VK_LEFT) && SharedData::GetInstance()->LEFTkeyPressed)
+			{
+				SharedData::GetInstance()->LEFTkeyPressed = false;
+			}
+			if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
+			{
+				SharedData::GetInstance()->ENTERkeyPressed = true;
+				if (getEquipmentLookAt())
+				{
+					inputeState = EQUIP_OPTIONS;
+					options.clear();
+					if (EQinventory[23]->getName() == "UNDEFINED")
+						options.push_back("UNEQUIP");
+					if (ItemInventory[Items::ENCRYPTED_MEMORY] >= 100)
+						options.push_back("POWER UP");
+					options.push_back("BACK");
+				}
+			}
+			else if (!Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
+			{
+				SharedData::GetInstance()->ENTERkeyPressed = false;
+			}
+			break;
+		case EQUIP_OPTIONS:
+		{
+			if (Application::IsKeyPressed(VK_DOWN) && !SharedData::GetInstance()->DNkeyPressed)
+			{
+				secondSeeker++;
+				if (secondSeeker > options.size() - 1)
+					secondSeeker = 0;
+				SharedData::GetInstance()->DNkeyPressed = true;
+			}
+			else if (!Application::IsKeyPressed(VK_DOWN) && SharedData::GetInstance()->DNkeyPressed)
+			{
+				SharedData::GetInstance()->DNkeyPressed = false;
+			}
+
+			if (Application::IsKeyPressed(VK_UP) && !SharedData::GetInstance()->UPkeyPressed)
+			{
+				secondSeeker--;
+				if (secondSeeker < 0)
+					secondSeeker = options.size() - 1;
+				SharedData::GetInstance()->UPkeyPressed = true;
+			}
+
+			else if (!Application::IsKeyPressed(VK_UP) && SharedData::GetInstance()->UPkeyPressed)
+			{
+				SharedData::GetInstance()->UPkeyPressed = false;
+			}
+			if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
+			{
+				SharedData::GetInstance()->ENTERkeyPressed = true;
+				if (options[secondSeeker] == "UNEQUIP")
+				{
+					switch (getEquipmentLookAt()->getType())
+					{
+						case Equipment::HELMET:
+						{
+							Equipment temp;
+							temp = *EQinventory[23];
+							*EQinventory[23] = *EquippedItems[HEAD];
+							EquippedItems[HEAD] = NULL;
+							SortInventory();
+						}
+							break;
+						case Equipment::ARMOUR:
+						{
+												  Equipment temp;
+												  temp = *EQinventory[23];
+												  *EQinventory[23] = *EquippedItems[CHEST];
+												  EquippedItems[CHEST] = NULL;
+												  SortInventory();
+						}
+							break;
+						case Equipment::SWORD:
+						case Equipment::SHIELD:
+						{
+												  Equipment temp;
+												  temp = *EQinventory[23];
+												  if (seeker.x == 1)
+												  {
+													  *EQinventory[23] = *EquippedItems[RHAND];
+													  EquippedItems[RHAND] = NULL;
+												  }
+												  if (seeker.x == -1)
+												  {
+													  *EQinventory[23] = *EquippedItems[LHAND];
+													  EquippedItems[LHAND] = NULL;
+												  }
+												  SortInventory();
+						}
+							break;
+						case Equipment::LEG:
+						{
+												  Equipment temp;
+												  temp = *EQinventory[23];
+												  *EQinventory[23] = *EquippedItems[LEGS];
+												  EquippedItems[LEGS] = NULL;
+												  SortInventory();
+						}
+							break;
+					}
+				}
+				if (options[secondSeeker] == "POWER UP")
+				{
+					PowerUp(getEquipmentLookAt());
+					ItemInventory[Items::ENCRYPTED_MEMORY] -= 100;
+				}
+				inputeState = INVENTORY;
+				secondSeeker = 0;
+			}
+			else if (!Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
+			{
+				SharedData::GetInstance()->ENTERkeyPressed = false;
+			}
+		}
+		}
+		break;
 	case TAB1:
 		switch (inputeState)
 		{
@@ -201,6 +367,7 @@ void Inventory::UpdateInput()
 				{
 					ResetInventory();
 					state = TAB2;
+					seeker.x = 0;
 				}
 				SharedData::GetInstance()->LEFTkeyPressed = true;
 			}
@@ -213,7 +380,10 @@ void Inventory::UpdateInput()
 			{
 				seeker.y++;
 				if (seeker.y > 0)
-					seeker.y = -2;
+				{
+					seeker.x = 0;
+					state = TAB0;
+				}
 				SharedData::GetInstance()->UPkeyPressed = true;
 			}
 			else if (!Application::IsKeyPressed(VK_UP) && SharedData::GetInstance()->UPkeyPressed)
@@ -315,6 +485,7 @@ void Inventory::UpdateInput()
 				if (options[secondSeeker] == "RIGHT HAND" || options[secondSeeker] == "LEFT HAND" || options[secondSeeker] == "EQUIP")
 				{
 					EquipItem(options[secondSeeker]);
+					SortInventory();
 				}
 				secondSeeker = 0;
 				inputeState = INVENTORY;
@@ -370,6 +541,7 @@ void Inventory::UpdateInput()
 					SharedData::GetInstance()->ENTERkeyPressed = true;
 					inputeState = EQUIP_OPTIONS;
 					options.clear();
+					if (ItemInventory[(int)seeker.y] > 0)
 					options.push_back("USE");
 					options.push_back("BACK");
 				}
@@ -435,6 +607,20 @@ void Inventory::Update(double dt)
 
 Equipment* Inventory::getEquipmentLookAt()
 {
+	if (state == TAB0)
+	{
+		if (seeker.x == 0 && seeker.y == 1)
+		return getLeg();
+		if (seeker.x == 0 && seeker.y == 2)
+			return getArmour();
+		if (seeker.x == 0 && seeker.y == 3)
+			return getHead();
+		if (seeker.x == -1 && seeker.y == 2)
+			return getLeftArm();
+		if (seeker.x == 1 && seeker.y == 2)
+			return getRightArm();
+		return NULL;
+	}
 	return EQinventory[seeker.x + (abs(seeker.y) * 8)];
 }
 

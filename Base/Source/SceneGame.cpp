@@ -184,7 +184,11 @@ void SceneGame::CatchUpdate(double dt)
 			SharedData::GetInstance()->enemyTurn = false;
 			RemoveEnemy();
 			SharedData::GetInstance()->soundManager.StopAllSound();
-			GS = MAP;
+			if (SharedData::GetInstance()->gameState != SharedData::GAME_BOSS)
+				GS = MAP;
+			else
+				GS = WIN;
+
 			return;
 		}
 		else if (!chargebar->CheckCollision(greenbar))
@@ -204,12 +208,13 @@ void SceneGame::EnterBattleScene(Enemy* enemy)
 	battleScene.SetBattleStart(true);
 	SharedData::GetInstance()->soundManager.StopAllSound();
 	SharedData::GetInstance()->soundManager.SoundPlay("Sound/battleStart.mp3", &SharedData::GetInstance()->battleStart, 0.3f, true);
-
+	SharedData::GetInstance()->playerHitenemy = false;
 	renderedHp = 0;
 	renderedMp = 0;
 
 	EnemyInBattle = enemy;
 	GS = BATTLE;
+	SharedData::GetInstance()->playerHitenemy = false;
 }
 
 //For the mini game
@@ -374,9 +379,44 @@ void SceneGame::renderInventoryMenus()
 	{
 		xpos += 0.5f;
 	}
-
 	switch (SharedData::GetInstance()->inventory.getState())
 	{
+	case Inventory::TAB0:
+		if (SharedData::GetInstance()->inventory.getEquipmentLookAt() && SharedData::GetInstance()->inventory.getEquipmentLookAt()->getName() != "UNDEFINED")
+		{
+			std::ostringstream ss;
+			ss.str("");
+			ss << "Name: " << SharedData::GetInstance()->inventory.getEquipmentLookAt()->getName() << endl;
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392);
+			ss.str("");
+			ss << "Damage: " << SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDamage() << endl;
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392 - 20);
+			ss.str("");
+			ss << "Defense: " << SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDefense() << endl;
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392 - 40);
+			ss.str("");
+			ss << "AVG: " << (SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDefense() + SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDamage()) * 0.5 << endl;
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392 - 60);
+		}
+
+		if (SharedData::GetInstance()->inventory.getInputState() == Inventory::INVENTORY)
+			Render2DMesh(meshList[GEO_INVENTORYSEEKER], false, 1, 470.5 + ((SharedData::GetInstance()->inventory.getSeeker().x) * 46), 313 + ((SharedData::GetInstance()->inventory.getSeeker().y - 1) * 46));
+		if (SharedData::GetInstance()->inventory.getInputState() == Inventory::EQUIP_OPTIONS)
+		{
+			Render2DMeshWScale(meshList[GEO_INVENTORYSECONDBACKGROUND], false, 122, -44 - (float)(SharedData::GetInstance()->inventory.getOptions().size() * 18), 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 36, 290 + SharedData::GetInstance()->inventory.getSeeker().y * 46);
+			for (int i = 0; i < SharedData::GetInstance()->inventory.getOptions().size(); ++i)
+			{
+				std::ostringstream ss;
+				ss.str("");
+				ss << SharedData::GetInstance()->inventory.getOptions()[i];
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 46, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46 - (i * 20));
+			}
+			std::ostringstream ss;
+			ss.str("");
+			ss << SharedData::GetInstance()->inventory.getOptions()[SharedData::GetInstance()->inventory.getSecondSeeker()];
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 46, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46 - (SharedData::GetInstance()->inventory.getSecondSeeker() * 20));
+		}
+	break;
 	case Inventory::TAB1:
 		if (SharedData::GetInstance()->inventory.getEquipmentLookAt()->getName() != "UNDEFINED")
 		{
@@ -464,7 +504,6 @@ void SceneGame::renderInventoryMenus()
 		}
 		break;
 	}
-//	cout << xpos << " " << ypos << endl;
 }
 
 void SceneGame::RenderInventory()
@@ -542,6 +581,23 @@ void SceneGame::Update(double dt)
 	{
 		SharedData::GetInstance()->ZKeyPressed = false;
 	}
+	if (Application::IsKeyPressed('Q') && !SharedData::GetInstance()->QKeyPressed)
+	{
+		SharedData::GetInstance()->QKeyPressed = true;
+
+		if (!renderQuest)
+			renderQuest = true;
+
+		else if (renderQuest)
+		{
+			renderQuest = false;
+			MS = PLAY;
+		}
+	}
+	else if (!Application::IsKeyPressed('Q') && SharedData::GetInstance()->QKeyPressed)
+	{
+		SharedData::GetInstance()->QKeyPressed = false;
+	}
 
 	//For battle scene Dialogue
 	if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed && SharedData::GetInstance()->playerBattleDialogue)
@@ -561,8 +617,6 @@ void SceneGame::Update(double dt)
 	case BATTLE:
 
 		//Updating of catch percentage
-		if (EnemyInBattle->GetHealth() > 0)
-		SharedData::GetInstance()->enemyCatchPercentage = (EnemyInBattle->GetMaxHealth() - EnemyInBattle->GetHealth()) / EnemyInBattle->GetMaxHealth() * 100 + SharedData::GetInstance()->trapPercentageIncrease;;
 
 		//Flashing effect of dialogue
 		if (flashEffect)
@@ -584,6 +638,26 @@ void SceneGame::Update(double dt)
 			}
 		}
 
+
+		if (EnemyInBattle->GetHealth() > 0)
+		{
+			SharedData::GetInstance()->enemyCatchPercentage = (EnemyInBattle->GetMaxHealth() - EnemyInBattle->GetHealth()) / EnemyInBattle->GetMaxHealth() * 100 + SharedData::GetInstance()->trapPercentageIncrease;
+		}
+		else
+		{
+			SetGS("MAP");
+			//enemy Died
+			SceneGame* mainScene = (SceneGame*)Application::GetInstance().GetScene();
+
+			//Player win
+			battleScene.Reset();
+			mainScene->RemoveEnemy();
+
+			if (SharedData::GetInstance()->gameState == SharedData::GAME_BOSS)
+				GS = WIN;
+			//destory enemy here
+		}
+
 		//Decrease Rendered HP on screen
 		if (SharedData::GetInstance()->player->GetHP() < renderedHp)
 		{
@@ -594,20 +668,7 @@ void SceneGame::Update(double dt)
 				renderedHp = SharedData::GetInstance()->player->GetHP();
 			}
 
-			//if enemy not dead		
-			if (EnemyInBattle->GetHealth() <= 0)
-			{
-				SceneGame* mainScene = (SceneGame*)Application::GetInstance().GetScene();
-
-				//Player win
-				battleScene.Reset();
-				mainScene->RemoveEnemy();
-
-				if (SharedData::GetInstance()->gameState == SharedData::GAME_BOSS)
-					GS = WIN;
-				//destory enemy here
-			}
-			else if (renderedHp < 0.0f)
+		    if (renderedHp < 0.0f)
 			{
 				if (SharedData::GetInstance()->playerLives > 0)
 				{
@@ -617,6 +678,8 @@ void SceneGame::Update(double dt)
 					renderedHp = 100;
 					SharedData::GetInstance()->gameState = SharedData::GAME_S1;
 					GS = MAP;
+					SharedData::GetInstance()->player->SetMapOffset(Vector3(0, 0, 0));
+					SharedData::GetInstance()->player->SetPosition(Vector3(530, 64, 0));
 					cout << SharedData::GetInstance()->playerLives << endl;
 				}
 				else
@@ -835,6 +898,7 @@ void SceneGame::RenderMonster()
 					battleScene.SetBattleSelection(BattleSystem::BS_ATTACK);
 					SharedData::GetInstance()->enemyTurn = false;
 					SharedData::GetInstance()->playerTurn = true;
+					SharedData::GetInstance()->playerHitenemy = false;
 					//battleMonsterScale.x = 300.f;
 					//battleMonsterScale.y = 300.f;
 					battleMonsterPos.x = 280;
@@ -1121,7 +1185,21 @@ void SceneGame::RenderTamagucci()
 
 void SceneGame::RenderCatch()
 {
-	RenderBackground(meshList[GEO_BATTLESCENE]);
+	if (SharedData::GetInstance()->gameState == SharedData::GAME_S1)
+		RenderBackground(meshList[GEO_GRASS]);
+
+	if (SharedData::GetInstance()->gameState == SharedData::GAME_S2)
+		RenderBackground(meshList[GEO_ROCK]);
+
+	if (SharedData::GetInstance()->gameState == SharedData::GAME_S4)
+		RenderBackground(meshList[GEO_BEACH]);
+
+	if (SharedData::GetInstance()->gameState == SharedData::GAME_S3)
+		RenderBackground(meshList[GEO_BATTLESCENE]);
+
+	if (SharedData::GetInstance()->gameState == SharedData::GAME_BOSS)
+		RenderBackground(meshList[GEO_BOSSBG]);
+
 	RenderMonster();
 
 	Render2DMeshWScale(meshList[GEO_RED], false, redbar->scale.x, redbar->scale.y, redbar->position.x, redbar->position.y, false);
@@ -1136,6 +1214,7 @@ void SceneGame::RenderBattleDialogue()
 		SharedData::GetInstance()->playerBattleDialogue && battleScene.GetBattleSelection() == BattleSystem::BS_STAB ||
 		SharedData::GetInstance()->playerBattleDialogue && battleScene.GetBattleSelection() == BattleSystem::BS_SKILL)
 	{
+
 		Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false);
 
 		if (battleScene.GetBattleSelection() == BattleSystem::BS_SLASH)
@@ -1185,12 +1264,16 @@ void SceneGame::RenderBattleDialogue()
 			switch (SharedData::GetInstance()->inventory.getArmour()->getMonster().GetType())
 			{
 			case 0:
+				ss << "You damage Enemy for " << SharedData::GetInstance()->player->GetDMG()* 2.35 << ", Enemy HP left " << EnemyInBattle->GetHealth();
+				break;
 			case 1:
+				ss << "You damage Enemy for " << SharedData::GetInstance()->player->GetDMG()* 2.85 << ", Enemy HP left " << EnemyInBattle->GetHealth();
+				break;
 			case 2:
-				ss << "You damage Enemy for " << SharedData::GetInstance()->player->GetDMG() << ", Enemy HP left " << EnemyInBattle->GetHealth();
+				ss << "You damage Enemy for " << SharedData::GetInstance()->player->GetDMG()* 3.15 << ", Enemy HP left " << EnemyInBattle->GetHealth();
 				break;
 			case 3:
-				ss << "defend increased!!";
+				ss << "Defence increased by 15";
 				break;
 			}
 
@@ -1296,6 +1379,7 @@ void SceneGame::RenderBattleHUD()
 		case BattleSystem::BATTLE_SELECTION::BS_ITEM:
 			battleScene.SetArrowPos(420, 91, 0);
 			break;
+		case BattleSystem::BATTLE_SELECTION::BS_BACK2:
 		case BattleSystem::BATTLE_SELECTION::BS_BACK:
 		case BattleSystem::BATTLE_SELECTION::BS_RUN:
 			battleScene.SetArrowPos(420, 41, 0);
@@ -1337,7 +1421,7 @@ void SceneGame::RenderBattleHUD()
 		ss.precision(5);
 		if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice() && !battleScene.GetOpenItemBag())
 			ss << "Capture";
-		else if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice() && battleScene.GetOpenItemBag())
+		else if (!battleScene.GetFirstChoice() && battleScene.GetSecondChoice() && battleScene.GetOpenItemBag())
 			ss << "Trap x " << SharedData::GetInstance()->inventory.GetTrapCount();
 		else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice() && !battleScene.GetOpenItemBag())
 		{
@@ -1384,7 +1468,21 @@ void SceneGame::RenderBattleHUD()
 
 void SceneGame::RenderBattleScene()
 {
-	RenderBackground(meshList[GEO_BATTLESCENE]);
+	if (SharedData::GetInstance()->gameState == SharedData::GAME_S1)
+		RenderBackground(meshList[GEO_GRASS]);
+
+	if (SharedData::GetInstance()->gameState == SharedData::GAME_S2)
+		RenderBackground(meshList[GEO_ROCK]);
+
+	if (SharedData::GetInstance()->gameState == SharedData::GAME_S4)
+		RenderBackground(meshList[GEO_BEACH]);
+
+	if (SharedData::GetInstance()->gameState == SharedData::GAME_S3)
+		RenderBackground(meshList[GEO_BATTLESCENE]);
+
+	if (SharedData::GetInstance()->gameState == SharedData::GAME_BOSS)
+		RenderBackground(meshList[GEO_BOSSBG]);
+
 	RenderMonster();
 	RenderBattleAnimation();
 	RenderBattleHUD();

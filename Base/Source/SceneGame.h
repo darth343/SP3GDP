@@ -135,6 +135,7 @@ protected:
 	float cursorDebounce = 0;
 	ostringstream npctalk;
 	bool captured;
+	bool renderQuest = false;
 };
 
 #endif

@@ -133,6 +133,8 @@ void SceneBase::Init()
 	meshList[GEO_LOGO]->textureID = LoadTGA("Image//RealizeLogo.tga");
 	meshList[GEO_ICONINV] = MeshBuilder::Generate2DMesh("GEO_BACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 64.0f, 64.0f);
 	meshList[GEO_ICONINV]->textureID = LoadTGA("Image//Icon_Inventory.tga");
+	meshList[GEO_ICONQUEST] = MeshBuilder::Generate2DMesh("GEO_BACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 64.0f, 64.0f);
+	meshList[GEO_ICONQUEST]->textureID = LoadTGA("Image//Icon_Quest.tga");
 	meshList[GEO_ICONTAM] = MeshBuilder::Generate2DMesh("GEO_BACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 64.0f, 64.0f);
 	meshList[GEO_ICONTAM]->textureID = LoadTGA("Image//Icon_Tamagucci.tga");
 
@@ -268,6 +270,16 @@ void SceneBase::Init()
 	meshList[GEO_BATTLEMONSTER]->textureID = LoadTGA("Image//battleMonster.tga");
 	meshList[GEO_BATTLEDIALOUGEBACKGROUND] = MeshBuilder::Generate2DMesh("GEO_BATTLEDIALOUGEBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 780.0f, 600.0f);
 	meshList[GEO_BATTLEDIALOUGEBACKGROUND]->textureID = LoadTGA("Image//dialogueBox.tga");
+
+	meshList[GEO_ROCK] = MeshBuilder::Generate2DMesh("GEO_BATTLEDIALOUGEBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_ROCK]->textureID = LoadTGA("Image//Rock.tga");
+	meshList[GEO_GRASS] = MeshBuilder::Generate2DMesh("GEO_BATTLEDIALOUGEBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_GRASS]->textureID = LoadTGA("Image//Grass.tga");
+	meshList[GEO_BEACH] = MeshBuilder::Generate2DMesh("GEO_BATTLEDIALOUGEBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_BEACH]->textureID = LoadTGA("Image//Beach.tga");
+	meshList[GEO_BOSSBG] = MeshBuilder::Generate2DMesh("GEO_BATTLEDIALOUGEBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_BOSSBG]->textureID = LoadTGA("Image//BossBG.tga");
+
 	meshList[GEO_BATTLEARROW] = MeshBuilder::Generate2DMesh("GEO_BATTLEARROW", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
 	meshList[GEO_BATTLEARROW]->textureID = LoadTGA("Image//arrow.tga");
 	meshList[GEO_HPBARDESIGN] = MeshBuilder::Generate2DMesh("GEO_HPBARDESIGN", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
@@ -302,6 +314,12 @@ void SceneBase::Init()
 	meshList[GEO_INSTRUCTIONBG]->textureID = LoadTGA("Image//instructionbg.tga");
 	meshList[GEO_INTRODUCTION] = MeshBuilder::Generate2DMesh("GEO_STORYBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
 	meshList[GEO_INTRODUCTION]->textureID = LoadTGA("Image//storybg.tga");
+
+	meshList[GEO_TICKCROSS] = MeshBuilder::Generate2DMesh("GEO_HPBARDESIGN", Color(1, 1, 1), 0.0f, 0.0f, 100.f, 100.0f);
+	meshList[GEO_TICKCROSS]->textureID = LoadTGA("Image//Tick.tga");
+
+	meshList[GEO_QUEST] = MeshBuilder::Generate2DMesh("GEO_HPBARDESIGN", Color(1, 1, 1), 0.0f, 0.0f, 400.f, 300.0f);
+	meshList[GEO_QUEST]->textureID = LoadTGA("Image//Quest.tga");
 
 	meshList[GEO_DRAGONDOWN] = MeshBuilder::GenerateSpriteAnimation("down", 1, 4);
 	meshList[GEO_DRAGONDOWN]->textureID = LoadTGA("Image//dragonWalkDownAnimation.tga");

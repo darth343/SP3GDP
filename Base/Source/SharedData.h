@@ -52,6 +52,7 @@ public:
 	bool BACKkeyPressed;
 	bool IkeyPressed;
 	bool SpaceKeyPressed;
+	bool QKeyPressed;
 
 	bool BS_SlashRender;
 	bool BS_StabRender;
@@ -60,6 +61,7 @@ public:
 	bool BS_BiteRender;
 	bool BS_SkinRender;
 	bool enemyHitPlayer;
+	bool playerHitenemy;
 	bool enemyTurn;
 	bool playerTurn;
 	bool playerBattleDialogue;
@@ -96,6 +98,7 @@ private:
 		BACKkeyPressed = false;
 		IkeyPressed = false;
 		SpaceKeyPressed = false;
+		QKeyPressed = false;
 
 		soundFootstep = NULL;
 		worldBGM = NULL;
@@ -111,6 +114,7 @@ private:
 		enemyTurn = false;
 		playerTurn = true;
 		enemyHitPlayer = false;
+		playerHitenemy = false;
 		BS_ScreamRender = false;
 		BS_RoarRender = false;
 		BS_BiteRender = false;

@@ -123,6 +123,8 @@ void NPC::ScrollDialogue(int & dialogue)
 void NPC::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 {
 	//MOVEMENT
+	if (SharedData::GetInstance()->gameState != SharedData::GAME_BOSS)
+	{
 		if (GetID() == 1)
 		{
 			if (this->GetAnimationState() == NPC::NPC_AWANDERING)
@@ -215,6 +217,9 @@ void NPC::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 			else if (this->GetDialogueState() == 3)
 				this->maxDia = 2;
 		}
+	}
+	else
+		maxDia = 2;
 	if (CheckCollision(playerPos, mapOffset, m_cMap))
 	{
 		if (GetAnimationState() != NPC::NPC_ADYING)
