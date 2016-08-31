@@ -13,6 +13,7 @@ class Inventory
 public:
 	enum INVENTORY_STATE
 	{
+		TAB0,
 		TAB1,
 		TAB2
 	};

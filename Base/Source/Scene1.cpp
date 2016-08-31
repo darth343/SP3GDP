@@ -174,7 +174,7 @@ void Scene1::Init()
 	renderedMp = 100;
 	renderedHp = 100;
 
-	for (int j = 0; j < 0; ++j)
+	for (int j = 0; j < 10; ++j)
 	{
 		Equipment* temp = new Equipment();
 		Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::TOTAL_ETYPE -1);

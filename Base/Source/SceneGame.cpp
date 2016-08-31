@@ -360,9 +360,44 @@ void SceneGame::renderInventoryMenus()
 	{
 		xpos += 0.5f;
 	}
-
 	switch (SharedData::GetInstance()->inventory.getState())
 	{
+	case Inventory::TAB0:
+		if (SharedData::GetInstance()->inventory.getEquipmentLookAt() && SharedData::GetInstance()->inventory.getEquipmentLookAt()->getName() != "UNDEFINED")
+		{
+			std::ostringstream ss;
+			ss.str("");
+			ss << "Name: " << SharedData::GetInstance()->inventory.getEquipmentLookAt()->getName() << endl;
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392);
+			ss.str("");
+			ss << "Damage: " << SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDamage() << endl;
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392 - 20);
+			ss.str("");
+			ss << "Defense: " << SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDefense() << endl;
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392 - 40);
+			ss.str("");
+			ss << "AVG: " << (SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDefense() + SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDamage()) * 0.5 << endl;
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392 - 60);
+		}
+
+		if (SharedData::GetInstance()->inventory.getInputState() == Inventory::INVENTORY)
+			Render2DMesh(meshList[GEO_INVENTORYSEEKER], false, 1, 470.5 + ((SharedData::GetInstance()->inventory.getSeeker().x) * 46), 313 + ((SharedData::GetInstance()->inventory.getSeeker().y - 1) * 46));
+		if (SharedData::GetInstance()->inventory.getInputState() == Inventory::EQUIP_OPTIONS)
+		{
+			Render2DMeshWScale(meshList[GEO_INVENTORYSECONDBACKGROUND], false, 122, -44 - (float)(SharedData::GetInstance()->inventory.getOptions().size() * 18), 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 36, 290 + SharedData::GetInstance()->inventory.getSeeker().y * 46);
+			for (int i = 0; i < SharedData::GetInstance()->inventory.getOptions().size(); ++i)
+			{
+				std::ostringstream ss;
+				ss.str("");
+				ss << SharedData::GetInstance()->inventory.getOptions()[i];
+				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 46, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46 - (i * 20));
+			}
+			std::ostringstream ss;
+			ss.str("");
+			ss << SharedData::GetInstance()->inventory.getOptions()[SharedData::GetInstance()->inventory.getSecondSeeker()];
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 426.5 + SharedData::GetInstance()->inventory.getSeeker().x * 46 + 46, 254 + SharedData::GetInstance()->inventory.getSeeker().y * 46 - (SharedData::GetInstance()->inventory.getSecondSeeker() * 20));
+		}
+	break;
 	case Inventory::TAB1:
 		if (SharedData::GetInstance()->inventory.getEquipmentLookAt()->getName() != "UNDEFINED")
 		{
@@ -450,7 +485,6 @@ void SceneGame::renderInventoryMenus()
 		}
 		break;
 	}
-//	cout << xpos << " " << ypos << endl;
 }
 
 void SceneGame::RenderInventory()
