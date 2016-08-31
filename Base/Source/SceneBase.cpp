@@ -329,6 +329,15 @@ void SceneBase::Init()
 		banshee->m_anim->Set(0, 2, 0, 1.f, true);
 	}
 
+	meshList[GEO_MONSTERCEREBUS] = MeshBuilder::GenerateSpriteAnimation("slash", 1, 3);
+	meshList[GEO_MONSTERCEREBUS]->textureID = LoadTGA("Image//Monster_CERBERUS.tga");
+	SpriteAnimation *cerebus = dynamic_cast<SpriteAnimation*>(meshList[GEO_MONSTERCEREBUS]);
+	if (cerebus)
+	{
+		cerebus->m_anim = new Animation();
+		cerebus->m_anim->Set(0, 2, 0, 1.f, true);
+	}
+
 	meshList[GEO_MONSTER] = MeshBuilder::GenerateSpriteAnimation("slash", 1, 4);
 	meshList[GEO_MONSTER]->textureID = LoadTGA("Image//Monster_GOLEM.tga");
 	SpriteAnimation *golem = dynamic_cast<SpriteAnimation*>(meshList[GEO_MONSTER]);

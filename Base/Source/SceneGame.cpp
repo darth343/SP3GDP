@@ -191,7 +191,6 @@ void SceneGame::EnterBattleScene(Enemy* enemy)
 	battleScene.SetBattleStart(true);
 	SharedData::GetInstance()->soundManager.StopAllSound();
 	SharedData::GetInstance()->soundManager.SoundPlay("Sound/battleStart.mp3", &SharedData::GetInstance()->battleStart, 0.3f, true);
-	cout << "Battle" << endl;
 	EnemyInBattle = enemy;
 	GS = BATTLE;
 }
@@ -809,6 +808,11 @@ void SceneGame::RenderMonster()
 	{
 			Render2DMeshWScale(meshList[GEO_MONSTER], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
 	}
+			if (SharedData::GetInstance()->gameState == SharedData::GAME_S3)
+
+			{
+				Render2DMeshWScale(meshList[GEO_MONSTERCEREBUS], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
+			}
 
 	
 }
