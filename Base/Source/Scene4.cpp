@@ -252,6 +252,13 @@ void Scene4::PlayerUpdate(double dt)
 
 void Scene4::GOupdate(double dt)
 {
+	SpriteAnimation *dragonDown = dynamic_cast<SpriteAnimation*>(meshList[GEO_DRAGONDOWN]);
+	if (dragonDown)
+	{
+		dragonDown->m_anim->animActive = true;
+		dragonDown->Update(dt);
+	}
+
 	SpriteAnimation *sa = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC]);
 	if (sa)
 	{
@@ -510,10 +517,11 @@ void Scene4::RenderGO()
 				RenderTextOnScreen(meshList[GEO_TEXT], npctalk.str(), Color(1, 1, 0), 30, 60, 100);
 			}
 		}
+
 		if (m_goList[i]->type == GameObject::GO_ENEMY)
 		{
 			Enemy* temp = (Enemy*)m_goList[i];
-			Render2DMeshWScale(meshList[GEO_MONSTERBANSHEE], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetFlipStatus(), 50);
+			Render2DMeshWScale(meshList[GEO_DRAGONDOWN], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetFlipStatus(), 50);
 		}
 
 		if (m_goList[i]->type == GameObject::GO_NEXT)

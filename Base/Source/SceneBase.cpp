@@ -298,6 +298,20 @@ void SceneBase::Init()
 	meshList[GEO_LOSE]->textureID = LoadTGA("Image//SciFi_Lose.tga");
 	meshList[GEO_LIVES] = MeshBuilder::GenerateSpriteAnimation("slash", 1, 4);
 	meshList[GEO_LIVES]->textureID = LoadTGA("Image//Lives.tga");
+	meshList[GEO_INSTRUCTIONBG] = MeshBuilder::Generate2DMesh("GEO_INSTRUCTIONBG", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_INSTRUCTIONBG]->textureID = LoadTGA("Image//instructionbg.tga");
+	meshList[GEO_INTRODUCTION] = MeshBuilder::Generate2DMesh("GEO_STORYBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_INTRODUCTION]->textureID = LoadTGA("Image//storybg.tga");
+
+	meshList[GEO_DRAGONDOWN] = MeshBuilder::GenerateSpriteAnimation("down", 1, 4);
+	meshList[GEO_DRAGONDOWN]->textureID = LoadTGA("Image//dragonWalkDownAnimation.tga");
+
+	SpriteAnimation *dragonDown = dynamic_cast<SpriteAnimation*>(meshList[GEO_DRAGONDOWN]);
+	if (dragonDown)
+	{
+		dragonDown->m_anim = new Animation();
+		dragonDown->m_anim->Set(0, 3, 0, 1.f, true);
+	}
 
 	meshList[GEO_PORTAL] = MeshBuilder::GenerateSpriteAnimation("slash", 3, 3);
 	meshList[GEO_PORTAL]->textureID = LoadTGA("Image//Portal.tga");

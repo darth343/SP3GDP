@@ -21,6 +21,9 @@ public:
 		BS_SKILL,
 		BS_BACK,
 
+		BS_POTION,
+		BS_TRAP,
+
 		BS_TOTAL,
 	};
 
@@ -34,6 +37,7 @@ public:
 	void SetEscapeChance(float percetage);
 	void SetBattleSelection(BATTLE_SELECTION selection);
 	void SetMonsterHitAnimation(bool set);
+	void SetOpenItemBag(bool set);
 
 	//new
 	void EndPlayerTurn();
@@ -41,6 +45,7 @@ public:
 
 	void Reset();
 
+	bool GetOpenItemBag();
 	bool GetBattleStart();
 	float GetArrowPosX();
 	float GetArrowPosY();
@@ -65,5 +70,10 @@ private:
 	BATTLE_SELECTION battleSelection; //Selection chosen in battlescene
 
 	bool monsterHitAnimation;
+
+	bool openItemBag;
+
+
+
 };
 

@@ -144,10 +144,10 @@ void SceneGame::SetGS(string set)
 
 void SceneGame::CatchUpdate(double dt)
 {
-	enemyCatchPercentage = (EnemyInBattle->GetMaxHealth() - EnemyInBattle->GetHealth()) / EnemyInBattle->GetMaxHealth() * 100;
+	SharedData::GetInstance()->enemyCatchPercentage = (EnemyInBattle->GetMaxHealth() - EnemyInBattle->GetHealth()) / EnemyInBattle->GetMaxHealth() * 100 + SharedData::GetInstance()->trapPercentageIncrease;
 
 	float prevScale = greenbar->scale.x;
-	greenbar->scale.x = enemyCatchPercentage * 0.01 * redbar->scale.x; // * 0.01 is the same as divide by 100
+	greenbar->scale.x = SharedData::GetInstance()->enemyCatchPercentage * 0.01 * redbar->scale.x; // * 0.01 is the same as divide by 100
 	if (greenbar->scale.x > prevScale)
 	{
 		greenbar->position.x -= (greenbar->scale.x - prevScale) * 0.5;
@@ -544,7 +544,7 @@ void SceneGame::Update(double dt)
 	case BATTLE:
 
 		//Updating of catch percentage
-		enemyCatchPercentage = (EnemyInBattle->GetMaxHealth() - EnemyInBattle->GetHealth()) / EnemyInBattle->GetMaxHealth() * 100;
+		SharedData::GetInstance()->enemyCatchPercentage = (EnemyInBattle->GetMaxHealth() - EnemyInBattle->GetHealth()) / EnemyInBattle->GetMaxHealth() * 100 + SharedData::GetInstance()->trapPercentageIncrease;;
 
 		//Flashing effect of dialogue
 		if (flashEffect)
@@ -792,9 +792,14 @@ void SceneGame::RenderMonster()
 			}
 		}
 	}
-
-	Render2DMeshWScale(meshList[GEO_MONSTERBANSHEE], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
-
+	if (SharedData::GetInstance()->gameState == SharedData::GAME_S4)
+	{
+		Render2DMeshWScale(meshList[GEO_DRAGONDOWN], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
+	}
+	else
+	{
+		Render2DMeshWScale(meshList[GEO_MONSTERBANSHEE], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
+	}
 
 	
 }
@@ -1211,10 +1216,12 @@ void SceneGame::RenderBattleHUD()
 	{
 		switch (battleScene.GetBattleSelection())
 		{
+		case BattleSystem::BATTLE_SELECTION::BS_POTION:
 		case BattleSystem::BATTLE_SELECTION::BS_SLASH:
 		case BattleSystem::BATTLE_SELECTION::BS_ATTACK:
 			battleScene.SetArrowPos(120, 91, 0);
 			break;
+		case BattleSystem::BATTLE_SELECTION::BS_TRAP:
 		case BattleSystem::BATTLE_SELECTION::BS_SKILL:
 		case BattleSystem::BATTLE_SELECTION::BS_CAPTURE:
 			battleScene.SetArrowPos(120, 41, 0);
@@ -1243,25 +1250,30 @@ void SceneGame::RenderBattleHUD()
 		std::ostringstream ss;
 		ss.str("");
 		ss.precision(5);
-		if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice())
+		if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice() && !battleScene.GetOpenItemBag())
 			ss << "Attack";
-		else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice())
+		else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice() && !battleScene.GetOpenItemBag())
 			ss << "Slash";
+		else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice() && battleScene.GetOpenItemBag())
+			ss << "Potion x " << SharedData::GetInstance()->inventory.GetPotionCount();
+
 		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 200, 100);
 
 		ss.str("");
 		ss.precision(5);
-		if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice())
+		if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice() && !battleScene.GetOpenItemBag())
 			ss << "Item";
-		else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice())
+		else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice() && !battleScene.GetOpenItemBag())
 			ss << "Stab";
 		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 500, 100);
 
 		ss.str("");
 		ss.precision(5);
-		if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice())
+		if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice() && !battleScene.GetOpenItemBag())
 			ss << "Capture";
-		else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice())
+		else if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice() && battleScene.GetOpenItemBag())
+			ss << "Trap x " << SharedData::GetInstance()->inventory.GetTrapCount();
+		else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice() && !battleScene.GetOpenItemBag())
 		{
 			if (SharedData::GetInstance()->inventory.getArmour() != NULL)
 			{
@@ -1297,7 +1309,7 @@ void SceneGame::RenderBattleHUD()
 		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 500, 50);
 
 		ss.str("");
-		ss << "Capture Rate : " << enemyCatchPercentage << "%";
+		ss << "Capture Rate : " << SharedData::GetInstance()->enemyCatchPercentage << "%";
 		ss.precision(5);
 		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 580, 180);
 	}
