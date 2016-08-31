@@ -23,6 +23,10 @@ public:
 
 		BS_POTION,
 		BS_TRAP,
+		BS_BACK2,
+
+
+
 
 		BS_TOTAL,
 	};

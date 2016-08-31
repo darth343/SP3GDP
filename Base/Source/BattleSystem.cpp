@@ -161,6 +161,7 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 			firstChoice = false;
 			secondChoice = true;
 			SetOpenItemBag(true);
+			battleSelection = BS_POTION;
 			cout << "Item Bag" << battleSelection << endl;
 			break;
 
@@ -316,6 +317,7 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 			if (SharedData::GetInstance()->enemyCatchPercentage > 100.0f)
 				SharedData::GetInstance()->enemyCatchPercentage = 100.0f;
 			break;
+		case BS_BACK2:
 		case BS_BACK:
 			cout << " Back " << battleSelection << endl;
 
@@ -394,8 +396,10 @@ void BattleSystem::GetBattleChoiceInput(static bool& UPkeyPressed, static bool& 
 
 			if (firstChoice && battleSelection < BS_ATTACK)
 				battleSelection = BS_RUN;
-			else if (secondChoice && battleSelection < BS_SLASH)
+			else if (secondChoice && battleSelection < BS_SLASH && !openItemBag)
 				battleSelection = BS_BACK;
+			else if (secondChoice && battleSelection < BS_POTION && openItemBag)
+				battleSelection = BS_BACK2;
 
 			cout << "BS = " << battleSelection << endl;
 		}
@@ -417,8 +421,10 @@ void BattleSystem::GetBattleChoiceInput(static bool& UPkeyPressed, static bool& 
 
 			if (firstChoice && battleSelection > BS_RUN)
 				battleSelection = BS_ATTACK;
-			else if (secondChoice && battleSelection > BS_BACK)
+			else if (secondChoice && battleSelection > BS_BACK && !openItemBag)
 				battleSelection = BS_SLASH;
+			else if (secondChoice && battleSelection > BS_BACK2 && openItemBag)
+				battleSelection = BS_POTION;
 
 			cout << "BS = " << battleSelection << endl;
 		}
@@ -433,6 +439,7 @@ void BattleSystem::GetBattleChoiceInput(static bool& UPkeyPressed, static bool& 
 }
 void BattleSystem::UpdateBattleSystem(static bool& UPkeyPressed, static bool& DNkeyPressed, static bool& LEFTkeyPressed, static bool& RIGHTkeyPressed, static bool& ENTERkeyPressed, CPlayerInfo* theHero, Enemy* enemy)
 {
+	cout << "BattleSelection = " << battleSelection << endl;
 	if (SharedData::GetInstance()->playerTurn && !SharedData::GetInstance()->enemyTurn && !SharedData::GetInstance()->playerHitenemy)
 	{
 		GetBattleChoiceInput(UPkeyPressed, DNkeyPressed, LEFTkeyPressed, RIGHTkeyPressed, ENTERkeyPressed);

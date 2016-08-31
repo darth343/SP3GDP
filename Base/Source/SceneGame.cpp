@@ -204,7 +204,7 @@ void SceneGame::EnterBattleScene(Enemy* enemy)
 	battleScene.SetBattleStart(true);
 	SharedData::GetInstance()->soundManager.StopAllSound();
 	SharedData::GetInstance()->soundManager.SoundPlay("Sound/battleStart.mp3", &SharedData::GetInstance()->battleStart, 0.3f, true);
-
+	SharedData::GetInstance()->playerHitenemy = false;
 	renderedHp = 0;
 	renderedMp = 0;
 
@@ -1340,6 +1340,7 @@ void SceneGame::RenderBattleHUD()
 		case BattleSystem::BATTLE_SELECTION::BS_ITEM:
 			battleScene.SetArrowPos(420, 91, 0);
 			break;
+		case BattleSystem::BATTLE_SELECTION::BS_BACK2:
 		case BattleSystem::BATTLE_SELECTION::BS_BACK:
 		case BattleSystem::BATTLE_SELECTION::BS_RUN:
 			battleScene.SetArrowPos(420, 41, 0);
@@ -1381,7 +1382,7 @@ void SceneGame::RenderBattleHUD()
 		ss.precision(5);
 		if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice() && !battleScene.GetOpenItemBag())
 			ss << "Capture";
-		else if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice() && battleScene.GetOpenItemBag())
+		else if (!battleScene.GetFirstChoice() && battleScene.GetSecondChoice() && battleScene.GetOpenItemBag())
 			ss << "Trap x " << SharedData::GetInstance()->inventory.GetTrapCount();
 		else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice() && !battleScene.GetOpenItemBag())
 		{
