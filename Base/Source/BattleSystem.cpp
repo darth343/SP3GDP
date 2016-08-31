@@ -246,8 +246,7 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 			break;
 		case BS_SKILL:
 
-			SharedData::GetInstance()->soundManager.SoundPlay("Sound/skill.mp3", &SharedData::GetInstance()->skill, 1.0f, false);
-			SharedData::GetInstance()->playerHitenemy = true;
+
 
 			if (theHero->GetMP() >= 15)
 			{
@@ -261,6 +260,8 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 						theHero->UseMP(15);
 						enemy->TakeDamage(theHero->GetDMG()* 2.35);
 						SharedData::GetInstance()->BS_ScreamRender = true;
+						SharedData::GetInstance()->soundManager.SoundPlay("Sound/skill.mp3", &SharedData::GetInstance()->skill, 1.0f, false);
+						SharedData::GetInstance()->playerHitenemy = true;
 						break;
 					case 1:
 						if (theHero->GetMP() >= 35)
@@ -268,6 +269,8 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 							theHero->UseMP(35);
 							enemy->TakeDamage(theHero->GetDMG()* 2.85);
 							SharedData::GetInstance()->BS_BiteRender = true;
+							SharedData::GetInstance()->soundManager.SoundPlay("Sound/skill.mp3", &SharedData::GetInstance()->skill, 1.0f, false);
+							SharedData::GetInstance()->playerHitenemy = true;
 						}
 						break;
 					case 2:
@@ -276,6 +279,8 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 							theHero->UseMP(60);
 							enemy->TakeDamage(theHero->GetDMG()* 3.15);
 							SharedData::GetInstance()->BS_RoarRender = true;
+							SharedData::GetInstance()->soundManager.SoundPlay("Sound/skill.mp3", &SharedData::GetInstance()->skill, 1.0f, false);
+							SharedData::GetInstance()->playerHitenemy = true;
 						}
 						break;
 					case 3:
@@ -284,6 +289,8 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 							theHero->UseMP(20);
 							theHero->SetDEF(theHero->GetDEF() + 15);
 							SharedData::GetInstance()->BS_SkinRender = true;
+							SharedData::GetInstance()->soundManager.SoundPlay("Sound/skill.mp3", &SharedData::GetInstance()->skill, 1.0f, false);
+							SharedData::GetInstance()->playerHitenemy = true;
 						}
 						break;
 					}
