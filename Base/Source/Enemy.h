@@ -17,7 +17,6 @@ enum ENEMY_STATES
 	E_IDLE,
 	E_PATROL,
 	E_CHASE,
-	E_DEAD,
 	E_TOTAL,
 };
 

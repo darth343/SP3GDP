@@ -116,7 +116,6 @@ void TAMAGUCCI::TamagucciBackgroundUpdate(double dt)
 				SharedData::GetInstance()->inventory.getEquippedItems()[i]->happinessLosstimer -= HAPPYLOSSTIME;
 				SharedData::GetInstance()->inventory.getEquippedItems()[i]->DecrementTamHappy();
 			}
-			cout << SharedData::GetInstance()->inventory.getEquippedItems()[i]->happinessLosstimer << endl;
 		}
 	}
 }

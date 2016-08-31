@@ -511,7 +511,8 @@ void Scene3::RenderGO()
 				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
 				if (Application::IsKeyPressed(VK_RETURN))
 				{
-					SharedData::GetInstance()->player->SetPosition(Vector3(400, -300, 0));
+					SharedData::GetInstance()->player->SetPosition(Vector3(382, 64, 0));
+					SharedData::GetInstance()->player->SetMapOffset(Vector3(0,0,0));
 					SharedData::GetInstance()->gameState = SharedData::GAME_S1;
 				}
 			}

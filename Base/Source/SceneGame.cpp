@@ -72,8 +72,8 @@ void SceneGame::Init()
 	//new
 	flashEffect = false;
 	flashTimer = 0.0f;
-	renderedMp = 100;
-	renderedHp = 100;
+	renderedMp = 0;
+	renderedHp = 0;
 }
 
 bool SceneGame::GetMonsterScaleUp()
@@ -191,6 +191,8 @@ void SceneGame::EnterBattleScene(Enemy* enemy)
 	battleScene.SetBattleStart(true);
 	SharedData::GetInstance()->soundManager.StopAllSound();
 	SharedData::GetInstance()->soundManager.SoundPlay("Sound/battleStart.mp3", &SharedData::GetInstance()->battleStart, 0.3f, true);
+	renderedHp = 0;
+	renderedMp = 0;
 	EnemyInBattle = enemy;
 	GS = BATTLE;
 }
@@ -571,6 +573,11 @@ void SceneGame::Update(double dt)
 		{
 			renderedHp -= dt * 100;
 
+			if (SharedData::GetInstance()->player->GetHP() > renderedHp)
+			{
+				renderedHp = SharedData::GetInstance()->player->GetHP();
+			}
+
 			//if enemy not dead		
 			if (EnemyInBattle->GetHealth() < 0)
 			{
@@ -611,12 +618,35 @@ void SceneGame::Update(double dt)
 			}
 
 		}
+		else if (SharedData::GetInstance()->player->GetHP() > renderedHp)
+		{
+			renderedHp += dt * 100;
+			if (SharedData::GetInstance()->player->GetHP() < renderedHp)
+			{
+				renderedHp = SharedData::GetInstance()->player->GetHP();
+			}
+		}
 
 		//Decrease RenderedMP on screen
 		if (SharedData::GetInstance()->player->GetMP() < renderedMp)
 		{
 			renderedMp -= dt * 100;
+			if (SharedData::GetInstance()->player->GetMP() > renderedMp)
+			{
+				renderedMp = SharedData::GetInstance()->player->GetMP();
+			}
 		}
+
+		//Decrease RenderedMP on screen
+		if (SharedData::GetInstance()->player->GetMP() > renderedMp)
+		{
+			renderedMp += dt * 100;
+			if (SharedData::GetInstance()->player->GetMP() < renderedMp)
+			{
+				renderedMp = SharedData::GetInstance()->player->GetMP();
+			}
+		}
+
 		battleScene.UpdateBattleSystem(SharedData::GetInstance()->UPkeyPressed, SharedData::GetInstance()->DNkeyPressed, SharedData::GetInstance()->LEFTkeyPressed, SharedData::GetInstance()->RIGHTkeyPressed, SharedData::GetInstance()->ENTERkeyPressed, SharedData::GetInstance()->player, EnemyInBattle);
 		//SharedData::GetInstance()->soundManager.SoundPlay("Sound/battleStart.mp3", &SharedData::GetInstance()->battleStart, 0.3f, true);
 
@@ -973,13 +1003,13 @@ void SceneGame::renderTamagotchiMenu()
 			}
 			Render2DMeshWScale(meshList[GEO_BATTLEARROW], false, 0.05, 0.03, arrowPos.x, arrowPos.y, false);
 				break;
-		}
-		break;
 		case TAMAGUCCI::STATS:
 		{
 			ss.str("");
 			ss << "Press Enter to go back";
-			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 360, 400);
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 284, 49);
+		}
+			break;
 		}
 		break;
 	}

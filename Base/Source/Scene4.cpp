@@ -524,7 +524,8 @@ void Scene4::RenderGO()
 				if (Application::IsKeyPressed(VK_RETURN))
 				{
 
-					SharedData::GetInstance()->player->SetPosition(Vector3(820, 360, 0));
+					SharedData::GetInstance()->player->SetPosition(Vector3(693, 365, 0));
+					SharedData::GetInstance()->player->SetMapOffset(Vector3(160, 349, 0));
 					SharedData::GetInstance()->gameState = SharedData::GAME_S1;
 				}
 			}
