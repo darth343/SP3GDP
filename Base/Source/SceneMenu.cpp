@@ -115,6 +115,10 @@ void SceneMenu::Update(double dt)
 			case GS_GAME:
 				move = true;
 				break;
+			case GS_INTRODUCTION:
+				renderStoryNow = true;
+				move = true;
+				break;
 			case GS_INSTRUCTIONS:
 				renderInstructionNow = true;
 				move = true;
@@ -188,6 +192,7 @@ void SceneMenu::Render()
 	Render2DMeshWScale(meshList[GEO_MENUINST], false, 270, 60, othericonx, y - 140, false, 2);
 	Render2DMeshWScale(meshList[GEO_MENUOPT], false, 200, 60, othericonx, y - 210, false, 2);
 	Render2DMeshWScale(meshList[GEO_MENUQUIT], false, 150, 60, othericonx, y - 280, false, 2);
+	
 	if (renderInstructionNow)
 		RenderInstruction();
 	if (renderStoryNow)
