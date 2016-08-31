@@ -115,7 +115,12 @@ void SceneMenu::Update(double dt)
 			case GS_GAME:
 				move = true;
 				break;
+			case GS_INTRODUCTION:
+				renderStoryNow = true;
+				move = true;
+				break;
 			case GS_INSTRUCTIONS:
+				renderInstructionNow = true;
 				move = true;
 				break;
 			}
@@ -142,12 +147,37 @@ void SceneMenu::Update(double dt)
 			case GS_GAME:
 				SharedData::GetInstance()->gameState = SharedData::STORY;
 				break;
+
+			case GS_INSTRUCTIONS:
+				if (renderInstructionNow && Application::IsKeyPressed(VK_RETURN))
+				{
+					renderInstructionNow = false;
+					m_gs = GS_GAME;
+				}
+				break;
+			case GS_INTRODUCTION:
+				if (renderStoryNow && Application::IsKeyPressed(VK_RETURN))
+				{
+					renderStoryNow = false;
+					m_gs = GS_GAME;
+				}
+				break;
 				//Other cases here
 			}
 		}
 
 	fps = (float)(1.f / dt);
 
+}
+
+void SceneMenu::RenderInstruction()
+{
+	RenderBackground(meshList[GEO_INSTRUCTIONBG]);
+}
+
+void SceneMenu::RenderStory()
+{
+	RenderBackground(meshList[GEO_INTRODUCTION]);
 }
 
 void SceneMenu::Render()
@@ -162,6 +192,11 @@ void SceneMenu::Render()
 	Render2DMeshWScale(meshList[GEO_MENUINST], false, 270, 60, othericonx, y - 140, false, 2);
 	Render2DMeshWScale(meshList[GEO_MENUOPT], false, 200, 60, othericonx, y - 210, false, 2);
 	Render2DMeshWScale(meshList[GEO_MENUQUIT], false, 150, 60, othericonx, y - 280, false, 2);
+	
+	if (renderInstructionNow)
+		RenderInstruction();
+	if (renderStoryNow)
+		RenderStory();
 }
 
 void SceneMenu::Exit()

@@ -81,7 +81,7 @@ void SceneBoss::Init()
 	currHealth = 100;
 	enemyCatchPercentage = 0;
 	//npc.ReadFromFile("NPC//Text.txt", m_goList);
-	vector<NPC*>npcvec = npc.GetVec();
+	/*vector<NPC*>npcvec = npc.GetVec();
 
 	for (int i = 0; i < npcvec.size(); i++)
 	{
@@ -94,7 +94,7 @@ void SceneBoss::Init()
 		npcvec[i]->currDia = 1;
 
 		m_goList.push_back(dynamic_cast<NPC*>(npcvec[i]));
-	}
+	}*/
 
 	// Initialise and load the REAR tile map
 	//m_cRearMap = new CMap();
@@ -881,7 +881,7 @@ void SceneBoss::Update(double dt)
 				if (SharedData::GetInstance()->playerLives > 0)
 				{
 					SharedData::GetInstance()->playerLives--;
-					SharedData::GetInstance()->stateCheck = true;
+					//SharedData::GetInstance()->stateCheck = true;
 					SharedData::GetInstance()->gameState = SharedData::GAME_S1;
 				}
 				else
@@ -1085,7 +1085,7 @@ void SceneBoss::RenderTestMap()
 				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
 				if (Application::IsKeyPressed(VK_RETURN))
 				{
-					SharedData::GetInstance()->stateCheck = true;
+					//SharedData::GetInstance()->stateCheck = true;
 					SharedData::GetInstance()->gameState = SharedData::GAME_S2;
 				}
 			}
@@ -1098,7 +1098,7 @@ void SceneBoss::RenderTestMap()
 				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
 				if (Application::IsKeyPressed(VK_RETURN))
 				{
-					SharedData::GetInstance()->stateCheck = true;
+					//SharedData::GetInstance()->stateCheck = true;
 					SharedData::GetInstance()->gameState = SharedData::GAME_BOSS;
 				}
 			}

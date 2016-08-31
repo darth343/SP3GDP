@@ -33,6 +33,15 @@ Inventory::~Inventory()
 	}
 }
 
+void Inventory::useTrap()
+{
+	if (ItemInventory[Items::TRAP] > 0)
+	{
+		SharedData::GetInstance()->enemyCatchPercentage += 20;
+		ItemInventory[Items::TRAP]--;
+	}
+}
+
 void Inventory::usePotion()
 {
 	if (ItemInventory[Items::POTION] > 0)
@@ -131,6 +140,11 @@ Inventory::INVENTORY_STATE Inventory::getState()
 vector<string> Inventory::getOptions()
 {
 	return options;
+}
+
+int Inventory::GetTrapCount()
+{
+	return ItemInventory[Items::TRAP];
 }
 
 int Inventory::GetPotionCount()

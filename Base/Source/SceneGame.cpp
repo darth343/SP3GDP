@@ -144,10 +144,10 @@ void SceneGame::SetGS(string set)
 
 void SceneGame::CatchUpdate(double dt)
 {
-	enemyCatchPercentage = (EnemyInBattle->GetMaxHealth() - EnemyInBattle->GetHealth()) / EnemyInBattle->GetMaxHealth() * 100;
+	SharedData::GetInstance()->enemyCatchPercentage = (EnemyInBattle->GetMaxHealth() - EnemyInBattle->GetHealth()) / EnemyInBattle->GetMaxHealth() * 100 + SharedData::GetInstance()->trapPercentageIncrease;
 
 	float prevScale = greenbar->scale.x;
-	greenbar->scale.x = enemyCatchPercentage * 0.01 * redbar->scale.x; // * 0.01 is the same as divide by 100
+	greenbar->scale.x = SharedData::GetInstance()->enemyCatchPercentage * 0.01 * redbar->scale.x; // * 0.01 is the same as divide by 100
 	if (greenbar->scale.x > prevScale)
 	{
 		greenbar->position.x -= (greenbar->scale.x - prevScale) * 0.5;
@@ -190,9 +190,10 @@ void SceneGame::EnterBattleScene(Enemy* enemy)
 {
 	battleScene.SetBattleStart(true);
 	SharedData::GetInstance()->soundManager.StopAllSound();
-	SharedData::GetInstance()->soundManager.SoundPlay("Sound/battleStart.mp3", &SharedData::GetInstance()->battleStart, 0.3f, true);
+	SharedData::GetInstance()->soundManager.SoundPlay("Sound/battleStart.mp3", &SharedData::GetInstance()->battleStart, 0.3f, true)
 	renderedHp = 0;
 	renderedMp = 0;
+	cout << "Battle" << endl;
 	EnemyInBattle = enemy;
 	GS = BATTLE;
 }
@@ -546,7 +547,7 @@ void SceneGame::Update(double dt)
 	case BATTLE:
 
 		//Updating of catch percentage
-		enemyCatchPercentage = (EnemyInBattle->GetMaxHealth() - EnemyInBattle->GetHealth()) / EnemyInBattle->GetMaxHealth() * 100;
+		SharedData::GetInstance()->enemyCatchPercentage = (EnemyInBattle->GetMaxHealth() - EnemyInBattle->GetHealth()) / EnemyInBattle->GetMaxHealth() * 100 + SharedData::GetInstance()->trapPercentageIncrease;;
 
 		//Flashing effect of dialogue
 		if (flashEffect)
@@ -611,6 +612,7 @@ void SceneGame::Update(double dt)
 				battleScene.SetFirstChoice(true);
 				battleScene.SetSecondChoice(false);
 				battleScene.SetBattleSelection(BattleSystem::BS_ATTACK);
+				SharedData::GetInstance()->soundManager.StopSingleSound("Sound/battleStart.mp3");
 				RemoveEnemy();
 				//SceneGame* mainScene = (SceneGame*)Application::GetInstance().GetScene();
 
@@ -788,43 +790,55 @@ void SceneGame::RemoveEnemy()
 void SceneGame::RenderMonster()
 {
 	if (battleScene.GetMonsterHitAnimation())
-	{
-		if (monsterScaleUp)
 		{
-			battleMonsterScale.x += 3;
-			battleMonsterScale.y += 3;
-			battleMonsterPos.x -= 2.f;
-			battleMonsterPos.y -= 2.f;
-
-			if (battleMonsterScale.x > 330 || battleMonsterScale.y > 330)
-				monsterScaleUp = false;
-		}
-		else if (!monsterScaleUp)
-		{
-			battleMonsterScale.x -= 3;
-			battleMonsterScale.y -= 3;
-			battleMonsterPos.x += 2.f;
-			battleMonsterPos.y += 2.f;
-
-			if (battleMonsterScale.x < 300 || battleMonsterScale.y < 300)
+			if (monsterScaleUp)
 			{
-				battleScene.SetMonsterHitAnimation(false);
-				battleScene.SetFirstChoice(true);
-				battleScene.SetSecondChoice(false);
-				battleScene.SetBattleSelection(BattleSystem::BS_ATTACK);
-				SharedData::GetInstance()->enemyTurn = false;
-				SharedData::GetInstance()->playerTurn = true;
-				//battleMonsterScale.x = 300.f;
-				//battleMonsterScale.y = 300.f;
-				battleMonsterPos.x = 280;
-				battleMonsterPos.y = 240;
-				monsterScaleUp = true;
+				battleMonsterScale.x += 3;
+				battleMonsterScale.y += 3;
+				battleMonsterPos.x -= 2.f;
+				battleMonsterPos.y -= 2.f;
+
+				if (battleMonsterScale.x > 330 || battleMonsterScale.y > 330)
+					monsterScaleUp = false;
+			}
+			else if (!monsterScaleUp)
+			{
+				battleMonsterScale.x -= 3;
+				battleMonsterScale.y -= 3;
+				battleMonsterPos.x += 2.f;
+				battleMonsterPos.y += 2.f;
+
+				if (battleMonsterScale.x < 300 || battleMonsterScale.y < 300)
+				{
+					battleScene.SetMonsterHitAnimation(false);
+					battleScene.SetFirstChoice(true);
+					battleScene.SetSecondChoice(false);
+					battleScene.SetBattleSelection(BattleSystem::BS_ATTACK);
+					SharedData::GetInstance()->enemyTurn = false;
+					SharedData::GetInstance()->playerTurn = true;
+					//battleMonsterScale.x = 300.f;
+					//battleMonsterScale.y = 300.f;
+					battleMonsterPos.x = 280;
+					battleMonsterPos.y = 240;
+					monsterScaleUp = true;
+				}
 			}
 		}
+		if (SharedData::GetInstance()->gameState == SharedData::GAME_S1)
+{
+		Render2DMeshWScale(meshList[GEO_MONSTERBANSHEE], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
+
+}
+
+	if (SharedData::GetInstance()->gameState == SharedData::GAME_S4)
+	{
+		Render2DMeshWScale(meshList[GEO_DRAGONDOWN], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
 	}
+			if (SharedData::GetInstance()->gameState == SharedData::GAME_S2)
 
-	Render2DMeshWScale(meshList[GEO_MONSTERBANSHEE], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
-
+	{
+			Render2DMeshWScale(meshList[GEO_MONSTER], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
+	}
 
 	
 }
@@ -1241,10 +1255,12 @@ void SceneGame::RenderBattleHUD()
 	{
 		switch (battleScene.GetBattleSelection())
 		{
+		case BattleSystem::BATTLE_SELECTION::BS_POTION:
 		case BattleSystem::BATTLE_SELECTION::BS_SLASH:
 		case BattleSystem::BATTLE_SELECTION::BS_ATTACK:
 			battleScene.SetArrowPos(120, 91, 0);
 			break;
+		case BattleSystem::BATTLE_SELECTION::BS_TRAP:
 		case BattleSystem::BATTLE_SELECTION::BS_SKILL:
 		case BattleSystem::BATTLE_SELECTION::BS_CAPTURE:
 			battleScene.SetArrowPos(120, 41, 0);
@@ -1273,25 +1289,30 @@ void SceneGame::RenderBattleHUD()
 		std::ostringstream ss;
 		ss.str("");
 		ss.precision(5);
-		if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice())
+		if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice() && !battleScene.GetOpenItemBag())
 			ss << "Attack";
-		else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice())
+		else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice() && !battleScene.GetOpenItemBag())
 			ss << "Slash";
+		else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice() && battleScene.GetOpenItemBag())
+			ss << "Potion x " << SharedData::GetInstance()->inventory.GetPotionCount();
+
 		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 200, 100);
 
 		ss.str("");
 		ss.precision(5);
-		if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice())
+		if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice() && !battleScene.GetOpenItemBag())
 			ss << "Item";
-		else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice())
+		else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice() && !battleScene.GetOpenItemBag())
 			ss << "Stab";
 		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 500, 100);
 
 		ss.str("");
 		ss.precision(5);
-		if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice())
+		if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice() && !battleScene.GetOpenItemBag())
 			ss << "Capture";
-		else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice())
+		else if (battleScene.GetFirstChoice() && !battleScene.GetSecondChoice() && battleScene.GetOpenItemBag())
+			ss << "Trap x " << SharedData::GetInstance()->inventory.GetTrapCount();
+		else if (battleScene.GetSecondChoice() && !battleScene.GetFirstChoice() && !battleScene.GetOpenItemBag())
 		{
 			if (SharedData::GetInstance()->inventory.getArmour() != NULL)
 			{
@@ -1327,7 +1348,7 @@ void SceneGame::RenderBattleHUD()
 		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 500, 50);
 
 		ss.str("");
-		ss << "Capture Rate : " << enemyCatchPercentage << "%";
+		ss << "Capture Rate : " << SharedData::GetInstance()->enemyCatchPercentage << "%";
 		ss.precision(5);
 		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 580, 180);
 	}

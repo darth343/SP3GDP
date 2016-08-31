@@ -26,6 +26,8 @@ public:
 	virtual void Update(double dt);
 	virtual void Render();
 	virtual void Exit();
+	void RenderInstruction();
+	void RenderStory();
 	GAMESTATE_TYPE m_gs;
 
 private:
@@ -33,6 +35,8 @@ private:
 	float othericonx = 500;
 	bool move = false;
 	bool movein = false;
+	bool renderInstructionNow = false;
+	bool renderStoryNow = false;
 };
 
 #endif

@@ -106,7 +106,7 @@ void Scene3::Init()
 	//m_cRearMap->LoadMap( "Image//MapDesign_Rear.csv" );
 
 	// Initialise the hero's position
-	SharedData::GetInstance()->player->SetPosition(Vector3(615, 2000, 0));
+	SharedData::GetInstance()->player->SetPosition(Vector3(815, 2000, 0));
 	SharedData::GetInstance()->player->SetPlayerMesh(meshList[GEO_HEROD]);
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
 	//Mtx44 perspective;
@@ -376,6 +376,7 @@ void Scene3::MapUpdate(double dt)
 		PlayerUpdate(dt);
 		GOupdate(dt);
 		SharedData::GetInstance()->soundManager.SoundPlay("Sound/route1.mp3", &SharedData::GetInstance()->worldBGM, 0.3f, true);
+		cout << "route1" << endl;
 	}
 
 	PlayerUpdate(dt);
@@ -458,7 +459,6 @@ void Scene3::RenderMap()
 	ss << "FPS: " << fps;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 0), 30, 0, 0);
 }
-
 
 void Scene3::RenderGO()
 {

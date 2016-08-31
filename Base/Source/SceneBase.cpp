@@ -243,8 +243,6 @@ void SceneBase::Init()
 	meshList[GEO_BLUETILE]->textureID = LoadTGA("Image//blueTile.tga");
 	meshList[GEO_HEROWALK] = MeshBuilder::Generate2DMesh("Player", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_HEROWALK]->textureID = LoadTGA("Image//Hero.tga");
-	meshList[GEO_MONSTER] = MeshBuilder::Generate2DMesh("Monster", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
-	meshList[GEO_MONSTER]->textureID = LoadTGA("Image//Monster.tga");
 	meshList[GEO_POTION] = MeshBuilder::Generate2DMesh("Potion", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
 	meshList[GEO_POTION]->textureID = LoadTGA("Image//Potion.tga");
 	meshList[GEO_SWORD] = MeshBuilder::Generate2DMesh("GEO_SWORD", Color(1, 1, 1), 0.0f, 0.0f, 1.0f, 1.0f);
@@ -298,6 +296,20 @@ void SceneBase::Init()
 	meshList[GEO_LOSE]->textureID = LoadTGA("Image//SciFi_Lose.tga");
 	meshList[GEO_LIVES] = MeshBuilder::GenerateSpriteAnimation("slash", 1, 4);
 	meshList[GEO_LIVES]->textureID = LoadTGA("Image//Lives.tga");
+	meshList[GEO_INSTRUCTIONBG] = MeshBuilder::Generate2DMesh("GEO_INSTRUCTIONBG", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_INSTRUCTIONBG]->textureID = LoadTGA("Image//instructionbg.tga");
+	meshList[GEO_INTRODUCTION] = MeshBuilder::Generate2DMesh("GEO_STORYBACKGROUND", Color(1, 1, 1), 0.0f, 0.0f, 800.0f, 600.0f);
+	meshList[GEO_INTRODUCTION]->textureID = LoadTGA("Image//storybg.tga");
+
+	meshList[GEO_DRAGONDOWN] = MeshBuilder::GenerateSpriteAnimation("down", 1, 4);
+	meshList[GEO_DRAGONDOWN]->textureID = LoadTGA("Image//dragonWalkDownAnimation.tga");
+
+	SpriteAnimation *dragonDown = dynamic_cast<SpriteAnimation*>(meshList[GEO_DRAGONDOWN]);
+	if (dragonDown)
+	{
+		dragonDown->m_anim = new Animation();
+		dragonDown->m_anim->Set(0, 3, 0, 1.f, true);
+	}
 
 	meshList[GEO_PORTAL] = MeshBuilder::GenerateSpriteAnimation("slash", 3, 3);
 	meshList[GEO_PORTAL]->textureID = LoadTGA("Image//Portal.tga");
@@ -315,6 +327,15 @@ void SceneBase::Init()
 	{
 		banshee->m_anim = new Animation();
 		banshee->m_anim->Set(0, 2, 0, 1.f, true);
+	}
+
+	meshList[GEO_MONSTER] = MeshBuilder::GenerateSpriteAnimation("slash", 1, 4);
+	meshList[GEO_MONSTER]->textureID = LoadTGA("Image//Monster_GOLEM.tga");
+	SpriteAnimation *golem = dynamic_cast<SpriteAnimation*>(meshList[GEO_MONSTER]);
+	if (golem)
+	{
+		golem->m_anim = new Animation();
+		golem->m_anim->Set(0, 3, 0, 1.f, true);
 	}
 
 
