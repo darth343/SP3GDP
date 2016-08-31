@@ -47,27 +47,6 @@ void Scene1::Init()
 	m_cMap2->Init(Application::GetInstance().GetScreenHeight(), Application::GetInstance().GetScreenWidth(), 32);
 	m_cMap2->LoadMap("Data//MapData_WM2.csv");
 
-	GameObject* touch = new GameObject(Vector3(50.f, 50.f, 1));
-	cout << touch << endl;
-	touch->position.Set(0, 820, 1);
-	touch->type = GameObject::GO_NEXT;
-	m_goList.push_back(touch);
-
-	cout << m_goList.size() << endl;
-	GameObject* down = new GameObject(Vector3(50.f, 50.f, 1));
-	down->position.Set(370, 10, 1);
-	down->type = GameObject::GO_DOWN;
-	m_goList.push_back(down);
-
-	GameObject* s4 = new GameObject(Vector3(50.f, 50.f, 1));
-	s4->position.Set(910, 700, 1);
-	s4->type = GameObject::GO_S4;
-	m_goList.push_back(s4);
-
-	GameObject* boss = new GameObject(Vector3(50.f, 50.f, 1));
-	boss->position.Set(450, 1100, 1);
-	boss->type = GameObject::GO_BOSS;
-	m_goList.push_back(boss);
 
 	GameObject* teleporter2 = new GameObject(Vector3(20.f, 20.f, 1));
 	teleporter2->position.Set(182, 510, 1);
@@ -116,6 +95,27 @@ void Scene1::Init()
 		theEnemy->position.Set(RandPos.x * 32, 600, 1);
 		m_goList.push_back(theEnemy);
 	}
+
+	GameObject* touch = new GameObject(Vector3(50.f, 50.f, 1));
+	cout << touch << endl;
+	touch->position.Set(0, 820, 1);
+	touch->type = GameObject::GO_NEXT;
+	m_goList.push_back(touch);
+
+	GameObject* down = new GameObject(Vector3(50.f, 50.f, 1));
+	down->position.Set(370, 10, 1);
+	down->type = GameObject::GO_DOWN;
+	m_goList.push_back(down);
+
+	GameObject* s4 = new GameObject(Vector3(50.f, 50.f, 1));
+	s4->position.Set(910, 700, 1);
+	s4->type = GameObject::GO_S4;
+	m_goList.push_back(s4);
+
+	GameObject* boss = new GameObject(Vector3(50.f, 50.f, 1));
+	boss->position.Set(450, 1100, 1);
+	boss->type = GameObject::GO_BOSS;
+	m_goList.push_back(boss);
 
 
 	/*teleporter1 = new GameObject(Vector3(20.f, 20.f, 1));
@@ -597,6 +597,7 @@ void Scene1::RenderGO()
 
 			if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
 			{
+				SharedData::GetInstance()->player->SetMapOffset(Vector3(0, 0, 0));
 				SharedData::GetInstance()->player->SetPosition(Vector3(182, 532, 0));
 			}
 		}
@@ -606,7 +607,8 @@ void Scene1::RenderGO()
 
 			if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
 			{
-				SharedData::GetInstance()->player->SetPosition(Vector3(182, 52, 0));
+				SharedData::GetInstance()->player->SetMapOffset(Vector3(0, 0, 0));
+				SharedData::GetInstance()->player->SetPosition(Vector3(182, 72, 0));
 			}
 		}
 	}

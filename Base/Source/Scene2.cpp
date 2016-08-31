@@ -86,11 +86,6 @@ void Scene2::Init()
 		m_goList.push_back(theEnemy);
 	}
 
-	GameObject* touch = new GameObject(Vector3(50.f, 50.f, 1));
-	touch->position.Set(1500, 80, 1);
-	touch->type = GameObject::GO_NEXT;
-	m_goList.push_back(touch);
-
 	enemyMaxHealth = 100;
 	currHealth = 100;
 	enemyCatchPercentage = 0;
@@ -108,6 +103,11 @@ void Scene2::Init()
 
 		m_goList.push_back(dynamic_cast<NPC*>(npcvec[i]));
 	}
+
+	GameObject* touch = new GameObject(Vector3(50.f, 50.f, 1));
+	touch->position.Set(1500, 80, 1);
+	touch->type = GameObject::GO_NEXT;
+	m_goList.push_back(touch);
 
 	// Initialise the hero's position
 	SharedData::GetInstance()->player->SetPosition(Vector3(1300, 60, 0));
@@ -519,6 +519,8 @@ void Scene2::RenderGO()
 				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
 				if (Application::IsKeyPressed(VK_RETURN))
 				{
+					SharedData::GetInstance()->player->SetMapOffset(Vector3(0, 0, 0));
+					SharedData::GetInstance()->player->SetPosition(Vector3(80, 830, 0));
 					SharedData::GetInstance()->gameState = SharedData::GAME_S1;
 				}
 			}

@@ -184,7 +184,11 @@ void SceneGame::CatchUpdate(double dt)
 			SharedData::GetInstance()->enemyTurn = false;
 			RemoveEnemy();
 			SharedData::GetInstance()->soundManager.StopAllSound();
-			GS = MAP;
+			if (SharedData::GetInstance()->gameState != SharedData::GAME_BOSS)
+				GS = MAP;
+			else
+				GS = WIN;
+
 			return;
 		}
 		else if (!chargebar->CheckCollision(greenbar))
@@ -210,6 +214,7 @@ void SceneGame::EnterBattleScene(Enemy* enemy)
 
 	EnemyInBattle = enemy;
 	GS = BATTLE;
+	SharedData::GetInstance()->playerHitenemy = false;
 }
 
 //For the mini game
@@ -656,6 +661,8 @@ void SceneGame::Update(double dt)
 					renderedHp = 100;
 					SharedData::GetInstance()->gameState = SharedData::GAME_S1;
 					GS = MAP;
+					SharedData::GetInstance()->player->SetMapOffset(Vector3(0, 0, 0));
+					SharedData::GetInstance()->player->SetPosition(Vector3(530, 64, 0));
 					cout << SharedData::GetInstance()->playerLives << endl;
 				}
 				else
@@ -1161,7 +1168,21 @@ void SceneGame::RenderTamagucci()
 
 void SceneGame::RenderCatch()
 {
-	RenderBackground(meshList[GEO_BATTLESCENE]);
+	if (SharedData::GetInstance()->gameState == SharedData::GAME_S1)
+		RenderBackground(meshList[GEO_GRASS]);
+
+	if (SharedData::GetInstance()->gameState == SharedData::GAME_S2)
+		RenderBackground(meshList[GEO_ROCK]);
+
+	if (SharedData::GetInstance()->gameState == SharedData::GAME_S4)
+		RenderBackground(meshList[GEO_BEACH]);
+
+	if (SharedData::GetInstance()->gameState == SharedData::GAME_S3)
+		RenderBackground(meshList[GEO_BATTLESCENE]);
+
+	if (SharedData::GetInstance()->gameState == SharedData::GAME_BOSS)
+		RenderBackground(meshList[GEO_BOSSBG]);
+
 	RenderMonster();
 
 	Render2DMeshWScale(meshList[GEO_RED], false, redbar->scale.x, redbar->scale.y, redbar->position.x, redbar->position.y, false);
@@ -1176,6 +1197,7 @@ void SceneGame::RenderBattleDialogue()
 		SharedData::GetInstance()->playerBattleDialogue && battleScene.GetBattleSelection() == BattleSystem::BS_STAB ||
 		SharedData::GetInstance()->playerBattleDialogue && battleScene.GetBattleSelection() == BattleSystem::BS_SKILL)
 	{
+
 		Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.3, 0, 0, false);
 
 		if (battleScene.GetBattleSelection() == BattleSystem::BS_SLASH)
@@ -1429,7 +1451,21 @@ void SceneGame::RenderBattleHUD()
 
 void SceneGame::RenderBattleScene()
 {
-	RenderBackground(meshList[GEO_BATTLESCENE]);
+	if (SharedData::GetInstance()->gameState == SharedData::GAME_S1)
+		RenderBackground(meshList[GEO_GRASS]);
+
+	if (SharedData::GetInstance()->gameState == SharedData::GAME_S2)
+		RenderBackground(meshList[GEO_ROCK]);
+
+	if (SharedData::GetInstance()->gameState == SharedData::GAME_S4)
+		RenderBackground(meshList[GEO_BEACH]);
+
+	if (SharedData::GetInstance()->gameState == SharedData::GAME_S3)
+		RenderBackground(meshList[GEO_BATTLESCENE]);
+
+	if (SharedData::GetInstance()->gameState == SharedData::GAME_BOSS)
+		RenderBackground(meshList[GEO_BOSSBG]);
+
 	RenderMonster();
 	RenderBattleAnimation();
 	RenderBattleHUD();

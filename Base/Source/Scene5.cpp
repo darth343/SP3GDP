@@ -43,38 +43,6 @@ void Scene5::Init()
 	m_cMap->Init(Application::GetInstance().GetScreenHeight(), Application::GetInstance().GetScreenWidth(), 32);
 	m_cMap->LoadMap("Data//MapData_Boss.csv");
 
-	GameObject* touch = new GameObject(Vector3(50.f, 50.f, 1));
-	cout << touch << endl;
-	touch->position.Set(0, 820, 1);
-	touch->type = GameObject::GO_NEXT;
-	m_goList.push_back(touch);
-
-	cout << m_goList.size() << endl;
-	GameObject* down = new GameObject(Vector3(50.f, 50.f, 1));
-	down->position.Set(370, 10, 1);
-	down->type = GameObject::GO_DOWN;
-	m_goList.push_back(down);
-
-	GameObject* s4 = new GameObject(Vector3(50.f, 50.f, 1));
-	s4->position.Set(910, 700, 1);
-	s4->type = GameObject::GO_S4;
-	m_goList.push_back(s4);
-
-	GameObject* boss = new GameObject(Vector3(50.f, 50.f, 1));
-	boss->position.Set(450, 1100, 1);
-	boss->type = GameObject::GO_BOSS;
-	m_goList.push_back(boss);
-
-	GameObject* teleporter2 = new GameObject(Vector3(20.f, 20.f, 1));
-	teleporter2->position.Set(182, 510, 1);
-	teleporter2->type = GameObject::GO_TELEPORT2;
-	m_goList.push_back(teleporter2);
-
-	GameObject* teleporter1 = new GameObject(Vector3(20.f, 20.f, 1));
-	teleporter1->position.Set(182, 154, 1);
-	teleporter1->type = GameObject::GO_TELEPORT;
-	m_goList.push_back(teleporter1);
-
 	// Init for loading GameObjects
 	Items* thePotion = new Items(Vector3(32.f, 32.f, 1));
 	thePotion->type = GameObject::GO_ITEM;
@@ -97,12 +65,16 @@ void Scene5::Init()
 	chargebar->position.Set(500, 150, 1);
 
 	Enemy* theEnemy;
-	theEnemy = new Enemy(Monster::getMonster(Monster::BOSS), Vector3(50.f, 50.f, 1));
+	theEnemy = new Enemy(Monster::getMonster(Monster::BOSS), Vector3(100.f, 100.f, 1));
 	theEnemy->type = GameObject::GO_ENEMY;
 		
-	theEnemy->position.Set(400, 600, 1);
+	theEnemy->position.Set(380, 800, 1);
 	m_goList.push_back(theEnemy);
 
+	GameObject* down = new GameObject(Vector3(50.f, 50.f, 1));
+	down->position.Set(370, 10, 1);
+	down->type = GameObject::GO_DOWN;
+	m_goList.push_back(down);
 
 	/*teleporter1 = new GameObject(Vector3(20.f, 20.f, 1));
 	teleporter1->position.Set(182, 154, 1);
@@ -117,7 +89,7 @@ void Scene5::Init()
 	enemyMaxHealth = 100;
 	currHealth = 100;
 	enemyCatchPercentage = 0;
-	NPC::ReadFromFile("NPC//Text.txt", npcvec);
+	NPC::ReadFromFile("NPC//5.txt", npcvec);
 
 	for (int i = 0; i < npcvec.size(); i++)
 	{
@@ -398,9 +370,6 @@ void Scene5::GOupdate(double dt)
 					if (temp->GetID() == temp->collideWhichNPC())
 					{
 						npcID = temp->collideWhichNPC();
-
-						currState = 2;
-
 						dialogueNum = 0;
 						renderNPCstuff = false;
 						MS = PLAY;
@@ -480,9 +449,12 @@ void Scene5::RenderGO()
 			if (m_goList[i]->type == GameObject::GO_NPC)
 			{
 				NPC* temp = (NPC*)m_goList[i];
-				if (MS == IN_DIALOUGE)
-					temp->SetAnimationState(NPC::NPC_AIDLE);
-
+				if (temp->GetID() == 1 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
+					Render2DMeshWScale(meshList[GEO_NPC1_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
+				if (temp->GetID() == 2 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
+					Render2DMeshWScale(meshList[GEO_NPC3_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
+				if (temp->GetID() == 3 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
+					Render2DMeshWScale(meshList[GEO_NPC2_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
 				if (renderNPCstuff)
 				{
 					if (npcPic == 1)
@@ -493,12 +465,7 @@ void Scene5::RenderGO()
 						Render2DMeshWScale(meshList[GEO_NPCPIC3], false, 350, 350, 450, 60, false);
 					Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.25, 10, 20, false);
 				}
-				if (temp->GetID() == 1 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
-					Render2DMeshWScale(meshList[GEO_NPC1_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
-				if (temp->GetID() == 2 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
-					Render2DMeshWScale(meshList[GEO_NPC3_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
-				if (temp->GetID() == 3 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
-					Render2DMeshWScale(meshList[GEO_NPC2_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
+				
 				RenderTextOnScreen(meshList[GEO_TEXT], npctalk.str(), Color(1, 1, 0), 30, 60, 100);
 			}
 		}

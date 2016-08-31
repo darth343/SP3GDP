@@ -69,15 +69,10 @@ void Scene3::Init()
 	chargebar->type = GameObject::GO_MOVE;
 	chargebar->position.Set(500, 150, 1);
 
-	GameObject* down = new GameObject(Vector3(50.f, 50.f, 1));
-	down->position.Set(612, 1200, 1);
-	down->type = GameObject::GO_DOWN;
-	m_goList.push_back(down);
-
 	for (int i = 0; i < 4; ++i)
 	{
 		Enemy* theEnemy;
-		theEnemy = new Enemy(Monster::getMonster(Monster::DRAGON), Vector3(32.f, 32.f, 1));
+		theEnemy = new Enemy(Monster::getMonster(Monster::CEREBUS), Vector3(50.f, 50.f, 1));
 		theEnemy->type = GameObject::GO_ENEMY;
 		theEnemy->position.Set(200, 700, 1);
 		m_goList.push_back(theEnemy);
@@ -86,7 +81,7 @@ void Scene3::Init()
 	enemyMaxHealth = 100;
 	currHealth = 100;
 	enemyCatchPercentage = 0;
-	NPC::ReadFromFile("NPC//2.txt", npcvec);
+	NPC::ReadFromFile("NPC//3.txt", npcvec);
 
 	for (int i = 0; i < npcvec.size(); i++)
 	{
@@ -99,6 +94,11 @@ void Scene3::Init()
 		npcvec[i]->currDia = 1;
 		m_goList.push_back(dynamic_cast<NPC*>(npcvec[i]));
 	}
+
+	GameObject* down = new GameObject(Vector3(50.f, 50.f, 1));
+	down->position.Set(612, 1200, 1);
+	down->type = GameObject::GO_DOWN;
+	m_goList.push_back(down);
 
 	// Initialise and load the REAR tile map
 	//m_cRearMap = new CMap();
@@ -115,7 +115,7 @@ void Scene3::Init()
 	//projectionStack.LoadMatrix(perspective);
 
 	battleMonsterPos.Set(300, 240, 0);
-	battleMonsterScale.Set(0.3, 0.3, 1);
+	battleMonsterScale.Set(300, 300, 1);
 	monsterScaleUp = true;
 
 
@@ -502,6 +502,7 @@ void Scene3::RenderGO()
 					Render2DMeshWScale(meshList[GEO_NPC3_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
 				if (temp->GetID() == 3 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
 					Render2DMeshWScale(meshList[GEO_NPC2_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
+				
 				RenderTextOnScreen(meshList[GEO_TEXT], npctalk.str(), Color(1, 1, 0), 30, 60, 100);
 			}
 		}
