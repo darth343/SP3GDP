@@ -104,6 +104,16 @@ void BattleSystem::EndEnemyTurn()
 	SharedData::GetInstance()->playerTurn = true;
 }
 
+void BattleSystem::ResetAnimation()
+{
+	SharedData::GetInstance()->BS_BiteRender = false;
+	SharedData::GetInstance()->BS_SkinRender = false;
+	SharedData::GetInstance()->BS_RoarRender = false;
+	SharedData::GetInstance()->BS_ScreamRender = false;
+	SharedData::GetInstance()->BS_SlashRender = false;
+	SharedData::GetInstance()->BS_StabRender = false;
+}
+
 void BattleSystem::Reset()
 {
 	SharedData::GetInstance()->soundManager.StopSingleSound("Sound/battleStart.mp3");
@@ -116,6 +126,7 @@ void BattleSystem::Reset()
 	escapePercentage = 25.0f;
 	battleSelection = BS_ATTACK;
 	SetMonsterHitAnimation(false);
+	ResetAnimation();
 }
 
 void BattleSystem::SetMonsterHitAnimation(bool set)
@@ -200,7 +211,7 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 			//minus enemy hp, then enemy turn = true, player turn = false
 
 			cout << "Slash enemy " << endl;
-
+			SharedData::GetInstance()->playerHitenemy = true;
 			SharedData::GetInstance()->soundManager.SoundPlay("Sound/slash.mp3", &SharedData::GetInstance()->slash, 1.0f, false);
 
 			if (SharedData::GetInstance()->inventory.GetTotalATK() <= 0)
@@ -214,22 +225,13 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 
 			cout << "Player Slash Enemy for " << theHero->GetDMG() << " Enemy HP left " << enemy->GetHealth() << endl;
 
-			//if enemy not dead		
-			if (enemy->GetHealth() < 0)
-			{
-				//Player win
-				Reset();
-				mainScene->SetGS("TESTMAP");
-				//destory enemy here
-			}
-
-
 			break;
 
 		case BS_STAB:
 			//minus enemy hp, then enemy turn = true, player turn = false
 			cout << "Stab enemy " << battleSelection << endl;
 
+			SharedData::GetInstance()->playerHitenemy = true;
 			SharedData::GetInstance()->soundManager.SoundPlay("Sound/stab.mp3", &SharedData::GetInstance()->stab, 1.0f, false);
 
 			if (SharedData::GetInstance()->inventory.GetTotalATK() <= 0)
@@ -240,19 +242,11 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 			SharedData::GetInstance()->BS_StabRender = true;
 
 			cout << "Player Stab Enemy for " << theHero->GetDMG() << " Enemy HP left " << enemy->GetHealth() << endl;
-
-			//if enemy not dead		
-			if (enemy->GetHealth() < 0)
-			{
-				//Player win
-				Reset();
-				mainScene->SetGS("TESTMAP");
-				//destory enemy here
-			}
 			break;
 		case BS_SKILL:
 
 			SharedData::GetInstance()->soundManager.SoundPlay("Sound/skill.mp3", &SharedData::GetInstance()->skill, 1.0f, false);
+			SharedData::GetInstance()->playerHitenemy = true;
 
 			if (theHero->GetMP() >= 15)
 			{
@@ -439,7 +433,7 @@ void BattleSystem::GetBattleChoiceInput(static bool& UPkeyPressed, static bool& 
 }
 void BattleSystem::UpdateBattleSystem(static bool& UPkeyPressed, static bool& DNkeyPressed, static bool& LEFTkeyPressed, static bool& RIGHTkeyPressed, static bool& ENTERkeyPressed, CPlayerInfo* theHero, Enemy* enemy)
 {
-	if (SharedData::GetInstance()->playerTurn && !SharedData::GetInstance()->enemyTurn)
+	if (SharedData::GetInstance()->playerTurn && !SharedData::GetInstance()->enemyTurn && !SharedData::GetInstance()->playerHitenemy)
 	{
 		GetBattleChoiceInput(UPkeyPressed, DNkeyPressed, LEFTkeyPressed, RIGHTkeyPressed, ENTERkeyPressed);
 		if (Application::IsKeyPressed(VK_RETURN) && !ENTERkeyPressed)

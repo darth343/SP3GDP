@@ -44,7 +44,7 @@ public:
 	void EndEnemyTurn();
 
 	void Reset();
-
+	void ResetAnimation();
 	bool GetOpenItemBag();
 	bool GetBattleStart();
 	float GetArrowPosX();

@@ -595,8 +595,6 @@ void SceneGame::Update(double dt)
 	case BATTLE:
 
 		//Updating of catch percentage
-		if (EnemyInBattle->GetHealth() > 0)
-		SharedData::GetInstance()->enemyCatchPercentage = (EnemyInBattle->GetMaxHealth() - EnemyInBattle->GetHealth()) / EnemyInBattle->GetMaxHealth() * 100 + SharedData::GetInstance()->trapPercentageIncrease;;
 
 		//Flashing effect of dialogue
 		if (flashEffect)
@@ -618,6 +616,26 @@ void SceneGame::Update(double dt)
 			}
 		}
 
+
+		if (EnemyInBattle->GetHealth() > 0)
+		{
+			SharedData::GetInstance()->enemyCatchPercentage = (EnemyInBattle->GetMaxHealth() - EnemyInBattle->GetHealth()) / EnemyInBattle->GetMaxHealth() * 100 + SharedData::GetInstance()->trapPercentageIncrease;
+		}
+		else
+		{
+			SetGS("MAP");
+			//enemy Died
+			SceneGame* mainScene = (SceneGame*)Application::GetInstance().GetScene();
+
+			//Player win
+			battleScene.Reset();
+			mainScene->RemoveEnemy();
+
+			if (SharedData::GetInstance()->gameState == SharedData::GAME_BOSS)
+				GS = WIN;
+			//destory enemy here
+		}
+
 		//Decrease Rendered HP on screen
 		if (SharedData::GetInstance()->player->GetHP() < renderedHp)
 		{
@@ -628,20 +646,7 @@ void SceneGame::Update(double dt)
 				renderedHp = SharedData::GetInstance()->player->GetHP();
 			}
 
-			//if enemy not dead		
-			if (EnemyInBattle->GetHealth() <= 0)
-			{
-				SceneGame* mainScene = (SceneGame*)Application::GetInstance().GetScene();
-
-				//Player win
-				battleScene.Reset();
-				mainScene->RemoveEnemy();
-
-				if (SharedData::GetInstance()->gameState == SharedData::GAME_BOSS)
-					GS = WIN;
-				//destory enemy here
-			}
-			else if (renderedHp < 0.0f)
+		    if (renderedHp < 0.0f)
 			{
 				if (SharedData::GetInstance()->playerLives > 0)
 				{
@@ -869,6 +874,7 @@ void SceneGame::RenderMonster()
 					battleScene.SetBattleSelection(BattleSystem::BS_ATTACK);
 					SharedData::GetInstance()->enemyTurn = false;
 					SharedData::GetInstance()->playerTurn = true;
+					SharedData::GetInstance()->playerHitenemy = false;
 					//battleMonsterScale.x = 300.f;
 					//battleMonsterScale.y = 300.f;
 					battleMonsterPos.x = 280;

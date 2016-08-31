@@ -60,6 +60,7 @@ public:
 	bool BS_BiteRender;
 	bool BS_SkinRender;
 	bool enemyHitPlayer;
+	bool playerHitenemy;
 	bool enemyTurn;
 	bool playerTurn;
 	bool playerBattleDialogue;
@@ -111,6 +112,7 @@ private:
 		enemyTurn = false;
 		playerTurn = true;
 		enemyHitPlayer = false;
+		playerHitenemy = false;
 		BS_ScreamRender = false;
 		BS_RoarRender = false;
 		BS_BiteRender = false;
