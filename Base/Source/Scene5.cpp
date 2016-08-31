@@ -507,31 +507,6 @@ void Scene5::RenderGO()
 			Enemy* temp = (Enemy*)m_goList[i];
 			Render2DMeshWScale(meshList[GEO_BOSS], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetFlipStatus(), 50);
 		}
-		if (m_goList[i]->type == GameObject::GO_NEXT)
-		{
-			if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
-			{
-				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
-				if (Application::IsKeyPressed(VK_RETURN))
-				{
-					SharedData::GetInstance()->player->SetPosition(Vector3(1300, -100, 0));
-					SharedData::GetInstance()->gameState = SharedData::GAME_S2;
-				}
-			}
-		}
-
-		if (m_goList[i]->type == GameObject::GO_S4)
-		{
-			if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
-			{
-				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
-				if (Application::IsKeyPressed(VK_RETURN))
-				{
-					SharedData::GetInstance()->player->SetPosition(Vector3(0, 227, 0));
-					SharedData::GetInstance()->gameState = SharedData::GAME_S4;
-				}
-			}
-		}
 		if (m_goList[i]->type == GameObject::GO_DOWN)
 		{
 			if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
@@ -539,40 +514,10 @@ void Scene5::RenderGO()
 				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
 				if (Application::IsKeyPressed(VK_RETURN))
 				{
-					SharedData::GetInstance()->player->SetPosition(Vector3(400, 800, 0));
-
+					SharedData::GetInstance()->player->SetPosition(Vector3(455, 510, 0));
+					SharedData::GetInstance()->player->SetMapOffset(Vector3(0, 552, 0));
 					SharedData::GetInstance()->gameState = SharedData::GAME_S1;
 				}
-			}
-		}
-		if (m_goList[i]->type == GameObject::GO_BOSS)
-		{
-			if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
-			{
-				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
-				if (Application::IsKeyPressed(VK_RETURN))
-				{
-					SharedData::GetInstance()->player->SetPosition(Vector3(400, 0, 0));
-					SharedData::GetInstance()->gameState = SharedData::GAME_BOSS;
-				}
-			}
-		}
-		if (m_goList[i]->type == GameObject::GO_TELEPORT)
-		{
-			Render2DMeshWScale(meshList[GEO_PORTAL], false, 50, 50, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, false);
-
-			if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
-			{
-				SharedData::GetInstance()->player->SetPosition(Vector3(182, 532, 0));
-			}
-		}
-		if (m_goList[i]->type == GameObject::GO_TELEPORT2)
-		{
-			Render2DMeshWScale(meshList[GEO_PORTAL], false, 50, 50, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, false);
-
-			if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
-			{
-				SharedData::GetInstance()->player->SetPosition(Vector3(182, 52, 0));
 			}
 		}
 	}
@@ -609,8 +554,31 @@ void Scene5::Render()
 	case TAMAGUCCI_SCREEN:
 		RenderTamagucci();
 		break;
+	case WIN:
+		RenderBackground(meshList[GEO_WIN]);
+		if (Application::IsKeyPressed(VK_SPACE) && !SharedData::GetInstance()->SpaceKeyPressed)
+		{
+			SharedData::GetInstance()->SpaceKeyPressed = true;
+		}
+		else if (!Application::IsKeyPressed(VK_SPACE) && SharedData::GetInstance()->SpaceKeyPressed)
+		{
+			SharedData::GetInstance()->SpaceKeyPressed = false;
+			SharedData::GetInstance()->gameState = SharedData::MENU;
+			GS = MAP;
+		}
+		break;
 	case LOSE:
 		RenderBackground(meshList[GEO_LOSE]);
+		if (Application::IsKeyPressed(VK_SPACE) && !SharedData::GetInstance()->SpaceKeyPressed)
+		{
+			SharedData::GetInstance()->SpaceKeyPressed = true;
+		}
+		else if (!Application::IsKeyPressed(VK_SPACE) && SharedData::GetInstance()->SpaceKeyPressed)
+		{
+			SharedData::GetInstance()->SpaceKeyPressed = false;
+			SharedData::GetInstance()->gameState = SharedData::MENU;
+			GS = MAP;
+		}
 		break;
 	}
 }

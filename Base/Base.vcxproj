@@ -36,6 +36,7 @@
     <ClCompile Include="Source\Scene2.cpp" />
     <ClCompile Include="Source\Scene3.cpp" />
     <ClCompile Include="Source\Scene4.cpp" />
+    <ClCompile Include="Source\Scene5.cpp" />
     <ClCompile Include="Source\SceneBase.cpp" />
     <ClCompile Include="Source\SceneGame.cpp" />
     <ClCompile Include="Source\SceneMenu.cpp" />
@@ -76,6 +77,8 @@
     <ClInclude Include="Source\Scene2.h" />
     <ClInclude Include="Source\Scene3.h" />
     <ClInclude Include="Source\Scene4.h" />
+    <ClInclude Include="Source\Scene5.h" />
+    <ClInclude Include="Source\SceneBase.h" />
     <ClInclude Include="Source\SceneGame.h" />
     <ClInclude Include="Source\SceneMenu.h" />
     <ClInclude Include="Source\SceneStory.h" />

@@ -32,6 +32,9 @@ void SceneMenu::Init()
 
 void SceneMenu::Update(double dt)
 {
+	SharedData::GetInstance()->menuCoolDown -= dt;
+
+
 	//SharedData::GetInstance()->soundManager.SoundPlay("Sound/title.mp3", &SharedData::GetInstance()->title, 0.3f, false);
 	SpriteAnimation *logo = dynamic_cast<SpriteAnimation*>(meshList[GEO_LOGO]);
 	if (logo)
@@ -139,13 +142,24 @@ void SceneMenu::Update(double dt)
 			othericonx -= 200 * dt;
 			realizeiconx += 200 * dt;
 		}
+		if (realizeiconx > 20)
+		{
+			movein = false;
+		}
 		if (realizeiconx <= -350)
 		{
 			move = false;
 			switch (m_gs)
 			{
 			case GS_GAME:
-				SharedData::GetInstance()->gameState = SharedData::STORY;
+				if (SharedData::GetInstance()->menuCoolDown <= 0)
+				{
+					SharedData::GetInstance()->gameState = SharedData::STORY;
+					SharedData::GetInstance()->menuCoolDown = 3;
+				}
+				movein = true;
+
+				m_gs = GS_GAME;
 				break;
 
 			case GS_INSTRUCTIONS:

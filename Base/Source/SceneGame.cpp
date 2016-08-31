@@ -72,8 +72,8 @@ void SceneGame::Init()
 	//new
 	flashEffect = false;
 	flashTimer = 0.0f;
-	renderedMp = 100;
-	renderedHp = 100;
+	renderedMp = 0;
+	renderedHp = 0;
 }
 
 bool SceneGame::GetMonsterScaleUp()
@@ -161,6 +161,19 @@ void SceneGame::CatchUpdate(double dt)
 		if (chargebar->CheckCollision(greenbar))
 		{
 			cout << "CAPTURED" << endl;
+
+			if (SharedData::GetInstance()->gameState == SharedData::GAME_S1)
+				SharedData::GetInstance()->capturedBanshee = true;
+
+			else if (SharedData::GetInstance()->gameState == SharedData::GAME_S2)
+				SharedData::GetInstance()->capturedGolem = true;
+
+			else if (SharedData::GetInstance()->gameState == SharedData::GAME_S3)
+				SharedData::GetInstance()->capturedCerebus = true;
+
+			else if (SharedData::GetInstance()->gameState == SharedData::GAME_S4)
+				SharedData::GetInstance()->capturedDragon = true;
+
 			capturedMonster = true;
 			currState = 3;
 			SharedData::GetInstance()->inventory.addToInventory(EnemyInBattle);
@@ -191,6 +204,10 @@ void SceneGame::EnterBattleScene(Enemy* enemy)
 	battleScene.SetBattleStart(true);
 	SharedData::GetInstance()->soundManager.StopAllSound();
 	SharedData::GetInstance()->soundManager.SoundPlay("Sound/battleStart.mp3", &SharedData::GetInstance()->battleStart, 0.3f, true);
+
+	renderedHp = 0;
+	renderedMp = 0;
+
 	EnemyInBattle = enemy;
 	GS = BATTLE;
 }
@@ -544,6 +561,7 @@ void SceneGame::Update(double dt)
 	case BATTLE:
 
 		//Updating of catch percentage
+		if (EnemyInBattle->GetHealth() > 0)
 		SharedData::GetInstance()->enemyCatchPercentage = (EnemyInBattle->GetMaxHealth() - EnemyInBattle->GetHealth()) / EnemyInBattle->GetMaxHealth() * 100 + SharedData::GetInstance()->trapPercentageIncrease;;
 
 		//Flashing effect of dialogue
@@ -571,14 +589,22 @@ void SceneGame::Update(double dt)
 		{
 			renderedHp -= dt * 100;
 
+			if (SharedData::GetInstance()->player->GetHP() > renderedHp)
+			{
+				renderedHp = SharedData::GetInstance()->player->GetHP();
+			}
+
 			//if enemy not dead		
-			if (EnemyInBattle->GetHealth() < 0)
+			if (EnemyInBattle->GetHealth() <= 0)
 			{
 				SceneGame* mainScene = (SceneGame*)Application::GetInstance().GetScene();
 
 				//Player win
 				battleScene.Reset();
 				mainScene->RemoveEnemy();
+
+				if (SharedData::GetInstance()->gameState == SharedData::GAME_BOSS)
+					GS = WIN;
 				//destory enemy here
 			}
 			else if (renderedHp < 0.0f)
@@ -605,6 +631,7 @@ void SceneGame::Update(double dt)
 				battleScene.SetSecondChoice(false);
 				battleScene.SetBattleSelection(BattleSystem::BS_ATTACK);
 				SharedData::GetInstance()->soundManager.StopSingleSound("Sound/battleStart.mp3");
+				if (SharedData::GetInstance()->gameState != SharedData::GAME_BOSS)
 				RemoveEnemy();
 				//SceneGame* mainScene = (SceneGame*)Application::GetInstance().GetScene();
 
@@ -612,12 +639,35 @@ void SceneGame::Update(double dt)
 			}
 
 		}
+		else if (SharedData::GetInstance()->player->GetHP() > renderedHp)
+		{
+			renderedHp += dt * 100;
+			if (SharedData::GetInstance()->player->GetHP() < renderedHp)
+			{
+				renderedHp = SharedData::GetInstance()->player->GetHP();
+			}
+		}
 
 		//Decrease RenderedMP on screen
 		if (SharedData::GetInstance()->player->GetMP() < renderedMp)
 		{
 			renderedMp -= dt * 100;
+			if (SharedData::GetInstance()->player->GetMP() > renderedMp)
+			{
+				renderedMp = SharedData::GetInstance()->player->GetMP();
+			}
 		}
+
+		//Decrease RenderedMP on screen
+		if (SharedData::GetInstance()->player->GetMP() > renderedMp)
+		{
+			renderedMp += dt * 100;
+			if (SharedData::GetInstance()->player->GetMP() < renderedMp)
+			{
+				renderedMp = SharedData::GetInstance()->player->GetMP();
+			}
+		}
+
 		battleScene.UpdateBattleSystem(SharedData::GetInstance()->UPkeyPressed, SharedData::GetInstance()->DNkeyPressed, SharedData::GetInstance()->LEFTkeyPressed, SharedData::GetInstance()->RIGHTkeyPressed, SharedData::GetInstance()->ENTERkeyPressed, SharedData::GetInstance()->player, EnemyInBattle);
 		//SharedData::GetInstance()->soundManager.SoundPlay("Sound/battleStart.mp3", &SharedData::GetInstance()->battleStart, 0.3f, true);
 
@@ -794,19 +844,22 @@ void SceneGame::RenderMonster()
 			}
 		}
 		if (SharedData::GetInstance()->gameState == SharedData::GAME_S1)
-{
+		{
 		Render2DMeshWScale(meshList[GEO_MONSTERBANSHEE], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
 
-}
+		}
 
 	if (SharedData::GetInstance()->gameState == SharedData::GAME_S4)
 	{
 		Render2DMeshWScale(meshList[GEO_DRAGONDOWN], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
 	}
-			if (SharedData::GetInstance()->gameState == SharedData::GAME_S2)
-
+	if (SharedData::GetInstance()->gameState == SharedData::GAME_S2)
 	{
-			Render2DMeshWScale(meshList[GEO_MONSTER], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
+		Render2DMeshWScale(meshList[GEO_MONSTER], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
+	}
+	if (SharedData::GetInstance()->gameState == SharedData::GAME_BOSS)
+	{
+		Render2DMeshWScale(meshList[GEO_BOSS], false, battleMonsterScale.x, battleMonsterScale.y, battleMonsterPos.x, battleMonsterPos.y, false);
 	}
 			if (SharedData::GetInstance()->gameState == SharedData::GAME_S3)
 
@@ -991,13 +1044,13 @@ void SceneGame::renderTamagotchiMenu()
 			}
 			Render2DMeshWScale(meshList[GEO_BATTLEARROW], false, 0.05, 0.03, arrowPos.x, arrowPos.y, false);
 				break;
-		}
-		break;
 		case TAMAGUCCI::STATS:
 		{
 			ss.str("");
 			ss << "Press Enter to go back";
-			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 360, 400);
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 284, 49);
+		}
+			break;
 		}
 		break;
 	}

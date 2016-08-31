@@ -532,7 +532,8 @@ void Scene4::RenderGO()
 				if (Application::IsKeyPressed(VK_RETURN))
 				{
 
-					SharedData::GetInstance()->player->SetPosition(Vector3(820, 360, 0));
+					SharedData::GetInstance()->player->SetPosition(Vector3(693, 365, 0));
+					SharedData::GetInstance()->player->SetMapOffset(Vector3(160, 349, 0));
 					SharedData::GetInstance()->gameState = SharedData::GAME_S1;
 				}
 			}
@@ -571,6 +572,19 @@ void Scene4::Render()
 
 	case TAMAGUCCI_SCREEN:
 		RenderTamagucci();
+		break;
+	case LOSE:
+		RenderBackground(meshList[GEO_LOSE]);
+		if (Application::IsKeyPressed(VK_SPACE) && !SharedData::GetInstance()->SpaceKeyPressed)
+		{
+			SharedData::GetInstance()->SpaceKeyPressed = true;
+		}
+		else if (!Application::IsKeyPressed(VK_SPACE) && SharedData::GetInstance()->SpaceKeyPressed)
+		{
+			SharedData::GetInstance()->SpaceKeyPressed = false;
+			SharedData::GetInstance()->gameState = SharedData::MENU;
+			GS = MAP;
+		}
 		break;
 	}
 }

@@ -51,6 +51,7 @@ public:
 	bool ENTERkeyPressed;
 	bool BACKkeyPressed;
 	bool IkeyPressed;
+	bool SpaceKeyPressed;
 
 	bool BS_SlashRender;
 	bool BS_StabRender;
@@ -63,6 +64,8 @@ public:
 	bool playerTurn;
 	bool playerBattleDialogue;
 
+	float menuCoolDown;
+
 	int hungerLevel;
 	int energyLevel;
 	int happinessLevel;
@@ -72,6 +75,12 @@ public:
 
 	float trapPercentageIncrease;
 	float enemyCatchPercentage;
+
+
+	bool capturedBanshee;
+	bool capturedGolem;
+	bool capturedDragon;
+	bool capturedCerebus;
 
 private:
 	SharedData()
@@ -86,7 +95,7 @@ private:
 		ENTERkeyPressed = false;
 		BACKkeyPressed = false;
 		IkeyPressed = false;
-
+		SpaceKeyPressed = false;
 
 		soundFootstep = NULL;
 		worldBGM = NULL;
@@ -113,6 +122,14 @@ private:
 		playerLives = 3;
 		trapPercentageIncrease = 0.0f;
 		enemyCatchPercentage = 0.0f;
+		menuCoolDown = 0.f;
+
+
+		capturedBanshee = false;
+		capturedGolem = false;
+		capturedDragon = false;
+		capturedCerebus = false;
+
 	}
 	~SharedData()
 	{
