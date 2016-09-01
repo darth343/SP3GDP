@@ -361,17 +361,20 @@ void SceneGame::renderInventoryItems()
 
 	stringstream ss;
 	ss.str("");
-	ss << "ATTACK :         " << SharedData::GetInstance()->inventory.GetTotalATK();
+	ss << "HEALTH :         " << SharedData::GetInstance()->player->GetHP();
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 30, 43, 371);
 	ss.str("");
-	ss << "DEFENSE:         " << SharedData::GetInstance()->inventory.GetTotalDEF();
+	ss << "ATTACK:         " << SharedData::GetInstance()->inventory.GetTotalATK();
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 30, 43, 371 - 33);
+	ss.str("");
+	ss << "DEFENSE:         " << SharedData::GetInstance()->inventory.GetTotalDEF();
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 30, 43, 371 - 66);
 
 	ss.str("");
 	ss << "Potions:          " << SharedData::GetInstance()->inventory.GetPotionCount();
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 43.5, 180 + 22);
 	ss.str("");
-	ss << "Traps:            " << SharedData::GetInstance()->inventory.GetPotionCount();
+	ss << "Traps:            " << SharedData::GetInstance()->inventory.GetTrapCount();
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 43.5, 180 - 22.5 + 22);
 	ss.str("");
 	ss << "Encrypted Memory: " << SharedData::GetInstance()->inventory.GetMemoryCount();
@@ -415,8 +418,14 @@ void SceneGame::renderInventoryMenus()
 			ss << "Defense: " << SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDefense() << endl;
 			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392 - 40);
 			ss.str("");
-			ss << "AVG: " << (SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDefense() + SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDamage()) * 0.5 << endl;
+			if (SharedData::GetInstance()->inventory.getEquipmentLookAt()->getLevels() < 5)
+			ss << "Level: " << SharedData::GetInstance()->inventory.getEquipmentLookAt()->getLevels() << endl;
+			else
+			ss << "Level: " << "MAX" << endl;
 			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392 - 60);
+			ss.str("");
+			ss << "AVG: " << (SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDefense() + SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDamage()) * 0.5 << endl;
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392 - 80);
 		}
 
 		if (SharedData::GetInstance()->inventory.getInputState() == Inventory::INVENTORY)
@@ -451,8 +460,14 @@ void SceneGame::renderInventoryMenus()
 			ss << "Defense: " << SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDefense() << endl;
 			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392 - 40);
 			ss.str("");
-			ss << "AVG: " << (SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDefense() + SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDamage()) * 0.5 << endl;
+			if (SharedData::GetInstance()->inventory.getEquipmentLookAt()->getLevels() < 5)
+				ss << "Level: " << SharedData::GetInstance()->inventory.getEquipmentLookAt()->getLevels() << endl;
+			else
+				ss << "Level: " << "MAX" << endl;
 			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392 - 60);
+			ss.str("");
+			ss << "AVG: " << (SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDefense() + SharedData::GetInstance()->inventory.getEquipmentLookAt()->getDamage()) * 0.5 << endl;
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 0), 25, 562.5, 392 - 80);
 		}
 
 		if (SharedData::GetInstance()->inventory.getInputState() == Inventory::INVENTORY)
@@ -500,12 +515,12 @@ void SceneGame::renderInventoryMenus()
 		}
 		if (SharedData::GetInstance()->inventory.getSeeker().y == Items::TRAP)
 		{
-			ss << "Traps:            " << SharedData::GetInstance()->inventory.GetPotionCount();
+			ss << "Traps:            " << SharedData::GetInstance()->inventory.GetTrapCount();
 			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 43.5, 180 - 22.5 + 22);
 		}
 		if (SharedData::GetInstance()->inventory.getSeeker().y == Items::ENCRYPTED_MEMORY)
 		{
-			ss << "Encrypted Memory: " << SharedData::GetInstance()->inventory.GetPotionCount();
+			ss << "Encrypted Memory: " << SharedData::GetInstance()->inventory.GetMemoryCount();
 			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 25, 43.5, 180 - 45+ 22);
 		}
 		if (SharedData::GetInstance()->inventory.getInputState() == Inventory::EQUIP_OPTIONS)
@@ -600,6 +615,27 @@ void SceneGame::Update(double dt)
 	else if (!Application::IsKeyPressed('Z') && SharedData::GetInstance()->ZKeyPressed)
 	{
 		SharedData::GetInstance()->ZKeyPressed = false;
+	}
+
+	if (SharedData::GetInstance()->tamagucci.getAlertStatus())
+	{
+		if (!alertOffsetDirection)
+		{
+			alertPosOffset += dt * 50;
+			if (alertPosOffset > 20)
+				alertOffsetDirection = !alertOffsetDirection;
+		}
+		else
+		{
+			alertPosOffset -= dt * 50;
+			if (alertPosOffset < 0)
+				alertOffsetDirection = !alertOffsetDirection;
+		}
+	}
+	else
+	{
+		alertPosOffset = 0;
+		alertOffsetDirection = false;
 	}
 
 	//For battle scene Dialogue

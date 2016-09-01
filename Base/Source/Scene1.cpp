@@ -501,16 +501,38 @@ void Scene1::Update(double dt)
 
 void Scene1::RenderMap()
 {
+	static float xpos = 0.f;
+	static float ypos = 0.f;
+
+	if (Application::IsKeyPressed('U'))
+	{
+		ypos += 0.5f;
+	}
+	if (Application::IsKeyPressed('J'))
+	{
+		ypos -= 0.5f;
+	}
+	if (Application::IsKeyPressed('H'))
+	{
+		xpos -= 0.5f;
+	}
+	if (Application::IsKeyPressed('K'))
+	{
+		xpos += 0.5f;
+	}
+
 	RenderBackground(meshList[GEO_BACKGROUND]);
 	RenderTileMap(meshList[GEO_TILESET3], m_cMap2);
 	RenderTileMap(meshList[GEO_TILESET3], m_cMap);
 	std::ostringstream ss;
 	RenderPlayer();
 	Render2DMeshWScale(meshList[GEO_ICONTAM], false, 1, 1, 700, 10, false);
+	if (SharedData::GetInstance()->tamagucci.getAlertStatus())
+	Render2DMeshWScale(meshList[GEO_EXCLAIM], false, 1, 1, 700, 51 + alertPosOffset, false);
 	Render2DMeshWScale(meshList[GEO_ICONINV], false, 1, 1, 630, 10, false);
 	Render2DMeshWScale(meshList[GEO_ICONQUEST], false, 1, 1, 560, 10, false);
 	Render2DMeshWScale(meshList[GEO_LIVES], false, 120, 50, 0, 550, false);
-
+	cout << xpos << " " << ypos << endl;
 	//On screen text
 	ss.str("");
 	ss.precision(5);

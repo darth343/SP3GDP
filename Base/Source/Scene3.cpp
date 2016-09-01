@@ -85,7 +85,7 @@ void Scene3::Init()
 	for (int i = 0; i < 4; ++i)
 	{
 		Enemy* theEnemy;
-		theEnemy = new Enemy(Monster::getMonster(Monster::CEREBUS), Vector3(32.f, 32.f, 1));
+		theEnemy = new Enemy(Monster::getMonster(Monster::CEREBUS), Vector3(50.f, 50.f, 1));
 		theEnemy->type = GameObject::GO_ENEMY;
 		theEnemy->position.Set(200, 500, 1);
 		m_goList.push_back(theEnemy);
@@ -489,6 +489,8 @@ void Scene3::RenderMap()
 	std::ostringstream ss;
 	RenderPlayer();
 	Render2DMeshWScale(meshList[GEO_ICONTAM], false, 1, 1, 700, 10, false);
+	if (SharedData::GetInstance()->tamagucci.getAlertStatus())
+		Render2DMeshWScale(meshList[GEO_EXCLAIM], false, 1, 1, 700, 51 + alertPosOffset, false);
 	Render2DMeshWScale(meshList[GEO_ICONINV], false, 1, 1, 630, 10, false);
 	Render2DMeshWScale(meshList[GEO_ICONQUEST], false, 1, 1, 560, 10, false);
 	Render2DMeshWScale(meshList[GEO_LIVES], false, 120, 50, 0, 550, false);

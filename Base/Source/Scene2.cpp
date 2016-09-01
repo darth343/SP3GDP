@@ -491,6 +491,8 @@ void Scene2::RenderMap()
 	std::ostringstream ss;
 	RenderPlayer();
 	Render2DMeshWScale(meshList[GEO_ICONTAM], false, 1, 1, 700, 10, false);
+	if (SharedData::GetInstance()->tamagucci.getAlertStatus())
+		Render2DMeshWScale(meshList[GEO_EXCLAIM], false, 1, 1, 700, 51 + alertPosOffset, false);
 	Render2DMeshWScale(meshList[GEO_ICONINV], false, 1, 1, 630, 10, false);
 	Render2DMeshWScale(meshList[GEO_ICONQUEST], false, 1, 1, 560, 10, false);
 	Render2DMeshWScale(meshList[GEO_LIVES], false, 120, 50, 0, 550, false);

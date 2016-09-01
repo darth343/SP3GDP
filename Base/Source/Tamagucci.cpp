@@ -38,54 +38,31 @@ TAMAGUCCI::~TAMAGUCCI()
 	delete tamfood;
 }
 
-//std::ostream& operator<<(std::ostream& cout, TAMAGUCCI::MENUBUTTONS buttons)
-//{
-//	switch (buttons)
-//	{
-//		case TAMAGUCCI::T_NOTHING:
-//			cout << "NOTHING";
-//			break;
-//		case TAMAGUCCI::T_FOOD:
-//			cout << "FOOD";
-//			break;
-//		case TAMAGUCCI::T_SLEEP:
-//			cout << "SLEEP";
-//			break;
-//		case TAMAGUCCI::T_ENTERTAINMENT:
-//			cout << "ENTERTAINMENT";
-//			break;
-//		case TAMAGUCCI::T_CLEAN:
-//			cout << "CLEAN";
-//			break;
-//		case TAMAGUCCI::T_STATS:
-//			cout << "STATS";
-//			break;
-//		case TAMAGUCCI::TOTAL_TBUTTONS:
-//			cout << "TOTAL BUTTONS";
-//			break;
-//	}
-//	return cout;
-//}
-//
-//std::ostream& operator<<(std::ostream& cout, TAMAGUCCI::FOODCHOICES foodchoice)
-//{
-//	switch (foodchoice)
-//	{
-//	case TAMAGUCCI::FC_KB:
-//		cout << "KILOBYTE";
-//		break;
-//	case TAMAGUCCI::FC_MB:
-//		cout << "MEGABYTE";
-//		break;
-//	case TAMAGUCCI::FC_GB:
-//		cout << "GIGABYTE";
-//		break;
-//	case TAMAGUCCI::FC_BACK:
-//		cout << "BACK";
-//		break;
-//	}
-//	return cout;
-//}
+bool TAMAGUCCI::getAlertStatus()
+{
+	if (SharedData::GetInstance()->inventory.getHead())
+	{
+		return SharedData::GetInstance()->inventory.getHead()->pooPositions.size() || (SharedData::GetInstance()->inventory.getHead()->GetTamEnergy() + SharedData::GetInstance()->inventory.getHead()->GetTamHappy() + SharedData::GetInstance()->inventory.getHead()->GetTamHunger()) < 15;
+	}
+	if (SharedData::GetInstance()->inventory.getArmour())
+	{
+		return SharedData::GetInstance()->inventory.getArmour()->pooPositions.size() || (SharedData::GetInstance()->inventory.getArmour()->GetTamEnergy() + SharedData::GetInstance()->inventory.getArmour()->GetTamHappy() + SharedData::GetInstance()->inventory.getArmour()->GetTamHunger()) < 15;
+	}
+	if (SharedData::GetInstance()->inventory.getLeftArm())
+	{
+		return SharedData::GetInstance()->inventory.getLeftArm()->pooPositions.size() || (SharedData::GetInstance()->inventory.getLeftArm()->GetTamEnergy() + SharedData::GetInstance()->inventory.getLeftArm()->GetTamHappy() + SharedData::GetInstance()->inventory.getLeftArm()->GetTamHunger()) < 15;
+	}
+	if (SharedData::GetInstance()->inventory.getRightArm())
+	{
+		return SharedData::GetInstance()->inventory.getRightArm()->pooPositions.size() || (SharedData::GetInstance()->inventory.getRightArm()->GetTamEnergy() + SharedData::GetInstance()->inventory.getRightArm()->GetTamHappy() + SharedData::GetInstance()->inventory.getRightArm()->GetTamHunger()) < 15;
+	}
+	if (SharedData::GetInstance()->inventory.getLeg())
+	{
+		return SharedData::GetInstance()->inventory.getLeg()->pooPositions.size() || (SharedData::GetInstance()->inventory.getLeg()->GetTamEnergy() + SharedData::GetInstance()->inventory.getLeg()->GetTamHappy() + SharedData::GetInstance()->inventory.getLeg()->GetTamHunger()) < 15;
+	}
+	return false;
+}
+
 void TAMAGUCCI::TamagucciBackgroundUpdate(double dt)
 {
 	moveUpdate(dt);
@@ -390,7 +367,6 @@ void TAMAGUCCI::GetTamagucciInput()
 					  // ENTER BUTTON
 					  if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 					  {
-						  SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->DecrementTamHunger();
 						  SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->IncrementTamEnergy();
 						  SharedData::GetInstance()->ENTERkeyPressed = true;
 						  sleep = false;
@@ -572,8 +548,6 @@ void TAMAGUCCI::MiniGame1(double dt)
 	if (coolDown <= 0)
 	{
 		SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->IncrementTamHappy();
-		SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->DecrementTamEnergy();
-		SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->DecrementTamHunger();
 		ResetTamagotchi();
 		GoBack = true;
 		minigame1Score = 0;

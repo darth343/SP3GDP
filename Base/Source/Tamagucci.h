@@ -5,9 +5,9 @@
 #include "Equipment.h"
 #include <vector>
 
-const float ENERGYLOSSTIME = 180.f;
-const float HUNGERLOSSTIME = 120.f;
-const float HAPPYLOSSTIME = 240.f;
+const float ENERGYLOSSTIME = 800.f;
+const float HUNGERLOSSTIME = 200.f;
+const float HAPPYLOSSTIME = 1200.f;
 
 using std::vector;
 class TAMAGUCCI
@@ -58,6 +58,7 @@ public:
 	void MiniGame1UpdatePosition(double dt);
 	void ResetTamagotchi();
 	void SetIndex(int index);
+	bool getAlertStatus();
 	int GetScore();
 	void TamagucciBackgroundUpdate(double dt);
 	//friend std::ostream& operator<<(std::ostream& cout, FIRSTMENUPOPTIONS buttons);

@@ -107,6 +107,8 @@ protected:
 	vector<GameObject *> m_goList;
 	GameObject* touch;
 	int npcPic = 0; //Which npc picture to show on the dialogue
+	bool alertOffsetDirection = false;
+	float alertPosOffset = 0;
 	float enemyCatchPercentage;
 	float enemyMaxHealth;
 	float currHealth = 100;

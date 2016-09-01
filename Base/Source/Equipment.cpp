@@ -13,6 +13,7 @@ Equipment::Equipment()
 , direction(true)
 {
 	position.Set(350, 100, 1);
+	Levels = 1;
 	TamHappy = 5;
 	TamHunger = 5;
 	TamEnergy = 5;
@@ -49,8 +50,6 @@ void Equipment::IncrementTamEnergy()
 
 void Equipment::IncrementTamHappy()
 {
-	TamHappy++;
-	if (TamHappy > 5)
 		TamHappy = 5;
 }
 
@@ -126,14 +125,30 @@ Equipment::EQUIPMENT_TYPE Equipment::getType()
 	return type;
 }
 
-float Equipment::getDamage()
+int Equipment::getLevels()
 {
-	return damage;
+	return Levels;
 }
 
-float Equipment::getDefense()
+void Equipment::setLevels(int level)
 {
-	return defense;
+	Levels = level;
+}
+
+int Equipment::getDamage()
+{
+	if (pooPositions.size() > 0)
+		return 0;
+	int totalLevel = TamHappy + TamHunger + TamEnergy;
+	return (damage / 15) * totalLevel;
+}
+
+int Equipment::getDefense()
+{
+	if (pooPositions.size() > 0)
+		return 0;
+	int totalLevel = TamHappy + TamHunger + TamEnergy;
+	return (defense / 15) * totalLevel;
 }
 
 void Equipment::setDamage(float damage)

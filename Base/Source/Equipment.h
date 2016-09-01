@@ -32,8 +32,10 @@ public:
 	string getName();
 	Monster getMonster();
 	EQUIPMENT_TYPE getType();
-	float getDamage();
-	float getDefense();
+	int getLevels();
+	void setLevels(int level);
+	int getDamage();
+	int getDefense();
 	friend std::ostream& operator<<(std::ostream& cout, EQUIPMENT_TYPE type);
 	int GetTamHappy();
 	int GetTamEnergy();
@@ -57,6 +59,7 @@ private:
 	int TamHappy;
 	int TamHunger;
 	int TamEnergy;
+	int Levels;
 	string name;
 	Monster monster;
 	EQUIPMENT_TYPE type;

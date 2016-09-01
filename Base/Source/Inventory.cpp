@@ -128,8 +128,12 @@ void Inventory::addToInventory(Enemy* enemy)
 	temp->SetName(ss.str());
 	temp->SetMonster(enemy->GetMonster());
 	temp->setType(randType);
-	temp->setDamage(Equipment::getDatabase()[randType][0]->getDamage() + Math::RandIntMinMax(-10, 10));
-	temp->setDefense(Equipment::getDatabase()[randType][0]->getDefense() + Math::RandIntMinMax(-10, 10));
+	if (temp->getType() != Equipment::ARMOUR || temp->getType() != Equipment::HELMET)
+	temp->setDamage(Equipment::getDatabase()[randType][0]->getDamage() + Math::RandIntMinMax(0, 10));
+	else
+	temp->setDamage(Equipment::getDatabase()[randType][0]->getDamage() + Math::RandIntMinMax(0, 2));
+	if (temp->getType() != Equipment::SWORD)
+	temp->setDefense(Equipment::getDatabase()[randType][0]->getDefense() + Math::RandIntMinMax(0, 10));
 	if (temp->getDamage() < 0)
 		temp->setDamage(0);
 	if (temp->getDefense() < 0)
@@ -257,7 +261,7 @@ void Inventory::UpdateInput()
 					options.clear();
 					if (EQinventory[23]->getName() == "UNDEFINED")
 						options.push_back("UNEQUIP");
-					if (ItemInventory[Items::ENCRYPTED_MEMORY] >= 100)
+					if (ItemInventory[Items::ENCRYPTED_MEMORY] >= 100 && getEquipmentLookAt()->getLevels() < 5)
 						options.push_back("POWER UP");
 					options.push_back("BACK");
 				}
@@ -443,7 +447,7 @@ void Inventory::UpdateInput()
 					case Equipment::ARMOUR:
 					case Equipment::LEG:
 						options.push_back("EQUIP");
-						if (ItemInventory[Items::ENCRYPTED_MEMORY] >= 100)
+						if (ItemInventory[Items::ENCRYPTED_MEMORY] >= 100 && getEquipmentLookAt()->getLevels() < 5)
 						options.push_back("POWER UP");
 						options.push_back("DISCARD");
 						options.push_back("BACK");
@@ -751,6 +755,9 @@ void Inventory::removeFromInventory(Equipment* equipment)
 
 void Inventory::PowerUp(Equipment* equipment)
 {
+	if (equipment->getLevels() >= 5)
+		return;
+	equipment->setLevels(equipment->getLevels() + 1);
 	equipment->setDamage(equipment->getDamage() + Math::RandIntMinMax(0, 10));
 	equipment->setDefense(equipment->getDefense() + Math::RandIntMinMax(0, 10));
 }
