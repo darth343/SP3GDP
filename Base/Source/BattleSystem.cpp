@@ -253,8 +253,6 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 			break;
 		case BS_SKILL:
 
-
-
 			if (theHero->GetMP() >= 15)
 			{
 				if (SharedData::GetInstance()->inventory.getArmour() != NULL)
@@ -321,15 +319,24 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 			break;
 
 		case BS_POTION:
-			SharedData::GetInstance()->inventory.removeFromInventory(Items::POTION);
-			theHero->SetHP(theHero->GetHP() + 20);
+			if (SharedData::GetInstance()->inventory.GetPotionCount() > 0)
+			{
+				SharedData::GetInstance()->inventory.removeFromInventory(Items::POTION);
+				theHero->SetHP(theHero->GetHP() + 20);
+				if (theHero->GetHP() > 100.0f)
+					theHero->SetHP(100.0f);
+			}
 			break;
 		case BS_TRAP:
-			SharedData::GetInstance()->inventory.removeFromInventory(Items::TRAP);
-			SharedData::GetInstance()->trapPercentageIncrease = 20.0f;
-			SharedData::GetInstance()->enemyCatchPercentage += SharedData::GetInstance()->trapPercentageIncrease;
-			if (SharedData::GetInstance()->enemyCatchPercentage > 100.0f)
-				SharedData::GetInstance()->enemyCatchPercentage = 100.0f;
+			if (SharedData::GetInstance()->inventory.GetTrapCount() > 0)
+			{
+				SharedData::GetInstance()->inventory.removeFromInventory(Items::TRAP);
+				SharedData::GetInstance()->trapPercentageIncrease = 20.0f;
+				SharedData::GetInstance()->enemyCatchPercentage += SharedData::GetInstance()->trapPercentageIncrease;
+				if (SharedData::GetInstance()->enemyCatchPercentage > 100.0f)
+					SharedData::GetInstance()->enemyCatchPercentage = 100.0f;
+
+			}
 			break;
 		case BS_BACK2:
 		case BS_BACK:
@@ -371,8 +378,6 @@ void BattleSystem::GetBattleChoiceInput(static bool& UPkeyPressed, static bool& 
 		}
 		else if (!Application::IsKeyPressed(VK_UP) && UPkeyPressed)
 		{
-
-
 			UPkeyPressed = false;
 		}
 
