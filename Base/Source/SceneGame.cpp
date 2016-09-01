@@ -188,10 +188,16 @@ void SceneGame::CatchUpdate(double dt)
 			battleScene.SetBattleSelection(BattleSystem::BS_ATTACK);
 			battleScene.SetFirstChoice(true);
 			battleScene.SetSecondChoice(false);
+
+			if (SharedData::GetInstance()->soundPlay)
+			{
+				SharedData::GetInstance()->soundManager.stopMusic("Sound//battleStart.mp3");
+				SharedData::GetInstance()->soundPlay = false;
+			}
+
 			SharedData::GetInstance()->playerTurn = true;
 			SharedData::GetInstance()->enemyTurn = false;
 			RemoveEnemy();
-			//SharedData::GetInstance()->soundManager.StopAllSound();
 			if (SharedData::GetInstance()->gameState != SharedData::GAME_BOSS)
 				GS = MAP;
 			else
@@ -634,7 +640,6 @@ void SceneGame::Update(double dt)
 			}
 		}
 
-
 		if (EnemyInBattle->GetHealth() > 0)
 		{
 			SharedData::GetInstance()->enemyCatchPercentage = (EnemyInBattle->GetMaxHealth() - EnemyInBattle->GetHealth()) / EnemyInBattle->GetMaxHealth() * 100 + SharedData::GetInstance()->trapPercentageIncrease;
@@ -647,7 +652,9 @@ void SceneGame::Update(double dt)
 
 			//Player win
 			battleScene.Reset();
-			mainScene->RemoveEnemy();
+			if (SharedData::GetInstance()->gameState != SharedData::GAME_BOSS)
+				mainScene->RemoveEnemy();
+
 			if (SharedData::GetInstance()->soundPlay)
 			{
 				SharedData::GetInstance()->soundManager.stopMusic("Sound//battleStart.mp3");
@@ -675,6 +682,12 @@ void SceneGame::Update(double dt)
 
 		    if (renderedHp < 0.0f)
 			{
+				if (SharedData::GetInstance()->soundPlay)
+				{
+					SharedData::GetInstance()->soundManager.stopMusic("Sound//battleStart.mp3");
+					SharedData::GetInstance()->soundPlay = false;
+				}
+
 				if (SharedData::GetInstance()->playerLives > 0)
 				{
 					SharedData::GetInstance()->playerLives--;
@@ -682,12 +695,6 @@ void SceneGame::Update(double dt)
 					SharedData::GetInstance()->player->SetHP(100);
 					renderedHp = 100;
 					SharedData::GetInstance()->gameState = SharedData::GAME_S1;
-					if (SharedData::GetInstance()->soundPlay)
-					{
-						SharedData::GetInstance()->soundManager.stopMusic("Sound//battleStart.mp3");
-						SharedData::GetInstance()->soundPlay = false;
-					}
-
 					GS = MAP;
 					SharedData::GetInstance()->player->SetMapOffset(Vector3(0, 0, 0));
 					SharedData::GetInstance()->player->SetPosition(Vector3(530, 64, 0));
@@ -695,26 +702,20 @@ void SceneGame::Update(double dt)
 				}
 				else
 				{
-					//Player Lose should do auto load to previous save file
 					GS = LOSE;
 					SharedData::GetInstance()->Reset();
 				}
-
-				//Player Lose should do auto load to previous save file
 
 				SharedData::GetInstance()->playerTurn = true;
 				SharedData::GetInstance()->enemyTurn = false;
 				battleScene.SetFirstChoice(true);
 				battleScene.SetSecondChoice(false);
 				battleScene.SetBattleSelection(BattleSystem::BS_ATTACK);
-				SharedData::GetInstance()->soundManager.StopSingleSound("Sound/battleStart.mp3");
 				if (SharedData::GetInstance()->gameState != SharedData::GAME_BOSS)
 				RemoveEnemy();
 				SceneGame* mainScene = (SceneGame*)Application::GetInstance().GetScene();
 				mainScene->Reset();
-				//mainScene->RemoveEnemy();
 			}
-
 		}
 		else if (SharedData::GetInstance()->player->GetHP() > renderedHp)
 		{

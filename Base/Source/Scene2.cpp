@@ -431,6 +431,7 @@ void Scene2::MapUpdate(double dt)
 void Scene2::Update(double dt)
 {
 	SceneBase::Update(dt);
+
 	static bool f6press = false;
 	if (Application::IsKeyPressed(VK_F6) && !f6press)
 	{
@@ -475,7 +476,6 @@ void Scene2::Update(double dt)
 	case BATTLE:
 	case CATCH:
 	case INVENTORY_SCREEN:
-		SceneGame::Update(dt);
 	case TAMAGUCCI_SCREEN:
 		SceneGame::Update(dt);
 		break;

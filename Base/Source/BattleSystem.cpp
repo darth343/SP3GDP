@@ -477,6 +477,7 @@ void BattleSystem::UpdateBattleSystem(static bool& UPkeyPressed, static bool& DN
 				damageToPlayer = 0;
 			theHero->TakeDMG(damageToPlayer);
 			SetMonsterHitAnimation(true);
+			SharedData::GetInstance()->soundManager.playSE("sound/monsterHit.mp3");
 
 			SharedData::GetInstance()->enemyHitPlayer = false;
 		}
