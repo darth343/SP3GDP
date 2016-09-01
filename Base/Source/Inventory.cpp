@@ -121,7 +121,7 @@ void Inventory::SortInventory()
 void Inventory::addToInventory(Enemy* enemy)
 {
 	Equipment* temp = new Equipment();
-	Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::ARMOUR);
+	Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::LEG);
 	//Equipment::EQUIPMENT_TYPE randType = Equipment::ARMOUR;
 	stringstream ss;
 	ss << enemy->GetName() << " " << randType;
