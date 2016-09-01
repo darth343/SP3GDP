@@ -167,6 +167,7 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 
 		case BS_CAPTURE:
 			//Start Capture function && render capture function
+			SharedData::GetInstance()->playerBattleDialogue = false;
 			mainScene->SetGS("CATCH");
 			battleStart = false;
 			break;
@@ -176,7 +177,8 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 			cout << "RUN AWAY" << battleSelection << endl;
 			escapePercentage += Math::RandFloatMinMax(0.0f, 50.0f);
 			cout << "Escape % = " << escapePercentage << endl;
-			if (escapePercentage > 50.0f)
+			if (escapePercentage > 50.0f && SharedData::GetInstance()->gameState != SharedData::GAMESTATE::GAME_BOSS || 
+				escapePercentage > 70.0f && SharedData::GetInstance()->gameState == SharedData::GAMESTATE::GAME_BOSS)
 			{
 				SharedData::GetInstance()->playerTurn = true;
 				SharedData::GetInstance()->enemyTurn = false;
@@ -194,7 +196,8 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 
 				battleSelection = BS_ATTACK;
 				mainScene->SetGS("MAP");
-				mainScene->RemoveEnemy();
+				if (SharedData::GetInstance()->gameState != SharedData::GAMESTATE::GAME_BOSS)
+					mainScene->RemoveEnemy();
 				Reset();
 			}
 			else
@@ -367,14 +370,18 @@ void BattleSystem::GetBattleChoiceInput(static bool& UPkeyPressed, static bool& 
 			SharedData::GetInstance()->soundManager.playSE("Sound/click.mp3");
 
 			UPkeyPressed = true;
-			battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 2);
+			if (openItemBag)
+				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 1);
+			else
+				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 2);
 
 			if (firstChoice && battleSelection < BS_ATTACK)
 				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 4);
-			else if (secondChoice && battleSelection < BS_SLASH)
+			else if (secondChoice && battleSelection < BS_SLASH && !openItemBag)
 				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 4);
-
-			cout << "BS = " << battleSelection << endl;
+			else if (secondChoice && battleSelection < BS_POTION && openItemBag)
+				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 2);
+				cout << "BS = " << battleSelection << endl;
 		}
 		else if (!Application::IsKeyPressed(VK_UP) && UPkeyPressed)
 		{
@@ -387,13 +394,17 @@ void BattleSystem::GetBattleChoiceInput(static bool& UPkeyPressed, static bool& 
 			SharedData::GetInstance()->soundManager.playSE("Sound/click.mp3");
 
 			DNkeyPressed = true;
-			battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 2);
+			if (openItemBag)
+				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 1);
+			else
+				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 2);
 
 			if (firstChoice && battleSelection > BS_RUN)
 				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 4);
-			else if (secondChoice && battleSelection > BS_BACK)
+			else if (secondChoice && battleSelection > BS_BACK && !openItemBag)
 				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 4);
-
+			else if (secondChoice && battleSelection > BS_TRAP && openItemBag)
+				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 2);
 			cout << "BS = " << battleSelection << endl;
 		}
 		else if (!Application::IsKeyPressed(VK_DOWN) && DNkeyPressed)
@@ -453,7 +464,7 @@ void BattleSystem::GetBattleChoiceInput(static bool& UPkeyPressed, static bool& 
 }
 void BattleSystem::UpdateBattleSystem(static bool& UPkeyPressed, static bool& DNkeyPressed, static bool& LEFTkeyPressed, static bool& RIGHTkeyPressed, static bool& ENTERkeyPressed, CPlayerInfo* theHero, Enemy* enemy)
 {
-	cout << "BattleSelection = " << battleSelection << endl;
+
 	if (SharedData::GetInstance()->playerTurn && !SharedData::GetInstance()->enemyTurn && !SharedData::GetInstance()->playerHitenemy)
 	{
 		GetBattleChoiceInput(UPkeyPressed, DNkeyPressed, LEFTkeyPressed, RIGHTkeyPressed, ENTERkeyPressed);

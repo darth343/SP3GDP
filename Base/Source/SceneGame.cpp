@@ -1219,6 +1219,7 @@ void SceneGame::RenderCatch()
 
 void SceneGame::RenderBattleDialogue()
 {
+	//cout << "BattleDiaLogue = " << SharedData::GetInstance()->playerBattleDialogue;
 	//Player Attack Enemy Dialogue
 	if (SharedData::GetInstance()->playerBattleDialogue && battleScene.GetBattleSelection() == BattleSystem::BS_SLASH ||
 		SharedData::GetInstance()->playerBattleDialogue && battleScene.GetBattleSelection() == BattleSystem::BS_STAB ||
