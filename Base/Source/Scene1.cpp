@@ -483,6 +483,7 @@ void Scene1::MapUpdate(double dt)
 void Scene1::Update(double dt)
 {
 	SceneBase::Update(dt);
+
 	switch (GS)
 	{
 	case MAP:

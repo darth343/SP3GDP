@@ -13,7 +13,6 @@ class SceneMenu : public SceneBase
 		GS_GAME,
 		GS_INTRODUCTION,
 		GS_INSTRUCTIONS,
-		GS_OPTIONS,
 		GS_QUIT,
 		GS_MAX,
 	};

@@ -46,7 +46,6 @@ void SceneMenu::Update(double dt)
 
 	SpriteAnimation *play = dynamic_cast<SpriteAnimation*>(meshList[GEO_MENUPLAY]);
 	SpriteAnimation *quit = dynamic_cast<SpriteAnimation*>(meshList[GEO_MENUQUIT]);
-	SpriteAnimation *opt = dynamic_cast<SpriteAnimation*>(meshList[GEO_MENUOPT]);
 	SpriteAnimation *inst = dynamic_cast<SpriteAnimation*>(meshList[GEO_MENUINST]);
 	SpriteAnimation *story = dynamic_cast<SpriteAnimation*>(meshList[GEO_MENUSTORY]);
 
@@ -59,7 +58,6 @@ void SceneMenu::Update(double dt)
 	{
 		inst->Update(dt*0.5);
 		inst->m_anim->animActive = true;
-		opt->m_currentFrame = 0;
 		quit->m_currentFrame = 0;
 		story->m_currentFrame = 0;
 		play->m_currentFrame = 0;
@@ -68,12 +66,6 @@ void SceneMenu::Update(double dt)
 	{
 		story->Update(dt*0.5);
 		story->m_anim->animActive = true;
-	}
-	if (opt && m_gs == GS_OPTIONS)
-	{
-		opt->Update(dt*0.5);
-		opt->m_anim->animActive = true;
-		
 	}
 	if (quit && m_gs == GS_QUIT)
 	{
@@ -90,7 +82,6 @@ void SceneMenu::Update(double dt)
 			quit->m_currentFrame = 0;
 			inst->m_currentFrame = 0;
 			story->m_currentFrame = 0;
-			opt->m_currentFrame = 0;
 			SharedData::GetInstance()->soundManager.playSE("Sound//Click.mp3");
 		}
 		else if (!Application::IsKeyPressed(VK_DOWN) && SharedData::GetInstance()->DNkeyPressed)
@@ -107,15 +98,15 @@ void SceneMenu::Update(double dt)
 			quit->m_currentFrame = 0;
 			inst->m_currentFrame = 0;
 			story->m_currentFrame = 0;
-			opt->m_currentFrame = 0;
 			SharedData::GetInstance()->soundManager.playSE("Sound//Click.mp3");
 		}
 		else if (!Application::IsKeyPressed(VK_UP) && SharedData::GetInstance()->UPkeyPressed)
 		{
 			SharedData::GetInstance()->UPkeyPressed = false;
 		}
-		if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
+		if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed && !movein && !renderStoryNow)
 		{
+			SharedData::GetInstance()->soundManager.playSE("Sound//Click.mp3");
 			SharedData::GetInstance()->ENTERkeyPressed = true;
 			switch (m_gs)
 			{
@@ -123,19 +114,18 @@ void SceneMenu::Update(double dt)
 				move = true;
 				break;
 			case GS_INTRODUCTION:
-				renderStoryNow = true;
 				move = true;
+				renderStoryNow = true;
 				break;
 			case GS_INSTRUCTIONS:
-				renderInstructionNow = true;
 				move = true;
+				renderInstructionNow = true;
 				break;
 			}
 		}
 		else if (!Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
 		{
 			SharedData::GetInstance()->ENTERkeyPressed = false;
-			SharedData::GetInstance()->soundManager.playSE("Sound//Click.mp3");
 		}
 		if (move)
 		{
@@ -153,7 +143,6 @@ void SceneMenu::Update(double dt)
 		}
 		if (realizeiconx <= -350)
 		{
-			move = false;
 			switch (m_gs)
 			{
 			case GS_GAME:
@@ -163,7 +152,6 @@ void SceneMenu::Update(double dt)
 					SharedData::GetInstance()->menuCoolDown = 3;
 				}
 				movein = true;
-
 				m_gs = GS_GAME;
 				break;
 
@@ -171,28 +159,35 @@ void SceneMenu::Update(double dt)
 				if (renderInstructionNow && Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 				{
 					SharedData::GetInstance()->ENTERkeyPressed = true;
+					SharedData::GetInstance()->gameState = SharedData::GAME_S1;
+					m_gs = GS_GAME;
+					SharedData::GetInstance()->soundManager.stopMusic("Sound//Menu.mp3");
 				}
 				else if (renderInstructionNow && !Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
 				{
 					SharedData::GetInstance()->ENTERkeyPressed = false;
 					renderInstructionNow = false;
-					m_gs = GS_GAME;
 				}
+				movein = true;
 				break;
 			case GS_INTRODUCTION:
 				if (renderStoryNow && Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 				{
 					SharedData::GetInstance()->ENTERkeyPressed = true;
+					SharedData::GetInstance()->gameState = SharedData::GAME_S1;
+					m_gs = GS_GAME;
+					SharedData::GetInstance()->soundManager.stopMusic("Sound//Menu.mp3");
+
 				}
 				else if (renderStoryNow && !Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
 				{
 					SharedData::GetInstance()->ENTERkeyPressed = false;
 					renderStoryNow = false;
-					m_gs = GS_GAME;
 				}
 				break;
 				//Other cases here
 			}
+			move = false;
 		}
 
 	fps = (float)(1.f / dt);
@@ -219,8 +214,7 @@ void SceneMenu::Render()
 	Render2DMeshWScale(meshList[GEO_MENUPLAY], false, 150, 60, othericonx, y, false, 2);
 	Render2DMeshWScale(meshList[GEO_MENUSTORY], false, 170, 60, othericonx, y - 70, false, 2);
 	Render2DMeshWScale(meshList[GEO_MENUINST], false, 270, 60, othericonx, y - 140, false, 2);
-	Render2DMeshWScale(meshList[GEO_MENUOPT], false, 200, 60, othericonx, y - 210, false, 2);
-	Render2DMeshWScale(meshList[GEO_MENUQUIT], false, 150, 60, othericonx, y - 280, false, 2);
+	Render2DMeshWScale(meshList[GEO_MENUQUIT], false, 150, 60, othericonx, y - 210, false, 2);
 	
 	if (renderInstructionNow)
 		RenderInstruction();
