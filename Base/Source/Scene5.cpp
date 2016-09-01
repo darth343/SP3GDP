@@ -36,6 +36,11 @@ void Scene5::Reset()
 {
 	for (int i = 0; i < m_goList.size(); ++i)
 	{
+		if (m_goList[i]->type == GameObject::GO_ENEMY)
+		{
+			Enemy* temp = (Enemy*)m_goList[i];
+			temp->Reset();
+		}
 		m_goList[i]->active = true;
 	}
 }
@@ -514,6 +519,7 @@ void Scene5::RenderGO()
 				{
 					SharedData::GetInstance()->player->SetPosition(Vector3(455, 510, 0));
 					SharedData::GetInstance()->player->SetMapOffset(Vector3(0, 552, 0));
+					Reset();
 					SharedData::GetInstance()->gameState = SharedData::GAME_S1;
 				}
 			}

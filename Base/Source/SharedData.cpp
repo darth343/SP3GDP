@@ -7,7 +7,11 @@ void SharedData::Reset()
 	enemyCatchPercentage = 0;
 	menuCoolDown = 0;
 	playerLives = 3;
-	//inventory.ResetInventory();
+	capturedBanshee = false;
+	capturedCerebus = false;
+	capturedDragon = false;
+	capturedGolem = false;
+	inventory.ResetInventory();
 	player->Reset();
 	Application::GetInstance().GetScene5()->Reset();
 	Application::GetInstance().GetScene4()->Reset();
