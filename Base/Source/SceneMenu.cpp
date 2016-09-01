@@ -27,15 +27,13 @@ void SceneMenu::Init()
 	//cout << npcvec[1].GetDialogue() << endl;
 	//cout << npcvec[0].GetDialogue() << endl;
 	//Init GameState Here for testing purposes
-	SharedData::GetInstance()->soundManager.playMusic("Sound//Menu.mp3");
 }
 
 
 void SceneMenu::Update(double dt)
 {
+	SharedData::GetInstance()->soundManager.SoundPlay("Sound//Menu.mp3", &SharedData::GetInstance()->title, 0.3f, false);
 	SharedData::GetInstance()->menuCoolDown -= dt;
-
-
 	//SharedData::GetInstance()->soundManager.SoundPlay("Sound/title.mp3", &SharedData::GetInstance()->title, 0.3f, false);
 	SpriteAnimation *logo = dynamic_cast<SpriteAnimation*>(meshList[GEO_LOGO]);
 	if (logo)
@@ -161,7 +159,7 @@ void SceneMenu::Update(double dt)
 					SharedData::GetInstance()->ENTERkeyPressed = true;
 					SharedData::GetInstance()->gameState = SharedData::GAME_S1;
 					m_gs = GS_GAME;
-					SharedData::GetInstance()->soundManager.stopMusic("Sound//Menu.mp3");
+					SharedData::GetInstance()->title->stop();
 				}
 				else if (renderInstructionNow && !Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
 				{
@@ -176,7 +174,7 @@ void SceneMenu::Update(double dt)
 					SharedData::GetInstance()->ENTERkeyPressed = true;
 					SharedData::GetInstance()->gameState = SharedData::GAME_S1;
 					m_gs = GS_GAME;
-					SharedData::GetInstance()->soundManager.stopMusic("Sound//Menu.mp3");
+					SharedData::GetInstance()->title->stop();
 
 				}
 				else if (renderStoryNow && !Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)

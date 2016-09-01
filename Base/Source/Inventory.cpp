@@ -64,7 +64,8 @@ void Inventory::usePotion()
 {
 	if (ItemInventory[Items::POTION] > 0)
 	{
-		SharedData::GetInstance()->player->AddHealth(100);
+		SharedData::GetInstance()->player->SetHP(100);
+		SharedData::GetInstance()->player->SetMP(100);
 		ItemInventory[Items::POTION]--;
 	}
 }

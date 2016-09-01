@@ -187,7 +187,7 @@ void Scene1::Init()
 	renderedMp = 100;
 	renderedHp = 100;
 
-	for (int j = 0; j < 0; ++j)
+	for (int j = 0; j < 2; ++j)
 	{
 		Equipment* temp = new Equipment();
 		//Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::TOTAL_ETYPE -1);
@@ -319,18 +319,18 @@ void Scene1::GOupdate(double dt)
 	{
 		SharedData::GetInstance()->QKeyPressed = true;
 
-		if (!renderQuest)
+		if (!renderQuest && MS == PLAY)
 		{
 			renderQuest = true;
+			MS = IN_DIALOUGE;
 		}
 		else if (renderQuest)
 		{
 			renderQuest = false;
 			MS = PLAY;
-			//GS = MAP;
 		}
 	}
-	else if (!Application::IsKeyPressed('Q') && SharedData::GetInstance()->QKeyPressed)
+	if (!Application::IsKeyPressed('Q') && SharedData::GetInstance()->QKeyPressed)
 	{
 		SharedData::GetInstance()->QKeyPressed = false;
 	}
@@ -469,11 +469,10 @@ void Scene1::MapUpdate(double dt)
 	if (MS == PLAY)
 	{
 		PlayerUpdate(dt);
-		GOupdate(dt);
+		SharedData::GetInstance()->soundManager.SoundPlay("Sound/Map.mp3", &SharedData::GetInstance()->worldBGM, 0.3f, false);
 	}
-	SharedData::GetInstance()->tamagucci.TamagucciBackgroundUpdate(dt);
-	PlayerUpdate(dt);
 	GOupdate(dt);
+	SharedData::GetInstance()->tamagucci.TamagucciBackgroundUpdate(dt);
 	if (Application::IsKeyPressed('R'))
 	{
 
@@ -602,8 +601,6 @@ void Scene1::RenderGO()
 
 		if (m_goList[i]->type == GameObject::GO_S4)
 		{
-			Render2DMeshWScale(meshList[GEO_POTION], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, false);
-
 			if (m_goList[i]->CheckCollision(SharedData::GetInstance()->player->GetPosition(), SharedData::GetInstance()->player->GetMapOffset(), m_cMap))
 			{
 				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
@@ -699,8 +696,6 @@ void Scene1::Render()
 	case MAP:
 		RenderMap();
 		RenderGO();
-		//SharedData::GetInstance()->soundManager.playMusic("Sound//route1.mp3");
-		SharedData::GetInstance()->soundManager.SoundPlay("Sound/Map.mp3", &SharedData::GetInstance()->worldBGM, 0.3f, false);
 		break;
 	case BATTLE:
 		RenderBattleScene();

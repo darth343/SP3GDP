@@ -1,7 +1,7 @@
 #include "Enemy.h"
 #include "Application.h"
 
-const float MOVEMENTSPEED = 50.f;
+const float MOVEMENTSPEED = 150.f;
 const float IDLE_TIMER = 2.0;
 const int TILES_BEFORECHASING = 3;
 const int TILES_BEFOREPATROLLING = 7;

@@ -390,18 +390,18 @@ void Scene3::GOupdate(double dt)
 	{
 		SharedData::GetInstance()->QKeyPressed = true;
 
-		if (!renderQuest)
+		if (!renderQuest && MS == PLAY)
 		{
 			renderQuest = true;
+			MS = IN_DIALOUGE;
 		}
 		else if (renderQuest)
 		{
 			renderQuest = false;
 			MS = PLAY;
-			//GS = MAP;
 		}
 	}
-	else if (!Application::IsKeyPressed('Q') && SharedData::GetInstance()->QKeyPressed)
+	if (!Application::IsKeyPressed('Q') && SharedData::GetInstance()->QKeyPressed)
 	{
 		SharedData::GetInstance()->QKeyPressed = false;
 	}
@@ -412,12 +412,8 @@ void Scene3::MapUpdate(double dt)
 	if (MS == PLAY)
 	{
 		PlayerUpdate(dt);
-		GOupdate(dt);
 		SharedData::GetInstance()->soundManager.SoundPlay("Sound/Map.mp3", &SharedData::GetInstance()->worldBGM, 0.3f, true);
-		cout << "Map" << endl;
 	}
-
-	PlayerUpdate(dt);
 	GOupdate(dt);
 	if (Application::IsKeyPressed('R'))
 	{
@@ -470,6 +466,7 @@ void Scene3::Update(double dt)
 	case MAP:
 		MapUpdate(dt);
 		SharedData::GetInstance()->tamagucci.TamagucciBackgroundUpdate(dt);
+		//SharedData::GetInstance()->soundManager.SoundPlay("Sound/Map.mp3", &SharedData::GetInstance()->worldBGM, 0.3f, false);
 	case BATTLE:
 	case CATCH:
 	case TAMAGUCCI_SCREEN:

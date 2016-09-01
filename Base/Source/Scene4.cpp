@@ -106,7 +106,7 @@ void Scene4::Init()
 	enemyMaxHealth = 100;
 	currHealth = 100;
 	enemyCatchPercentage = 0;
-	NPC::ReadFromFile("NPC//Text.txt", npcvec);
+	//NPC::ReadFromFile("NPC//Text.txt", npcvec);
 
 	for (int i = 0; i < npcvec.size(); i++)
 	{
@@ -403,18 +403,18 @@ void Scene4::GOupdate(double dt)
 	{
 		SharedData::GetInstance()->QKeyPressed = true;
 
-		if (!renderQuest)
+		if (!renderQuest && MS == PLAY)
 		{
 			renderQuest = true;
+			MS = IN_DIALOUGE;
 		}
 		else if (renderQuest)
 		{
 			renderQuest = false;
 			MS = PLAY;
-			//GS = MAP;
 		}
 	}
-	else if (!Application::IsKeyPressed('Q') && SharedData::GetInstance()->QKeyPressed)
+	if (!Application::IsKeyPressed('Q') && SharedData::GetInstance()->QKeyPressed)
 	{
 		SharedData::GetInstance()->QKeyPressed = false;
 	}
@@ -425,12 +425,10 @@ void Scene4::MapUpdate(double dt)
 	if (MS == PLAY)
 	{
 		PlayerUpdate(dt);
-		GOupdate(dt);
 		SharedData::GetInstance()->soundManager.SoundPlay("Sound/Map.mp3", &SharedData::GetInstance()->worldBGM, 0.3f, false);
 	}
-	SharedData::GetInstance()->tamagucci.TamagucciBackgroundUpdate(dt);
-	PlayerUpdate(dt);
 	GOupdate(dt);
+	SharedData::GetInstance()->tamagucci.TamagucciBackgroundUpdate(dt);
 	if (Application::IsKeyPressed('R'))
 	{
 

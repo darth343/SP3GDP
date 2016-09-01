@@ -181,6 +181,7 @@ void SceneGame::CatchUpdate(double dt)
 				SharedData::GetInstance()->capturedDragon = true;
 
 			capturedMonster = true;
+			if (SharedData::GetInstance()->gameState == SharedData::GAME_S1)
 			currState = 3;
 			SharedData::GetInstance()->inventory.addToInventory(EnemyInBattle);
 			SharedData::GetInstance()->soundManager.stopMusic("Sound//battleStart.mp3");
@@ -199,9 +200,14 @@ void SceneGame::CatchUpdate(double dt)
 			SharedData::GetInstance()->enemyTurn = false;
 			RemoveEnemy();
 			if (SharedData::GetInstance()->gameState != SharedData::GAME_BOSS)
+			{
 				GS = MAP;
+			}
 			else
+			{
+				SharedData::GetInstance()->Reset();
 				GS = WIN;
+			}
 
 			return;
 		}
@@ -224,7 +230,8 @@ void SceneGame::EnterBattleScene(Enemy* enemy)
 	//SharedData::GetInstance()->soundManager.SoundPlay("Sound/battleStart.mp3", &SharedData::GetInstance()->battleStart, 0.3f, true);
 	if(!SharedData::GetInstance()->soundPlay)
 	{
-		SharedData::GetInstance()->soundManager.stopMusic("Sound//Map.mp3");
+		SharedData::GetInstance()->worldBGM->stop();
+		SharedData::GetInstance()->worldBGM = NULL;
 		SharedData::GetInstance()->soundManager.playMusic("Sound//battleStart.mp3");
 		SharedData::GetInstance()->soundPlay = true;
 	}
@@ -1107,6 +1114,7 @@ void SceneGame::renderTamagotchiMenu()
 				}
 				break;
 			case TAMAGUCCI::FC_PORK:
+				arrowPos.Set(36.5, 7.5);
 				if (SharedData::GetInstance()->tamagucci.GetShowFood())
 				{
 					Render2DMeshWScale(meshList[GEO_PORK], false, SharedData::GetInstance()->tamagucci.GetTamFood()->scale.x, SharedData::GetInstance()->tamagucci.GetTamFood()->scale.y, SharedData::GetInstance()->tamagucci.GetTamFood()->position.x, SharedData::GetInstance()->tamagucci.GetTamFood()->position.y, false);

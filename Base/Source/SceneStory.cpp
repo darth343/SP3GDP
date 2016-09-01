@@ -76,8 +76,7 @@ void SceneStory::Update(double dt)
 	{
 		herox = -15;
 		SharedData::GetInstance()->gameState = SharedData::GAME_S1;
-		SharedData::GetInstance()->soundManager.stopMusic("Sound//Menu.mp3");
-
+		SharedData::GetInstance()->title->stop();
 	}
 	else if (!Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
 	{

@@ -310,7 +310,7 @@ void TAMAGUCCI::GetTamagucciInput()
 								 SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->IncrementTamHunger(2);
 							 if (foodChoice == FC_PORK)
 								 SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->IncrementTamHunger(3);
-
+							 SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->hungerLosstimer = 0;
 							 SharedData::GetInstance()->ENTERkeyPressed = true;
 							 //SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->DecrementTamEnergy();
 							 if (foodChoice != FC_BACK)
@@ -368,6 +368,7 @@ void TAMAGUCCI::GetTamagucciInput()
 					  if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 					  {
 						  SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->IncrementTamEnergy();
+						  SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->energyLosstimer = 0;
 						  SharedData::GetInstance()->ENTERkeyPressed = true;
 						  sleep = false;
 							menuState = FIRSTMENU;
@@ -548,6 +549,7 @@ void TAMAGUCCI::MiniGame1(double dt)
 	if (coolDown <= 0)
 	{
 		SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->IncrementTamHappy();
+		SharedData::GetInstance()->inventory.getEquippedItems()[EquippedItemIndex]->happinessLosstimer = 0;
 		ResetTamagotchi();
 		GoBack = true;
 		minigame1Score = 0;

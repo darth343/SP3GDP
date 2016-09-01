@@ -395,18 +395,18 @@ void Scene5::GOupdate(double dt)
 	{
 		SharedData::GetInstance()->QKeyPressed = true;
 
-		if (!renderQuest)
+		if (!renderQuest && MS == PLAY)
 		{
 			renderQuest = true;
+			MS = IN_DIALOUGE;
 		}
 		else if (renderQuest)
 		{
 			renderQuest = false;
 			MS = PLAY;
-			//GS = MAP;
 		}
 	}
-	else if (!Application::IsKeyPressed('Q') && SharedData::GetInstance()->QKeyPressed)
+	if (!Application::IsKeyPressed('Q') && SharedData::GetInstance()->QKeyPressed)
 	{
 		SharedData::GetInstance()->QKeyPressed = false;
 	}
@@ -417,17 +417,10 @@ void Scene5::MapUpdate(double dt)
 	if (MS == PLAY)
 	{
 		PlayerUpdate(dt);
-		GOupdate(dt);
 		SharedData::GetInstance()->soundManager.SoundPlay("Sound/Map.mp3", &SharedData::GetInstance()->worldBGM, 0.3f, false);
 	}
-	SharedData::GetInstance()->tamagucci.TamagucciBackgroundUpdate(dt);
-	PlayerUpdate(dt);
 	GOupdate(dt);
-	if (Application::IsKeyPressed('R'))
-		{
-			
-		}
-
+	SharedData::GetInstance()->tamagucci.TamagucciBackgroundUpdate(dt);
 }
 
 void Scene5::Update(double dt)

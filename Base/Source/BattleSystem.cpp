@@ -324,10 +324,7 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 		case BS_POTION:
 			if (SharedData::GetInstance()->inventory.GetPotionCount() > 0)
 			{
-				SharedData::GetInstance()->inventory.removeFromInventory(Items::POTION);
-				theHero->SetHP(theHero->GetHP() + 20);
-				if (theHero->GetHP() > 100.0f)
-					theHero->SetHP(100.0f);
+				SharedData::GetInstance()->inventory.usePotion();
 			}
 			break;
 		case BS_TRAP:
