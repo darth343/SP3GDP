@@ -123,6 +123,7 @@ protected:
 	Vector3 battleMonsterPos;
 	Vector3 battleMonsterScale;
 	bool monsterScaleUp;
+	bool soundPlay = false;
 
 	//Battle System HP bar 
 	float maxHpScale;
@@ -136,6 +137,7 @@ protected:
 	float renderedMp;
 	ostringstream npctalk;
 	bool captured;
+	bool renderQuest = false;
 };
 
 #endif

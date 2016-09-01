@@ -12,8 +12,6 @@ class NPC : public GameObject
 {
 public:
 	NPC(Vector3);
-	NPC()
-	{}
 	~NPC();
 	enum NPC_ANIMATION
 	{
@@ -47,17 +45,19 @@ public:
 	void ScrollDialogue(int&);
 	int collideWhichNPC();
 	void SetState(int&);
-	bool collisionDetected = false;
-	
-	bool enterPressed;
-	int currState = 1;
-	int dialogueNumber;
+	bool GetColDetected();
+	int GetCurrState();
+
 	NPC_ANIMATION GetAnimationState();
 	NPC_DIALOGUE GetDialogueState();
 private:
 	float npcID;
-	int maxState = 1;
+	int maxState;
+	bool collisionDetected;
+	int dialogueNumber;
 
+	bool enterPressed;
+	int currState;
 	int collideWithNPC;
 	int num;
 	bool moveLeft;

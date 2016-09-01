@@ -1,2 +1,2 @@
-3`2`1`Oh, Hello again!`1
-3`2`2`Have you captured all the monsters to fight the boss and save our village?`1
+3`0`1`Oh, Hello again!`1
+3`0`2`Have you captured all the monsters to fight the boss and save our village?`1

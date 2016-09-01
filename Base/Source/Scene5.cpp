@@ -250,7 +250,7 @@ void Scene5::PlayerUpdate(double dt)
 	if (Application::IsKeyPressed('I') && !SharedData::GetInstance()->IkeyPressed && GS)
 	{
 		GS = INVENTORY_SCREEN;
-		SharedData::GetInstance()->inventory.ResetInventory();
+		SharedData::GetInstance()->inventory.ResetInventoryVariables();
 		SharedData::GetInstance()->IkeyPressed = true;
 	}
 	else if (!Application::IsKeyPressed('I') && SharedData::GetInstance()->IkeyPressed)
@@ -343,7 +343,7 @@ void Scene5::GOupdate(double dt)
 			if (temp->collideWhichNPC() == npcID)
 				temp->SetState(currState);
 			
-			if (temp->collisionDetected && Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
+			if (temp->GetColDetected() && Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 			{
 				npctalk.str("");
 				MS = IN_DIALOUGE;			
@@ -353,7 +353,7 @@ void Scene5::GOupdate(double dt)
 			else if (!Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
 				SharedData::GetInstance()->ENTERkeyPressed = false;
 
-			if (temp->GetDialogueState() == temp->currState && temp->GetID() == temp->collideWhichNPC())
+			if (temp->GetDialogueState() == temp->GetCurrState() && temp->GetID() == temp->collideWhichNPC())
 			{
 				if (dialogueNum == temp->maxDia)
 				{
@@ -385,6 +385,25 @@ void Scene5::GOupdate(double dt)
 				}
 			}
 		}
+	}
+	if (Application::IsKeyPressed('Q') && !SharedData::GetInstance()->QKeyPressed)
+	{
+		SharedData::GetInstance()->QKeyPressed = true;
+
+		if (!renderQuest)
+		{
+			renderQuest = true;
+		}
+		else if (renderQuest)
+		{
+			renderQuest = false;
+			MS = PLAY;
+			//GS = MAP;
+		}
+	}
+	else if (!Application::IsKeyPressed('Q') && SharedData::GetInstance()->QKeyPressed)
+	{
+		SharedData::GetInstance()->QKeyPressed = false;
 	}
 }
 
@@ -432,6 +451,7 @@ void Scene5::RenderMap()
 	RenderPlayer();
 	Render2DMeshWScale(meshList[GEO_ICONTAM], false, 1, 1, 700, 10, false);
 	Render2DMeshWScale(meshList[GEO_ICONINV], false, 1, 1, 630, 10, false);
+	Render2DMeshWScale(meshList[GEO_ICONQUEST], false, 1, 1, 560, 10, false);
 	Render2DMeshWScale(meshList[GEO_LIVES], false, 120, 50, 0, 550, false);
 
 	//On screen text
@@ -458,11 +478,11 @@ void Scene5::RenderGO()
 			if (m_goList[i]->type == GameObject::GO_NPC)
 			{
 				NPC* temp = (NPC*)m_goList[i];
-				if (temp->GetID() == 1 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
+				if (temp->GetID() == 1 && temp->GetDialogueState() == temp->GetCurrState() && temp->GetNum() == 1)
 					Render2DMeshWScale(meshList[GEO_NPC1_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
-				if (temp->GetID() == 2 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
+				if (temp->GetID() == 2 && temp->GetDialogueState() == temp->GetCurrState() && temp->GetNum() == 1)
 					Render2DMeshWScale(meshList[GEO_NPC3_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
-				if (temp->GetID() == 3 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
+				if (temp->GetID() == 3 && temp->GetDialogueState() == temp->GetCurrState() && temp->GetNum() == 1)
 					Render2DMeshWScale(meshList[GEO_NPC2_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
 				if (renderNPCstuff)
 				{
@@ -496,6 +516,23 @@ void Scene5::RenderGO()
 				}
 			}
 		}
+	}
+	if (renderQuest)
+	{
+		Render2DMeshWScale(meshList[GEO_QUEST], false, 1.5, 1.5, 100, 80);
+		MS = IN_DIALOUGE;
+
+		if (SharedData::GetInstance()->capturedBanshee)
+			Render2DMeshWScale(meshList[GEO_TICKCROSS], false, 1, 1, 245, 250);
+
+		if (SharedData::GetInstance()->capturedCerebus)
+			Render2DMeshWScale(meshList[GEO_TICKCROSS], false, 1, 1, 245, 100);
+
+		if (SharedData::GetInstance()->capturedDragon)
+			Render2DMeshWScale(meshList[GEO_TICKCROSS], false, 1, 1, 500, 100);
+
+		if (SharedData::GetInstance()->capturedGolem)
+			Render2DMeshWScale(meshList[GEO_TICKCROSS], false, 1, 1, 500, 250);
 	}
 }
 

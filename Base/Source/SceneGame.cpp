@@ -189,7 +189,7 @@ void SceneGame::CatchUpdate(double dt)
 			SharedData::GetInstance()->playerTurn = true;
 			SharedData::GetInstance()->enemyTurn = false;
 			RemoveEnemy();
-			SharedData::GetInstance()->soundManager.StopAllSound();
+			//SharedData::GetInstance()->soundManager.StopAllSound();
 			if (SharedData::GetInstance()->gameState != SharedData::GAME_BOSS)
 				GS = MAP;
 			else
@@ -212,8 +212,14 @@ void SceneGame::CatchUpdate(double dt)
 void SceneGame::EnterBattleScene(Enemy* enemy)
 {
 	battleScene.SetBattleStart(true);
-	SharedData::GetInstance()->soundManager.StopAllSound();
-	SharedData::GetInstance()->soundManager.SoundPlay("Sound/battleStart.mp3", &SharedData::GetInstance()->battleStart, 0.3f, true);
+	//SharedData::GetInstance()->soundManager.StopAllSound();
+	//SharedData::GetInstance()->soundManager.SoundPlay("Sound/battleStart.mp3", &SharedData::GetInstance()->battleStart, 0.3f, true);
+	if(!SharedData::GetInstance()->soundPlay)
+	{
+		SharedData::GetInstance()->soundManager.stopMusic("Sound//Route1.mp3");
+		SharedData::GetInstance()->soundManager.playMusic("Sound//battleStart.mp3");
+		SharedData::GetInstance()->soundPlay = true;
+	}
 	SharedData::GetInstance()->playerHitenemy = false;
 	renderedHp = 0;
 	renderedMp = 0;
@@ -604,7 +610,6 @@ void SceneGame::Update(double dt)
 	switch (GS)
 	{
 	case BATTLE:
-
 		//Updating of catch percentage
 
 		//Flashing effect of dialogue
@@ -641,12 +646,18 @@ void SceneGame::Update(double dt)
 			//Player win
 			battleScene.Reset();
 			mainScene->RemoveEnemy();
-
+			if (SharedData::GetInstance()->soundPlay)
+			{
+				SharedData::GetInstance()->soundManager.stopMusic("Sound//battleStart.mp3");
+				SharedData::GetInstance()->soundPlay = false;
+			}
 			if (SharedData::GetInstance()->gameState == SharedData::GAME_BOSS)
 			{
 				GS = WIN;
 				SharedData::GetInstance()->Reset();
 			}
+			else
+				GS = MAP;
 			//destory enemy here
 		}
 
@@ -669,6 +680,12 @@ void SceneGame::Update(double dt)
 					SharedData::GetInstance()->player->SetHP(100);
 					renderedHp = 100;
 					SharedData::GetInstance()->gameState = SharedData::GAME_S1;
+					if (SharedData::GetInstance()->soundPlay)
+					{
+						SharedData::GetInstance()->soundManager.stopMusic("Sound//battleStart.mp3");
+						SharedData::GetInstance()->soundPlay = false;
+					}
+
 					GS = MAP;
 					SharedData::GetInstance()->player->SetMapOffset(Vector3(0, 0, 0));
 					SharedData::GetInstance()->player->SetPosition(Vector3(530, 64, 0));
@@ -1302,6 +1319,7 @@ void SceneGame::RenderBattleDialogue()
 
 			if (flashEffect)
 			{
+
 				ss.str("");
 				ss.precision(5);
 				ss << "Press enter to continue ";
@@ -1324,6 +1342,8 @@ void SceneGame::RenderBattleDialogue()
 				ss.str("");
 				ss.precision(5);
 				ss << "Press enter to continue ";
+
+
 
 				RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 0, 0), 15, 300, 50);
 			}

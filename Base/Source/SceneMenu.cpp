@@ -27,6 +27,7 @@ void SceneMenu::Init()
 	//cout << npcvec[1].GetDialogue() << endl;
 	//cout << npcvec[0].GetDialogue() << endl;
 	//Init GameState Here for testing purposes
+	SharedData::GetInstance()->soundManager.playMusic("Sound//Menu.mp3");
 }
 
 
@@ -79,7 +80,7 @@ void SceneMenu::Update(double dt)
 		quit->Update(dt*0.5);
 		quit->m_anim->animActive = true;
 	}
-		if (Application::IsKeyPressed(VK_DOWN) && !SharedData::GetInstance()->DNkeyPressed)
+	if (Application::IsKeyPressed(VK_DOWN) && !SharedData::GetInstance()->DNkeyPressed  && !renderInstructionNow && !renderStoryNow)
 		{
 			SharedData::GetInstance()->DNkeyPressed = true;
 			m_gs = static_cast<GAMESTATE_TYPE>(m_gs + 1);
@@ -90,12 +91,13 @@ void SceneMenu::Update(double dt)
 			inst->m_currentFrame = 0;
 			story->m_currentFrame = 0;
 			opt->m_currentFrame = 0;
+			SharedData::GetInstance()->soundManager.playSE("Sound//Click.mp3");
 		}
 		else if (!Application::IsKeyPressed(VK_DOWN) && SharedData::GetInstance()->DNkeyPressed)
 		{
 			SharedData::GetInstance()->DNkeyPressed = false;
 		}
-		if (Application::IsKeyPressed(VK_UP) && !SharedData::GetInstance()->UPkeyPressed)
+		if (Application::IsKeyPressed(VK_UP) && !SharedData::GetInstance()->UPkeyPressed && !renderInstructionNow && !renderStoryNow)
 		{
 			SharedData::GetInstance()->UPkeyPressed = true;
 			m_gs = static_cast<GAMESTATE_TYPE>(m_gs - 1);
@@ -106,6 +108,7 @@ void SceneMenu::Update(double dt)
 			inst->m_currentFrame = 0;
 			story->m_currentFrame = 0;
 			opt->m_currentFrame = 0;
+			SharedData::GetInstance()->soundManager.playSE("Sound//Click.mp3");
 		}
 		else if (!Application::IsKeyPressed(VK_UP) && SharedData::GetInstance()->UPkeyPressed)
 		{
@@ -113,6 +116,7 @@ void SceneMenu::Update(double dt)
 		}
 		if (Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 		{
+			SharedData::GetInstance()->ENTERkeyPressed = true;
 			switch (m_gs)
 			{
 			case GS_GAME:
@@ -128,9 +132,10 @@ void SceneMenu::Update(double dt)
 				break;
 			}
 		}
-		else if (Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
+		else if (!Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
 		{
 			SharedData::GetInstance()->ENTERkeyPressed = false;
+			SharedData::GetInstance()->soundManager.playSE("Sound//Click.mp3");
 		}
 		if (move)
 		{
@@ -163,15 +168,25 @@ void SceneMenu::Update(double dt)
 				break;
 
 			case GS_INSTRUCTIONS:
-				if (renderInstructionNow && Application::IsKeyPressed(VK_RETURN))
+				if (renderInstructionNow && Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 				{
+					SharedData::GetInstance()->ENTERkeyPressed = true;
+				}
+				else if (renderInstructionNow && !Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
+				{
+					SharedData::GetInstance()->ENTERkeyPressed = false;
 					renderInstructionNow = false;
 					m_gs = GS_GAME;
 				}
 				break;
 			case GS_INTRODUCTION:
-				if (renderStoryNow && Application::IsKeyPressed(VK_RETURN))
+				if (renderStoryNow && Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 				{
+					SharedData::GetInstance()->ENTERkeyPressed = true;
+				}
+				else if (renderStoryNow && !Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
+				{
+					SharedData::GetInstance()->ENTERkeyPressed = false;
 					renderStoryNow = false;
 					m_gs = GS_GAME;
 				}

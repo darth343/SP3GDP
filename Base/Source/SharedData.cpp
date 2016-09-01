@@ -7,7 +7,7 @@ void SharedData::Reset()
 	enemyCatchPercentage = 0;
 	menuCoolDown = 0;
 	playerLives = 3;
-	inventory.ResetInventory();
+	//inventory.ResetInventory();
 	player->Reset();
 	Application::GetInstance().GetScene5()->Reset();
 	Application::GetInstance().GetScene4()->Reset();

@@ -11,6 +11,9 @@ NPC::NPC(Vector3 scale) : GameObject(scale)
 	npcDialogueState = NPC_DNOSTATE;
 	npcAnimationState = NPC_ANOSTATE;
 	npcID = 0;
+	maxState = 1;
+	currState = 1;
+	collisionDetected = false;
 }
 NPC::~NPC()
 {
@@ -18,6 +21,14 @@ NPC::~NPC()
 void NPC::SetState(int &state)
 {
 	this->currState = state;
+}
+int NPC::GetCurrState()
+{
+	return currState;
+}
+bool NPC::GetColDetected()
+{
+	return collisionDetected;
 }
 //Text file is going to include NPC id, NPC animation state, NPC dialogue state, NPC dialogue
 void NPC::ReadFromFile(string filename, vector<NPC*>&npcs)
@@ -232,7 +243,6 @@ void NPC::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 	else 
 	{
 		collisionDetected = false;
-		enterPressed = false;
 		collideWithNPC = 0;
 		SetAnimationState(NPC::NPC_AWANDERING);
 	}

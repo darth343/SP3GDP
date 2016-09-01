@@ -52,6 +52,7 @@ public:
 	bool BACKkeyPressed;
 	bool IkeyPressed;
 	bool SpaceKeyPressed;
+	bool QKeyPressed;
 
 	bool BS_SlashRender;
 	bool BS_StabRender;
@@ -83,6 +84,7 @@ public:
 	bool capturedDragon;
 	bool capturedCerebus;
 	void Reset();
+	bool soundPlay;
 private:
 	SharedData()
 	{
@@ -97,6 +99,8 @@ private:
 		BACKkeyPressed = false;
 		IkeyPressed = false;
 		SpaceKeyPressed = false;
+		QKeyPressed = false;
+		soundPlay = false;
 
 		soundFootstep = NULL;
 		worldBGM = NULL;

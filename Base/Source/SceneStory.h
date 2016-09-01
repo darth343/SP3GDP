@@ -30,13 +30,12 @@ public:
 	GAMESTATE_TYPE m_gs;
 
 private:
-	bool flip = false;
-	int i = 0;
-	float herox = -15;
+	bool flip;
+	float herox;
 	ostringstream ss;
-	float cooldown = 1.f;
-	bool showFirst = false;
-	bool showSecond = false;
+	float cooldown;
+	bool showFirst;
+	bool showSecond;
 };
 
 #endif

@@ -192,8 +192,8 @@ void Scene1::Init()
 		Equipment* temp = new Equipment();
 		//Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::TOTAL_ETYPE -1);
 		Monster::MONSTER_TYPE randmonstertype = (Monster::MONSTER_TYPE)Math::RandIntMinMax(Monster::BANSHEE, Monster::GOLEM);
-		Equipment::EQUIPMENT_TYPE randType = Equipment::ARMOUR;
-		//Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::TOTAL_ETYPE -1);
+		//Equipment::EQUIPMENT_TYPE randType = Equipment::ARMOUR;
+		Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::TOTAL_ETYPE -1);
 		stringstream ss;
 		ss << Monster::getMonster(randmonstertype).getName() << " " << randType;
 		temp->SetName(ss.str());
@@ -297,7 +297,7 @@ void Scene1::PlayerUpdate(double dt)
 	if (Application::IsKeyPressed('I') && !SharedData::GetInstance()->IkeyPressed && GS)
 	{
 		GS = INVENTORY_SCREEN;
-		SharedData::GetInstance()->inventory.ResetInventory();
+		SharedData::GetInstance()->inventory.ResetInventoryVariables();
 		SharedData::GetInstance()->IkeyPressed = true;
 	}
 	else if (!Application::IsKeyPressed('I') && SharedData::GetInstance()->IkeyPressed)
@@ -314,6 +314,25 @@ void Scene1::GOupdate(double dt)
 		SharedData::GetInstance()->capturedCerebus = true;
 		SharedData::GetInstance()->capturedDragon = true;
 		SharedData::GetInstance()->capturedGolem = true;
+	}
+	if (Application::IsKeyPressed('Q') && !SharedData::GetInstance()->QKeyPressed)
+	{
+		SharedData::GetInstance()->QKeyPressed = true;
+
+		if (!renderQuest)
+		{
+			renderQuest = true;
+		}
+		else if (renderQuest)
+		{
+			renderQuest = false;
+			MS = PLAY;
+			//GS = MAP;
+		}
+	}
+	else if (!Application::IsKeyPressed('Q') && SharedData::GetInstance()->QKeyPressed)
+	{
+		SharedData::GetInstance()->QKeyPressed = false;
 	}
 	SpriteAnimation *sa = dynamic_cast<SpriteAnimation*>(meshList[GEO_NPCPIC]);
 	if (sa)
@@ -397,7 +416,7 @@ void Scene1::GOupdate(double dt)
 			if (temp->collideWhichNPC() == npcID)
 				temp->SetState(currState);
 			
-			if (temp->collisionDetected && Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
+			if (temp->GetColDetected() && Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 			{
 				npctalk.str("");
 				MS = IN_DIALOUGE;			
@@ -407,7 +426,7 @@ void Scene1::GOupdate(double dt)
 			else if (!Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
 				SharedData::GetInstance()->ENTERkeyPressed = false;
 
-			if (temp->GetDialogueState() == temp->currState && temp->GetID() == temp->collideWhichNPC())
+			if (temp->GetDialogueState() == temp->GetCurrState() && temp->GetID() == temp->collideWhichNPC())
 			{
 				if (dialogueNum == temp->maxDia)
 				{
@@ -451,7 +470,6 @@ void Scene1::MapUpdate(double dt)
 	{
 		PlayerUpdate(dt);
 		GOupdate(dt);
-		SharedData::GetInstance()->soundManager.SoundPlay("Sound/route1.mp3", &SharedData::GetInstance()->worldBGM, 0.3f, false);
 	}
 	SharedData::GetInstance()->tamagucci.TamagucciBackgroundUpdate(dt);
 	PlayerUpdate(dt);
@@ -489,6 +507,7 @@ void Scene1::RenderMap()
 	RenderPlayer();
 	Render2DMeshWScale(meshList[GEO_ICONTAM], false, 1, 1, 700, 10, false);
 	Render2DMeshWScale(meshList[GEO_ICONINV], false, 1, 1, 630, 10, false);
+	Render2DMeshWScale(meshList[GEO_ICONQUEST], false, 1, 1, 560, 10, false);
 	Render2DMeshWScale(meshList[GEO_LIVES], false, 120, 50, 0, 550, false);
 
 	//On screen text
@@ -500,6 +519,7 @@ void Scene1::RenderMap()
 
 void Scene1::RenderGO()
 {
+
 	for (int i = 0; i < m_goList.size(); i++)
 	{
 		if (m_goList[i]->active == true)
@@ -528,13 +548,13 @@ void Scene1::RenderGO()
 						Render2DMeshWScale(meshList[GEO_NPCPIC3], false, 350, 350, 450, 60, false);
 					Render2DMeshWScale(meshList[GEO_BATTLEDIALOUGEBACKGROUND], false, 1, 0.25, 10, 20, false);
 				}
-				if (temp->GetID() == 1 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
+				if (temp->GetID() == 1 && temp->GetDialogueState() == temp->GetCurrState() && temp->GetNum() == 1)
 					Render2DMeshWScale(meshList[GEO_NPC1_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
-				if (temp->GetID() == 2 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
+				if (temp->GetID() == 2 && temp->GetDialogueState() == temp->GetCurrState() && temp->GetNum() == 1)
 					Render2DMeshWScale(meshList[GEO_NPC3_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
-				if (temp->GetID() == 3 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
+				if (temp->GetID() == 3 && temp->GetDialogueState() == temp->GetCurrState() && temp->GetNum() == 1)
 					Render2DMeshWScale(meshList[GEO_NPC2_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
-				RenderTextOnScreen(meshList[GEO_TEXT], npctalk.str(), Color(1, 1, 0), 30, 60, 100);
+				RenderTextOnScreen(meshList[GEO_TEXT], npctalk.str(), Color(1, 1, 0), 30, 60, 115);
 			}
 			if (m_goList[i]->type == GameObject::GO_ENEMY)
 			{
@@ -629,6 +649,23 @@ void Scene1::RenderGO()
 			}
 		}
 	}
+	if (renderQuest)
+	{
+		Render2DMeshWScale(meshList[GEO_QUEST], false, 1.5, 1.5, 100, 80);
+		MS = IN_DIALOUGE;
+
+		if (SharedData::GetInstance()->capturedBanshee)
+			Render2DMeshWScale(meshList[GEO_TICKCROSS], false, 1, 1, 245, 250);
+
+		if (SharedData::GetInstance()->capturedCerebus)
+			Render2DMeshWScale(meshList[GEO_TICKCROSS], false, 1, 1, 245, 100);
+
+		if (SharedData::GetInstance()->capturedDragon)
+			Render2DMeshWScale(meshList[GEO_TICKCROSS], false, 1, 1, 500, 100);
+
+		if (SharedData::GetInstance()->capturedGolem)
+			Render2DMeshWScale(meshList[GEO_TICKCROSS], false, 1, 1, 500, 250);
+	}
 }
 
 void Scene1::Render()
@@ -639,6 +676,8 @@ void Scene1::Render()
 	case MAP:
 		RenderMap();
 		RenderGO();
+		//SharedData::GetInstance()->soundManager.playMusic("Sound//route1.mp3");
+		SharedData::GetInstance()->soundManager.SoundPlay("Sound/route1.mp3", &SharedData::GetInstance()->worldBGM, 0.3f, false);
 		break;
 	case BATTLE:
 		RenderBattleScene();
