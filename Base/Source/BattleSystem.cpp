@@ -333,9 +333,12 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 		case BS_TRAP:
 			if (SharedData::GetInstance()->inventory.GetTrapCount() > 0)
 			{
-				SharedData::GetInstance()->inventory.removeFromInventory(Items::TRAP);
-				SharedData::GetInstance()->trapPercentageIncrease = 20.0f;
-				SharedData::GetInstance()->enemyCatchPercentage += SharedData::GetInstance()->trapPercentageIncrease;
+				if (SharedData::GetInstance()->trapPercentageIncrease < 20.0f)
+				{
+					SharedData::GetInstance()->inventory.removeFromInventory(Items::TRAP);
+					SharedData::GetInstance()->trapPercentageIncrease = 20.0f;
+					SharedData::GetInstance()->enemyCatchPercentage += SharedData::GetInstance()->trapPercentageIncrease;
+				}
 				if (SharedData::GetInstance()->enemyCatchPercentage > 100.0f)
 					SharedData::GetInstance()->enemyCatchPercentage = 100.0f;
 
