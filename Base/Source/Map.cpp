@@ -31,7 +31,7 @@ bool CMap::LoadMap(const string mapName)
 		printf("Map (%s) has been successfully loaded!\n", mapName.c_str());
 		return true;
 	}
-
+	printf("Map (%s) can't be accessed. Are you in the correct directory?\n", mapName.c_str());
 	return false;
 }
 

@@ -82,7 +82,7 @@ public:
 	bool capturedGolem;
 	bool capturedDragon;
 	bool capturedCerebus;
-
+	void Reset();
 private:
 	SharedData()
 	{

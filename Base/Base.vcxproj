@@ -42,6 +42,7 @@
     <ClCompile Include="Source\SceneMenu.cpp" />
     <ClCompile Include="Source\SceneStory.cpp" />
     <ClCompile Include="Source\shader.cpp" />
+    <ClCompile Include="Source\SharedData.cpp" />
     <ClCompile Include="Source\SoundManager.cpp" />
     <ClCompile Include="Source\SpriteAnimation.cpp" />
     <ClCompile Include="Source\Tamagucci.cpp" />

@@ -57,6 +57,7 @@ public:
 	void SetDEF(float def);
 	void TakeDMG(float dmg);
 	void UseMP(float mp);
+	void Reset();
 
 	float GetHP();
 	float GetMP();

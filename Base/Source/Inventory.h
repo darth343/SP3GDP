@@ -46,6 +46,7 @@ public:
 	void UpdateSeeker();
 	void UpdateInput();
 	void Update(double dt);
+	void ResetInventoryVariables();
 	void ResetInventory();
 	void SortInventory();
 	void SortByType(vector<Equipment*>);

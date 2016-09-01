@@ -32,6 +32,14 @@ Scene5::~Scene5()
 	}
 }
 
+void Scene5::Reset()
+{
+	for (int i = 0; i < m_goList.size(); ++i)
+	{
+		m_goList[i]->active = true;
+	}
+}
+
 void Scene5::Init()
 {
 	SceneGame::Init();
@@ -405,6 +413,7 @@ void Scene5::Update(double dt)
 	{
 	case MAP:
 		MapUpdate(dt);
+		SharedData::GetInstance()->tamagucci.TamagucciBackgroundUpdate(dt);
 	case BATTLE:
 	case CATCH:
 	case TAMAGUCCI_SCREEN:
@@ -468,11 +477,11 @@ void Scene5::RenderGO()
 				
 				RenderTextOnScreen(meshList[GEO_TEXT], npctalk.str(), Color(1, 1, 0), 30, 60, 100);
 			}
-		}
-		if (m_goList[i]->type == GameObject::GO_ENEMY)
-		{
-			Enemy* temp = (Enemy*)m_goList[i];
-			Render2DMeshWScale(meshList[GEO_BOSS], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetFlipStatus(), 50);
+			if (m_goList[i]->type == GameObject::GO_ENEMY)
+			{
+				Enemy* temp = (Enemy*)m_goList[i];
+				Render2DMeshWScale(meshList[GEO_BOSS], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetFlipStatus(), 50);
+			}
 		}
 		if (m_goList[i]->type == GameObject::GO_DOWN)
 		{

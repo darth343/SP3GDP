@@ -9,7 +9,7 @@ struct Node
 		posX = tile.Pos.x;
 		posY = tile.Pos.y;
 	};
-	~Node(){if (parent)delete parent;};
+	~Node(){};
 	int posX;
 	int posY;
 

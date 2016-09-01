@@ -76,6 +76,12 @@ void SceneGame::Init()
 	renderedHp = 0;
 }
 
+void SceneGame::ResetGame()
+{
+	currState = 0;
+	dialogueNum = 0;
+}
+
 bool SceneGame::GetMonsterScaleUp()
 {
 	return monsterScaleUp;
@@ -637,7 +643,10 @@ void SceneGame::Update(double dt)
 			mainScene->RemoveEnemy();
 
 			if (SharedData::GetInstance()->gameState == SharedData::GAME_BOSS)
+			{
 				GS = WIN;
+				SharedData::GetInstance()->Reset();
+			}
 			//destory enemy here
 		}
 
@@ -666,8 +675,11 @@ void SceneGame::Update(double dt)
 					cout << SharedData::GetInstance()->playerLives << endl;
 				}
 				else
+				{
 					//Player Lose should do auto load to previous save file
 					GS = LOSE;
+					SharedData::GetInstance()->Reset();
+				}
 
 				//Player Lose should do auto load to previous save file
 
@@ -679,8 +691,8 @@ void SceneGame::Update(double dt)
 				SharedData::GetInstance()->soundManager.StopSingleSound("Sound/battleStart.mp3");
 				if (SharedData::GetInstance()->gameState != SharedData::GAME_BOSS)
 				RemoveEnemy();
-				//SceneGame* mainScene = (SceneGame*)Application::GetInstance().GetScene();
-
+				SceneGame* mainScene = (SceneGame*)Application::GetInstance().GetScene();
+				mainScene->Reset();
 				//mainScene->RemoveEnemy();
 			}
 
@@ -841,14 +853,15 @@ static bool touched = true;
 
 void SceneGame::RemoveEnemy()
 {
-	for (int i = 0; i < m_goList.size(); ++i)
-	{
-		if (m_goList[i] == EnemyInBattle)
-		{
-			delete m_goList[i];
-			m_goList.erase(m_goList.begin() + i);
-		}
-	}
+	//for (int i = 0; i < m_goList.size(); ++i)
+	//{
+	//	if (m_goList[i] == EnemyInBattle)
+	//	{
+	//		delete m_goList[i];
+	//		m_goList.erase(m_goList.begin() + i);
+	//	}
+	//}
+	EnemyInBattle->active = false;
 	EnemyInBattle = NULL;
 }
 

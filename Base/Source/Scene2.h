@@ -28,7 +28,7 @@ public:
 	virtual void Update(double dt);
 	virtual void Render();
 	virtual void Exit();
-
+	virtual void Reset();
 	void RenderMap();
 	void RenderGO();
 	//Update Functions

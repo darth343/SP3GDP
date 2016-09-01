@@ -21,6 +21,12 @@ CPlayerInfo::~CPlayerInfo(void)
 {
 }
 
+void CPlayerInfo::Reset()
+{
+	this->playerHP = 100;
+	this->playerMP = 100;
+}
+
 // Initialise this class instance
 void CPlayerInfo::Init(void)
 {

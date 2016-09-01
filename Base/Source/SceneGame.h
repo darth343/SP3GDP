@@ -44,10 +44,11 @@ public:
 	SceneGame();
 	~SceneGame();
 
-	void Init();
-	void Update(double dt);
-	void Render();
-	void Exit();
+	virtual void Init();
+	virtual void Update(double dt);
+	virtual void Render();
+	virtual void Exit();
+	virtual void Reset() = 0;
 	void RenderTileMap(Mesh* mesh, CMap* m_cMap, Vector3 speed = Vector3(1, 1, 1));
 
 	//Render Functions
@@ -96,6 +97,8 @@ public:
 	void renderTamagotchiUI();
 	void renderInventoryItems();
 	void renderInventoryMenus();
+
+	void ResetGame();
 protected:
 	Gauge* greenbar;
 	Gauge* redbar;
@@ -131,8 +134,6 @@ protected:
 	float maxMpScale;
 	Vector3 mpPos;
 	float renderedMp;
-	int itemCursorPos = 0;
-	float cursorDebounce = 0;
 	ostringstream npctalk;
 	bool captured;
 };

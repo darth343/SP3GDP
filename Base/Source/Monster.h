@@ -28,7 +28,7 @@ public:
 	float getDamage();
 	void takeDamage(int damage);
 	int GetType();
-
+	void Reset();
 private:
 	static Monster* database[MONSTER_TOTAL];
 	MONSTER_TYPE type;

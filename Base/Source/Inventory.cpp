@@ -33,6 +33,24 @@ Inventory::~Inventory()
 	}
 }
 
+void Inventory::ResetInventory()
+{
+	for (int i = 0; i < EQinventory.size(); ++i)
+	{
+		if (EQinventory[i])
+		{
+			delete EQinventory[i];
+			EQinventory[i] = new Equipment;
+		}
+	}
+	for (int i = 0; i < EI_TOTAL; ++i)
+	{
+		if (EquippedItems[i])
+			delete EquippedItems[i];
+		EquippedItems[i] = NULL;
+	}
+}
+
 void Inventory::useTrap()
 {
 	if (ItemInventory[Items::TRAP] > 0)
@@ -166,7 +184,7 @@ void Inventory::printInventory()
 	return;
 }
 
-void Inventory::ResetInventory()
+void Inventory::ResetInventoryVariables()
 {
 	state = TAB1;
 	inputeState = INVENTORY;
@@ -189,7 +207,7 @@ void Inventory::UpdateInput()
 				if (seeker.y < 1)
 				{
 					state = TAB1;
-					ResetInventory();
+					ResetInventoryVariables();
 				}
 				SharedData::GetInstance()->DNkeyPressed = true;
 			}
@@ -365,7 +383,7 @@ void Inventory::UpdateInput()
 				seeker.x--;
 				if (seeker.x < 0)
 				{
-					ResetInventory();
+					ResetInventoryVariables();
 					state = TAB2;
 					seeker.x = 0;
 				}
@@ -506,7 +524,7 @@ void Inventory::UpdateInput()
 					seeker.x++;
 					if (seeker.x > 0)
 					{
-						ResetInventory();
+						ResetInventoryVariables();
 					}
 					SharedData::GetInstance()->RIGHTkeyPressed = true;
 				}

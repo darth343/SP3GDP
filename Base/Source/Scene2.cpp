@@ -32,6 +32,19 @@ Scene2::~Scene2()
 	}
 }
 
+void Scene2::Reset()
+{
+	for (int i = 0; i < m_goList.size(); ++i)
+	{
+		if (m_goList[i]->type == GameObject::GO_ENEMY)
+		{
+			Enemy* temp = (Enemy*)m_goList[i];
+			temp->Reset();
+		}
+		m_goList[i]->active = true;
+	}
+}
+
 void Scene2::Init()
 {
 	SceneGame::Init();
@@ -439,7 +452,7 @@ void Scene2::Update(double dt)
 	{
 	case MAP:
 		MapUpdate(dt);
-		break;
+		SharedData::GetInstance()->tamagucci.TamagucciBackgroundUpdate(dt);
 	case BATTLE:
 	case CATCH:
 	case INVENTORY_SCREEN:
@@ -506,11 +519,11 @@ void Scene2::RenderGO()
 					Render2DMeshWScale(meshList[GEO_NPC2_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
 				RenderTextOnScreen(meshList[GEO_TEXT], npctalk.str(), Color(1, 1, 0), 30, 60, 100);
 			}
-		}
-		if (m_goList[i]->type == GameObject::GO_ENEMY)
-		{
-			Enemy* temp = (Enemy*)m_goList[i];
-			Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetFlipStatus(), 50);
+			if (m_goList[i]->type == GameObject::GO_ENEMY)
+			{
+				Enemy* temp = (Enemy*)m_goList[i];
+				Render2DMeshWScale(meshList[GEO_MONSTER], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetFlipStatus(), 50);
+			}
 		}
 		if (m_goList[i]->type == GameObject::GO_NEXT)
 		{
@@ -521,6 +534,7 @@ void Scene2::RenderGO()
 				{
 					SharedData::GetInstance()->player->SetMapOffset(Vector3(0, 0, 0));
 					SharedData::GetInstance()->player->SetPosition(Vector3(80, 830, 0));
+					Reset();
 					SharedData::GetInstance()->gameState = SharedData::GAME_S1;
 				}
 			}

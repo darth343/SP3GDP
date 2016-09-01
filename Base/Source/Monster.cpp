@@ -17,6 +17,12 @@ Monster::Monster()
 Monster::~Monster()
 {
 }
+
+void Monster::Reset()
+{
+	health = maxHealth;
+}
+
 string Monster::getName()
 {
 	return name;

@@ -157,6 +157,31 @@ void Application::Init()
 
 }
 
+SceneGame* Application::GetScene1()
+{
+	return (SceneGame*)WM_Scene;
+}
+
+SceneGame* Application::GetScene2()
+{
+	return (SceneGame*)AE_Scene;
+}
+
+SceneGame* Application::GetScene3()
+{
+	return (SceneGame*)KY_Scene;
+}
+
+SceneGame* Application::GetScene4()
+{
+	return (SceneGame*)HS_Scene;
+}
+
+SceneGame* Application::GetScene5()
+{
+	return (SceneGame*)bossScene;
+}
+
 void Application::Run()
 {
 	menuScene = new SceneMenu;

@@ -31,6 +31,11 @@ public:
 	int GetScreenHeight();
 	int GetScreenWidth();
 	Scene* GetScene();
+	SceneGame* GetScene1();
+	SceneGame* GetScene2();
+	SceneGame* GetScene3();
+	SceneGame* GetScene4();
+	SceneGame* GetScene5();
 	//Declare variables to store the last and current mouse position
 	static double mouse_last_x, mouse_last_y, mouse_current_x, mouse_current_y, mouse_diff_x, mouse_diff_y;
 	static double camera_yaw, camera_pitch;

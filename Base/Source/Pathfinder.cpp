@@ -8,9 +8,9 @@ Pathfinder::Pathfinder()
 
 Pathfinder::~Pathfinder()
 {
-	//ClearLists();
-	//delete start;
-	//delete end;
+	ClearLists();
+	delete start;
+	delete end;
 }
 
 void Pathfinder::ClearLists()
@@ -21,17 +21,19 @@ void Pathfinder::ClearLists()
 		temp = openList.back();
 		openList.pop_back();
 		delete temp;
+		temp = NULL;
 	}
 	openList.clear();
-
 	while (visitedList.size() > 0)
 	{
 		Node * temp;
 		temp = visitedList.back();
 		visitedList.pop_back();
+		if (temp)
 		delete temp;
 	}
 	visitedList.clear();
+	pathToEnd.clear();
 }
 
 void Pathfinder::FindPath(Tile startTile, Tile endTile, CMap* m_cMap)
@@ -63,7 +65,7 @@ void Pathfinder::FindPath(Tile startTile, Tile endTile, CMap* m_cMap)
 Node* Pathfinder::getNextNodeFromOpenList()
 {
 	float lowestF = 9999;
-	int nodeIndex = -1;
+	int nodeIndex = 0;
 
 	Node* nextNode = nullptr;
 	for (int i = 0; i < openList.size(); ++i)
@@ -78,7 +80,10 @@ Node* Pathfinder::getNextNodeFromOpenList()
 			nodeIndex = i;
 		}
 	}
-
+	if (abs(openList[0]->posX) > 1000 || abs(openList[0]->posY) > 1000)
+	{
+		int a = 0;
+	}
 	if (nodeIndex >= 0)
 	{
 		nextNode = openList[nodeIndex];
@@ -148,20 +153,20 @@ void Pathfinder::openNode(int posX, int posY, float newCost, Node * parent, CMap
 		}
 	}
 	bool InOpenList = false;
-	Node * newChild = new Node(m_cMap->theMap[posY][posX], parent);
-	newChild->nodeID = id;
-	newChild->G = newCost;
-	newChild->H = parent->Distance(end);
+	Node newChild = Node(m_cMap->theMap[posY][posX], parent);
+	newChild.nodeID = id;
+	newChild.G = newCost;
+	newChild.H = parent->Distance(end);
 	//float ftest = newChild->getF();
 	//ftest;
 	for (int i = 0; i < openList.size(); ++i)
 	{
 		if (id == openList[i]->nodeID)
 		{
-			float newF = newChild->G + newCost + newChild->H;
+			float newF = newChild.G + newCost + newChild.H;
 			if (openList[i]->getF() > newF)
 			{
-				openList[i]->G = newChild->G + newCost;
+				openList[i]->G = newChild.G + newCost;
 				openList[i]->parent = parent;
 			}
 			else
@@ -170,8 +175,9 @@ void Pathfinder::openNode(int posX, int posY, float newCost, Node * parent, CMap
 			}
 		}
 	}
-
-	openList.push_back(newChild);
+	Node * temp = new Node();
+	*temp = newChild;
+	openList.push_back(temp);
 }
 
 Node* Pathfinder::getStart()

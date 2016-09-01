@@ -20,6 +20,11 @@ Enemy::~Enemy()
 {
 }
 
+void Enemy::Reset()
+{
+	monster.Reset();
+}
+
 void Enemy::MoveLeftRight(double dt, bool left)
 {
 	if (monster.GetType() != Monster::BOSS)
@@ -186,6 +191,8 @@ void Enemy::MoveTo(double dt, Tile nextTile, CMap* m_cMap)
 
 void Enemy::Update(double dt, Vector3 playerPos, Vector3 mapOffset, CMap* m_cMap)
 {
+	if (!active)
+		return;
 	if (CheckCollision(playerPos, mapOffset, m_cMap))
 	{
 		SceneGame* theScene = (SceneGame*)Application::GetInstance().GetScene();

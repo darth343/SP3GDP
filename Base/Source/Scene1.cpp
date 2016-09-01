@@ -32,6 +32,19 @@ Scene1::~Scene1()
 	}
 }
 
+void Scene1::Reset()
+{
+	for (int i = 0; i < m_goList.size(); ++i)
+	{
+		if (m_goList[i]->type == GameObject::GO_ENEMY)
+		{
+			Enemy* temp = (Enemy*)m_goList[i];
+			temp->Reset();
+		}
+		m_goList[i]->active = true;
+	}
+}
+
 void Scene1::Init()
 {
 	SceneGame::Init();
@@ -174,7 +187,7 @@ void Scene1::Init()
 	renderedMp = 100;
 	renderedHp = 100;
 
-	for (int j = 0; j < 10; ++j)
+	for (int j = 0; j < 0; ++j)
 	{
 		Equipment* temp = new Equipment();
 		//Equipment::EQUIPMENT_TYPE randType = (Equipment::EQUIPMENT_TYPE)Math::RandIntMinMax(Equipment::SWORD, Equipment::TOTAL_ETYPE -1);
@@ -202,8 +215,8 @@ void Scene1::Init()
 		}
 	}
 	SharedData::GetInstance()->inventory.SortInventory();
-	renderedMp = 100;
-	renderedHp = 100;
+	renderedMp = 0;
+	renderedHp = 0;
 }
 
 void Scene1::PlayerUpdate(double dt)
@@ -444,10 +457,9 @@ void Scene1::MapUpdate(double dt)
 	PlayerUpdate(dt);
 	GOupdate(dt);
 	if (Application::IsKeyPressed('R'))
-		{
-			
-		}
+	{
 
+	}
 }
 
 void Scene1::Update(double dt)
@@ -457,6 +469,7 @@ void Scene1::Update(double dt)
 	{
 	case MAP:
 		MapUpdate(dt);
+		SharedData::GetInstance()->tamagucci.TamagucciBackgroundUpdate(dt);
 	case BATTLE:
 	case CATCH:
 	case TAMAGUCCI_SCREEN:
@@ -523,11 +536,11 @@ void Scene1::RenderGO()
 					Render2DMeshWScale(meshList[GEO_NPC2_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
 				RenderTextOnScreen(meshList[GEO_TEXT], npctalk.str(), Color(1, 1, 0), 30, 60, 100);
 			}
-		}
-		if (m_goList[i]->type == GameObject::GO_ENEMY)
-		{
-			Enemy* temp = (Enemy*)m_goList[i];
-			Render2DMeshWScale(meshList[GEO_MONSTERBANSHEE], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetFlipStatus(), 50);
+			if (m_goList[i]->type == GameObject::GO_ENEMY)
+			{
+				Enemy* temp = (Enemy*)m_goList[i];
+				Render2DMeshWScale(meshList[GEO_MONSTERBANSHEE], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetFlipStatus(), 50);
+			}
 		}
 		if (m_goList[i]->type == GameObject::GO_NEXT)
 		{
@@ -538,6 +551,7 @@ void Scene1::RenderGO()
 				{
 					SharedData::GetInstance()->player->SetPosition(Vector3(594, 32, 0));
 					SharedData::GetInstance()->player->SetMapOffset(Vector3(800, 0, 0));
+					Reset();
 					SharedData::GetInstance()->gameState = SharedData::GAME_S2;
 				}
 			}
@@ -554,6 +568,7 @@ void Scene1::RenderGO()
 				{
 					SharedData::GetInstance()->player->SetPosition(Vector3(88, 220, 0));
 					SharedData::GetInstance()->player->SetMapOffset(Vector3(0, 327, 0));
+					Reset();
 					SharedData::GetInstance()->gameState = SharedData::GAME_S4;
 				}
 			}
@@ -565,8 +580,9 @@ void Scene1::RenderGO()
 				Render2DMeshWScale(meshList[GEO_POPUP], false, 1, 1, 150, 200, false);
 				if (Application::IsKeyPressed(VK_RETURN))
 				{
-					SharedData::GetInstance()->player->SetPosition(Vector3(590, 3000, 0));
-
+					SharedData::GetInstance()->player->SetPosition(Vector3(490, 383, 0));
+					SharedData::GetInstance()->player->SetMapOffset(Vector3(99, 680, 0));
+					Reset();
 					SharedData::GetInstance()->gameState = SharedData::GAME_S3;
 				}
 			}
@@ -583,6 +599,7 @@ void Scene1::RenderGO()
 					{
 						SharedData::GetInstance()->player->SetPosition(Vector3(400, -400, 0));
 						SharedData::GetInstance()->gameState = SharedData::GAME_BOSS;
+						Reset();
 					}
 				}
 				else
