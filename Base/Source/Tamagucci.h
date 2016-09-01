@@ -22,7 +22,6 @@ public:
 	enum GAMEOPTIONS
 	{
 		CATCHING,
-		ROCKPAPERSCISSORS,
 		G_BACK,
 	};
 
@@ -56,9 +55,7 @@ public:
 	void UpdateTamagucci(double dt);
 	void GetTamagucciInput();
 	void MiniGame1(double dt);
-	void MiniGame2(double dt){};
 	void MiniGame1UpdatePosition(double dt);
-	void MiniGame2UpdatePosition(double dt){};
 	void ResetTamagotchi();
 	void SetIndex(int index);
 	int GetScore();

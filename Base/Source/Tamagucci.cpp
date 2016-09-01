@@ -214,8 +214,7 @@ void TAMAGUCCI::UpdateTamagucci(double dt)
 		{
 		case CATCHING:
 			MiniGame1(dt);
-		case ROCKPAPERSCISSORS:
-			MiniGame2(dt);
+			break;
 		}
 		break;
 	}

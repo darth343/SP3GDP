@@ -183,6 +183,8 @@ void SceneGame::CatchUpdate(double dt)
 			capturedMonster = true;
 			currState = 3;
 			SharedData::GetInstance()->inventory.addToInventory(EnemyInBattle);
+			SharedData::GetInstance()->soundManager.stopMusic("Sound//battleStart.mp3");
+			SharedData::GetInstance()->soundPlay = false;
 			battleScene.SetBattleSelection(BattleSystem::BS_ATTACK);
 			battleScene.SetFirstChoice(true);
 			battleScene.SetSecondChoice(false);
@@ -216,7 +218,7 @@ void SceneGame::EnterBattleScene(Enemy* enemy)
 	//SharedData::GetInstance()->soundManager.SoundPlay("Sound/battleStart.mp3", &SharedData::GetInstance()->battleStart, 0.3f, true);
 	if(!SharedData::GetInstance()->soundPlay)
 	{
-		SharedData::GetInstance()->soundManager.stopMusic("Sound//Route1.mp3");
+		SharedData::GetInstance()->soundManager.stopMusic("Sound//Map.mp3");
 		SharedData::GetInstance()->soundManager.playMusic("Sound//battleStart.mp3");
 		SharedData::GetInstance()->soundPlay = true;
 	}
@@ -1100,11 +1102,8 @@ void SceneGame::renderTamagotchiMenu()
 			ss << "REACH FOR THE STARS";
 			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 360, 59.5);
 			ss.str("");
-			ss << "ROCK PAPER SCISSORS";
-			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 360, 32.5);
-			ss.str("");
 			ss << "BACK";
-			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 360, 7.5);
+			RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(1, 1, 1), 25, 360, 32.5);
 
 			//RENDER OPTION SEEKER
 			switch (SharedData::GetInstance()->tamagucci.getGameChoice())
@@ -1112,11 +1111,8 @@ void SceneGame::renderTamagotchiMenu()
 			case TAMAGUCCI::CATCHING:
 				arrowPos.Set(314.5, 57.5);
 				break;
-			case TAMAGUCCI::ROCKPAPERSCISSORS:
-				arrowPos.Set(314.5, 30.5);
-				break;
 			case TAMAGUCCI::G_BACK:
-				arrowPos.Set(314.5, 5.5);
+				arrowPos.Set(314.5, 30.5);
 				break;
 			}
 			Render2DMeshWScale(meshList[GEO_BATTLEARROW], false, 0.05, 0.03, arrowPos.x, arrowPos.y, false);

@@ -677,7 +677,7 @@ void Scene1::Render()
 		RenderMap();
 		RenderGO();
 		//SharedData::GetInstance()->soundManager.playMusic("Sound//route1.mp3");
-		SharedData::GetInstance()->soundManager.SoundPlay("Sound/route1.mp3", &SharedData::GetInstance()->worldBGM, 0.3f, false);
+		SharedData::GetInstance()->soundManager.SoundPlay("Sound/Map.mp3", &SharedData::GetInstance()->worldBGM, 0.3f, false);
 		break;
 	case BATTLE:
 		RenderBattleScene();

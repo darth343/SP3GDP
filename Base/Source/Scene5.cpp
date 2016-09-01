@@ -413,7 +413,7 @@ void Scene5::MapUpdate(double dt)
 	{
 		PlayerUpdate(dt);
 		GOupdate(dt);
-		SharedData::GetInstance()->soundManager.SoundPlay("Sound/route1.mp3", &SharedData::GetInstance()->worldBGM, 0.3f, false);
+		SharedData::GetInstance()->soundManager.SoundPlay("Sound/Map.mp3", &SharedData::GetInstance()->worldBGM, 0.3f, false);
 	}
 	SharedData::GetInstance()->tamagucci.TamagucciBackgroundUpdate(dt);
 	PlayerUpdate(dt);
