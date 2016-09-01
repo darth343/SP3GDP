@@ -457,7 +457,6 @@ void Scene1::MapUpdate(double dt)
 	{
 		PlayerUpdate(dt);
 		GOupdate(dt);
-		SharedData::GetInstance()->soundManager.SoundPlay("Sound/route1.mp3", &SharedData::GetInstance()->worldBGM, 0.3f, false);
 	}
 	SharedData::GetInstance()->tamagucci.TamagucciBackgroundUpdate(dt);
 	PlayerUpdate(dt);
@@ -660,6 +659,8 @@ void Scene1::Render()
 	case MAP:
 		RenderMap();
 		RenderGO();
+		//SharedData::GetInstance()->soundManager.playMusic("Sound//route1.mp3");
+		SharedData::GetInstance()->soundManager.SoundPlay("Sound/route1.mp3", &SharedData::GetInstance()->worldBGM, 0.3f, false);
 		break;
 	case BATTLE:
 		RenderBattleScene();

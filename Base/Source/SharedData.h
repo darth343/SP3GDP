@@ -84,6 +84,8 @@ public:
 	bool capturedDragon;
 	bool capturedCerebus;
 
+	bool soundPlay;
+
 private:
 	SharedData()
 	{
@@ -99,6 +101,7 @@ private:
 		IkeyPressed = false;
 		SpaceKeyPressed = false;
 		QKeyPressed = false;
+		soundPlay = false;
 
 		soundFootstep = NULL;
 		worldBGM = NULL;

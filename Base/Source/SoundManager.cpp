@@ -11,6 +11,7 @@ using std::endl;
 SoundManager::SoundManager()
 	: soundEngine(NULL)
 {
+	soundEngine = irrklang::createIrrKlangDevice();
 }
 
 SoundManager::~SoundManager()
@@ -40,9 +41,21 @@ void SoundManager::SoundPlay(const char*  fileName, ISound ** soundType, float v
 		(*soundType) = NULL;
 	if ((*soundType))
 		(*soundType)->setVolume(volume);
+}
+void SoundManager::playSE(string Music)
+{
+	SoundEffect = soundEngine->play2D(Music.c_str(), false, false, false);
+}
+void SoundManager::playMusic(string Music)
+{
+	Song = soundEngine->play2D(Music.c_str(), true, false, true);
+	//Song->setVolume(0.5);
 
 }
-
+void SoundManager::stopMusic(string Music)
+{
+	Song->stop();
+}
 void SoundManager::SoundPause(ISound ** soundType)
 {
 	if ((*soundType) != NULL && (*soundType)->getIsPaused() == false)
