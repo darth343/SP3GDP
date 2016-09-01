@@ -110,7 +110,6 @@ void Scene1::Init()
 	}
 
 	GameObject* touch = new GameObject(Vector3(50.f, 50.f, 1));
-	cout << touch << endl;
 	touch->position.Set(0, 820, 1);
 	touch->type = GameObject::GO_NEXT;
 	m_goList.push_back(touch);
@@ -531,7 +530,6 @@ void Scene1::RenderMap()
 	Render2DMeshWScale(meshList[GEO_ICONINV], false, 1, 1, 630, 10, false);
 	Render2DMeshWScale(meshList[GEO_ICONQUEST], false, 1, 1, 560, 10, false);
 	Render2DMeshWScale(meshList[GEO_LIVES], false, 120, 50, 0, 550, false);
-	cout << xpos << " " << ypos << endl;
 	//On screen text
 	ss.str("");
 	ss.precision(5);

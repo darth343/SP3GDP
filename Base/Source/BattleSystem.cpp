@@ -152,7 +152,6 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 			battleSelection = BS_SLASH;
 			firstChoice = false;
 			secondChoice = true;
-			cout << "ATTACK! " << endl;
 			break;
 
 		case BS_ITEM:
@@ -162,7 +161,6 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 			secondChoice = true;
 			SetOpenItemBag(true);
 			battleSelection = BS_POTION;
-			cout << "Item Bag" << battleSelection << endl;
 			break;
 
 		case BS_CAPTURE:
@@ -174,9 +172,7 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 
 
 		case BS_RUN:
-			cout << "RUN AWAY" << battleSelection << endl;
 			escapePercentage += Math::RandFloatMinMax(0.0f, 50.0f);
-			cout << "Escape % = " << escapePercentage << endl;
 			if (escapePercentage > 50.0f && SharedData::GetInstance()->gameState != SharedData::GAMESTATE::GAME_BOSS || 
 				escapePercentage > 70.0f && SharedData::GetInstance()->gameState == SharedData::GAMESTATE::GAME_BOSS)
 			{
@@ -186,8 +182,6 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 				SetBattleSelection(BattleSystem::BS_ATTACK);
 				SetFirstChoice(true);
 				SetSecondChoice(false);
-				cout << "ESCAPE LOHHHHHHHHHH!" << endl;
-
 				if (SharedData::GetInstance()->soundPlay)
 				{
 					SharedData::GetInstance()->soundPlay = false;
@@ -204,8 +198,6 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 			{
 
 				escapePercentage = 25.0f;
-				cout << "WHY YOU NO ESCAPE!!!!" << endl;
-				
 				// new
 				SharedData::GetInstance()->playerBattleDialogue = true;
 			}
@@ -215,13 +207,11 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 	else if (secondChoice)
 	{
 		//Second Choice only applys to Attack and Item as it need to display a new numbers of choices
-		cout << "Second Choice Selection" << endl;
 		switch (battleSelection)
 		{
 		case BS_SLASH:
 			//minus enemy hp, then enemy turn = true, player turn = false
 
-			cout << "Slash enemy " << endl;
 			SharedData::GetInstance()->playerHitenemy = true;
 			SharedData::GetInstance()->soundManager.playSE("Sound/slash.mp3");
 
@@ -234,14 +224,10 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 
 			SharedData::GetInstance()->BS_SlashRender = true;
 
-			cout << "Player Slash Enemy for " << theHero->GetDMG() << " Enemy HP left " << enemy->GetHealth() << endl;
-
 			break;
 
 		case BS_STAB:
 			//minus enemy hp, then enemy turn = true, player turn = false
-			cout << "Stab enemy " << battleSelection << endl;
-
 			SharedData::GetInstance()->playerHitenemy = true;
 			SharedData::GetInstance()->soundManager.playMusic("Sound//stab.mp3");
 
@@ -251,8 +237,6 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 				theHero->SetDMG(SharedData::GetInstance()->inventory.GetTotalATK());
 			enemy->TakeDamage(theHero->GetDMG());
 			SharedData::GetInstance()->BS_StabRender = true;
-
-			cout << "Player Stab Enemy for " << theHero->GetDMG() << " Enemy HP left " << enemy->GetHealth() << endl;
 			break;
 		case BS_SKILL:
 
@@ -343,7 +327,6 @@ void BattleSystem::RunBattleChoice(CPlayerInfo* theHero, Enemy* enemy)
 			break;
 		case BS_BACK2:
 		case BS_BACK:
-			cout << " Back " << battleSelection << endl;
 
 			firstChoice = true;
 			secondChoice = false;
@@ -381,7 +364,6 @@ void BattleSystem::GetBattleChoiceInput(static bool& UPkeyPressed, static bool& 
 				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 4);
 			else if (secondChoice && battleSelection < BS_POTION && openItemBag)
 				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection + 2);
-				cout << "BS = " << battleSelection << endl;
 		}
 		else if (!Application::IsKeyPressed(VK_UP) && UPkeyPressed)
 		{
@@ -405,7 +387,6 @@ void BattleSystem::GetBattleChoiceInput(static bool& UPkeyPressed, static bool& 
 				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 4);
 			else if (secondChoice && battleSelection > BS_TRAP && openItemBag)
 				battleSelection = static_cast<BATTLE_SELECTION> (battleSelection - 2);
-			cout << "BS = " << battleSelection << endl;
 		}
 		else if (!Application::IsKeyPressed(VK_DOWN) && DNkeyPressed)
 		{
@@ -428,8 +409,6 @@ void BattleSystem::GetBattleChoiceInput(static bool& UPkeyPressed, static bool& 
 				battleSelection = BS_BACK;
 			else if (secondChoice && battleSelection < BS_POTION && openItemBag)
 				battleSelection = BS_BACK2;
-
-			cout << "BS = " << battleSelection << endl;
 		}
 		else if (!Application::IsKeyPressed(VK_LEFT) && LEFTkeyPressed)
 		{
@@ -452,8 +431,6 @@ void BattleSystem::GetBattleChoiceInput(static bool& UPkeyPressed, static bool& 
 				battleSelection = BS_SLASH;
 			else if (secondChoice && battleSelection > BS_BACK2 && openItemBag)
 				battleSelection = BS_POTION;
-
-			cout << "BS = " << battleSelection << endl;
 		}
 		else if (!Application::IsKeyPressed(VK_RIGHT) && RIGHTkeyPressed)
 		{

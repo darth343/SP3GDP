@@ -166,8 +166,6 @@ void SceneGame::CatchUpdate(double dt)
 		SharedData::GetInstance()->ENTERkeyPressed = true;
 		if (chargebar->CheckCollision(greenbar))
 		{
-			cout << "CAPTURED" << endl;
-
 			if (SharedData::GetInstance()->gameState == SharedData::GAME_S1)
 				SharedData::GetInstance()->capturedBanshee = true;
 
@@ -741,7 +739,6 @@ void SceneGame::Update(double dt)
 					GS = MAP;
 					SharedData::GetInstance()->player->SetMapOffset(Vector3(0, 0, 0));
 					SharedData::GetInstance()->player->SetPosition(Vector3(530, 64, 0));
-					cout << SharedData::GetInstance()->playerLives << endl;
 				}
 				else
 				{
@@ -812,7 +809,6 @@ void SceneGame::Update(double dt)
 		if (SharedData::GetInstance()->BS_StabRender)
 		{
 			SpriteAnimation *stabAnimation = dynamic_cast<SpriteAnimation*>(meshList[GEO_STABANIMATION]);
-			//cout << "Animation = " << slashAnimation->m_currentFrame << endl;
 			if (stabAnimation)
 			{
 				stabAnimation->m_anim->animActive = true;

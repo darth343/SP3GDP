@@ -36,7 +36,8 @@ public:
 	void setLevels(int level);
 	int getDamage();
 	int getDefense();
-	friend std::ostream& operator<<(std::ostream& cout, EQUIPMENT_TYPE type);
+	friend std::ostream& operator<<(std::ostream& 
+		, EQUIPMENT_TYPE type);
 	int GetTamHappy();
 	int GetTamEnergy();
 	int GetTamHunger();

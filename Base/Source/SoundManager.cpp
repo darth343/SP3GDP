@@ -71,7 +71,6 @@ void SoundManager::StopAllSound()
 void SoundManager::StopSingleSound(const char* fileName)
 {
 	soundEngine->removeSoundSource(fileName);
-	cout << "StopOne" << endl;
 }
 
 #endif
