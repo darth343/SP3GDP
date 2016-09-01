@@ -238,7 +238,7 @@ void SceneGame::EnterBattleScene(Enemy* enemy)
 	SharedData::GetInstance()->playerHitenemy = false;
 	renderedHp = 0;
 	renderedMp = 0;
-
+	SharedData::GetInstance()->trapPercentageIncrease = 0.0f;
 	EnemyInBattle = enemy;
 	GS = BATTLE;
 	SharedData::GetInstance()->playerHitenemy = false;
