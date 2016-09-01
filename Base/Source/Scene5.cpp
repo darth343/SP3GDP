@@ -335,7 +335,7 @@ void Scene5::GOupdate(double dt)
 			if (temp->collideWhichNPC() == npcID)
 				temp->SetState(currState);
 			
-			if (temp->collisionDetected && Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
+			if (temp->GetColDetected() && Application::IsKeyPressed(VK_RETURN) && !SharedData::GetInstance()->ENTERkeyPressed)
 			{
 				npctalk.str("");
 				MS = IN_DIALOUGE;			
@@ -345,7 +345,7 @@ void Scene5::GOupdate(double dt)
 			else if (!Application::IsKeyPressed(VK_RETURN) && SharedData::GetInstance()->ENTERkeyPressed)
 				SharedData::GetInstance()->ENTERkeyPressed = false;
 
-			if (temp->GetDialogueState() == temp->currState && temp->GetID() == temp->collideWhichNPC())
+			if (temp->GetDialogueState() == temp->GetCurrState() && temp->GetID() == temp->collideWhichNPC())
 			{
 				if (dialogueNum == temp->maxDia)
 				{
@@ -377,6 +377,25 @@ void Scene5::GOupdate(double dt)
 				}
 			}
 		}
+	}
+	if (Application::IsKeyPressed('Q') && !SharedData::GetInstance()->QKeyPressed)
+	{
+		SharedData::GetInstance()->QKeyPressed = true;
+
+		if (!renderQuest)
+		{
+			renderQuest = true;
+		}
+		else if (renderQuest)
+		{
+			renderQuest = false;
+			MS = PLAY;
+			//GS = MAP;
+		}
+	}
+	else if (!Application::IsKeyPressed('Q') && SharedData::GetInstance()->QKeyPressed)
+	{
+		SharedData::GetInstance()->QKeyPressed = false;
 	}
 }
 
@@ -450,11 +469,11 @@ void Scene5::RenderGO()
 			if (m_goList[i]->type == GameObject::GO_NPC)
 			{
 				NPC* temp = (NPC*)m_goList[i];
-				if (temp->GetID() == 1 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
+				if (temp->GetID() == 1 && temp->GetDialogueState() == temp->GetCurrState() && temp->GetNum() == 1)
 					Render2DMeshWScale(meshList[GEO_NPC1_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
-				if (temp->GetID() == 2 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
+				if (temp->GetID() == 2 && temp->GetDialogueState() == temp->GetCurrState() && temp->GetNum() == 1)
 					Render2DMeshWScale(meshList[GEO_NPC3_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
-				if (temp->GetID() == 3 && temp->GetDialogueState() == temp->currState && temp->GetNum() == 1)
+				if (temp->GetID() == 3 && temp->GetDialogueState() == temp->GetCurrState() && temp->GetNum() == 1)
 					Render2DMeshWScale(meshList[GEO_NPC2_LEFT], false, m_goList[i]->scale.x, m_goList[i]->scale.y, m_goList[i]->position.x - SharedData::GetInstance()->player->GetMapOffset().x, m_goList[i]->position.y - SharedData::GetInstance()->player->GetMapOffset().y, temp->GetMoveRight(), 32);
 				if (renderNPCstuff)
 				{
