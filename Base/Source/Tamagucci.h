@@ -61,7 +61,6 @@ public:
 	bool getAlertStatus();
 	int GetScore();
 	void TamagucciBackgroundUpdate(double dt);
-	//friend std::ostream& operator<<(std::ostream& , FIRSTMENUPOPTIONS buttons);
 	//friend std::ostream& operator<<(std::ostream& cout, FOODCHOICES foodchoice);
 	TAMAGOTCHISTATE getTamagotchiState();
 	MENUSTATE getMenuState();
@@ -105,6 +104,7 @@ private:
 	FIRSTMENUPOPTIONS firstMenuOption;
 	FOODCHOICES foodChoice;
 	GAMEOPTIONS gameChoice;
+	//FIRSTMENUPOPTIONS buttons;
 	//MOVEMENT STUFF
 };
 #endif // !TAMAGUCCI_H

@@ -1,0 +1,6 @@
+Name,Type,Health,Defense,Damage,Skill
+BANSHEE,0,50,10,20,
+CEREBUS,1,70,50,25,
+DRAGON,2,150,50,40,
+GOLEM,3,90,50,35,
+BOSS,4,500,20,50,
