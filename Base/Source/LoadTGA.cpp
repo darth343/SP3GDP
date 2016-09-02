@@ -9,8 +9,7 @@ GLuint LoadTGA(const char *file_path)				// load TGA file to memory
 {
 	std::ifstream fileStream(file_path, std::ios::binary);
 	if(!fileStream.is_open()) {
-		std::
-			<< "Impossible to open " << file_path << ". Are you in the right directory ?\n";
+		std::cout << "Impossible to open " << file_path << ". Are you in the right directory ?\n";
 		return 0;
 	}
 
